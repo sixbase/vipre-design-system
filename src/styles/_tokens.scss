@@ -1,0 +1,118 @@
+// ============================================================================
+// VIPRE DESIGN SYSTEM — TOKENS
+// ----------------------------------------------------------------------------
+// Authored in SCSS, emitted as CSS custom properties so they stay live at
+// runtime (required for light/dark theming, which compile-time SCSS vars
+// can't do). Three tiers:
+//   1. PRIMITIVE — raw ramps (--vds-graphite-500). Never used directly in
+//      components; only bound to intent below.
+//   2. SEMANTIC  — intent-mapped (--vds-canvas, --vds-ink…). Flip per theme.
+//   3. SCALE     — radius / shadow / motion. (Type lives in _typography.scss.)
+// ============================================================================
+
+// ---- PRIMITIVE ramps (SCSS maps → emitted as custom properties) ------------
+$graphite: (
+  0: #ffffff, 50: #f7f8fa, 100: #eff1f5, 200: #e2e6ed, 300: #cbd2dd,
+  400: #9aa4b4, 500: #6b7585, 600: #4d5666, 700: #3a424f, 800: #262c36,
+  900: #161b22, 950: #0d1117,
+);
+
+$iris: (
+  50: #f0f1fe, 100: #e2e4fd, 200: #c8cbfb, 300: #a6a8f7, 400: #8482f0,
+  500: #6963e8, 600: #564ddb, 700: #443bb8, 800: #383293, 900: #2f2c74,
+);
+
+$emerald: (50: #ecfdf5, 500: #10b981, 600: #059669, 700: #047857);
+$amber:   (50: #fffbeb, 500: #f59e0b, 600: #d97706, 700: #b45309);
+$rose:    (50: #fef2f2, 500: #ef4444, 600: #dc2626, 700: #b91c1c);
+$sky:     (50: #eff6ff, 500: #3b82f6, 600: #2563eb, 700: #1d4ed8);
+
+@mixin emit-ramp($name, $ramp) {
+  @each $step, $value in $ramp {
+    --vds-#{$name}-#{$step}: #{$value};
+  }
+}
+
+:root {
+  // ---- Tier 1 · primitives -------------------------------------------------
+  @include emit-ramp(graphite, $graphite);
+  @include emit-ramp(iris, $iris);
+  @include emit-ramp(emerald, $emerald);
+  @include emit-ramp(amber, $amber);
+  @include emit-ramp(rose, $rose);
+  @include emit-ramp(sky, $sky);
+
+  // ---- Tier 3 · scale (theme-independent) ----------------------------------
+  --vds-font-sans: 'Rubik', ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --vds-radius-sm: 0.375rem; // 6px
+  --vds-radius-md: 0.5rem;   // 8px
+  --vds-radius-lg: 0.75rem;  // 12px
+  --vds-radius-xl: 1rem;     // 16px
+
+  --vds-shadow-xs: 0 1px 2px 0 rgb(13 17 23 / 0.06);
+  --vds-shadow-sm: 0 1px 3px 0 rgb(13 17 23 / 0.08), 0 1px 2px -1px rgb(13 17 23 / 0.08);
+  --vds-shadow-md: 0 4px 12px -2px rgb(13 17 23 / 0.12), 0 2px 6px -2px rgb(13 17 23 / 0.08);
+  --vds-shadow-lg: 0 12px 28px -6px rgb(13 17 23 / 0.18), 0 6px 12px -6px rgb(13 17 23 / 0.12);
+
+  --vds-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --vds-dur-fast: 120ms;
+  --vds-dur-base: 200ms;
+
+  // ---- Tier 2 · semantic (LIGHT is default) --------------------------------
+  --vds-canvas:         var(--vds-graphite-50);
+  --vds-surface:        var(--vds-graphite-0);
+  --vds-surface-raised: var(--vds-graphite-0);
+  --vds-line:           var(--vds-graphite-200);
+  --vds-line-strong:    var(--vds-graphite-300);
+  --vds-ink:            var(--vds-graphite-900);
+  --vds-ink-muted:      var(--vds-graphite-600);
+  --vds-ink-subtle:     var(--vds-graphite-500);
+
+  --vds-primary:        var(--vds-iris-600);
+  --vds-primary-hover:  var(--vds-iris-700);
+  --vds-on-primary:     var(--vds-graphite-0);
+  --vds-primary-soft:   var(--vds-iris-50);
+
+  --vds-success:        var(--vds-emerald-600);
+  --vds-success-soft:   var(--vds-emerald-50);
+  --vds-warning:        var(--vds-amber-600);
+  --vds-warning-soft:   var(--vds-amber-50);
+  --vds-danger:         var(--vds-rose-600);
+  --vds-danger-soft:    var(--vds-rose-50);
+  --vds-info:           var(--vds-sky-600);
+  --vds-info-soft:      var(--vds-sky-50);
+
+  --vds-focus-ring:     var(--vds-iris-500);
+}
+
+// ---- Tier 2 · semantic (DARK overrides) ------------------------------------
+.dark {
+  --vds-canvas:         var(--vds-graphite-950);
+  --vds-surface:        var(--vds-graphite-900);
+  --vds-surface-raised: var(--vds-graphite-800);
+  --vds-line:           var(--vds-graphite-800);
+  --vds-line-strong:    var(--vds-graphite-700);
+  --vds-ink:            var(--vds-graphite-50);
+  --vds-ink-muted:      var(--vds-graphite-400);
+  --vds-ink-subtle:     var(--vds-graphite-500);
+
+  --vds-primary:        var(--vds-iris-500);
+  --vds-primary-hover:  var(--vds-iris-400);
+  --vds-on-primary:     var(--vds-graphite-950);
+  --vds-primary-soft:   color-mix(in oklab, var(--vds-iris-500) 16%, transparent);
+
+  --vds-success:        var(--vds-emerald-500);
+  --vds-success-soft:   color-mix(in oklab, var(--vds-emerald-500) 16%, transparent);
+  --vds-warning:        var(--vds-amber-500);
+  --vds-warning-soft:   color-mix(in oklab, var(--vds-amber-500) 16%, transparent);
+  --vds-danger:         var(--vds-rose-500);
+  --vds-danger-soft:    color-mix(in oklab, var(--vds-rose-500) 16%, transparent);
+  --vds-info:           var(--vds-sky-500);
+  --vds-info-soft:      color-mix(in oklab, var(--vds-sky-500) 16%, transparent);
+
+  --vds-focus-ring:     var(--vds-iris-400);
+
+  color-scheme: dark;
+}

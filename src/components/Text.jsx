@@ -3,35 +3,18 @@ import { cx } from '../lib/cx.js'
 
 /* ----------------------------------------------------------------------------
    Typography components — the ONLY way to render text in the system.
-   They bind the Rubik typescale tokens (text-title, text-body…) to semantic
-   ink colors, so callers never reach for raw font sizes or hex colors.
+   They bind the Rubik typescale classes (.vds-text--title …) to semantic tone
+   classes, so callers never reach for raw font sizes or colors.
    -------------------------------------------------------------------------- */
 
-const HEADING_SCALE = {
-  display: 'text-display',
-  title: 'text-title',
-  heading: 'text-heading',
-  subheading: 'text-subheading',
-}
-
-const TEXT_SCALE = {
-  'body-lg': 'text-body-lg',
-  body: 'text-body',
-  caption: 'text-caption',
-  detail: 'text-detail',
-  micro: 'text-micro',
-  eyebrow: 'text-eyebrow uppercase',
-  nano: 'text-nano',
-}
-
 const TONE = {
-  default: 'text-ink',
-  muted: 'text-ink-muted',
-  subtle: 'text-ink-subtle',
-  primary: 'text-primary',
-  success: 'text-success',
-  warning: 'text-warning',
-  danger: 'text-danger',
+  default: 'vds-text--tone-default',
+  muted: 'vds-text--tone-muted',
+  subtle: 'vds-text--tone-subtle',
+  primary: 'vds-text--tone-primary',
+  success: 'vds-text--tone-success',
+  warning: 'vds-text--tone-warning',
+  danger: 'vds-text--tone-danger',
 }
 
 /**
@@ -45,7 +28,11 @@ export const Heading = forwardRef(function Heading(
 ) {
   const Tag = as || 'h2'
   return (
-    <Tag ref={ref} className={cx(HEADING_SCALE[level], TONE[tone], 'text-balance', className)} {...props}>
+    <Tag
+      ref={ref}
+      className={cx('vds-text', 'vds-heading', `vds-text--${level}`, TONE[tone], className)}
+      {...props}
+    >
       {children}
     </Tag>
   )
@@ -61,7 +48,11 @@ export const Text = forwardRef(function Text(
 ) {
   const Tag = as
   return (
-    <Tag ref={ref} className={cx(TEXT_SCALE[variant], TONE[tone], className)} {...props}>
+    <Tag
+      ref={ref}
+      className={cx('vds-text', `vds-text--${variant}`, TONE[tone], className)}
+      {...props}
+    >
       {children}
     </Tag>
   )

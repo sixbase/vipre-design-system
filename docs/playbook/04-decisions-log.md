@@ -4,6 +4,24 @@ Every significant choice, with rationale. Append; don't rewrite history.
 
 ---
 
+### SCSS instead of Tailwind
+
+**Phase:** v1 / foundation (revision)
+**Context:** Initial POC used Tailwind 4 (`@theme` tokens + utility classes). Direction
+changed to "avoid Tailwind, go with SCSS."
+**Decision:** Removed Tailwind. Styling is now SCSS compiled to one stylesheet. Tokens are
+SCSS maps emitted as CSS custom properties (`--vds-*`); components use BEM classes
+(`vds-button--primary`) defined in `src/styles/components/*.scss`; the typescale is a
+`$scale` map + `step()` mixin. Light/dark still flips via `:root` / `.dark` custom props.
+**Rationale:** Client preference. Bonus: emitting primitives from a SCSS loop removes the
+Tailwind "tree-shake unused theme vars" gap entirely (every token is always present), and
+the bundle shrank (~21kB → ~9kB CSS). The `--vp-*` indirection that Tailwind's static
+utilities required is no longer needed — semantic tokens bind to primitives directly.
+**Supersedes:** the "`--vp-*` indirection" and Tailwind parts of the "POC stack" entries below.
+**Status:** active
+
+---
+
 ### Fresh aesthetic rather than porting Claude DS
 
 **Phase:** v1 / foundation
@@ -52,7 +70,8 @@ still reading as trustworthy.
 **Decision:** `@theme` semantic tokens point at `--vp-*` variables; the `--vp-*` values are swapped
 under `.dark`. Soft status backgrounds in dark use `color-mix(... 16%, transparent)`.
 **Rationale:** Keeps full `bg-primary` / `text-ink` utility ergonomics while theming from one place.
-**Status:** active
+**Status:** changed — superseded by the SCSS switch (top of file). No longer using Tailwind/`@theme`,
+so the indirection is gone; semantic `--vds-*` tokens bind to primitives directly.
 
 ---
 
@@ -60,9 +79,10 @@ under `.dark`. Soft status backgrounds in dark use `color-mix(... 16%, transpare
 
 **Phase:** v1
 **Context:** Direction was "as basic as possible — this is a POC."
-**Decision:** One Vite + React + Tailwind 4 app. No turbo/pnpm workspaces, no Storybook, no token
-build step, no per-component test/story files. The showcase page doubles as the docs.
+**Decision:** One Vite + React app (~~Tailwind 4~~ → **SCSS**, see top of file). No turbo/pnpm
+workspaces, no Storybook, no token build step, no per-component test/story files. The showcase page
+doubles as the docs. Deployed to GitHub Pages via Actions for a shareable preview link.
 **Rationale:** Fastest path to something readable and runnable that can be pulled into the prototypes.
 The heavier monorepo machinery (token JSON→CSS, test+story per component, publishing) is deferred
 until/if the system graduates from POC.
-**Status:** active
+**Status:** active (stack still single-app + no monorepo; styling tech changed to SCSS)

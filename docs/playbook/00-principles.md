@@ -23,6 +23,7 @@ Vipre is a security / device-management product: the UI should feel **calm, prec
 
 ## POC scope note
 
-This is intentionally a single Vite + React + Tailwind 4 app — no monorepo, no
-Storybook, no token build step. The token JSON→CSS pipeline, per-component test +
-story files, and package publishing can come later if the system graduates from POC.
+This is intentionally a single Vite + React app styled with **SCSS** — no monorepo, no
+Storybook, no Tailwind. Tokens are SCSS maps emitted as CSS custom properties. The
+token JSON→CSS pipeline, per-component test + story files, and package publishing can
+come later if the system graduates from POC.

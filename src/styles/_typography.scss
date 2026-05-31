@@ -1,0 +1,64 @@
+// ============================================================================
+// TYPOGRAPHY — Rubik typescale
+// ----------------------------------------------------------------------------
+// One source of truth: the $scale map. The step() mixin lets components pull a
+// step (e.g. button sizing), and the loop generates .vds-text--{step} classes
+// consumed by the Text / Heading components.
+//
+// Format per step: (font-size  line-height  font-weight  letter-spacing)
+// ============================================================================
+@use 'sass:map';
+@use 'sass:list';
+
+$scale: (
+  display:    (1.875rem  2.25rem  600  -0.022em),
+  title:      (1.5rem    2rem     600  -0.017em),
+  heading:    (1.25rem   1.75rem  600  -0.012em),
+  subheading: (1rem      1.5rem   500  -0.006em),
+  body-lg:    (0.9375rem 1.375rem 400  0),
+  body:       (0.875rem  1.25rem  400  0),
+  caption:    (0.8125rem 1.125rem 400  0),
+  detail:     (0.75rem   1rem     400  0),
+  micro:      (0.6875rem 0.875rem 500  0),
+  eyebrow:    (0.6875rem 0.875rem 600  0.04em),
+  nano:       (0.625rem  0.875rem 500  0.03em),
+);
+
+// Apply a named step's metrics. Usable from any component partial.
+@mixin step($name) {
+  $v: map.get($scale, $name);
+  font-size: list.nth($v, 1);
+  line-height: list.nth($v, 2);
+  font-weight: list.nth($v, 3);
+  letter-spacing: list.nth($v, 4);
+}
+
+// Generate the text classes.
+.vds-text {
+  font-family: var(--vds-font-sans);
+  margin: 0;
+}
+
+@each $name, $v in $scale {
+  .vds-text--#{$name} {
+    @include step($name);
+  }
+}
+
+.vds-text--eyebrow {
+  text-transform: uppercase;
+}
+
+// Tone (color) modifiers — orthogonal to size.
+.vds-text--tone-default { color: var(--vds-ink); }
+.vds-text--tone-muted   { color: var(--vds-ink-muted); }
+.vds-text--tone-subtle  { color: var(--vds-ink-subtle); }
+.vds-text--tone-primary { color: var(--vds-primary); }
+.vds-text--tone-success { color: var(--vds-success); }
+.vds-text--tone-warning { color: var(--vds-warning); }
+.vds-text--tone-danger  { color: var(--vds-danger); }
+
+// Headings should balance across lines.
+.vds-heading {
+  text-wrap: balance;
+}
