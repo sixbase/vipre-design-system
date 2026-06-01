@@ -4,6 +4,43 @@ Every significant choice, with rationale. Append; don't rewrite history.
 
 ---
 
+### Foundation pages follow Mason's token-page structure
+
+**Phase:** v1 / docs
+**Context:** The Colors and Typography pages used plain swatch/specimen grids — different
+from how Mason organizes token pages.
+**Decision:** Match Mason. **Colors:** semantic tokens first (grouped Surfaces / Text /
+Borders / Brand & interactive / Status) as a detailed table (swatch + token + light→dark
+ref + usage), tagged "Use these"; primitive ramps second as palette grids with hex,
+tagged "Reference only". **Typography:** Font family → annotated type-scale rows
+(token + size + usage + live preview) tagged "Use this" → Font weights → semantic
+mapping table → usage. Doc data lives in `src/docs/tokens.js`.
+**Note:** `src/docs/tokens.js` **mirrors** `src/styles/_tokens.scss` (hex + usage). Keep
+them in sync when ramps change — it's documentation data, not the source of truth.
+**Rationale:** Semantic-first with usage descriptions teaches *which* token to reach for,
+not just what colors exist — the whole point of the token layer.
+**Status:** active
+
+---
+
+### Per-component docs pages (matching Mason) + hash router
+
+**Phase:** v1 / docs
+**Context:** Mason/Claude gives every component its own dedicated page with a fixed
+anatomy (title → description → Installation → example sections → Props → Accessibility),
+plus separate foundation pages. Vipre's docs were a single anchor-scrolled page.
+**Decision:** Split the showcase into one page per topic under `src/docs/pages/`, driven by
+a `ComponentPage` layout that reproduces the Mason anatomy and a `DocPage` shell for
+foundation pages. Navigation is a tiny dependency-free **hash router** in `App.jsx`
+(`#/components/button`), with `src/docs/routes.js` as the single source for both the
+sidebar and the route map.
+**Rationale:** Matches Mason's organization, scales as components are added (new page =
+new route entry), and hash routing needs zero server config on GitHub Pages. Stayed
+dependency-free per the POC "as basic as possible" mandate (no react-router).
+**Status:** active
+
+---
+
 ### SCSS instead of Tailwind
 
 **Phase:** v1 / foundation (revision)
