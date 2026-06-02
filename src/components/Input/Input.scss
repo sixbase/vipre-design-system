@@ -11,6 +11,10 @@
   --vds-input-border: var(--vds-graphite-300);
   --vds-input-border-focus: var(--vds-graphite-400);
   --vds-input-ring: color-mix(in oklab, var(--vds-graphite-400) 35%, transparent);
+  // Subtle graphite for placeholder + leading/trailing icons. Bound to the
+  // graphite ramp directly (NOT --vds-ink-subtle, which is midnight) so the
+  // input stays neutral regardless of the semantic text tokens.
+  --vds-input-muted: var(--vds-graphite-500);
 
   display: inline-flex;
   align-items: center;
@@ -60,14 +64,14 @@
     font: inherit;
     outline: none;
 
-    &::placeholder { color: var(--vds-ink-subtle); }
+    &::placeholder { color: var(--vds-input-muted); }
   }
 
   &__affix {
     display: inline-flex;
     align-items: center;
     flex-shrink: 0;
-    color: var(--vds-ink-subtle);
+    color: var(--vds-input-muted);
   }
 
   // Trailing affix is often an interactive clear button — let it receive clicks.
@@ -79,4 +83,5 @@
   --vds-input-border: var(--vds-graphite-700);
   --vds-input-border-focus: var(--vds-graphite-500);
   --vds-input-ring: color-mix(in oklab, var(--vds-graphite-500) 40%, transparent);
+  --vds-input-muted: var(--vds-graphite-400); // lighter so the hint stays visible on dark
 }
