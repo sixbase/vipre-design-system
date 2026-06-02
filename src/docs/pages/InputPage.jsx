@@ -5,6 +5,8 @@ import { Section, Preview, IC } from '../primitives.jsx'
 import { Input, Textarea, Icon, Text } from '../../components/index.js'
 
 const FIELD_COL = { display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', maxWidth: 360 }
+const SIZES = ['sm', 'md', 'lg']
+const SIZE_LABEL = { sm: 'Small', md: 'Medium', lg: 'Large' }
 
 /* A single state, captioned. */
 function StateRow({ caption, children }) {
@@ -66,29 +68,29 @@ function LabeledField({ label, eyebrow, htmlFor, help, error, children }) {
   )
 }
 
-function SearchDemo() {
+function SearchDemo({ size = 'md' }) {
   const [value, setValue] = useState('')
+  const ic = size === 'sm' ? 'xs' : 'sm'
   return (
-    <div style={{ width: '100%', maxWidth: 360 }}>
-      <Input
-        placeholder="Search devices…"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        leading={<Icon as={Search} size="sm" />}
-        trailing={
-          value ? (
-            <button
-              type="button"
-              onClick={() => setValue('')}
-              aria-label="Clear search"
-              style={{ border: 0, background: 'none', padding: 0, cursor: 'pointer', display: 'inline-flex', color: 'inherit' }}
-            >
-              <Icon as={X} size="sm" />
-            </button>
-          ) : null
-        }
-      />
-    </div>
+    <Input
+      size={size}
+      placeholder="Search devices…"
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      leading={<Icon as={Search} size={ic} />}
+      trailing={
+        value ? (
+          <button
+            type="button"
+            onClick={() => setValue('')}
+            aria-label="Clear search"
+            style={{ border: 0, background: 'none', padding: 0, cursor: 'pointer', display: 'inline-flex', color: 'inherit' }}
+          >
+            <Icon as={X} size={ic} />
+          </button>
+        ) : null
+      }
+    />
   )
 }
 
@@ -130,68 +132,81 @@ export function InputPage() {
       </Section>
 
       {/* ---- Composition patterns (size-independent) ---- */}
-      <Section title="Search field" note="Compose leading + trailing slots — the clear button appears once there's text.">
-        <Preview
-          canvas={<SearchDemo />}
-          code={`<Input
-  placeholder="Search devices…"
-  value={value}
-  onChange={(e) => setValue(e.target.value)}
-  leading={<Icon as={Search} size="sm" />}
-  trailing={value && (
-    <button onClick={() => setValue('')} aria-label="Clear search">
-      <Icon as={X} size="sm" />
-    </button>
-  )}
-/>`}
-        />
-      </Section>
-
-      <Section title="With help text" note="A muted hint below the field. Link it with aria-describedby so screen readers read it.">
+      <Section title="Search field" note="Compose leading + trailing slots — the clear button appears once there's text. Shown at all three sizes.">
         <Preview
           canvas={
             <div style={FIELD_COL}>
-              <LabeledField label="Workspace name" htmlFor="ex-ws" help="Lowercase letters, numbers and dashes only.">
-                <Input id="ex-ws" placeholder="acme-prod" aria-describedby="ex-ws-help" />
-              </LabeledField>
+              {SIZES.map((s) => (
+                <StateRow key={s} caption={SIZE_LABEL[s]}>
+                  <SearchDemo size={s} />
+                </StateRow>
+              ))}
+            </div>
+          }
+          code={`<Input size="sm" placeholder="Search devices…" leading={<Icon as={Search} size="xs" />} … />
+<Input size="md" placeholder="Search devices…" leading={<Icon as={Search} size="sm" />} … />
+<Input size="lg" placeholder="Search devices…" leading={<Icon as={Search} size="sm" />} … />`}
+        />
+      </Section>
+
+      <Section title="With help text" note="A muted hint below the field, linked with aria-describedby. Shown at all three sizes.">
+        <Preview
+          canvas={
+            <div style={FIELD_COL}>
+              {SIZES.map((s) => (
+                <LabeledField
+                  key={s}
+                  label={`Workspace name (${SIZE_LABEL[s]})`}
+                  htmlFor={`ex-ws-${s}`}
+                  help="Lowercase letters, numbers and dashes only."
+                >
+                  <Input id={`ex-ws-${s}`} size={s} placeholder="acme-prod" aria-describedby={`ex-ws-${s}-help`} />
+                </LabeledField>
+              ))}
             </div>
           }
           code={`<label htmlFor="ws">Workspace name</label>
-<Input id="ws" aria-describedby="ws-help" placeholder="acme-prod" />
+<Input id="ws" size="md" aria-describedby="ws-help" placeholder="acme-prod" />
 <Text id="ws-help" variant="detail" tone="muted">
   Lowercase letters, numbers and dashes only.
 </Text>`}
         />
       </Section>
 
-      <Section title="With eyebrow label" note="An uppercase overline label using the eyebrow type step — for grouped or sectioned forms.">
+      <Section title="With eyebrow label" note="An uppercase overline label using the eyebrow type step. Shown at all three sizes.">
         <Preview
           canvas={
             <div style={FIELD_COL}>
-              <LabeledField label="Primary contact" eyebrow htmlFor="ex-eb">
-                <Input id="ex-eb" placeholder="Full name" />
-              </LabeledField>
+              {SIZES.map((s) => (
+                <LabeledField key={s} label={`Primary contact (${SIZE_LABEL[s]})`} eyebrow htmlFor={`ex-eb-${s}`}>
+                  <Input id={`ex-eb-${s}`} size={s} placeholder="Full name" />
+                </LabeledField>
+              ))}
             </div>
           }
           code={`<Text as="label" htmlFor="contact" variant="eyebrow" tone="muted">
   Primary contact
 </Text>
-<Input id="contact" placeholder="Full name" />`}
+<Input id="contact" size="md" placeholder="Full name" />`}
         />
       </Section>
 
-      <Section title="Multi-line (Textarea)" note="For longer, paragraph-style input. Textarea is a sibling primitive that shares the Input look and is vertically resizable.">
+      <Section title="Multi-line (Textarea)" note="For longer, paragraph-style input. A sibling primitive that shares the Input look, at all three sizes.">
         <Preview
           canvas={
             <div style={FIELD_COL}>
-              <LabeledField label="Notes" htmlFor="ex-notes" help="Add context for your teammates.">
-                <Textarea id="ex-notes" rows={4} placeholder="Add a note…" aria-describedby="ex-notes-help" />
-              </LabeledField>
+              {SIZES.map((s) => (
+                <LabeledField key={s} label={`Notes (${SIZE_LABEL[s]})`} htmlFor={`ex-notes-${s}`}>
+                  <Textarea id={`ex-notes-${s}`} size={s} rows={s === 'sm' ? 2 : 3} placeholder="Add a note…" />
+                </LabeledField>
+              ))}
             </div>
           }
           code={`import { Textarea } from 'vipre-design-system'
 
-<Textarea rows={4} placeholder="Add a note…" />`}
+<Textarea size="sm" rows={2} placeholder="Add a note…" />
+<Textarea size="md" rows={3} placeholder="Add a note…" />
+<Textarea size="lg" rows={3} placeholder="Add a note…" />`}
         />
       </Section>
     </ComponentPage>
