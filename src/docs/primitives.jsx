@@ -44,30 +44,32 @@ export function Code({ children }) {
  */
 export function PropsTable({ headers, rows }) {
   return (
-    <table className="vds-table">
-      <thead>
-        <tr>
-          {headers.map((h) => (
-            <th key={h}>{h}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((row, i) => (
-          <tr key={i}>
-            {row.map((cell, j) =>
-              cell && typeof cell === 'object' ? (
-                <td key={j}>
-                  <code>{cell.code}</code>
-                </td>
-              ) : (
-                <td key={j}>{cell}</td>
-              ),
-            )}
+    <div className="vds-table-wrap">
+      <table className="vds-table">
+        <thead>
+          <tr>
+            {headers.map((h) => (
+              <th key={h}>{h}</th>
+            ))}
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => (
+            <tr key={i}>
+              {row.map((cell, j) =>
+                cell && typeof cell === 'object' ? (
+                  <td key={j}>
+                    <code>{cell.code}</code>
+                  </td>
+                ) : (
+                  <td key={j}>{cell}</td>
+                ),
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }
 

@@ -78,6 +78,7 @@
 .vds-content {
   max-width: 820px;
   padding: 3rem 2.5rem 5rem;
+  min-width: 0; // allow the grid column to shrink so nowrap children clip/scroll
 }
 
 .vds-doc-section {
@@ -193,6 +194,14 @@
 }
 
 // ---- Reference table -------------------------------------------------------
+// Horizontal-scroll wrapper so wide tables never overflow the page on mobile.
+.vds-table-wrap {
+  overflow-x: auto;
+  margin: 1rem 0;
+  -webkit-overflow-scrolling: touch;
+}
+.vds-table-wrap .vds-table { margin: 0; }
+
 .vds-table {
   width: 100%;
   border-collapse: collapse;
@@ -331,9 +340,15 @@
 
 .vds-scale-preview {
   color: var(--vds-ink);
-  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+
+  // the actual text sits in a nested Heading/Text div — clip it there too
+  > * {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .vds-scale-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem 0.85rem; min-width: 0; }
