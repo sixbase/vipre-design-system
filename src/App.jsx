@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Heading, Text } from './components/index.js'
+import { Text } from './components/index.js'
 import { NAV, ROUTE_MAP } from './docs/routes.js'
+import { VipreLogo } from './docs/VipreLogo.jsx'
 
 /* Tiny dependency-free hash router. Reads window.location.hash (e.g.
    "#/components/button"), defaults to "/", and re-renders on hashchange.
@@ -37,13 +38,11 @@ export function App() {
       {/* ---- Sidebar ---- */}
       <aside className="vds-sidebar">
         <div className="vds-sidebar__header">
-          <a href="#/" className="vds-sidebar__brand" style={{ textDecoration: 'none' }}>
-            <Text variant="eyebrow" tone="primary">
-              Vipre
-            </Text>
-            <Heading level="subheading" as="div">
+          <a href="#/" className="vds-sidebar__brand" aria-label="Vipre Design System home">
+            <VipreLogo className="vds-logo" />
+            <Text variant="eyebrow" tone="subtle" className="vds-sidebar__brand-sub">
               Design System
-            </Heading>
+            </Text>
           </a>
           <button
             type="button"

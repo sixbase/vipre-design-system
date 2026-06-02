@@ -12,6 +12,12 @@
 }
 
 // ---- Sidebar ---------------------------------------------------------------
+.vds-logo {
+  display: block;
+  width: 88px;
+  height: auto;
+}
+
 .vds-sidebar {
   position: sticky;
   top: 0;
@@ -29,7 +35,16 @@
     margin-bottom: 2rem;
   }
 
-  &__brand { line-height: 1.1; }
+  &__brand {
+    display: block;
+    text-decoration: none;
+    color: var(--vds-ink); // drives the logo's currentColor
+  }
+
+  &__brand-sub {
+    display: block;
+    margin-top: 0.375rem;
+  }
 
   &__toggle {
     flex-shrink: 0;
