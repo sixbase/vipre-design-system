@@ -22,15 +22,15 @@ npm install ../vipre-design-system`}</Code>
 
       <Section
         title="2a. Tokens only (the bridge)"
-        note="Lightest path — pull in just the CSS variables and map them into your existing styling (e.g. Tailwind @theme). What the prototypes use today."
+        note="Lightest path — pull in just the CSS custom properties and use them directly. They're plain variables, so they work in any styling layer. What the prototypes use today."
       >
         <Code>{`@import "vipre-design-system/tokens.css";
 
-/* map into Tailwind @theme, for example */
-@theme {
-  --color-primary: var(--vds-primary);
-  --color-surface: var(--vds-surface);
-  --font-sans:     var(--vds-font-sans);
+/* the tokens are plain CSS custom properties — reference them anywhere */
+.btn-primary {
+  background: var(--vds-primary);
+  color: var(--vds-on-primary);
+  font-family: var(--vds-font-sans);
 }`}</Code>
       </Section>
 

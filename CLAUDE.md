@@ -18,7 +18,7 @@ A token-driven design system for Vipre's product UI (the MSP **scope navigator**
 
 ## Delivery model (don't break these)
 
-- `npm run build:tokens` → `dist/vipre-tokens.css` (tokens only — what prototypes bridge into Tailwind `@theme`).
+- `npm run build:tokens` → `dist/vipre-tokens.css` (tokens only — plain `--vds-*` CSS custom properties consumers map into their own theme layer).
 - `npm run build:styles` → `dist/vipre.css` (tokens + typescale + all component styles).
 - `package.json` exports: `.` (components), `./tokens.css`, `./styles.css`. Keep these stable.
 - Components ship as **source JSX** + a **global CSS bundle** (BEM classes). Consumers import the CSS once and use the React components — they never import a component's SCSS directly.

@@ -11,21 +11,63 @@
 // ============================================================================
 
 // ---- PRIMITIVE ramps (SCSS maps → emitted as custom properties) ------------
+// Every ramp is the same 11-step scale: 50,100,200,300,400,500,600,700,800,900,950.
+// Pure white lives as the standalone --vds-white token (it isn't a graphite step).
 $graphite: (
-  0: #ffffff, 50: #f7f8fa, 100: #eff1f5, 200: #e2e6ed, 300: #cbd2dd,
-  400: #9aa4b4, 500: #6b7585, 600: #4d5666, 700: #3a424f, 800: #262c36,
-  900: #161b22, 950: #0d1117,
+  50: #f7f8fa, 100: #eff1f5, 200: #e2e6ed, 300: #cbd2dd, 400: #9aa4b4,
+  500: #6b7585, 600: #4d5666, 700: #3a424f, 800: #262c36, 900: #161b22,
+  950: #0d1117,
 );
 
-$iris: (
-  50: #f0f1fe, 100: #e2e4fd, 200: #c8cbfb, 300: #a6a8f7, 400: #8482f0,
-  500: #6963e8, 600: #564ddb, 700: #443bb8, 800: #383293, 900: #2f2c74,
+// Unified chromatic family below — generated in OKLCH (perceptually uniform) on
+// ONE shared lightness + chroma ladder, varying only hue. Sophisticated/muted,
+// and the consistent perceptual lightness keeps WCAG contrast steady across hues.
+$emerald: ( // success — green
+  50: #edfbf0, 100: #d6f4dd, 200: #b4eac1, 300: #8bd8a0, 400: #5dbf7c,
+  500: #2ca45b, 600: #008542, 700: #006a34, 800: #025227, 900: #023e1c,
+  950: #022d13,
+);
+$amber: ( // warning — gold
+  50: #fff6e7, 100: #fbe9ca, 200: #f6d59f, 300: #e9bc6d, 400: #d39c30,
+  500: #b48008, 600: #906606, 700: #735101, 800: #593e03, 900: #432e02,
+  950: #322100,
+);
+$rose: ( // danger — red
+  50: #fff4f3, 100: #fee4e1, 200: #ffccc7, 300: #ffaaa2, 400: #f0837b,
+  500: #d7615b, 600: #b64340, 700: #95312f, 800: #742423, 900: #571c1a,
+  950: #3f1513,
 );
 
-$emerald: (50: #ecfdf5, 500: #10b981, 600: #059669, 700: #047857);
-$amber:   (50: #fffbeb, 500: #f59e0b, 600: #d97706, 700: #b45309);
-$rose:    (50: #fef2f2, 500: #ef4444, 600: #dc2626, 700: #b91c1c);
-$sky:     (50: #eff6ff, 500: #3b82f6, 600: #2563eb, 700: #1d4ed8);
+// Midnight — the product's navy surface family, anchored so 950 = #0b192d
+// (the real shipped background). A full ramp for surfaces, borders, and tints.
+$midnight: (
+  50: #f3f7fc, 100: #e3ecf7, 200: #c4d6ed, 300: #98b6dd, 400: #618bc2,
+  500: #3d68a4, 600: #2b5288, 700: #1e3e6b, 800: #152e51, 900: #0f223d,
+  950: #0b192d,
+);
+
+// Azure — brand primary; a vivid cerulean (hue 237) kept clearly distinct from
+// the Midnight navy (257) by hue + chroma, on the shared OKLCH ladder.
+$azure: (
+  50: #f0f8fe, 100: #d7efff, 200: #b4e1fe, 300: #7cceff, 400: #3eb3f0,
+  500: #0596d2, 600: #0178a8, 700: #005f87, 800: #014969, 900: #013750,
+  950: #00283c,
+);
+$harbor: ( // info — teal
+  50: #e7fcf9, 100: #cbf6ef, 200: #9eebe1, 300: #63dbcd, 400: #0cc0b1,
+  500: #01a094, 600: #068076, 700: #00665e, 800: #044f48, 900: #003b36,
+  950: #002c27,
+);
+$orchid: ( // accent — violet
+  50: #fcf3ff, 100: #f9e2fe, 200: #f2cafb, 300: #e3acf0, 400: #cc8adc,
+  500: #b269c3, 600: #944da4, 700: #783a86, 800: #5d2c68, 900: #45214e,
+  950: #321838,
+);
+$clay: ( // accent — terracotta
+  50: #fff5ee, 100: #ffe6d6, 200: #ffcfb0, 300: #fbb07e, 400: #e88e4e,
+  500: #cf6d1b, 600: #a85504, 700: #874201, 800: #693200, 900: #502502,
+  950: #3b1a01,
+);
 
 @mixin emit-ramp($name, $ramp) {
   @each $step, $value in $ramp {
@@ -35,12 +77,21 @@ $sky:     (50: #eff6ff, 500: #3b82f6, 600: #2563eb, 700: #1d4ed8);
 
 :root {
   // ---- Tier 1 · primitives -------------------------------------------------
+  // Neutrals
   @include emit-ramp(graphite, $graphite);
-  @include emit-ramp(iris, $iris);
+  @include emit-ramp(midnight, $midnight); // 950 = the shipped #0b192d canvas
+
+  // Unified chromatic family (OKLCH ladder, varied hue)
+  @include emit-ramp("azure", $azure);   // quoted: 'azure' is a CSS color keyword
+  @include emit-ramp(harbor, $harbor);
   @include emit-ramp(emerald, $emerald);
   @include emit-ramp(amber, $amber);
   @include emit-ramp(rose, $rose);
-  @include emit-ramp(sky, $sky);
+  @include emit-ramp("orchid", $orchid); // quoted: 'orchid' is a CSS color keyword
+  @include emit-ramp(clay, $clay);
+
+  // Pure white — standalone (not a graphite step) so every ramp stays 11-stop.
+  --vds-white: #ffffff;
 
   // ---- Tier 3 · scale (theme-independent) ----------------------------------
   --vds-font-sans: 'Rubik', ui-sans-serif, system-ui, -apple-system,
@@ -51,10 +102,11 @@ $sky:     (50: #eff6ff, 500: #3b82f6, 600: #2563eb, 700: #1d4ed8);
   --vds-radius-lg: 0.75rem;  // 12px
   --vds-radius-xl: 1rem;     // 16px
 
-  --vds-shadow-xs: 0 1px 2px 0 rgb(13 17 23 / 0.06);
-  --vds-shadow-sm: 0 1px 3px 0 rgb(13 17 23 / 0.08), 0 1px 2px -1px rgb(13 17 23 / 0.08);
-  --vds-shadow-md: 0 4px 12px -2px rgb(13 17 23 / 0.12), 0 2px 6px -2px rgb(13 17 23 / 0.08);
-  --vds-shadow-lg: 0 12px 28px -6px rgb(13 17 23 / 0.18), 0 6px 12px -6px rgb(13 17 23 / 0.12);
+  // Shadows tinted with the Midnight navy (#0b192d → 11 25 45) for a cool cast.
+  --vds-shadow-xs: 0 1px 2px 0 rgb(11 25 45 / 0.08);
+  --vds-shadow-sm: 0 1px 3px 0 rgb(11 25 45 / 0.10), 0 1px 2px -1px rgb(11 25 45 / 0.10);
+  --vds-shadow-md: 0 4px 12px -2px rgb(11 25 45 / 0.14), 0 2px 6px -2px rgb(11 25 45 / 0.10);
+  --vds-shadow-lg: 0 12px 28px -6px rgb(11 25 45 / 0.20), 0 6px 12px -6px rgb(11 25 45 / 0.14);
 
   --vds-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --vds-dur-fast: 120ms;
@@ -82,19 +134,21 @@ $sky:     (50: #eff6ff, 500: #3b82f6, 600: #2563eb, 700: #1d4ed8);
   --vds-columns: 12;
 
   // ---- Tier 2 · semantic (LIGHT is default) --------------------------------
-  --vds-canvas:         var(--vds-graphite-50);
-  --vds-surface:        var(--vds-graphite-0);
-  --vds-surface-raised: var(--vds-graphite-0);
-  --vds-line:           var(--vds-graphite-200);
-  --vds-line-strong:    var(--vds-graphite-300);
-  --vds-ink:            var(--vds-graphite-900);
-  --vds-ink-muted:      var(--vds-graphite-600);
-  --vds-ink-subtle:     var(--vds-graphite-500);
+  // Neutrals are Midnight (the Vipre navy), not graphite — the whole surface
+  // and text system carries the product's cool navy cast.
+  --vds-canvas:         var(--vds-midnight-50);
+  --vds-surface:        var(--vds-white);
+  --vds-surface-raised: var(--vds-white);
+  --vds-line:           var(--vds-midnight-200);
+  --vds-line-strong:    var(--vds-midnight-300);
+  --vds-ink:            var(--vds-midnight-950);
+  --vds-ink-muted:      var(--vds-midnight-700);
+  --vds-ink-subtle:     var(--vds-midnight-500);
 
-  --vds-primary:        var(--vds-iris-600);
-  --vds-primary-hover:  var(--vds-iris-700);
-  --vds-on-primary:     var(--vds-graphite-0);
-  --vds-primary-soft:   var(--vds-iris-50);
+  --vds-primary:        var(--vds-azure-600);
+  --vds-primary-hover:  var(--vds-azure-700);
+  --vds-on-primary:     var(--vds-white); // AA: white on azure-600 = 7.38
+  --vds-primary-soft:   var(--vds-azure-50);
 
   --vds-success:        var(--vds-emerald-600);
   --vds-success-soft:   var(--vds-emerald-50);
@@ -102,27 +156,28 @@ $sky:     (50: #eff6ff, 500: #3b82f6, 600: #2563eb, 700: #1d4ed8);
   --vds-warning-soft:   var(--vds-amber-50);
   --vds-danger:         var(--vds-rose-600);
   --vds-danger-soft:    var(--vds-rose-50);
-  --vds-info:           var(--vds-sky-600);
-  --vds-info-soft:      var(--vds-sky-50);
+  --vds-info:           var(--vds-harbor-600); // teal — kept distinct from the azure primary
+  --vds-info-soft:      var(--vds-harbor-50);
 
-  --vds-focus-ring:     var(--vds-iris-500);
+  --vds-focus-ring:     var(--vds-azure-500);
 }
 
 // ---- Tier 2 · semantic (DARK overrides) ------------------------------------
 .dark {
-  --vds-canvas:         var(--vds-graphite-950);
-  --vds-surface:        var(--vds-graphite-900);
-  --vds-surface-raised: var(--vds-graphite-800);
-  --vds-line:           var(--vds-graphite-800);
-  --vds-line-strong:    var(--vds-graphite-700);
-  --vds-ink:            var(--vds-graphite-50);
-  --vds-ink-muted:      var(--vds-graphite-400);
-  --vds-ink-subtle:     var(--vds-graphite-500);
+  // Dark canvas IS the shipped product background (#0b192d = midnight-950).
+  --vds-canvas:         var(--vds-midnight-950);
+  --vds-surface:        var(--vds-midnight-900);
+  --vds-surface-raised: var(--vds-midnight-800);
+  --vds-line:           var(--vds-midnight-800);
+  --vds-line-strong:    var(--vds-midnight-700);
+  --vds-ink:            var(--vds-midnight-50);
+  --vds-ink-muted:      var(--vds-midnight-300);
+  --vds-ink-subtle:     var(--vds-midnight-400);
 
-  --vds-primary:        var(--vds-iris-500);
-  --vds-primary-hover:  var(--vds-iris-400);
-  --vds-on-primary:     var(--vds-graphite-950);
-  --vds-primary-soft:   color-mix(in oklab, var(--vds-iris-500) 16%, transparent);
+  --vds-primary:        var(--vds-azure-400); // bright fill + dark text on the navy
+  --vds-primary-hover:  var(--vds-azure-300);
+  --vds-on-primary:     var(--vds-midnight-950); // AA: navy on azure-400 = 7.35
+  --vds-primary-soft:   color-mix(in oklab, var(--vds-azure-400) 16%, transparent);
 
   --vds-success:        var(--vds-emerald-500);
   --vds-success-soft:   color-mix(in oklab, var(--vds-emerald-500) 16%, transparent);
@@ -130,10 +185,10 @@ $sky:     (50: #eff6ff, 500: #3b82f6, 600: #2563eb, 700: #1d4ed8);
   --vds-warning-soft:   color-mix(in oklab, var(--vds-amber-500) 16%, transparent);
   --vds-danger:         var(--vds-rose-500);
   --vds-danger-soft:    color-mix(in oklab, var(--vds-rose-500) 16%, transparent);
-  --vds-info:           var(--vds-sky-500);
-  --vds-info-soft:      color-mix(in oklab, var(--vds-sky-500) 16%, transparent);
+  --vds-info:           var(--vds-harbor-500); // teal — kept distinct from the azure primary
+  --vds-info-soft:      color-mix(in oklab, var(--vds-harbor-500) 16%, transparent);
 
-  --vds-focus-ring:     var(--vds-iris-400);
+  --vds-focus-ring:     var(--vds-azure-400);
 
   color-scheme: dark;
 }

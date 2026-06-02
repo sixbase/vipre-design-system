@@ -2,29 +2,75 @@
    token pages can show hex values, ref mappings, and usage descriptions.
    Keep in sync with _tokens.scss when ramps change. */
 
+// Every ramp is the same 11-step scale: 50…950. Pure white is the standalone
+// --vds-white token, not a graphite step.
 export const GRAPHITE = {
-  0: '#ffffff', 50: '#f7f8fa', 100: '#eff1f5', 200: '#e2e6ed', 300: '#cbd2dd',
-  400: '#9aa4b4', 500: '#6b7585', 600: '#4d5666', 700: '#3a424f', 800: '#262c36',
-  900: '#161b22', 950: '#0d1117',
+  50: '#f7f8fa', 100: '#eff1f5', 200: '#e2e6ed', 300: '#cbd2dd', 400: '#9aa4b4',
+  500: '#6b7585', 600: '#4d5666', 700: '#3a424f', 800: '#262c36', 900: '#161b22',
+  950: '#0d1117',
 }
 
-export const IRIS = {
-  50: '#f0f1fe', 100: '#e2e4fd', 200: '#c8cbfb', 300: '#a6a8f7', 400: '#8482f0',
-  500: '#6963e8', 600: '#564ddb', 700: '#443bb8', 800: '#383293', 900: '#2f2c74',
+/* Unified chromatic family — OKLCH, one shared lightness + chroma ladder. */
+export const EMERALD = {
+  50: '#edfbf0', 100: '#d6f4dd', 200: '#b4eac1', 300: '#8bd8a0', 400: '#5dbf7c',
+  500: '#2ca45b', 600: '#008542', 700: '#006a34', 800: '#025227', 900: '#023e1c',
+  950: '#022d13',
+}
+export const AMBER = {
+  50: '#fff6e7', 100: '#fbe9ca', 200: '#f6d59f', 300: '#e9bc6d', 400: '#d39c30',
+  500: '#b48008', 600: '#906606', 700: '#735101', 800: '#593e03', 900: '#432e02',
+  950: '#322100',
+}
+export const ROSE = {
+  50: '#fff4f3', 100: '#fee4e1', 200: '#ffccc7', 300: '#ffaaa2', 400: '#f0837b',
+  500: '#d7615b', 600: '#b64340', 700: '#95312f', 800: '#742423', 900: '#571c1a',
+  950: '#3f1513',
 }
 
-export const EMERALD = { 50: '#ecfdf5', 500: '#10b981', 600: '#059669', 700: '#047857' }
-export const AMBER = { 50: '#fffbeb', 500: '#f59e0b', 600: '#d97706', 700: '#b45309' }
-export const ROSE = { 50: '#fef2f2', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c' }
-export const SKY = { 50: '#eff6ff', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' }
+/* Midnight — the product's navy surface family, anchored so 950 = #0B192D
+   (the real shipped background). Tokens: --vds-midnight-{step}. */
+export const MIDNIGHT = {
+  50: '#f3f7fc', 100: '#e3ecf7', 200: '#c4d6ed', 300: '#98b6dd', 400: '#618bc2',
+  500: '#3d68a4', 600: '#2b5288', 700: '#1e3e6b', 800: '#152e51', 900: '#0f223d',
+  950: '#0b192d',
+}
+
+/* Azure — brand primary; a vivid cerulean (hue 237) kept distinct from the
+   Midnight navy (257) by hue + chroma, on the shared OKLCH ladder. */
+export const AZURE = {
+  50: '#f0f8fe', 100: '#d7efff', 200: '#b4e1fe', 300: '#7cceff', 400: '#3eb3f0',
+  500: '#0596d2', 600: '#0178a8', 700: '#005f87', 800: '#014969', 900: '#013750',
+  950: '#00283c',
+}
+
+export const HARBOR = {
+  50: '#e7fcf9', 100: '#cbf6ef', 200: '#9eebe1', 300: '#63dbcd', 400: '#0cc0b1',
+  500: '#01a094', 600: '#068076', 700: '#00665e', 800: '#044f48', 900: '#003b36',
+  950: '#002c27',
+}
+export const ORCHID = {
+  50: '#fcf3ff', 100: '#f9e2fe', 200: '#f2cafb', 300: '#e3acf0', 400: '#cc8adc',
+  500: '#b269c3', 600: '#944da4', 700: '#783a86', 800: '#5d2c68', 900: '#45214e',
+  950: '#321838',
+}
+export const CLAY = {
+  50: '#fff5ee', 100: '#ffe6d6', 200: '#ffcfb0', 300: '#fbb07e', 400: '#e88e4e',
+  500: '#cf6d1b', 600: '#a85504', 700: '#874201', 800: '#693200', 900: '#502502',
+  950: '#3b1a01',
+}
 
 export const PRIMITIVES = [
+  // Neutrals
   { name: 'Graphite', shades: GRAPHITE },
-  { name: 'Iris', shades: IRIS },
+  { name: 'Midnight', shades: MIDNIGHT },
+  // Unified chromatic family (OKLCH ladder, varied hue)
+  { name: 'Azure', shades: AZURE },
+  { name: 'Harbor', shades: HARBOR },
   { name: 'Emerald', shades: EMERALD },
   { name: 'Amber', shades: AMBER },
   { name: 'Rose', shades: ROSE },
-  { name: 'Sky', shades: SKY },
+  { name: 'Orchid', shades: ORCHID },
+  { name: 'Clay', shades: CLAY },
 ]
 
 /* Semantic tokens, grouped by purpose. `ref` shows light → dark mapping. */
@@ -32,34 +78,34 @@ export const SEMANTIC_GROUPS = [
   {
     title: 'Surfaces',
     rows: [
-      { token: '--vds-canvas', ref: 'graphite-50 → 950', usage: 'Page background — the base canvas everything sits on' },
-      { token: '--vds-surface', ref: 'graphite-0 → 900', usage: 'Cards, panels, inputs — surfaces that lift off the canvas' },
-      { token: '--vds-surface-raised', ref: 'graphite-0 → 800', usage: 'Raised surfaces — popovers, menus, dropdowns' },
+      { token: '--vds-canvas', ref: 'midnight-50 → 950', usage: 'Page background — the base canvas everything sits on (dark = the #0b192d product bg)' },
+      { token: '--vds-surface', ref: 'white → midnight-900', usage: 'Cards, panels, inputs — surfaces that lift off the canvas' },
+      { token: '--vds-surface-raised', ref: 'white → midnight-800', usage: 'Raised surfaces — popovers, menus, dropdowns' },
     ],
   },
   {
     title: 'Text',
     rows: [
-      { token: '--vds-ink', ref: 'graphite-900 → 50', usage: 'Primary text, headings, input values — maximum readability' },
-      { token: '--vds-ink-muted', ref: 'graphite-600 → 400', usage: 'Secondary labels, captions, supporting copy' },
-      { token: '--vds-ink-subtle', ref: 'graphite-500 → 500', usage: 'Placeholders, metadata, lowest-emphasis text' },
+      { token: '--vds-ink', ref: 'midnight-950 → 50', usage: 'Primary text, headings, input values — maximum readability' },
+      { token: '--vds-ink-muted', ref: 'midnight-700 → 300', usage: 'Secondary labels, captions, supporting copy' },
+      { token: '--vds-ink-subtle', ref: 'midnight-500 → 400', usage: 'Placeholders, metadata, lowest-emphasis text' },
     ],
   },
   {
     title: 'Borders',
     rows: [
-      { token: '--vds-line', ref: 'graphite-200 → 800', usage: 'Card borders, dividers, table cell lines — subtle structure' },
-      { token: '--vds-line-strong', ref: 'graphite-300 → 700', usage: 'Input hover borders, selected outlines — more emphasis' },
+      { token: '--vds-line', ref: 'midnight-200 → 800', usage: 'Card borders, dividers, table cell lines — subtle structure' },
+      { token: '--vds-line-strong', ref: 'midnight-300 → 700', usage: 'Input hover borders, selected outlines — more emphasis' },
     ],
   },
   {
     title: 'Brand & interactive',
     rows: [
-      { token: '--vds-primary', ref: 'iris-600 → 500', usage: 'Primary button fill, active state, primary links' },
-      { token: '--vds-primary-hover', ref: 'iris-700 → 400', usage: 'Hover state for primary actions' },
-      { token: '--vds-on-primary', ref: 'white → graphite-950', usage: 'Text/icons on a primary-colored background' },
-      { token: '--vds-primary-soft', ref: 'iris-50 → iris@16%', usage: 'Tinted brand backgrounds — ghost hover, soft badges' },
-      { token: '--vds-focus-ring', ref: 'iris-500 → 400', usage: 'Keyboard focus outline via :focus-visible — never decorative' },
+      { token: '--vds-primary', ref: 'azure-600 → 400', usage: 'Primary button fill, active state, primary links' },
+      { token: '--vds-primary-hover', ref: 'azure-700 → 300', usage: 'Hover state for primary actions' },
+      { token: '--vds-on-primary', ref: 'white → midnight-950', usage: 'Text/icons on a primary-colored background' },
+      { token: '--vds-primary-soft', ref: 'azure-50 → azure@16%', usage: 'Tinted brand backgrounds — ghost hover, soft badges' },
+      { token: '--vds-focus-ring', ref: 'azure-500 → 400', usage: 'Keyboard focus outline via :focus-visible — never decorative' },
     ],
   },
   {
@@ -68,7 +114,7 @@ export const SEMANTIC_GROUPS = [
       { token: '--vds-success', ref: 'emerald-600 → 500', usage: 'Healthy, protected, success confirmations' },
       { token: '--vds-warning', ref: 'amber-600 → 500', usage: 'Needs attention but not broken — at-risk, low-stock' },
       { token: '--vds-danger', ref: 'rose-600 → 500', usage: 'Errors, threats, destructive actions' },
-      { token: '--vds-info', ref: 'sky-600 → 500', usage: 'Neutral informational notes and callouts' },
+      { token: '--vds-info', ref: 'harbor-600 → 500', usage: 'Neutral informational notes and callouts' },
     ],
   },
 ]

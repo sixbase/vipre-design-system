@@ -4,7 +4,7 @@ Gotchas and better approaches discovered during the build. If you hit something 
 
 ## SCSS emits every token — no tree-shake gap
 
-Emitting primitives from a SCSS loop (`@each` → custom properties) means **every** token is always present, even if only referenced via `var()` at runtime. This avoids the Tailwind-era problem where unused `@theme` vars were tree-shaken out. The token pages can safely read any `--vds-*` directly.
+Emitting primitives from a SCSS loop (`@each` → custom properties) means **every** token is always present, even if only referenced via `var()` at runtime. This avoids the kind of tree-shaking gap where unused theme variables get dropped from the build. The token pages can safely read any `--vds-*` directly.
 
 ## Dark mode needs CSS custom properties, not SCSS variables
 

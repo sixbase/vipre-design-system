@@ -4,6 +4,104 @@ Every significant choice, with rationale. Append; don't rewrite history.
 
 ---
 
+### More vibrant palette + Azure pulled off the Midnight hue; purged utility-CSS refs
+
+**Phase:** v2 / palette refinement
+**Context:** Azure (primary) and Midnight (navy neutral) felt too similar — they were the *same
+hue* (both ≈257° OKLCH), differing only in lightness. The palette also read a touch flat.
+**Decision:**
+- **Azure → vivid cerulean at hue 237°** (was 256°), so it's clearly distinct from the
+  Midnight navy (257°) by hue *and* chroma. Harbor nudged to 185° (greener teal) so primary
+  and info don't crowd. `azure-500` is now `#0596d2` vs Midnight's muted `#3d68a4`.
+- **Raised chroma across the whole chromatic family** (OKLCH peak C 0.116 → 0.150) for a more
+  vibrant feel; neutrals (graphite, midnight) untouched.
+- Re-verified WCAG AA on every status/primary pair — all ≥4.5 (status 4.7–5.4; primary 4.9
+  light / 7.5 dark).
+- **Purged every reference to the prior utility-CSS framework** across the system (install
+  docs now show framework-agnostic plain-`var()` usage; CLAUDE.md, principles, lessons, and
+  this log genericized). The DS was already pure SCSS with no such dependency or config.
+**Status:** active
+
+---
+
+### Unified the chromatic palette in OKLCH — one ladder, every hue
+
+**Phase:** v2 / palette refinement
+**Context:** The palette had two clashing systems: a muted Midnight-derived family
+(harbor/pine/orchid/brass/clay) next to vivid generic stock status (emerald/amber/rose/sky).
+Pine≈emerald and brass≈amber were near-duplicates, and amber/rose didn't feel part of the family.
+**Decision:** Regenerated **every chromatic ramp in OKLCH** (perceptually uniform) on ONE shared
+**lightness + chroma ladder**, varying only hue — sophisticated/muted, and because OKLCH lightness
+tracks perceived lightness, WCAG contrast stays consistent across hues. Final ramps: **azure**
+(primary), **harbor** (info/teal), **emerald** (success), **amber** (warning), **rose** (danger),
+**orchid** + **clay** (accents). **Removed iris, pine, brass** (redundant/unused). Neutrals
+(graphite, midnight) unchanged.
+**Why OKLCH, not one HSL ladder:** an earlier shared-HSL-ladder attempt failed AA — warm/teal
+mid-steps were too luminous to read as text. OKLCH fixes this; the 600 step is tuned dark enough
+that even amber passes 4.5:1 on white.
+**Primary:** light azure-600 + white text (5.05); dark = bright azure-400 + dark (midnight-950)
+text (7.35) so it pops on the navy canvas.
+**A11y:** every status/primary pair re-verified — all ≥4.5 (status 4.8–5.4 light, 4.9–5.4 dark).
+**Supersedes** the "Midnight-derived family (S+L rotation)" and "Accent = Azure (Midnight
+electrified)" notes — azure is now part of the unified OKLCH family at the navy hue.
+**Status:** active
+
+---
+
+### Re-anchored the theme on Midnight — the DS look & feel is now the Vipre navy
+
+**Phase:** v2 / brand reconciliation
+**Context:** The DS shipped with graphite (near-neutral charcoal) neutrals + iris accent,
+but the actual Vipre product is a deep navy (#0b192d). Direction: base the whole look & feel
+on Midnight.
+**Decision:** Rebound the **neutral** semantic tokens from graphite → **midnight** in both
+themes. Light: canvas midnight-50, ink midnight-950, ink-muted 700, ink-subtle 500, line
+200/300. Dark: **canvas = midnight-950 (the literal shipped #0b192d background)**, surface 900,
+raised 800, line 800/700, ink 50, ink-muted 300, ink-subtle 400. Shadows tinted with the navy
+(rgb 11 25 45) for a cool cast. **Status colors stay conventional** (emerald/amber/rose/sky —
+they must read as state, not brand).
+**Accent = Azure (aligned primary):** primary/links/focus use **azure** — a bespoke ramp built
+from *Midnight's own lightness ladder* with boosted saturation at hue 212, i.e. "Midnight
+electrified" (a luminous version of the brand navy, not a generic stock blue). Light primary
+azure-600 (7.38), dark azure-500 (5.35); hover azure-700/600; white text both modes. `info` is
+**Harbor** (teal) so it stays distinct from the blue primary. The generic **`sky` ramp was
+removed** (redundant with azure); **iris** kept as a primitive but unused in semantics.
+(First tried mapping the whole palette onto one shared lightness ladder for max harmony — it
+broke AA for warm/teal mid-steps as text, so neutrals=midnight, accents/status keep per-hue
+tuning.)
+**A11y:** every text/surface + accent pair re-checked vs WCAG AA — all ≥4.5.
+**Docs:** Colors-page swatches are now click-to-copy (accessible `<button>`s + a hex toast).
+**Graphite:** still defined as a primitive ramp (available cool-neutral), just no longer the
+semantic neutral.
+**Rationale:** Makes the DS unmistakably Vipre's; dark mode now equals the real product surface,
+closing the gap the token bridge exposed.
+**Status:** active
+
+---
+
+### Added `midnight` ramp (50→950, 950 = #0B192D) — the product navy family
+
+**Phase:** v2 / reconciling DS with the shipped product
+**Context:** The shipped Vipre product's background is a deep navy `#0B192D` (HSL 215°, 61%,
+11%). The DS dark canvas was `--vds-graphite-950` (#0d1117) — a near-neutral charcoal, much
+less saturated. The two didn't match, and the prototypes needed the real product surface as a
+usable color family.
+**Decision:** Added a full **`midnight` primitive ramp** `$midnight` → `--vds-midnight-{50…950}`,
+anchored so **950 = #0B192D** (the shipped background) with lighter navy tints rising to a pale
+`#f3f7fc` at 50. Hue held ~214–215° across the ramp; lighter steps are good for soft
+backgrounds/borders, deep steps for surfaces. Mirrored in `docs/tokens.js` (`MIDNIGHT`, in the
+`PRIMITIVES` list — renders as a full ramp on the Colors page). Rebuilt the token bridge
+(`build:tokens` → `dist/vipre-tokens.css`). First consumer **scope-navigator** vendors the ramp
+and maps the whole scale into its own theme layer (`--color-midnight-{step}` → `bg-midnight-950`
+etc.).
+**Not done (deliberately):** did **not** rewire `--vds-canvas`/dark theme to midnight — that
+larger reconciliation (making DS dark mode equal the product) is a separate, explicit call.
+**Rationale:** A coherent ramp (not a lone value) lets surfaces, borders, and tints all come
+from one navy family while keeping the theming decision open.
+**Status:** active
+
+---
+
 ### Restructured to mirror Mason as a deliverable, contributable package
 
 **Phase:** v1 / structure pass
@@ -38,7 +136,7 @@ e-commerce/CI weight the product doesn't need.
 
 **Phase:** v1 / consumption
 **Context:** The prototypes (`scope-navigator`, `action-rules`, `banner-modal`,
-`marketing-overview`, `vipre-prototypes`) are all **Tailwind 4** with inline utility
+`marketing-overview`, `vipre-prototypes`) are all built on a **utility-CSS framework** with inline utility
 classes and the Inter font. The DS is **SCSS/BEM** emitting `--vds-*` custom properties.
 Direct component import would mean rewriting prototype markup into BEM — too heavy for a POC.
 **Decision:** Share the **tokens**, not the components (yet). The DS now exports a
@@ -47,14 +145,14 @@ token-only stylesheet: `src/styles/tokens.entry.scss` (`@use 'tokens'`) compiled
 custom properties — no component/typography classes). `package.json` exposes it via
 `exports: { "./tokens.css": "./dist/vipre-tokens.css" }`. Prototypes add a local
 `file:` dependency on the DS, `@import "vipre-design-system/tokens.css"`, then map the
-semantic tokens into Tailwind's `@theme` (`--color-primary: var(--vds-primary)`, etc.)
+semantic tokens into the prototype's theme layer (`--color-primary: var(--vds-primary)`, etc.)
 and set `--font-sans: var(--vds-font-sans)`. This creates **additive** semantic utilities
 (`bg-surface`, `text-ink`, `text-primary`, `border-line`, `text-success`…) that resolve to
 DS tokens and flip in dark mode automatically. First adopter: `scope-navigator`.
 **Rationale:** ~80% of brand consistency (color, type, radius, shadow) for ~5% of the churn.
 The bridge works precisely because the DS's *output* is plain CSS custom properties, which
-Tailwind `@theme` can reference directly. Components (Button/Badge) get imported later, only
-where they earn it. Note: Tailwind v4 generates a semantic utility (and emits its
+the theme layer can reference directly. Components (Button/Badge) get imported later, only
+where they earn it. Note: the framework generates a semantic utility (and emits its
 `--color-*` var) only when the class appears in scanned source — so existing palette classes
 stay untouched and migrate incrementally.
 **Status:** active
@@ -98,20 +196,19 @@ dependency-free per the POC "as basic as possible" mandate (no react-router).
 
 ---
 
-### SCSS instead of Tailwind
+### SCSS instead of a utility-CSS framework
 
 **Phase:** v1 / foundation (revision)
-**Context:** Initial POC used Tailwind 4 (`@theme` tokens + utility classes). Direction
-changed to "avoid Tailwind, go with SCSS."
-**Decision:** Removed Tailwind. Styling is now SCSS compiled to one stylesheet. Tokens are
+**Context:** Initial POC used a utility-CSS framework (`@theme` tokens + utility classes). Direction
+changed to "avoid the utility-CSS framework, go with SCSS."
+**Decision:** Removed the utility-CSS framework. Styling is now SCSS compiled to one stylesheet. Tokens are
 SCSS maps emitted as CSS custom properties (`--vds-*`); components use BEM classes
 (`vds-button--primary`) defined in `src/styles/components/*.scss`; the typescale is a
 `$scale` map + `step()` mixin. Light/dark still flips via `:root` / `.dark` custom props.
-**Rationale:** Client preference. Bonus: emitting primitives from a SCSS loop removes the
-Tailwind "tree-shake unused theme vars" gap entirely (every token is always present), and
-the bundle shrank (~21kB → ~9kB CSS). The `--vp-*` indirection that Tailwind's static
+**Rationale:** Client preference. Bonus: emitting primitives from a SCSS loop removes the prior framework's "tree-shake unused theme vars" gap entirely (every token is always present), and
+the bundle shrank (~21kB → ~9kB CSS). The `--vp-*` indirection that the framework's static
 utilities required is no longer needed — semantic tokens bind to primitives directly.
-**Supersedes:** the "`--vp-*` indirection" and Tailwind parts of the "POC stack" entries below.
+**Supersedes:** the "`--vp-*` indirection" and the utility-framework parts of the "POC stack" entries below.
 **Status:** active
 
 ---
@@ -148,7 +245,7 @@ Inter 600).
 **Phase:** v1
 **Context:** Needed one accent that signals trust/action for a security product without leaning on
 the generic "SaaS blue."
-**Decision:** A custom `iris` ramp (indigo with a violet lean), distinct from stock Tailwind indigo.
+**Decision:** A custom `iris` ramp (indigo with a violet lean), distinct from a generic stock indigo.
 Status colors stay conventional (emerald/amber/rose/sky) so they read as state, not brand.
 **Rationale:** One confident accent keeps the UI calm; a slightly violet indigo is distinctive while
 still reading as trustworthy.
@@ -159,12 +256,12 @@ still reading as trustworthy.
 ### `--vp-*` indirection for dark mode
 
 **Phase:** v1
-**Context:** Tailwind 4 `@theme` generates static utilities, which can't themselves respond to a
+**Context:** the framework `@theme` generates static utilities, which can't themselves respond to a
 `.dark` class.
 **Decision:** `@theme` semantic tokens point at `--vp-*` variables; the `--vp-*` values are swapped
 under `.dark`. Soft status backgrounds in dark use `color-mix(... 16%, transparent)`.
 **Rationale:** Keeps full `bg-primary` / `text-ink` utility ergonomics while theming from one place.
-**Status:** changed — superseded by the SCSS switch (top of file). No longer using Tailwind/`@theme`,
+**Status:** changed — superseded by the SCSS switch (top of file). No longer using that framework,
 so the indirection is gone; semantic `--vds-*` tokens bind to primitives directly.
 
 ---
@@ -173,7 +270,7 @@ so the indirection is gone; semantic `--vds-*` tokens bind to primitives directl
 
 **Phase:** v1
 **Context:** Direction was "as basic as possible — this is a POC."
-**Decision:** One Vite + React app (~~Tailwind 4~~ → **SCSS**, see top of file). No turbo/pnpm
+**Decision:** One Vite + React app (~~a utility-CSS framework~~ → **SCSS**, see top of file). No turbo/pnpm
 workspaces, no Storybook, no token build step, no per-component test/story files. The showcase page
 doubles as the docs. Deployed to GitHub Pages via Actions for a shareable preview link.
 **Rationale:** Fastest path to something readable and runnable that can be pulled into the prototypes.
