@@ -321,8 +321,19 @@
 // Primitive palette grid — horizontal swatches with hex.
 .vds-palette-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 0.75rem 0 1.5rem; }
 
-.vds-palette-swatch { display: flex; flex-direction: column; gap: 0.25rem; min-width: 60px; }
-.vds-palette-sample { height: 44px; border-radius: var(--vds-radius-md); border: 1px solid var(--vds-line); }
+// Each swatch sits in a white card (always white, both themes — like a paint chip).
+.vds-palette-swatch {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  min-width: 64px;
+  padding: 0.5rem;
+  background-color: var(--vds-white);
+  border: 1px solid var(--vds-midnight-200);
+  border-radius: var(--vds-radius-lg);
+  box-shadow: var(--vds-shadow-xs);
+}
+.vds-palette-sample { height: 44px; border-radius: var(--vds-radius-md); border: 1px solid var(--vds-midnight-200); }
 
 // Click-to-copy: swatches are buttons. Reset native chrome, add a subtle lift.
 .vds-swatch-btn {
@@ -389,8 +400,9 @@
   z-index: 50;
   pointer-events: none;
 }
-.vds-palette-name { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.6875rem; color: var(--vds-ink); }
-.vds-palette-hex { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.625rem; color: var(--vds-ink-subtle); }
+// Fixed dark text — the card is always white, so theme ink (light in dark mode) would vanish.
+.vds-palette-name { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.6875rem; color: var(--vds-midnight-900); padding: 0 0.125rem; }
+.vds-palette-hex { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.625rem; color: var(--vds-midnight-500); padding: 0 0.125rem; }
 
 // Typography rows — name | preview | value (family / weight / spacing).
 .vds-type-table { display: flex; flex-direction: column; margin: 0.75rem 0 1.5rem; }

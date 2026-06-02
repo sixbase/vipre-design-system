@@ -145,21 +145,22 @@ $clay: ( // accent — terracotta
   --vds-ink-muted:      var(--vds-midnight-700);
   --vds-ink-subtle:     var(--vds-midnight-500);
 
-  --vds-primary:        var(--vds-azure-600);
-  --vds-primary-hover:  var(--vds-azure-700);
-  --vds-on-primary:     var(--vds-white); // AA: white on azure-600 = 7.38
-  --vds-primary-soft:   var(--vds-azure-50);
+  --vds-primary:        var(--vds-midnight-600); // brand uses midnight tones
+  --vds-primary-hover:  var(--vds-midnight-700);
+  --vds-on-primary:     var(--vds-white); // AA: white on midnight-600 = 7.88
+  --vds-primary-soft:   var(--vds-midnight-50);
 
+  // Light = darker 600 step (AA-readable on white); dark mode uses the vibrant 400.
   --vds-success:        var(--vds-emerald-600);
   --vds-success-soft:   var(--vds-emerald-50);
   --vds-warning:        var(--vds-amber-600);
   --vds-warning-soft:   var(--vds-amber-50);
   --vds-danger:         var(--vds-rose-600);
   --vds-danger-soft:    var(--vds-rose-50);
-  --vds-info:           var(--vds-harbor-600); // teal — kept distinct from the azure primary
-  --vds-info-soft:      var(--vds-harbor-50);
+  --vds-info:           var(--vds-midnight-600); // info uses the midnight palette
+  --vds-info-soft:      var(--vds-midnight-50);
 
-  --vds-focus-ring:     var(--vds-azure-500);
+  --vds-focus-ring:     var(--vds-midnight-500);
 }
 
 // ---- Tier 2 · semantic (DARK overrides) ------------------------------------
@@ -174,21 +175,21 @@ $clay: ( // accent — terracotta
   --vds-ink-muted:      var(--vds-midnight-300);
   --vds-ink-subtle:     var(--vds-midnight-400);
 
-  --vds-primary:        var(--vds-azure-400); // bright fill + dark text on the navy
-  --vds-primary-hover:  var(--vds-azure-300);
-  --vds-on-primary:     var(--vds-midnight-950); // AA: navy on azure-400 = 7.35
-  --vds-primary-soft:   color-mix(in oklab, var(--vds-azure-400) 16%, transparent);
+  --vds-primary:        var(--vds-midnight-300); // light navy fill + dark text on the dark canvas
+  --vds-primary-hover:  var(--vds-midnight-200);
+  --vds-on-primary:     var(--vds-midnight-950); // AA: navy text on midnight-300
+  --vds-primary-soft:   color-mix(in oklab, var(--vds-midnight-300) 16%, transparent);
 
-  --vds-success:        var(--vds-emerald-500);
-  --vds-success-soft:   color-mix(in oklab, var(--vds-emerald-500) 16%, transparent);
-  --vds-warning:        var(--vds-amber-500);
-  --vds-warning-soft:   color-mix(in oklab, var(--vds-amber-500) 16%, transparent);
-  --vds-danger:         var(--vds-rose-500);
-  --vds-danger-soft:    color-mix(in oklab, var(--vds-rose-500) 16%, transparent);
-  --vds-info:           var(--vds-harbor-500); // teal — kept distinct from the azure primary
-  --vds-info-soft:      color-mix(in oklab, var(--vds-harbor-500) 16%, transparent);
+  --vds-success:        var(--vds-emerald-400);
+  --vds-success-soft:   color-mix(in oklab, var(--vds-emerald-400) 16%, transparent);
+  --vds-warning:        var(--vds-amber-400);
+  --vds-warning-soft:   color-mix(in oklab, var(--vds-amber-400) 16%, transparent);
+  --vds-danger:         var(--vds-rose-400);
+  --vds-danger-soft:    color-mix(in oklab, var(--vds-rose-400) 16%, transparent);
+  --vds-info:           var(--vds-midnight-400); // info uses the midnight palette
+  --vds-info-soft:      color-mix(in oklab, var(--vds-midnight-400) 16%, transparent);
 
-  --vds-focus-ring:     var(--vds-azure-400);
+  --vds-focus-ring:     var(--vds-midnight-400);
 
   color-scheme: dark;
 }

@@ -101,20 +101,20 @@ export const SEMANTIC_GROUPS = [
   {
     title: 'Brand & interactive',
     rows: [
-      { token: '--vds-primary', ref: 'azure-600 → 400', usage: 'Primary button fill, active state, primary links' },
-      { token: '--vds-primary-hover', ref: 'azure-700 → 300', usage: 'Hover state for primary actions' },
+      { token: '--vds-primary', ref: 'midnight-600 → 300', usage: 'Primary button fill, active state, primary links' },
+      { token: '--vds-primary-hover', ref: 'midnight-700 → 200', usage: 'Hover state for primary actions' },
       { token: '--vds-on-primary', ref: 'white → midnight-950', usage: 'Text/icons on a primary-colored background' },
-      { token: '--vds-primary-soft', ref: 'azure-50 → azure@16%', usage: 'Tinted brand backgrounds — ghost hover, soft badges' },
-      { token: '--vds-focus-ring', ref: 'azure-500 → 400', usage: 'Keyboard focus outline via :focus-visible — never decorative' },
+      { token: '--vds-primary-soft', ref: 'midnight-50 → midnight@16%', usage: 'Tinted brand backgrounds — ghost hover, soft badges' },
+      { token: '--vds-focus-ring', ref: 'midnight-500 → 400', usage: 'Keyboard focus outline via :focus-visible — never decorative' },
     ],
   },
   {
     title: 'Status',
     rows: [
-      { token: '--vds-success', ref: 'emerald-600 → 500', usage: 'Healthy, protected, success confirmations' },
-      { token: '--vds-warning', ref: 'amber-600 → 500', usage: 'Needs attention but not broken — at-risk, low-stock' },
-      { token: '--vds-danger', ref: 'rose-600 → 500', usage: 'Errors, threats, destructive actions' },
-      { token: '--vds-info', ref: 'harbor-600 → 500', usage: 'Neutral informational notes and callouts' },
+      { token: '--vds-success', ref: 'emerald-600 → 400', usage: 'Healthy, protected, success confirmations' },
+      { token: '--vds-warning', ref: 'amber-600 → 400', usage: 'Needs attention but not broken — at-risk, low-stock' },
+      { token: '--vds-danger', ref: 'rose-600 → 400', usage: 'Errors, threats, destructive actions' },
+      { token: '--vds-info', ref: 'midnight-600 → 400', usage: 'Neutral informational notes and callouts' },
     ],
   },
 ]
