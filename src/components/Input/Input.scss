@@ -5,22 +5,29 @@
 @use '../../styles/typography' as type;
 
 .vds-input {
+  // Input is intentionally NEUTRAL — graphite chrome + a graphite focus, not
+  // the brand (iris) focus used by Button. Component tokens bind to the
+  // graphite ramp here and lighten under .dark (see override below).
+  --vds-input-border: var(--vds-graphite-300);
+  --vds-input-border-focus: var(--vds-graphite-400);
+  --vds-input-ring: color-mix(in oklab, var(--vds-graphite-400) 35%, transparent);
+
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   width: 100%;
   background-color: var(--vds-surface);
-  border: 1px solid var(--vds-line-strong);
+  border: 1px solid var(--vds-input-border);
   border-radius: var(--vds-radius-md);
   color: var(--vds-ink);
   transition:
     border-color var(--vds-dur-fast) var(--vds-ease-out),
     box-shadow var(--vds-dur-fast) var(--vds-ease-out);
 
-  // focus ring follows the inner input's focus
+  // focus ring follows the inner input's focus — graphite, not brand
   &:focus-within {
-    border-color: var(--vds-focus-ring);
-    box-shadow: 0 0 0 2px color-mix(in oklab, var(--vds-focus-ring) 35%, transparent);
+    border-color: var(--vds-input-border-focus);
+    box-shadow: 0 0 0 2px var(--vds-input-ring);
   }
 
   &--invalid {
@@ -65,4 +72,11 @@
 
   // Trailing affix is often an interactive clear button — let it receive clicks.
   &__affix--trail { cursor: pointer; }
+}
+
+// Dark theme: shift the graphite chrome up the ramp so it stays visible.
+.dark .vds-input {
+  --vds-input-border: var(--vds-graphite-700);
+  --vds-input-border-focus: var(--vds-graphite-500);
+  --vds-input-ring: color-mix(in oklab, var(--vds-graphite-500) 40%, transparent);
 }

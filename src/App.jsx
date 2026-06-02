@@ -22,15 +22,18 @@ function useHashRoute() {
 }
 
 export function App() {
-  const [dark, setDark] = useState(true)
+  const [dark, setDark] = useState(false) // light is the default theme
   const path = useHashRoute()
   const route = ROUTE_MAP[path] || ROUTE_MAP['/']
   const Page = route.Page
 
+  // Keep the <html> class in sync with state (covers initial mount + toggles).
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', dark)
+  }, [dark])
+
   function toggleTheme() {
-    const next = !dark
-    setDark(next)
-    document.documentElement.classList.toggle('dark', next)
+    setDark((d) => !d)
   }
 
   return (
