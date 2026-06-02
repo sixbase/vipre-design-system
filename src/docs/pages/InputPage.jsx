@@ -2,7 +2,25 @@ import { useState } from 'react'
 import { Search, X } from 'lucide-react'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { Section, Preview, IC } from '../primitives.jsx'
-import { Input, Icon } from '../../components/index.js'
+import { Input, Icon, Text } from '../../components/index.js'
+
+/* A field with a label above and an optional red error message below.
+   (Until a Field/Label primitive lands, this shows the intended pattern.) */
+function LabeledField({ label, htmlFor, error, children }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
+      <Text as="label" htmlFor={htmlFor} variant="detail" tone="muted">
+        {label}
+      </Text>
+      {children}
+      {error && (
+        <Text as="span" id={`${htmlFor}-error`} role="alert" variant="detail" tone="danger">
+          {error}
+        </Text>
+      )}
+    </div>
+  )
+}
 
 function SearchDemo() {
   const [value, setValue] = useState('')
@@ -67,16 +85,32 @@ export function InputPage() {
         />
       </Section>
 
-      <Section title="States">
+      <Section title="States" note="Default, invalid (with an error message), and disabled — shown as real labeled fields.">
         <Preview
           canvas={
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%', maxWidth: 320 }}>
-              <Input placeholder="Default" />
-              <Input invalid defaultValue="not-an-email" />
-              <Input disabled placeholder="Disabled" />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', maxWidth: 320 }}>
+              <LabeledField label="Display name" htmlFor="demo-name">
+                <Input id="demo-name" placeholder="Ada Lovelace" />
+              </LabeledField>
+              <LabeledField label="Email" htmlFor="demo-email" error="Enter a valid email address">
+                <Input id="demo-email" type="email" invalid defaultValue="ada@" aria-describedby="demo-email-error" />
+              </LabeledField>
+              <LabeledField label="Account ID" htmlFor="demo-acct">
+                <Input id="demo-acct" disabled defaultValue="ACC-2041" />
+              </LabeledField>
             </div>
           }
-          code={`<Input placeholder="Default" />\n<Input invalid defaultValue="not-an-email" />\n<Input disabled placeholder="Disabled" />`}
+          code={`{/* invalid: you decide WHEN to set invalid, then show why */}
+<label htmlFor="email">Email</label>
+<Input
+  id="email"
+  type="email"
+  invalid
+  aria-describedby="email-error"
+/>
+<Text id="email-error" role="alert" tone="danger" variant="detail">
+  Enter a valid email address
+</Text>`}
         />
       </Section>
 
