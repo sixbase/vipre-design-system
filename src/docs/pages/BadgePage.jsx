@@ -1,13 +1,13 @@
 import { ComponentPage } from '../ComponentPage.jsx'
 import { Section, Preview, IC } from '../primitives.jsx'
-import { Badge } from '../../components/Badge.jsx'
+import { Badge } from '../../components/index.js'
 
 export function BadgePage() {
   return (
     <ComponentPage
       title="Badge"
       description="A compact status pill with six tones and an optional leading status dot. Soft-tinted background paired with matching ink, sized off the small end of the typescale so it reads as a label."
-      installCode={`import { Badge } from '../components/Badge.jsx'`}
+      installCode={`import { Badge } from 'vipre-design-system'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],

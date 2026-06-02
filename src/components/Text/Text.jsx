@@ -1,10 +1,11 @@
 import { forwardRef } from 'react'
-import { cx } from '../lib/cx.js'
+import { cx } from '../../lib/cx.js'
 
 /* ----------------------------------------------------------------------------
-   Typography components — the ONLY way to render text in the system.
-   They bind the Rubik typescale classes (.vds-text--title …) to semantic tone
-   classes, so callers never reach for raw font sizes or colors.
+   Typography components — the ONLY way to render text in the system. They bind
+   the Rubik typescale classes (.vds-text--title …) to semantic tone classes,
+   so callers never reach for raw font sizes or colors. The scale + tone classes
+   live in src/styles/_typography.scss (shipped in the styles bundle).
    -------------------------------------------------------------------------- */
 
 const TONE = {
@@ -19,8 +20,12 @@ const TONE = {
 
 /**
  * Heading — display / title / heading / subheading.
- * `as` controls the semantic element so heading hierarchy stays correct
- * independent of visual size.
+ *
+ * `level` sets the visual size; `as` sets the semantic element, so heading
+ * hierarchy stays correct independent of how big something looks.
+ *
+ * @example
+ * <Heading level="title" as="h1">Customer Management</Heading>
  */
 export const Heading = forwardRef(function Heading(
   { level = 'heading', as, tone = 'default', className, children, ...props },
@@ -38,9 +43,15 @@ export const Heading = forwardRef(function Heading(
   )
 })
 
+Heading.displayName = 'Heading'
+
 /**
  * Text — body / caption / detail / micro / eyebrow / nano.
  * Defaults to <p>; pass `as="span"` for inline use.
+ *
+ * @example
+ * <Text variant="body" tone="muted">Secondary copy</Text>
+ * <Text variant="eyebrow" tone="primary">Overview</Text>
  */
 export const Text = forwardRef(function Text(
   { variant = 'body', as = 'p', tone = 'default', className, children, ...props },
@@ -57,3 +68,5 @@ export const Text = forwardRef(function Text(
     </Tag>
   )
 })
+
+Text.displayName = 'Text'

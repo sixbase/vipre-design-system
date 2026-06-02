@@ -1,0 +1,40 @@
+// ============================================================================
+// Surface — the panel primitive. A token-bound box: background, optional 1px
+// border, radius, padding, and elevation. Every card / panel / popover / table
+// shell COMPOSES this instead of re-declaring bg + border + radius. This is the
+// single place those decisions live.
+// ============================================================================
+
+// Padding steps a panel realistically uses (4px grid). Keeps the emitted CSS
+// small — add a step here if a composite genuinely needs it.
+$pad-steps: (0, 1, 2, 3, 4, 5, 6, 8);
+
+.vds-surface {
+  background-color: var(--vds-surface);
+  color: var(--vds-ink);
+  border: 1px solid transparent;
+  border-radius: var(--vds-radius-lg);
+
+  // ---- background ----
+  &--raised { background-color: var(--vds-surface-raised); }
+
+  // ---- border (hairline in the line token) ----
+  &--bordered { border-color: var(--vds-line); }
+
+  // ---- radius ----
+  &--radius-sm { border-radius: var(--vds-radius-sm); }
+  &--radius-md { border-radius: var(--vds-radius-md); }
+  &--radius-lg { border-radius: var(--vds-radius-lg); }
+  &--radius-xl { border-radius: var(--vds-radius-xl); }
+
+  // ---- elevation ----
+  &--elev-xs { box-shadow: var(--vds-shadow-xs); }
+  &--elev-sm { box-shadow: var(--vds-shadow-sm); }
+  &--elev-md { box-shadow: var(--vds-shadow-md); }
+  &--elev-lg { box-shadow: var(--vds-shadow-lg); }
+
+  // ---- padding (token-spaced) ----
+  @each $n in $pad-steps {
+    &--pad-#{$n} { padding: var(--vds-space-#{$n}); }
+  }
+}

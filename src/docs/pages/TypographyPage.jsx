@@ -1,6 +1,6 @@
 import { DocPage } from '../DocPage.jsx'
 import { Section, Code, PropsTable } from '../primitives.jsx'
-import { Heading, Text } from '../../components/Text.jsx'
+import { Heading, Text } from '../../components/index.js'
 import { TYPE_SCALE, WEIGHTS } from '../tokens.js'
 
 export function TypographyPage() {

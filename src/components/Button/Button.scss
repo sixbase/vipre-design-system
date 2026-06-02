@@ -1,7 +1,7 @@
 // ============================================================================
-// Button — variant × size. Token-bound only.
+// Button — variant × size. Token-bound only. Co-located with Button.jsx.
 // ============================================================================
-@use '../typography' as type;
+@use '../../styles/typography' as type;
 
 .vds-button {
   display: inline-flex;

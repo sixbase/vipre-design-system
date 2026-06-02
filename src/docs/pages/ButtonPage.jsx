@@ -1,13 +1,13 @@
 import { ComponentPage } from '../ComponentPage.jsx'
 import { Section, Preview, Kbd, IC } from '../primitives.jsx'
-import { Button } from '../../components/Button.jsx'
+import { Button } from '../../components/index.js'
 
 export function ButtonPage() {
   return (
     <ComponentPage
       title="Button"
       description="The primary interactive element. Four variants to match the weight of the action, three sizes, an opacity-based disabled state, and a visible keyboard focus ring. Forwards all native button props."
-      installCode={`import { Button } from '../components/Button.jsx'`}
+      installCode={`import { Button } from 'vipre-design-system'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],

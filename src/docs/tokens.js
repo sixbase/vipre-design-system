@@ -88,6 +88,30 @@ export const TYPE_SCALE = [
   { token: 'text--nano', kind: 't', variant: 'nano', size: '10 · 500', usage: 'Smallest tags, chart axis labels' },
 ]
 
+/* Spacing scale — mirrors --vds-space-* in _tokens.scss, with usage. */
+export const SPACING = [
+  { token: '--vds-space-1', px: '4px', usage: 'Icon-to-label gap, stacked metadata lines' },
+  { token: '--vds-space-2', px: '8px', usage: 'Default inline gap in buttons, checkbox-to-label' },
+  { token: '--vds-space-3', px: '12px', usage: 'Input padding, dense table cell padding' },
+  { token: '--vds-space-4', px: '16px', usage: 'Default card padding, gap between form fields' },
+  { token: '--vds-space-5', px: '20px', usage: 'Medium gap between card sections' },
+  { token: '--vds-space-6', px: '24px', usage: 'Gap between related groups; the grid gutter' },
+  { token: '--vds-space-8', px: '32px', usage: 'Section padding, modal body padding' },
+  { token: '--vds-space-10', px: '40px', usage: 'Large section gap' },
+  { token: '--vds-space-12', px: '48px', usage: 'Section rhythm between major blocks' },
+  { token: '--vds-space-16', px: '64px', usage: 'Major page divisions' },
+  { token: '--vds-space-20', px: '80px', usage: 'Extra-large breaks, top-level page padding' },
+  { token: '--vds-space-24', px: '96px', usage: 'Maximum — page top/bottom margins' },
+]
+
+/* Layout tokens — structural rhythm. */
+export const LAYOUT = [
+  { token: '--vds-container', value: '1200px', usage: 'Max content width, centered' },
+  { token: '--vds-gutter', value: '24px · space-6', usage: 'Gap between grid columns' },
+  { token: '--vds-section', value: '48px · space-12', usage: 'Vertical rhythm between major sections' },
+  { token: '--vds-columns', value: '12', usage: 'Base grid column count' },
+]
+
 export const WEIGHTS = [
   { name: 'normal', value: 400 },
   { name: 'medium', value: 500 },

@@ -1,48 +1,69 @@
 # Vipre Design System
 
-A fresh, token-first foundation for Vipre's product UI. This is a **POC**: deliberately lightweight (single Vite + React app, **SCSS** for styling, no monorepo) so it's easy to read, run, and eventually pull into the prototypes.
+A token-driven design system for Vipre's product UI — cool graphite neutrals, an iris brand accent, and the Rubik typescale. Built so Vipre's **front-end team can consume it** and **designers can contribute** to it.
 
-🔗 **Live preview:** https://sixbase.github.io/vipre-design-system/
+🔗 **Live docs:** https://sixbase.github.io/vipre-design-system/
 
-> Methodology borrowed from `sixbase/claude-design-system` (3-tier tokens, semantic theming, component-as-source-of-truth, a living playbook). The **aesthetic is designed fresh** for Vipre — cool graphite neutrals, an iris indigo-violet brand accent, and the **Rubik** typescale.
+> Structure and delivery mirror `sixbase/claude-design-system` (3-tier tokens, semantic theming, component-as-source-of-truth, a living playbook, per-component docs). The **aesthetic is fresh** for Vipre. Will be used to build the MSP **scope navigator** prototype.
 
-## Run it
+## Run the docs locally
 
 ```bash
 npm install
-npm run dev      # http://localhost:5173 — living token + component showcase
+npm run dev      # http://localhost:5173 — living docs + component reference
 ```
 
-## Architecture
+## Consume it in an app
 
-Styling is **SCSS**, compiled to a single stylesheet. Tokens are authored as SCSS
-maps and emitted as **CSS custom properties** (so they stay live for light/dark
-theming, which compile-time SCSS variables can't do). See
-[`src/styles/_tokens.scss`](src/styles/_tokens.scss).
+Two delivery paths (see the **Installation** page in the docs for detail):
 
-Three token tiers:
+```bash
+npm install ../vipre-design-system     # local link during the POC phase
+npm run build:lib                      # build the consumable CSS bundles
+```
 
-1. **Primitive** — raw ramps (`--vds-graphite-*`, `--vds-iris-*`). Never used directly in components.
-2. **Semantic** — intent-mapped tokens (`--vds-canvas`, `--vds-ink`, `--vds-primary`…) that flip between light and dark via `:root` / `.dark`.
-3. **Scale** — the Rubik typescale (`_typography.scss`), plus radius, shadow, and motion tokens.
+**Tokens only** (the bridge the prototypes use today):
+```css
+@import "vipre-design-system/tokens.css";   /* --vds-* CSS variables */
+```
 
-Components are plain React + BEM classes (`vds-button`, `vds-button--primary`).
-All styling lives in `src/styles/components/*.scss` — components only assemble class names.
+**Tokens + components:**
+```js
+import "vipre-design-system/styles.css";
+import { Button, Badge, Heading, Text } from "vipre-design-system";
+```
 
-**The one rule:** reference *semantic* and *scale* tokens only — never primitives, never raw hex/px. Missing a value? Add a token; don't inline it.
+Dark mode: add `class="dark"` to the root element — every semantic token flips.
 
-## What's here (v1 — foundation)
+## Repo structure
 
-| Layer | Status |
-| --- | --- |
-| Tokens (color, type, radius, shadow, motion) | ✅ |
-| Rubik typescale (11 steps) | ✅ |
-| Light / dark theming | ✅ |
-| `Text` / `Heading` | ✅ |
-| `Button` (4 variants × 3 sizes) | ✅ |
-| `Badge` (6 tones) | ✅ |
-| Living showcase / docs page | ✅ |
+```
+src/
+  components/            One folder per component (the public API)
+    Button/  Badge/  Text/   →  Component.jsx + Component.scss + index.js
+    index.js              barrel — what consumers import
+  styles/
+    _tokens.scss          3-tier tokens → --vds-* custom properties
+    _typography.scss      Rubik typescale ($scale map + step() mixin)
+    _components.scss       aggregates each component's co-located styles
+    tokens.entry.scss     → dist/vipre-tokens.css   (tokens only)
+    styles.entry.scss     → dist/vipre.css          (tokens + components)
+    main.scss             the docs app stylesheet (adds the showcase layout)
+  docs/                   the documentation site (pages, router, primitives)
+docs/playbook/            the living playbook — read before contributing
+CLAUDE.md                 project rules for AI agents + engineers
+CONTRIBUTING.md           how to add / edit a component
+```
 
-## Next
+## Architecture (3 tiers)
 
-Data-dense SaaS components the product needs: Table, Tabs, Nav, Filters, Card, Input, Modal, Toast. See [`docs/playbook/`](docs/playbook/).
+1. **Primitive** — raw ramps (`--vds-graphite-*`, `--vds-iris-*`). Never used directly.
+2. **Semantic** — intent tokens (`--vds-canvas`, `--vds-ink`, `--vds-primary`…) that flip light/dark.
+3. **Scale** — Rubik typescale, spacing, radius, shadow, motion, layout.
+
+**The one rule:** components reference *semantic* + *scale* tokens only — never primitives, never raw hex/px.
+
+## What's here (foundation)
+
+Foundations: Colors · Typography · Spacing · Layout. Components: Button · Badge · Text/Heading.
+Next: the data-dense set for MSP — Table, Tabs, SideNav, Filters, Card, Input, Modal, Toast. See [`docs/playbook/01-planning.md`](docs/playbook/01-planning.md).

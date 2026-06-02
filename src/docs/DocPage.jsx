@@ -1,4 +1,4 @@
-import { Heading, Text } from '../components/Text.jsx'
+import { Heading, Text } from '../components/index.js'
 
 /* ----------------------------------------------------------------------------
    DocPage — lighter shell for foundation pages (Colors, Typography) and the

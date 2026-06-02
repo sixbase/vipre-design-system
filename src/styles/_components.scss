@@ -1,0 +1,14 @@
+// Aggregates every component's co-located styles. Used by both the docs app
+// (main.scss) and the consumer bundle (styles.entry.scss).
+
+// Layout primitives — the building blocks composites assemble from.
+@use '../components/Surface/Surface';
+@use '../components/Stack/Stack';
+@use '../components/Inline/Inline';
+@use '../components/Divider/Divider';
+
+// Controls
+@use '../components/Button/Button';
+@use '../components/Badge/Badge';
+// Text/Heading have no component styles — they use the typescale classes
+// emitted by _typography.scss.

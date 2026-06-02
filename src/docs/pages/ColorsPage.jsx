@@ -1,6 +1,6 @@
 import { DocPage } from '../DocPage.jsx'
 import { Section } from '../primitives.jsx'
-import { Text } from '../../components/Text.jsx'
+import { Text } from '../../components/index.js'
 import { PRIMITIVES, SEMANTIC_GROUPS } from '../tokens.js'
 
 function SemanticTable({ rows }) {

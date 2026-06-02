@@ -1,4 +1,4 @@
-import { Heading, Text } from '../components/Text.jsx'
+import { Heading, Text } from '../components/index.js'
 import { Section, Code, PropsTable, A11yList } from './primitives.jsx'
 
 /* ----------------------------------------------------------------------------

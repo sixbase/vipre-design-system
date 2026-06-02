@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Heading, Text } from './components/Text.jsx'
+import { Heading, Text } from './components/index.js'
 import { NAV, ROUTE_MAP } from './docs/routes.js'
 
 /* Tiny dependency-free hash router. Reads window.location.hash (e.g.

@@ -1,4 +1,4 @@
-import { Heading, Text } from '../components/Text.jsx'
+import { Heading, Text } from '../components/index.js'
 
 /* ----------------------------------------------------------------------------
    Docs primitives — the shared building blocks every page composes from,

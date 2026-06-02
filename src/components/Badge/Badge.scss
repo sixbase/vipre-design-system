@@ -1,7 +1,7 @@
 // ============================================================================
-// Badge — compact status pill. Soft-tinted bg + matching ink.
+// Badge — compact status pill. Soft-tinted bg + matching ink. Co-located.
 // ============================================================================
-@use '../typography' as type;
+@use '../../styles/typography' as type;
 
 .vds-badge {
   display: inline-flex;

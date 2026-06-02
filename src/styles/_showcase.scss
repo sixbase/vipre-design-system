@@ -343,6 +343,27 @@
   .vds-scale-preview { text-align: left; }
 }
 
+// Spacing bar + layout grid demo.
+.vds-space-bar { display: inline-block; height: 0.75rem; background: var(--vds-primary); border-radius: 2px; }
+
+.vds-grid-demo {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--vds-gutter);
+  margin: 0.75rem 0 1.5rem;
+  padding: var(--vds-space-4);
+  border: 1px solid var(--vds-line);
+  border-radius: var(--vds-radius-lg);
+  background-color: var(--vds-surface);
+
+  span {
+    height: 2.5rem;
+    border-radius: var(--vds-radius-sm);
+    background: var(--vds-primary-soft);
+    border: 1px solid var(--vds-primary);
+  }
+}
+
 // ---- type specimens --------------------------------------------------------
 .vds-specimens { display: flex; flex-direction: column; }
 

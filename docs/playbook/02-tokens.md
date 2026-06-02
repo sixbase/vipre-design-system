@@ -45,7 +45,7 @@ Soft status backgrounds in dark use `color-mix(in oklab, … 16%, transparent)`.
 
 ## Tier 3 — Scale
 
-- **Type** — see [02-typography.md](02-typography.md). The `$scale` map + `step()` mixin.
+- **Type** — see [03-typography.md](03-typography.md). The `$scale` map + `step()` mixin.
 - **Radius** — `--vds-radius-sm/md/lg/xl` = 6 / 8 / 12 / 16px.
 - **Shadow** — `--vds-shadow-xs/sm/md/lg`, tuned on graphite-950 so they read in both themes.
 - **Motion** — `--vds-ease-out`, `--vds-dur-fast` (120ms), `--vds-dur-base` (200ms).
@@ -53,4 +53,4 @@ Soft status backgrounds in dark use `color-mix(in oklab, … 16%, transparent)`.
 ## Adding or renaming a token
 
 CSS variables fail silently. After any rename, `grep -r "old-token-name" src/`.
-Add the rationale to [04-decisions-log.md](04-decisions-log.md) if it's a real choice.
+Add the rationale to [06-decisions-log.md](06-decisions-log.md) if it's a real choice.

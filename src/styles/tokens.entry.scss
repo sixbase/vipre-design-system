@@ -1,0 +1,8 @@
+// Token-only entry point.
+// Compiles JUST the three token tiers (primitive ramps, semantic light/dark,
+// scale: radius/shadow/motion/font) into a standalone CSS file of custom
+// properties — no components, no typography classes, no showcase. This is the
+// artifact the prototypes consume: `dist/vipre-tokens.css`.
+//
+// Build:  npm run build:tokens
+@use 'tokens';

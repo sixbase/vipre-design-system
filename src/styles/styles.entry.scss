@@ -1,0 +1,8 @@
+// Full consumer stylesheet — everything except the docs-only showcase layout.
+// Tokens + base + typescale classes + every component's styles.
+// Build:  npm run build:styles  →  dist/vipre.css
+// Consume:  import 'vipre-design-system/styles.css'
+@use 'tokens';
+@use 'typography';
+@use 'base';
+@use 'components';

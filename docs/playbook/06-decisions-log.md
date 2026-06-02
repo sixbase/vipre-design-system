@@ -1,6 +1,63 @@
-# 04 — Decisions Log
+# 06 — Decisions Log
 
 Every significant choice, with rationale. Append; don't rewrite history.
+
+---
+
+### Restructured to mirror Mason as a deliverable, contributable package
+
+**Phase:** v1 / structure pass
+**Context:** Goal clarified: the DS will be handed to Vipre's front-end team to build the MSP
+scope navigator, while designers and others contribute/edit components. Needed Mason's
+*delivery + structure*, not its e-commerce styling or full turbo/Storybook/Shopify machinery.
+**Decision:**
+- **Consumable package** — `package.json` exports `.` (components), `./tokens.css`, `./styles.css`.
+  Two SCSS entries: `tokens.entry.scss` → `dist/vipre-tokens.css` (tokens only, the prototype
+  bridge) and `styles.entry.scss` → `dist/vipre.css` (tokens + typescale + all component styles).
+  Components ship as source JSX + one global CSS bundle (BEM); `react`/`react-dom` are peers.
+- **Per-component folders** — `src/components/{Name}/{Name}.jsx + {Name}.scss + index.js`
+  (co-located, like Mason's 4-file rule minus tests/stories for the POC). Barrel at
+  `src/components/index.js`; styles aggregated in `src/styles/_components.scss`.
+- **Component quality** — `displayName`, JSDoc `@example`, built-in a11y (e.g. status `Badge`
+  tones get `role="status"`).
+- **Docs parity** — added Getting Started › Installation, Foundation › Spacing + Layout
+  (with new `--vds-space-*` and layout tokens). Skipped the Examples section for now.
+- **Contribution-ready** — added root `CLAUDE.md` + `CONTRIBUTING.md`; expanded the playbook
+  to Mason's numbering (01-planning, 05-workflows, 07-lessons-learned, 09-layout-grid; renamed
+  tokens/typography/components/decisions to 02/03/04/06).
+**Stayed lean:** single Vite app (no turbo/Storybook/Shopify/changesets) per the POC mandate;
+hash router and source-JSX delivery keep it dependency-light.
+**Rationale:** ~all of Mason's *delivery look + structure + conventions* for a fraction of the
+machinery — enough for the FE team to consume and for designers to contribute, without
+e-commerce/CI weight the product doesn't need.
+**Status:** active
+
+---
+
+### Prototypes consume the DS via the token layer (CSS-var bridge), not components
+
+**Phase:** v1 / consumption
+**Context:** The prototypes (`scope-navigator`, `action-rules`, `banner-modal`,
+`marketing-overview`, `vipre-prototypes`) are all **Tailwind 4** with inline utility
+classes and the Inter font. The DS is **SCSS/BEM** emitting `--vds-*` custom properties.
+Direct component import would mean rewriting prototype markup into BEM — too heavy for a POC.
+**Decision:** Share the **tokens**, not the components (yet). The DS now exports a
+token-only stylesheet: `src/styles/tokens.entry.scss` (`@use 'tokens'`) compiled by
+`npm run build:tokens` → `dist/vipre-tokens.css` (just the `:root{--vds-*}` + `.dark{}`
+custom properties — no component/typography classes). `package.json` exposes it via
+`exports: { "./tokens.css": "./dist/vipre-tokens.css" }`. Prototypes add a local
+`file:` dependency on the DS, `@import "vipre-design-system/tokens.css"`, then map the
+semantic tokens into Tailwind's `@theme` (`--color-primary: var(--vds-primary)`, etc.)
+and set `--font-sans: var(--vds-font-sans)`. This creates **additive** semantic utilities
+(`bg-surface`, `text-ink`, `text-primary`, `border-line`, `text-success`…) that resolve to
+DS tokens and flip in dark mode automatically. First adopter: `scope-navigator`.
+**Rationale:** ~80% of brand consistency (color, type, radius, shadow) for ~5% of the churn.
+The bridge works precisely because the DS's *output* is plain CSS custom properties, which
+Tailwind `@theme` can reference directly. Components (Button/Badge) get imported later, only
+where they earn it. Note: Tailwind v4 generates a semantic utility (and emits its
+`--color-*` var) only when the class appears in scanned source — so existing palette classes
+stay untouched and migrate incrementally.
+**Status:** active
 
 ---
 
@@ -123,3 +180,32 @@ doubles as the docs. Deployed to GitHub Pages via Actions for a shareable previe
 The heavier monorepo machinery (token JSON→CSS, test+story per component, publishing) is deferred
 until/if the system graduates from POC.
 **Status:** active (stack still single-app + no monorepo; styling tech changed to SCSS)
+
+---
+
+### Layout primitives (Surface / Stack / Inline / Divider) as the composition base
+
+**Phase:** v2 / harvesting components from the prototype
+**Context:** To pull the MSP scope-navigator's complex components (stat tiles, package-adoption
+table, scope summary strip, entity drawer) into the DS *precisely*, we need a layer below the
+domain components. A complex component is ~90% composition of small building blocks + ~10% layout
+glue; the styling precision belongs in those building blocks, not re-declared per composite. Depends
+on the new **spacing** scale (`--vds-space-*`, 4px grid) — without it, layout glue would still be
+raw `gap`/`padding` values.
+**Decision:** Added four token-bound layout primitives under `src/components/`, same folder
+convention as Button:
+- **Surface** — the panel box (background, optional 1px `--vds-line` border, radius, `pad-{n}`
+  padding from the spacing scale, `elev-{x}` shadow, `raised`). Every card / popover / table-shell
+  composes this instead of re-declaring bg + border + radius.
+- **Stack** — vertical flex, `gap-{n}` from the spacing scale (replaces `flex flex-col gap-*`).
+- **Inline** — horizontal flex, `gap-{n}` + `wrap` + align/justify (replaces `flex items-center gap-*`).
+- **Divider** — 1px hairline in `--vds-line`, horizontal/vertical, `role="separator"`.
+Gap/padding modifiers are generated with an `@each` loop over a step list, each referencing
+`var(--vds-space-#{n})`, so spacing stays token-driven with **no inline styles** (rule #6).
+Registered in `src/components/index.js` + `src/styles/_components.scss`; `build:lib` green.
+**Rationale:** Establishes the composition base so domain components harvested from MSP are mostly
+assembly. Class-based gap modifiers (not inline `style={{gap}}`) keep the no-inline-style rule intact.
+**Next:** first harvest target is **StatTile** (Surface + Stat/Meter + Text/Badge). Docs pages,
+`routes.js` entries, and the `01-planning.md` status table for these four primitives are still to be
+added (deferred to avoid colliding with in-flight edits in those files).
+**Status:** active
