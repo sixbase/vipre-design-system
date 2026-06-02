@@ -4,6 +4,8 @@ import { ColorsPage } from './pages/ColorsPage.jsx'
 import { TypographyPage } from './pages/TypographyPage.jsx'
 import { SpacingPage } from './pages/SpacingPage.jsx'
 import { LayoutPage } from './pages/LayoutPage.jsx'
+import { IconPage } from './pages/IconPage.jsx'
+import { InputPage } from './pages/InputPage.jsx'
 import { ButtonPage } from './pages/ButtonPage.jsx'
 import { BadgePage } from './pages/BadgePage.jsx'
 
@@ -23,6 +25,13 @@ export const NAV = [
       { path: '/foundation/typography', name: 'Typography', Page: TypographyPage },
       { path: '/foundation/spacing', name: 'Spacing', Page: SpacingPage },
       { path: '/foundation/layout', name: 'Layout', Page: LayoutPage },
+    ],
+  },
+  {
+    group: 'Primitives',
+    items: [
+      { path: '/primitives/icon', name: 'Icon', Page: IconPage },
+      { path: '/primitives/input', name: 'Input', Page: InputPage },
     ],
   },
   {

@@ -1,0 +1,68 @@
+// ============================================================================
+// Input — token-bound text field. Sizes mirror Button (sm/md/lg). The root is
+// a flex shell so leading/trailing affixes sit inside one focusable-looking box.
+// ============================================================================
+@use '../../styles/typography' as type;
+
+.vds-input {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  background-color: var(--vds-surface);
+  border: 1px solid var(--vds-line-strong);
+  border-radius: var(--vds-radius-md);
+  color: var(--vds-ink);
+  transition:
+    border-color var(--vds-dur-fast) var(--vds-ease-out),
+    box-shadow var(--vds-dur-fast) var(--vds-ease-out);
+
+  // focus ring follows the inner input's focus
+  &:focus-within {
+    border-color: var(--vds-focus-ring);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--vds-focus-ring) 35%, transparent);
+  }
+
+  &--invalid {
+    border-color: var(--vds-danger);
+    &:focus-within {
+      border-color: var(--vds-danger);
+      box-shadow: 0 0 0 2px color-mix(in oklab, var(--vds-danger) 30%, transparent);
+    }
+  }
+
+  &--disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  // ---- sizes (heights match Button) ----
+  &--sm { height: 2rem;    padding: 0 0.625rem; @include type.step(detail); }
+  &--md { height: 2.25rem; padding: 0 0.75rem;  @include type.step(body); }
+  &--lg { height: 2.75rem; padding: 0 1rem;     @include type.step(body-lg); }
+
+  &__field {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 100%;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    outline: none;
+
+    &::placeholder { color: var(--vds-ink-subtle); }
+  }
+
+  &__affix {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    color: var(--vds-ink-subtle);
+  }
+
+  // Trailing affix is often an interactive clear button — let it receive clicks.
+  &__affix--trail { cursor: pointer; }
+}
