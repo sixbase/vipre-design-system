@@ -1,18 +1,29 @@
 import { useState } from 'react'
-import { Search, X } from 'lucide-react'
+import { Search, X, Mail, Globe, User } from 'lucide-react'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { Section, Preview, IC } from '../primitives.jsx'
-import { Input, Icon, Text } from '../../components/index.js'
+import { Input, Textarea, Icon, Text } from '../../components/index.js'
 
-/* A field with a label above and an optional red error message below.
-   (Until a Field/Label primitive lands, this shows the intended pattern.) */
-function LabeledField({ label, htmlFor, error, children }) {
+/* A field with a label (or eyebrow) above, optional help text and/or a red
+   error message below. (Until a Field/Label primitive lands, this shows the
+   intended pattern.) */
+function LabeledField({ label, eyebrow, htmlFor, help, error, children }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
-      <Text as="label" htmlFor={htmlFor} variant="detail" tone="muted">
+      <Text
+        as="label"
+        htmlFor={htmlFor}
+        variant={eyebrow ? 'eyebrow' : 'detail'}
+        tone="muted"
+      >
         {label}
       </Text>
       {children}
+      {help && !error && (
+        <Text as="span" id={`${htmlFor}-help`} variant="detail" tone="muted">
+          {help}
+        </Text>
+      )}
       {error && (
         <Text as="span" id={`${htmlFor}-error`} role="alert" variant="detail" tone="danger">
           {error}
@@ -21,6 +32,8 @@ function LabeledField({ label, htmlFor, error, children }) {
     </div>
   )
 }
+
+const FIELD_COL = { display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', maxWidth: 360 }
 
 function SearchDemo() {
   const [value, setValue] = useState('')
@@ -114,20 +127,68 @@ export function InputPage() {
         />
       </Section>
 
-      <Section title="Search field" note="Compose leading + trailing slots with Icon — the clear button appears once there's text.">
+      <Section title="Leading icon" note="Put an icon in front of the text with the leading slot — clarifies what a field is for.">
         <Preview
-          canvas={<SearchDemo />}
+          canvas={
+            <div style={FIELD_COL}>
+              <Input type="email" placeholder="you@company.com" leading={<Icon as={Mail} size="sm" />} />
+              <Input type="url" placeholder="https://…" leading={<Icon as={Globe} size="sm" />} />
+              <Input placeholder="Username" leading={<Icon as={User} size="sm" />} />
+            </div>
+          }
           code={`<Input
-  placeholder="Search devices…"
-  value={value}
-  onChange={(e) => setValue(e.target.value)}
-  leading={<Icon as={Search} size="sm" tone="subtle" />}
-  trailing={value && (
-    <button onClick={() => setValue('')} aria-label="Clear search">
-      <Icon as={X} size="sm" tone="subtle" />
-    </button>
-  )}
+  type="email"
+  placeholder="you@company.com"
+  leading={<Icon as={Mail} size="sm" />}
 />`}
+        />
+      </Section>
+
+      <Section title="With help text" note="A muted hint below the field. Link it with aria-describedby so screen readers read it.">
+        <Preview
+          canvas={
+            <div style={FIELD_COL}>
+              <LabeledField label="Workspace name" htmlFor="ex-ws" help="Lowercase letters, numbers and dashes only.">
+                <Input id="ex-ws" placeholder="acme-prod" aria-describedby="ex-ws-help" />
+              </LabeledField>
+            </div>
+          }
+          code={`<label htmlFor="ws">Workspace name</label>
+<Input id="ws" aria-describedby="ws-help" placeholder="acme-prod" />
+<Text id="ws-help" variant="detail" tone="muted">
+  Lowercase letters, numbers and dashes only.
+</Text>`}
+        />
+      </Section>
+
+      <Section title="With eyebrow label" note="An uppercase overline label using the eyebrow type step — for grouped or sectioned forms.">
+        <Preview
+          canvas={
+            <div style={FIELD_COL}>
+              <LabeledField label="Primary contact" eyebrow htmlFor="ex-eb">
+                <Input id="ex-eb" placeholder="Full name" />
+              </LabeledField>
+            </div>
+          }
+          code={`<Text as="label" htmlFor="contact" variant="eyebrow" tone="muted">
+  Primary contact
+</Text>
+<Input id="contact" placeholder="Full name" />`}
+        />
+      </Section>
+
+      <Section title="Multi-line (Textarea)" note="For longer, paragraph-style input. Textarea is a sibling primitive that shares the Input look and is vertically resizable.">
+        <Preview
+          canvas={
+            <div style={FIELD_COL}>
+              <LabeledField label="Notes" htmlFor="ex-notes" help="Add context for your teammates.">
+                <Textarea id="ex-notes" rows={4} placeholder="Add a note…" aria-describedby="ex-notes-help" />
+              </LabeledField>
+            </div>
+          }
+          code={`import { Textarea } from 'vipre-design-system'
+
+<Textarea rows={4} placeholder="Add a note…" />`}
         />
       </Section>
     </ComponentPage>
