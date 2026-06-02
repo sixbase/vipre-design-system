@@ -16,7 +16,7 @@ export function TypographyPage() {
               <code>--vds-font-sans</code>
             </span>
             <span className="vds-type-preview" style={{ fontSize: '1.25rem' }}>
-              The quick brown fox
+              The quick brown fox jumps over the lazy dog
             </span>
             <span className="vds-type-value">Rubik</span>
           </div>
@@ -31,21 +31,21 @@ export function TypographyPage() {
         <div className="vds-type-table">
           {TYPE_SCALE.map((s) => (
             <div key={s.token} className="vds-scale-row">
+              <div className="vds-scale-preview">
+                {s.kind === 'h' ? (
+                  <Heading level={s.level} as="div">
+                    The quick brown fox jumps over the lazy dog
+                  </Heading>
+                ) : (
+                  <Text variant={s.variant} as="div">
+                    The quick brown fox jumps over the lazy dog
+                  </Text>
+                )}
+              </div>
               <div className="vds-scale-meta">
                 <span className="vds-scale-token">{s.token}</span>
                 <span className="vds-scale-size">{s.size}</span>
                 <span className="vds-scale-usage">{s.usage}</span>
-              </div>
-              <div className="vds-scale-preview">
-                {s.kind === 'h' ? (
-                  <Heading level={s.level} as="div">
-                    Aa
-                  </Heading>
-                ) : (
-                  <Text variant={s.variant} as="div">
-                    Aa
-                  </Text>
-                )}
               </div>
             </div>
           ))}
