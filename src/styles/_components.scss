@@ -7,6 +7,10 @@
 @use '../components/Inline/Inline';
 @use '../components/Divider/Divider';
 
+// Composites
+@use '../components/Card/Card';
+@use '../components/StatTile/StatTile';
+
 // Controls
 @use '../components/Icon/Icon';
 @use '../components/Field/Field';
