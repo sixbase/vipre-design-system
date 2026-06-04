@@ -1,4 +1,4 @@
-import { Shield, Monitor, TriangleAlert, Activity } from 'lucide-react'
+import { Shield, Monitor, TriangleAlert, Activity, Users, Mail, Paperclip } from 'lucide-react'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { Section, Preview, IC } from '../primitives.jsx'
 import { StatTile } from '../../components/index.js'
@@ -55,18 +55,32 @@ export function StatTilePage() {
         />
       </Section>
 
-      <Section title="Icon treatment" note="Default 'outline' (a thin ring, transparent center, tone-colored glyph — Vipre's style). 'soft' fills the chip with the tone tint.">
+      <Section title="Icons" note="Pick an icon that matches the metric. The ring is neutral; the glyph carries the tone (green / blue / red).">
         <Preview
           canvas={
             <div style={GRID}>
-              <StatTile icon={Monitor} value={4} label="Users" tone="success" />
-              <StatTile icon={Shield} value={175} label="Emails" tone="primary" />
+              <StatTile icon={Users} value={4} label="Users" tone="success" />
+              <StatTile icon={Mail} value={175} label="Emails" tone="primary" />
               <StatTile icon={TriangleAlert} value={60} label="Threats" tone="danger" />
-              <StatTile icon={Activity} value={52} label="Attachments" tone="primary" iconVariant="soft" />
+              <StatTile icon={Paperclip} value={52} label="Attachments" tone="primary" />
             </div>
           }
-          code={`<StatTile icon={Monitor} value={4} label="Users" tone="success" />        {/* outline (default) */}
-<StatTile icon={Activity} value={52} label="Attachments" iconVariant="soft" />`}
+          code={`<StatTile icon={Users} value={4} label="Users" tone="success" />
+<StatTile icon={Mail} value={175} label="Emails" tone="primary" />
+<StatTile icon={Paperclip} value={52} label="Attachments" tone="primary" />`}
+        />
+      </Section>
+
+      <Section title="Icon variant" note="'outline' (default) is a ring; 'soft' fills the chip with the tone tint. Same icon, two treatments.">
+        <Preview
+          canvas={
+            <div style={GRID}>
+              <StatTile icon={Mail} value={175} label="Outline (default)" tone="primary" />
+              <StatTile icon={Mail} value={175} label="Soft" tone="primary" iconVariant="soft" />
+            </div>
+          }
+          code={`<StatTile icon={Mail} … />                     {/* outline — default */}
+<StatTile icon={Mail} … iconVariant="soft" />  {/* filled chip */}`}
         />
       </Section>
 
