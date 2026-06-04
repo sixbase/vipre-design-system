@@ -58,17 +58,15 @@
   &__delta { flex-shrink: 0; }
   &__spark { flex-shrink: 0; }
 
-  // structured delta chip: arrow + value, colored by direction
+  // structured delta chip: signed value, colored by direction (+/- conveys it)
   &__delta--chip {
     display: inline-flex;
     align-items: center;
-    gap: 0.15rem;
     font-size: 0.75rem;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     line-height: 1;
   }
-  &__delta-arrow { font-size: 0.6em; line-height: 1; }
   &__delta--good { color: var(--vds-success); }
   &__delta--bad { color: var(--vds-danger); }
 

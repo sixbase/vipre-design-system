@@ -11,7 +11,7 @@ export function StatTilePage() {
   return (
     <ComponentPage
       title="Stat Tile"
-      description="A KPI tile — a prominent value with a label, optional icon, a structured delta (auto ▲/▼ + color), an optional caption and trend sparkline, plus loading and empty states. Two layouts (stacked / row) and three sizes. Composes Surface + Icon + Sparkline."
+      description="A KPI tile — a prominent value with a label, optional icon, a structured delta (signed, auto-colored), an optional caption and trend sparkline, plus loading and empty states. Two layouts (stacked / row) and three sizes. Composes Surface + Icon + Sparkline."
       installCode={`import { StatTile } from 'vipre-design-system'`}
       props={[
         {
@@ -26,7 +26,7 @@ export function StatTilePage() {
             [{ code: 'tone' }, { code: "'default' | 'primary' | 'success' | 'warning' | 'danger'" }, { code: "'default'" }, 'Colors value + icon'],
             [{ code: 'size' }, { code: "'sm' | 'md' | 'lg'" }, { code: "'md'" }, 'Value size'],
             [{ code: 'layout' }, { code: "'row' | 'stacked'" }, { code: "'row'" }, 'Compact row (default) vs stacked card'],
-            [{ code: 'delta' }, { code: "'+3%' | number | { value, direction } | node" }, '—', 'Auto arrow + color'],
+            [{ code: 'delta' }, { code: "'+3%' | number | { value, direction } | node" }, '—', 'Signed value, auto-colored'],
             [{ code: 'invertDelta' }, { code: 'boolean' }, { code: 'false' }, '"Down" is good (e.g. error counts)'],
             [{ code: 'trend' }, { code: 'number[]' }, '—', 'Sparkline, colored by the delta'],
             [{ code: 'loading' }, { code: 'boolean' }, { code: 'false' }, 'Skeleton placeholder'],
@@ -36,7 +36,7 @@ export function StatTilePage() {
       ]}
       accessibility={[
         <>With <IC>onClick</IC> it renders a real <IC>{'<button>'}</IC> — keyboard + focus ring included.</>,
-        <>Icon, arrow and trend are decorative (<IC>aria-hidden</IC>); the sign in the delta text still conveys direction.</>,
+        <>Icon and trend are decorative (<IC>aria-hidden</IC>); the +/- sign conveys direction and color reinforces good/bad.</>,
         <><IC>loading</IC> sets <IC>aria-busy</IC>; tone colors meet AA contrast in both themes.</>,
       ]}
     >
@@ -70,7 +70,7 @@ export function StatTilePage() {
         />
       </Section>
 
-      <Section title="Delta" note="A string/number auto-derives the arrow + color. Use invertDelta where down is good — note 'At risk +5' reads red.">
+      <Section title="Delta" note="The +/- shows direction; color auto-derives (green good / red bad). Use invertDelta where down is good — note 'At risk +5' reads red.">
         <Preview
           canvas={
             <div style={GRID}>
@@ -80,9 +80,9 @@ export function StatTilePage() {
               <StatTile value={4} label="Incidents" delta="-2" invertDelta />
             </div>
           }
-          code={`<StatTile value={92} suffix="%" label="Uptime" delta="+1.2%" />   {/* up = green */}
-<StatTile value={318} label="New devices" delta="-8%" />          {/* down = red */}
-<StatTile value={17} label="At risk" delta="+5" invertDelta />    {/* up but BAD = red */}`}
+          code={`<StatTile value={92} suffix="%" label="Uptime" delta="+1.2%" />   {/* + = green */}
+<StatTile value={318} label="New devices" delta="-8%" />          {/* - = red */}
+<StatTile value={17} label="At risk" delta="+5" invertDelta />    {/* + but BAD = red */}`}
         />
       </Section>
 

@@ -36,7 +36,7 @@ function resolveDelta(delta, invert) {
  * StatTile
  *
  * A KPI tile: a prominent value + label, optional icon, structured delta
- * (auto ▲/▼ + color), caption, trend sparkline, and loading/empty states.
+ * (signed value, auto-colored), caption, trend sparkline, and loading/empty states.
  * Composes Surface + Icon + Sparkline.
  *
  * Props:
@@ -102,7 +102,6 @@ export const StatTile = forwardRef(function StatTile(
       <span className="vds-stat__delta">{d.node}</span>
     ) : (
       <span className={cx('vds-stat__delta', 'vds-stat__delta--chip', d.good ? 'vds-stat__delta--good' : 'vds-stat__delta--bad')}>
-        <span className="vds-stat__delta-arrow" aria-hidden="true">{d.direction === 'up' ? '▲' : '▼'}</span>
         {d.value}
       </span>
     ))
