@@ -137,6 +137,7 @@ export const StatTile = forwardRef(function StatTile(
       aria-busy={loading || undefined}
       padding={size === 'lg' ? 5 : 4}
       elevation="sm"
+      bordered={false}
       className={cx(
         'vds-stat',
         `vds-stat--${layout}`,
