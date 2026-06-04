@@ -4,6 +4,7 @@ import { ColorsPage } from './pages/ColorsPage.jsx'
 import { TypographyPage } from './pages/TypographyPage.jsx'
 import { SpacingPage } from './pages/SpacingPage.jsx'
 import { LayoutPage } from './pages/LayoutPage.jsx'
+import { DepthPage } from './pages/DepthPage.jsx'
 import { IconPage } from './pages/IconPage.jsx'
 import { FieldPage } from './pages/FieldPage.jsx'
 import { InputPage } from './pages/InputPage.jsx'
@@ -16,6 +17,8 @@ import { BadgePage } from './pages/BadgePage.jsx'
 import { CardPage } from './pages/CardPage.jsx'
 import { StatTilePage } from './pages/StatTilePage.jsx'
 import { SparklinePage } from './pages/SparklinePage.jsx'
+import { TablePage } from './pages/TablePage.jsx'
+import { ScopeNavigatorPage } from './pages/ScopeNavigatorPage.jsx'
 
 /* Single source of truth for both the sidebar nav and the hash router. */
 export const NAV = [
@@ -33,6 +36,7 @@ export const NAV = [
       { path: '/foundation/typography', name: 'Typography', Page: TypographyPage },
       { path: '/foundation/spacing', name: 'Spacing', Page: SpacingPage },
       { path: '/foundation/layout', name: 'Layout', Page: LayoutPage },
+      { path: '/foundation/depth', name: 'Depth', Page: DepthPage },
     ],
   },
   {
@@ -55,6 +59,8 @@ export const NAV = [
       { path: '/components/card', name: 'Card', Page: CardPage },
       { path: '/components/stat-tile', name: 'Stat Tile', Page: StatTilePage },
       { path: '/components/sparkline', name: 'Sparkline', Page: SparklinePage },
+      { path: '/components/table', name: 'Table', Page: TablePage },
+      { path: '/components/scope-navigator', name: 'Scope Navigator', Page: ScopeNavigatorPage },
     ],
   },
 ]

@@ -10,7 +10,9 @@ import { cx } from '../../lib/cx.js'
  *
  * Props:
  * - data:        number[] — the series (≥2 points)
- * - tone:        'primary' | 'success' | 'warning' | 'danger' | 'muted'  (default 'primary')
+ * - tone:        'primary' | 'success' | 'warning' | 'danger' | 'muted', or a
+ *                chromatic family for categorical series: 'azure' | 'harbor' |
+ *                'emerald' | 'amber' | 'rose' | 'orchid' | 'clay'  (default 'primary')
  * - width/height: px of the drawing box   (default 96 × 28)
  * - area:        fill under the line       (default true)
  * - label:       accessible name; if omitted the chart is decorative (aria-hidden)

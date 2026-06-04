@@ -29,6 +29,7 @@ Structure and delivery mirror `sixbase/claude-design-system`; the aesthetic is f
 | `Text` | `variant` (body-lg…nano), `as`, `tone` | ✅ |
 | `Button` | `variant` (primary/secondary/ghost/danger) × `size` (sm/md/lg) | ✅ |
 | `Badge` | `tone` (neutral/primary/success/warning/danger/info), `dot` | ✅ |
+| `ScopeNavigator` | `path`, `onNavigate`, `rootItems`, `typeConfig`, `statusConfig`, `onSearch`, `actions` — the MSP hierarchy breadcrumb (composite: Surface + Input + Icon) | ✅ |
 
 ## Roadmap — the data-dense set MSP needs
 

@@ -27,3 +27,19 @@ When a component's `.scss` lives in `src/components/{Name}/`, the path to the ty
 ## Hash routing for static hosting
 
 The docs use a tiny hash router (`#/components/button`). Hash routes need zero server config on GitHub Pages — no 404 rewrites, no `base` headaches for navigation. Kept dependency-free (no react-router) per the lean mandate.
+
+## Composites with overlays need a `popover` preview escape hatch
+
+The docs `Preview` box is `overflow: hidden` (clean rounded corners, clipped code strip). That
+silently **clips any absolutely-positioned overlay** — a dropdown/menu opened inside the demo just
+vanishes below the fold. When documenting a component with popovers (e.g. `ScopeNavigator`), pass
+`<Preview popover reserve={420}>`: `--popover` flips the box to `overflow: visible` + top-aligns the
+canvas, and `reserve` gives the open overlay vertical room. Verifying the overlay's *content* is
+still best done via DOM (`preview_inspect` / `preview_eval`), not the clipped screenshot.
+
+## Fixed-chrome surfaces: tint with `color-mix` on a token, never raw rgba
+
+The ScopeNavigator bar is always navy in both themes (product chrome). Its light-on-navy overlays
+(translucent borders/hover fills) are expressed as `color-mix(in oklab, var(--vds-white) 15%,
+transparent)` — token-bound, not `rgba(255,255,255,.15)`. Keeps the "no raw values" rule intact even
+for a surface that deliberately ignores the light/dark flip.

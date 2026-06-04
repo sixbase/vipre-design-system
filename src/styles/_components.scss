@@ -5,12 +5,15 @@
 @use '../components/Surface/Surface';
 @use '../components/Stack/Stack';
 @use '../components/Inline/Inline';
+@use '../components/Grid/Grid';
 @use '../components/Divider/Divider';
 
 // Composites
 @use '../components/Card/Card';
 @use '../components/StatTile/StatTile';
 @use '../components/Sparkline/Sparkline';
+@use '../components/Table/Table';
+@use '../components/ScopeNavigator/ScopeNavigator';
 
 // Controls
 @use '../components/Icon/Icon';

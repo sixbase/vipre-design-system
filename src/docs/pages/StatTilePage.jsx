@@ -1,9 +1,11 @@
 import { Shield, Monitor, TriangleAlert, Activity, Users, Mail, Paperclip } from 'lucide-react'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { Section, Preview, IC } from '../primitives.jsx'
-import { StatTile } from '../../components/index.js'
+import { StatTile, Grid } from '../../components/index.js'
 
-const GRID = { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '0.75rem', width: '100%', maxWidth: 520 }
+// Responsive auto-fit grid (matches the Grid primitive) — wraps to fewer
+// columns and stacks to one on small screens.
+const GRID = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 14rem), 1fr))', gap: '0.75rem', width: '100%', maxWidth: 520 }
 const ROW = { display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%', maxWidth: 360 }
 const TREND = [4, 6, 5, 8, 7, 9, 8, 11]
 
@@ -133,6 +135,25 @@ export function StatTilePage() {
             </div>
           }
           code={`<StatTile layout="stacked" icon={Shield} value={1192} label="Protected" trend={[…]} />`}
+        />
+      </Section>
+
+      <Section title="Responsive grid" note="Wrap tiles in <Grid> — auto-fit columns at a min width that stack to one column on small screens. No media queries; never overflows. (Resize the preview / your window to see it reflow.)">
+        <Preview
+          canvas={
+            <Grid min="14rem" gap={3} style={{ maxWidth: 520 }}>
+              <StatTile icon={Users} value={42} label="Distributors" tone="primary" />
+              <StatTile icon={Shield} value={47} label="Resellers" tone="success" />
+              <StatTile icon={Mail} value={324} label="Customers" tone="primary" />
+            </Grid>
+          }
+          code={`import { Grid, StatTile } from 'vipre-design-system'
+
+<Grid min="14rem" gap={3}>
+  <StatTile icon={Users} value={42} label="Distributors" />
+  <StatTile icon={Shield} value={47} label="Resellers" />
+  <StatTile icon={Mail} value={324} label="Customers" />
+</Grid>`}
         />
       </Section>
 
