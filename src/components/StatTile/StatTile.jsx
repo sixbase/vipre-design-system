@@ -1,52 +1,124 @@
-import { forwardRef } from 'react'
+import { forwardRef, isValidElement } from 'react'
 import { cx } from '../../lib/cx.js'
 import { Surface } from '../Surface/Surface.jsx'
 import { Icon } from '../Icon/Icon.jsx'
 import { Sparkline } from '../Sparkline/Sparkline.jsx'
 
+/* Format a value: numbers get locale separators; prefix/suffix wrap it. */
+function formatValue(value, prefix, suffix) {
+  if (value == null || value === '') return null // → empty state
+  const core = typeof value === 'number' ? value.toLocaleString() : value
+  return `${prefix ?? ''}${core}${suffix ?? ''}`
+}
+
+/* Normalize delta: a node (render as-is), or a value/{value,direction}. Derives
+   direction from the sign when not given, and whether it reads as "good". */
+function resolveDelta(delta, invert) {
+  if (delta == null) return null
+  if (isValidElement(delta)) return { node: delta }
+  let value
+  let direction
+  if (typeof delta === 'object') {
+    value = delta.value
+    direction = delta.direction
+  } else {
+    value = delta
+  }
+  if (!direction) {
+    const num = typeof value === 'number' ? value : parseFloat(String(value).replace(/[^0-9.eE+-]/g, ''))
+    direction = Number.isFinite(num) && num < 0 ? 'down' : 'up'
+  }
+  const good = invert ? direction === 'down' : direction === 'up'
+  return { value, direction, good }
+}
+
 /**
  * StatTile
  *
- * A KPI tile. A prominent tabular value with a label, optional icon, optional
- * delta (e.g. a Badge), and an optional `trend` sparkline. `tone` colors the
- * value/icon/trend for threshold states; `size` scales the value; `layout`
- * switches between a stacked card and a compact row. Composes Surface + Icon +
- * Sparkline. Pass `onClick` to make it a drill-in button.
+ * A KPI tile: a prominent value + label, optional icon, structured delta
+ * (auto ▲/▼ + color), caption, trend sparkline, and loading/empty states.
+ * Composes Surface + Icon + Sparkline.
  *
  * Props:
- * - value:  the metric (string|number) — tabular-nums
- * - label:  the metric name
- * - icon:   optional leading icon component
- * - tone:   'default' | 'primary' | 'success' | 'warning' | 'danger'
- * - size:   'sm' | 'md' | 'lg'   (value size; default 'md')
- * - layout: 'stacked' | 'row'    (default 'stacked')
- * - delta:  node shown top-right (stacked) / right (row), e.g. a Badge
- * - trend:  number[] — renders a Sparkline tinted to match the tone
- * - onClick: makes the tile a button
- * - all Surface props pass through (padding, elevation, radius…)
+ * - value:       string | number (numbers are locale-formatted). Empty → "—".
+ * - prefix/suffix: wrap the value (e.g. prefix="$", suffix="%")
+ * - label:       the metric name
+ * - caption:     small secondary line (e.g. "of 1,400 total")
+ * - icon:        optional leading icon component
+ * - tone:        'default' | 'primary' | 'success' | 'warning' | 'danger'
+ * - size:        'sm' | 'md' | 'lg'   (value size)
+ * - layout:      'stacked' | 'row'
+ * - delta:       '+3%' | -8 | { value, direction } | a node. Auto arrow + color.
+ * - invertDelta: treat "down" as good (e.g. error counts)   (default false)
+ * - trend:       number[] → Sparkline (colored by the delta when present)
+ * - loading:     show a skeleton    (default false)
+ * - onClick:     makes the tile a button
  *
  * @example
- * <StatTile icon={Shield} value="1,192" label="Protected" tone="success" trend={[4,6,5,8,7,9]} />
- * <StatTile layout="row" size="sm" value="64%" label="Utilization" tone="warning" />
+ * <StatTile icon={Shield} value={1192} label="Protected" tone="success"
+ *           delta="+3%" trend={[4,6,5,8,7,9]} />
+ * <StatTile value={17} label="At risk" tone="danger" delta="+5" invertDelta />
+ * <StatTile value={92} suffix="%" label="Uptime" caption="last 30 days" loading />
  */
 export const StatTile = forwardRef(function StatTile(
-  { value, label, icon, tone = 'default', size = 'md', layout = 'stacked', delta, trend, onClick, className, ...props },
+  {
+    value,
+    prefix,
+    suffix,
+    label,
+    caption,
+    icon,
+    tone = 'default',
+    size = 'md',
+    layout = 'stacked',
+    delta,
+    invertDelta = false,
+    trend,
+    loading = false,
+    onClick,
+    className,
+    ...props
+  },
   ref,
 ) {
   const interactive = typeof onClick === 'function'
-  const sparkTone = tone === 'default' ? 'muted' : tone
-  const hasTrend = Array.isArray(trend) && trend.length >= 2
-
-  // glyph ~ the value's size so the icon reads as a peer of the number
+  const d = resolveDelta(delta, invertDelta)
+  const formatted = formatValue(value, prefix, suffix)
+  const hasTrend = !loading && Array.isArray(trend) && trend.length >= 2
+  const sparkTone = d && !d.node ? (d.good ? 'success' : 'danger') : tone === 'default' ? 'muted' : tone
   const iconGlyph = { sm: 'md', md: 'lg', lg: 'lg' }[size] ?? 'lg'
+
   const iconEl = icon && (
     <span className="vds-stat__icon" aria-hidden="true">
       <Icon as={icon} size={iconGlyph} />
     </span>
   )
-  const deltaEl = delta != null && <span className="vds-stat__delta">{delta}</span>
-  const valueEl = <span className="vds-stat__value">{value}</span>
-  const labelEl = <span className="vds-stat__label">{label}</span>
+
+  const deltaEl =
+    d &&
+    (d.node ? (
+      <span className="vds-stat__delta">{d.node}</span>
+    ) : (
+      <span className={cx('vds-stat__delta', 'vds-stat__delta--chip', d.good ? 'vds-stat__delta--good' : 'vds-stat__delta--bad')}>
+        <span className="vds-stat__delta-arrow" aria-hidden="true">{d.direction === 'up' ? '▲' : '▼'}</span>
+        {d.value}
+      </span>
+    ))
+
+  const valueEl = loading ? (
+    <span className="vds-stat__skeleton vds-stat__skeleton--value" aria-hidden="true" />
+  ) : (
+    <span className="vds-stat__value">{formatted ?? '—'}</span>
+  )
+  const labelEl = loading ? (
+    <span className="vds-stat__skeleton vds-stat__skeleton--label" aria-hidden="true" />
+  ) : (
+    <span className="vds-stat__label">{label}</span>
+  )
+  const captionEl = !loading && caption != null && <span className="vds-stat__caption">{caption}</span>
+  const trendEl = hasTrend && (
+    <Sparkline className="vds-stat__spark" data={trend} tone={sparkTone} width={layout === 'row' ? 72 : 120} height={layout === 'row' ? 28 : 32} />
+  )
 
   return (
     <Surface
@@ -54,6 +126,7 @@ export const StatTile = forwardRef(function StatTile(
       as={interactive ? 'button' : 'div'}
       type={interactive ? 'button' : undefined}
       onClick={onClick}
+      aria-busy={loading || undefined}
       padding={size === 'lg' ? 5 : 4}
       className={cx(
         'vds-stat',
@@ -71,8 +144,9 @@ export const StatTile = forwardRef(function StatTile(
           <span className="vds-stat__body">
             {valueEl}
             {labelEl}
+            {captionEl}
           </span>
-          {hasTrend && <Sparkline className="vds-stat__spark" data={trend} tone={sparkTone} width={72} height={28} />}
+          {trendEl}
           {deltaEl}
         </>
       ) : (
@@ -85,7 +159,8 @@ export const StatTile = forwardRef(function StatTile(
           )}
           {valueEl}
           {labelEl}
-          {hasTrend && <Sparkline className="vds-stat__spark" data={trend} tone={sparkTone} width={120} height={32} />}
+          {captionEl}
+          {trendEl}
         </>
       )}
     </Surface>

@@ -35,8 +35,44 @@
     color: var(--vds-ink-muted);
   }
 
+  &__caption {
+    @include type.step(micro);
+    color: var(--vds-ink-subtle);
+  }
+
   &__delta { flex-shrink: 0; }
   &__spark { flex-shrink: 0; }
+
+  // structured delta chip: arrow + value, colored by direction
+  &__delta--chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  &__delta-arrow { font-size: 0.6em; line-height: 1; }
+  &__delta--good { color: var(--vds-success); }
+  &__delta--bad { color: var(--vds-danger); }
+
+  // loading skeleton
+  &__skeleton {
+    display: block;
+    border-radius: var(--vds-radius-sm);
+    background-image: linear-gradient(
+      90deg,
+      var(--vds-line) 25%,
+      var(--vds-line-strong) 37%,
+      var(--vds-line) 63%
+    );
+    background-size: 400% 100%;
+    animation: vds-stat-shimmer 1.4s ease infinite;
+
+    &--value { width: 4.5rem; height: 1.5rem; }
+    &--label { width: 6rem; height: 0.75rem; margin-top: 0.4rem; }
+  }
 
   // ---- layout: stacked (default) ----
   &--stacked {
@@ -115,4 +151,13 @@
     .vds-stat__value { color: var(--vds-danger); }
     .vds-stat__icon { background-color: var(--vds-danger-soft); color: var(--vds-danger); }
   }
+}
+
+@keyframes vds-stat-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vds-stat__skeleton { animation: none; }
 }
