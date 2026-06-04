@@ -21,7 +21,8 @@ export function StatTilePage() {
             [{ code: 'prefix / suffix' }, { code: 'string' }, '—', 'Wrap the value (e.g. "$", "%")'],
             [{ code: 'label' }, { code: 'string' }, '—', 'The metric name'],
             [{ code: 'caption' }, { code: 'ReactNode' }, '—', 'Small secondary line (context)'],
-            [{ code: 'icon' }, { code: 'icon component' }, '—', 'Leading icon in a tinted box'],
+            [{ code: 'icon' }, { code: 'icon component' }, '—', 'Leading icon'],
+            [{ code: 'iconVariant' }, { code: "'outline' | 'soft'" }, { code: "'outline'" }, 'Ringed (transparent) vs filled chip'],
             [{ code: 'tone' }, { code: "'default' | 'primary' | 'success' | 'warning' | 'danger'" }, { code: "'default'" }, 'Colors value + icon'],
             [{ code: 'size' }, { code: "'sm' | 'md' | 'lg'" }, { code: "'md'" }, 'Value size'],
             [{ code: 'layout' }, { code: "'stacked' | 'row'" }, { code: "'stacked'" }, 'Card vs compact row'],
@@ -51,6 +52,21 @@ export function StatTilePage() {
           }
           code={`<StatTile icon={Monitor} value={1284} label="Total devices"
   caption="of 1,400 seats" delta="+3%" trend={[…]} />`}
+        />
+      </Section>
+
+      <Section title="Icon treatment" note="Default 'outline' (a thin ring, transparent center, tone-colored glyph — Vipre's style). 'soft' fills the chip with the tone tint.">
+        <Preview
+          canvas={
+            <div style={GRID}>
+              <StatTile icon={Monitor} value={4} label="Users" tone="success" />
+              <StatTile icon={Shield} value={175} label="Emails" tone="primary" />
+              <StatTile icon={TriangleAlert} value={60} label="Threats" tone="danger" />
+              <StatTile icon={Activity} value={52} label="Attachments" tone="primary" iconVariant="soft" />
+            </div>
+          }
+          code={`<StatTile icon={Monitor} value={4} label="Users" tone="success" />        {/* outline (default) */}
+<StatTile icon={Activity} value={52} label="Attachments" iconVariant="soft" />`}
         />
       </Section>
 

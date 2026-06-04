@@ -45,6 +45,7 @@ function resolveDelta(delta, invert) {
  * - label:       the metric name
  * - caption:     small secondary line (e.g. "of 1,400 total")
  * - icon:        optional leading icon component
+ * - iconVariant: 'outline' (ringed, transparent — default) | 'soft' (filled chip)
  * - tone:        'default' | 'primary' | 'success' | 'warning' | 'danger'
  * - size:        'sm' | 'md' | 'lg'   (value size)
  * - layout:      'stacked' | 'row'
@@ -68,6 +69,7 @@ export const StatTile = forwardRef(function StatTile(
     label,
     caption,
     icon,
+    iconVariant = 'outline',
     tone = 'default',
     size = 'md',
     layout = 'stacked',
@@ -132,6 +134,7 @@ export const StatTile = forwardRef(function StatTile(
         'vds-stat',
         `vds-stat--${layout}`,
         `vds-stat--size-${size}`,
+        `vds-stat--icon-${iconVariant}`,
         `vds-stat--${tone}`,
         interactive && 'vds-stat--interactive',
         className,

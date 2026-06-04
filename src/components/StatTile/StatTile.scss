@@ -10,6 +10,10 @@
   text-align: left;
   font-family: var(--vds-font-sans);
 
+  // tone → accent (icon glyph) + soft (filled-chip bg). Set per tone below.
+  --vds-stat-accent: var(--vds-ink-muted);
+  --vds-stat-soft: color-mix(in oklab, var(--vds-ink-muted) 18%, transparent);
+
   &__icon {
     flex-shrink: 0;
     display: inline-flex;
@@ -17,10 +21,21 @@
     justify-content: center;
     width: 2.5rem;   // sized to roughly the value+label block; per-size below
     height: 2.5rem;
+    color: var(--vds-stat-accent);
+  }
+
+  // ---- icon treatments ----
+  // outline (default, Vipre style): a thin neutral ring, transparent center,
+  // the glyph carries the meaning via tone.
+  &--icon-outline .vds-stat__icon {
+    border-radius: 9999px;
+    border: 1px solid var(--vds-line-strong);
+    background-color: transparent;
+  }
+  // soft: filled rounded chip tinted to the tone.
+  &--icon-soft .vds-stat__icon {
     border-radius: var(--vds-radius-sm);
-    // Default tone: a clearly-visible neutral chip (stronger tint + ink glyph).
-    background-color: color-mix(in oklab, var(--vds-ink-muted) 20%, transparent);
-    color: var(--vds-ink);
+    background-color: var(--vds-stat-soft);
   }
 
   &__value {
@@ -134,22 +149,26 @@
     }
   }
 
-  // ---- tones (color the value + icon box; trend tinted via Sparkline tone) ----
+  // ---- tones (set the accent for the icon glyph + soft chip; color the value) ----
   &--primary {
+    --vds-stat-accent: var(--vds-primary);
+    --vds-stat-soft: var(--vds-primary-soft);
     .vds-stat__value { color: var(--vds-primary); }
-    .vds-stat__icon { background-color: var(--vds-primary-soft); color: var(--vds-primary); }
   }
   &--success {
+    --vds-stat-accent: var(--vds-success);
+    --vds-stat-soft: var(--vds-success-soft);
     .vds-stat__value { color: var(--vds-success); }
-    .vds-stat__icon { background-color: var(--vds-success-soft); color: var(--vds-success); }
   }
   &--warning {
+    --vds-stat-accent: var(--vds-warning);
+    --vds-stat-soft: var(--vds-warning-soft);
     .vds-stat__value { color: var(--vds-warning); }
-    .vds-stat__icon { background-color: var(--vds-warning-soft); color: var(--vds-warning); }
   }
   &--danger {
+    --vds-stat-accent: var(--vds-danger);
+    --vds-stat-soft: var(--vds-danger-soft);
     .vds-stat__value { color: var(--vds-danger); }
-    .vds-stat__icon { background-color: var(--vds-danger-soft); color: var(--vds-danger); }
   }
 }
 
