@@ -145,8 +145,8 @@ export const StatTile = forwardRef(function StatTile(
         <>
           {iconEl}
           <span className="vds-stat__body">
-            {valueEl}
             {labelEl}
+            {valueEl}
             {captionEl}
           </span>
           {trendEl}
@@ -160,8 +160,8 @@ export const StatTile = forwardRef(function StatTile(
               {deltaEl}
             </span>
           )}
-          {valueEl}
           {labelEl}
+          {valueEl}
           {captionEl}
           {trendEl}
         </>
