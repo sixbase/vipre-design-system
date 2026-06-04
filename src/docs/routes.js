@@ -52,7 +52,7 @@ export const NAV = [
       { path: '/components/button', name: 'Button', Page: ButtonPage },
       { path: '/components/badge', name: 'Badge', Page: BadgePage },
       { path: '/components/card', name: 'Card', Page: CardPage },
-      { path: '/components/stat-tile', name: 'StatTile', Page: StatTilePage },
+      { path: '/components/stat-tile', name: 'Stat Tile', Page: StatTilePage },
     ],
   },
 ]

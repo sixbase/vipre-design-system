@@ -8,7 +8,7 @@ const GRID = { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))'
 export function StatTilePage() {
   return (
     <ComponentPage
-      title="StatTile"
+      title="Stat Tile"
       description="A KPI tile — a big tabular value with a label, an optional icon, an optional delta, and tone coloring for threshold states. The dashboard workhorse, composed from Surface + Icon. Pass onClick to make it a drill-in button."
       installCode={`import { StatTile } from 'vipre-design-system'`}
       props={[
