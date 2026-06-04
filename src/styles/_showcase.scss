@@ -194,6 +194,15 @@
     background-color: var(--vds-surface);
   }
 
+  // Opt-in for components with absolutely-positioned overlays (dropdowns, menus):
+  // let them escape the box, and top-align the canvas so they have room below.
+  &--popover {
+    overflow: visible;
+    .vds-preview__canvas {
+      align-items: flex-start;
+    }
+  }
+
   &__code {
     border-top: 1px solid var(--vds-line);
     background-color: var(--vds-canvas);
@@ -210,14 +219,14 @@
 
 // ---- Reference table -------------------------------------------------------
 // Horizontal-scroll wrapper so wide tables never overflow the page on mobile.
-.vds-table-wrap {
+.vds-ref-table-wrap {
   overflow-x: auto;
   margin: 1rem 0;
   -webkit-overflow-scrolling: touch;
 }
-.vds-table-wrap .vds-table { margin: 0; }
+.vds-ref-table-wrap .vds-ref-table { margin: 0; }
 
-.vds-table {
+.vds-ref-table {
   width: 100%;
   border-collapse: collapse;
   margin: 1rem 0;
@@ -523,5 +532,152 @@
   .vds-content { padding: 2rem 1.5rem 4rem; }
   .vds-swatches, .vds-swatches--wide, .vds-swatches--iris, .vds-swatches--semantic {
     grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+// ---- depth: priority order -------------------------------------------------
+.vds-depth-order {
+  list-style: none;
+  margin: 0.75rem 0 1.5rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  li { display: flex; align-items: flex-start; gap: 0.75rem; }
+
+  &__n {
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    background: var(--vds-primary);
+    color: var(--vds-on-primary);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+// ---- depth: elevation ladder -----------------------------------------------
+.vds-elev-ladder {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  margin: 0.75rem 0 1.5rem;
+  padding: 1.5rem;
+  background: var(--vds-canvas);
+  border: 1px solid var(--vds-line);
+  border-radius: var(--vds-radius-lg);
+}
+
+.vds-elev-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  &__name { text-transform: capitalize; }
+}
+
+.vds-elev-tile {
+  height: 5rem;
+  border-radius: var(--vds-radius-md);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  transition: box-shadow var(--vds-dur-base) var(--vds-ease-out);
+
+  &__n {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.75rem;
+    color: var(--vds-ink-subtle);
+    padding: 0.375rem 0.5rem;
+  }
+}
+
+// ---- depth: shadow scale ---------------------------------------------------
+.vds-shadow-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin: 0.75rem 0 1.5rem;
+  padding: 1.5rem 1rem;
+}
+
+.vds-shadow-item { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+
+.vds-shadow-chip {
+  width: 100%;
+  height: 4rem;
+  background: var(--vds-surface);
+  border-radius: var(--vds-radius-md);
+}
+
+.vds-mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+// ---- depth: stacking order -------------------------------------------------
+.vds-zstack {
+  position: relative;
+  height: 11rem;
+  margin: 0.75rem 0 1.5rem;
+
+  &__card {
+    position: absolute;
+    width: 9rem;
+    height: 4.5rem;
+    border-radius: var(--vds-radius-md);
+    background: var(--vds-surface-raised);
+    border: 1px solid var(--vds-line);
+    box-shadow: var(--vds-shadow-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--vds-ink-muted);
+    font-size: 0.8125rem;
+  }
+}
+
+// ---- depth: scrim ----------------------------------------------------------
+.vds-scrim-demo {
+  position: relative;
+  height: 12rem;
+  border-radius: var(--vds-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--vds-line);
+  margin: 0.75rem 0 1.5rem;
+
+  &__bg {
+    position: absolute;
+    inset: 0;
+    background: var(--vds-canvas);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__scrim {
+    position: absolute;
+    inset: 0;
+    background: var(--vds-scrim);
+  }
+
+  &__dialog {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(22rem, 80%);
+    background: var(--vds-surface-overlay);
+    border: 1px solid var(--vds-line);
+    border-radius: var(--vds-radius-lg);
+    box-shadow: var(--vds-shadow-lg);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
   }
 }

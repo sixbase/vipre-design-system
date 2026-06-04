@@ -23,11 +23,18 @@ export function Section({ title, note, children }) {
   )
 }
 
-/** Live demo canvas with an optional code strip beneath it. */
-export function Preview({ canvas, code }) {
+/**
+ * Live demo canvas with an optional code strip beneath it.
+ * - popover: let absolutely-positioned overlays (dropdowns, menus) escape the
+ *   box instead of being clipped. Top-aligns the canvas so they have room.
+ * - reserve: min-height (px) for the canvas, so an open overlay has vertical room.
+ */
+export function Preview({ canvas, code, popover = false, reserve }) {
   return (
-    <div className="vds-preview">
-      <div className="vds-preview__canvas">{canvas}</div>
+    <div className={popover ? 'vds-preview vds-preview--popover' : 'vds-preview'}>
+      <div className="vds-preview__canvas" style={reserve ? { minHeight: reserve } : undefined}>
+        {canvas}
+      </div>
       {code && <pre className="vds-preview__code">{code}</pre>}
     </div>
   )
@@ -44,8 +51,8 @@ export function Code({ children }) {
  */
 export function PropsTable({ headers, rows }) {
   return (
-    <div className="vds-table-wrap">
-      <table className="vds-table">
+    <div className="vds-ref-table-wrap">
+      <table className="vds-ref-table">
         <thead>
           <tr>
             {headers.map((h) => (

@@ -306,3 +306,133 @@ assembly. Class-based gap modifiers (not inline `style={{gap}}`) keep the no-inl
 `routes.js` entries, and the `01-planning.md` status table for these four primitives are still to be
 added (deferred to avoid colliding with in-flight edits in those files).
 **Status:** active
+
+---
+
+## Chromatic Sparkline tones + StatTile `trendTone` (2026-06-04)
+**Context:** Dogfooding StatTile in the scope-navigator prototype (the descendant rollup tiles:
+Distributors / Resellers / Customers, each with a trend sparkline). These are a **categorical**
+series — the entity type carries no good/bad meaning — so StatTile's default sparkline coloring
+(delta-driven success/danger, else `muted`) flattened all three to the same neutral line, losing the
+per-type distinction the prototype had with raw brand hexes.
+**Decision:**
+- **Sparkline** gains the seven chromatic family tones (`azure`, `harbor`, `emerald`, `amber`,
+  `rose`, `orchid`, `clay`) alongside the existing semantic ones. Light uses the `600` step; a
+  `.dark .vds-sparkline--{family}` block flips to the vivid `400` step — same per-mode treatment the
+  status tones get, so light/dark parity holds (rule: never ship a light-only change).
+- **StatTile** gains a `trendTone` prop that overrides the derived sparkline tone (passes straight
+  through to `<Sparkline tone>`). Default behavior unchanged when omitted.
+**Rationale:** Keeps the precision in the primitive + tokens (no raw hex in the consumer): the
+prototype maps type→DS family (distributor→azure, reseller→rose, customer→emerald) and the DS owns
+the actual color + dark-mode flip. A categorical-but-token-bound coloring path the DS lacked.
+**Status:** active
+
+**Addendum (same day):** extended the chromatic treatment to **StatTile's `tone`** too (not just
+`trendTone`). The 7 families now set `--vds-stat-accent` (icon glyph) + `--vds-stat-soft` (chip),
+with a `.dark` block flipping to the 400 step. So `tone="azure"` colors the **icon glyph AND the
+sparkline** together (sparkTone derives from tone) — the right call for a categorical tile whose
+whole identity is one hue. `trendTone` stays for the rarer case of coloring only the sparkline. The
+scope-navigator rollup tiles now pass `tone={family}` (distributor→azure, reseller→rose,
+customer→emerald), restoring the per-type icon+line color the prototype had before, in DS tokens.
+
+---
+
+### Depth & elevation defined as a system area (spec, paper-first)
+
+**Phase:** v2 / foundations
+**Context:** "Depth" existed only as four raw shadow tokens (`--vds-shadow-xs/sm/md/lg`) and a
+presentational `Surface elevation="xs|sm|md|lg"` prop. No semantic ladder, no dark-mode depth
+strategy (Midnight-tinted shadows vanish on the graphite-950 canvas), no z-index scale (one
+stray `z-index: 1` in Table), no scrim token, no documented rule for when to use shadow vs.
+tone vs. line. The principles file already declared the intent ("Depth: Restrained — surfaces
+separated by tone and 1px lines before shadow") but it was never built out.
+**Decision:** Authored a depth spec in [10-depth.md](10-depth.md) (restrained feel, per user).
+Key choices:
+- **Priority order** tone → line → shadow → z-index. Resting surfaces get tone + line, never a
+  drop-shadow; shadow is reserved for elements that float free of the page.
+- **Semantic elevation ladder** named by role: `flat` / `resting` / `raised` / `overlay` /
+  `floating`. Each level binds surface token + shadow + stack order as one decision.
+- **Per-mode depth rule:** light = shadow-led (backgrounds barely change); dark = lightness-led
+  (higher = lighter surface, shadow only reinforces). Formalizes the existing dark
+  `surface-raised`=graphite-800 choice into a full ladder: 950→900→800→700.
+- **Proposed new tokens:** `--vds-surface-overlay` (Tier 2), a `--vds-z-*` scale
+  (base/raised/sticky/dropdown/drawer/modal/toast/tooltip = 0/10/100/200/300/400/500/600),
+  `--vds-scrim` (Tier 2, per-mode 0.45 light / 0.65 dark). Shadows kept as-is. Backdrop blur
+  explicitly **deferred** (reads richer than "restrained").
+- **Proposed `Surface` API migration** from presentational `elevation` values to the semantic
+  ladder, retiring the separate `raised` boolean (the level implies the surface), with old
+  values kept as deprecated aliases one cycle so scope-navigator doesn't break.
+**Status:** active / built. Tokens (`--vds-surface-overlay`, `--vds-z-*` scale, `--vds-scrim`)
+in `_tokens.scss`; `/foundation/depth` showcase page; and the semantic `Surface` `elevation` API
+(`flat|resting|raised|overlay|floating`, default `resting`) all shipped and verified light + dark.
+Old `elevation` values (`none|xs|sm|md|lg`) + the `raised` boolean kept as deprecated, shadow-only
+back-compat for one cycle (so scope-navigator's vendored copy is unaffected). Remaining: migrate
+`StatTile` off the deprecated `elevation="sm"` (a design call — `resting` carries no shadow).
+
+---
+
+### ScopeNavigator harvested into the DS (the flagship composite)
+
+**Phase:** v2 / components
+**Context:** the scope-navigator prototype's hierarchy breadcrumb (`ScopeNavigator.jsx`) is the
+single most-defining surface of the product — the bar that walks the distributor → reseller →
+customer account tree, drills into any level via a searchable/sortable/filterable dropdown, and
+collapses a deep trail into a "…" menu. It lived in the prototype hard-coupled to `./config`
+(entity `typeConfig` / `statusConfig`), `./data` (the mock tree), and Tailwind classes. This is the
+first **composite** graduated into the DS proper (not just tokens/primitives).
+
+**Decisions:**
+- **Preserve the logic, strip the coupling.** Kept verbatim: the deterministic width-estimated
+  responsive collapse (no measure-flicker), the `useLayoutEffect` viewport-clamp that shifts the
+  popover's real `left` (not a transform) so auto-focusing search never scrolls the page sideways,
+  the drill-down vs. switch dropdown semantics, and current-scope handling. Dropped: all `./config`
+  / `./data` imports and every Tailwind class.
+- **Data-driven, Vipre defaults baked in.** Entities are `{ id, name, type, status, children? }`;
+  `typeConfig` (type → `{label, icon, tone}`) and `statusConfig` (status → `{label, tone,
+  description}`) are **props with the Vipre taxonomy as defaults** (`defaultTypeConfig` /
+  `defaultStatusConfig` / `defaultSortOptions` exported alongside). Map **key order** drives the
+  "Level" / "Status" sorts and which statuses appear in the filter — no hardcoded ordering. Works
+  out of the box for Vipre (the DS's stated reason to exist), reusable for any tree.
+- **Composes primitives:** popovers are `Surface elevation="overlay"` (theme-following), search is
+  `Input` with a leading `Icon`, all glyphs are `Icon`. ~90% composition + layout glue, per the
+  harvest methodology.
+- **Fixed-chrome bar, theme-following popovers.** The bar is **always the Midnight navy in both
+  themes** (a product-chrome surface, like the sidebar) — its own local `--vds-scope-*` tokens map
+  to the midnight ramp; light-on-navy content uses `color-mix` on `--vds-white` for the alpha
+  overlays (never raw rgba — stays token-bound). The dropdowns, by contrast, are real Surfaces and
+  flip per theme. Verified: light = white popover under navy bar; dark = midnight-overlay popover.
+- **Type icon chip** is a filled `family-600` square (white glyph), tinted by a per-element
+  `--vds-scope-chip-bg` CSS var set from the config `tone` — closest DS analog to the prototype's
+  saturated `bg-{color}-600` chips. Status = a color-only dot (`--vds-scope-dot` from the status
+  tone) carrying a `title` with the meaning (never color-alone).
+- **Generalized the domain bits:** the prototype's bespoke "Future State" Zap toggle → a generic
+  `actions` slot; the ⌘K palette → an optional `onSearch` trigger. Consumers drop product controls
+  in without the DS knowing about them.
+
+**Docs:** new `ScopeNavigatorPage` (`/components/scope-navigator`) with a live demo tree and four
+sections (root / drilled-in / search+actions / responsive collapse). Required a small **shared docs
+primitive** change: `Preview` gained a `popover` modifier (+`reserve` min-height) so absolutely-
+positioned dropdowns escape the otherwise `overflow:hidden` preview box — added `.vds-preview--popover`
+to `_showcase.scss`.
+
+**Status:** built + verified (light + dark; drill-down, search filter, responsive "…" collapse all
+exercised in-browser). Registered in the barrel (under a new **Composites** section) and
+`_components.scss`. Not yet dogfooded back into the prototype (the prototype still runs its local
+`ScopeNavigator.jsx`); re-vendoring `src/vds/` + rebuilt `vipre.css` would close that loop when desired.
+
+**Refinement (same day — dark-default + container-responsive):** two follow-ups after first review.
+1. **The bar now scopes `.dark` onto its own root** (matching the prototype's `className="dark …"`),
+   so the whole bar AND its popovers render light-on-navy **even when the page is in light mode** —
+   the product runs the scope bar on the dark Midnight surface regardless of theme. This let the SCSS
+   drop the bespoke `--vds-scope-*` navy tokens and use plain semantic tokens (`--vds-canvas` bar /
+   `--vds-surface` active pill / `--vds-surface-overlay` popover / `--vds-ink*` / `--vds-line`) — the
+   `.dark` cascade does the theming. Verified: light page → navy bar + midnight-700 (`#1e3e6b`)
+   dropdown. 2. **Responsiveness is now CONTAINER-based, not viewport-based.** The first cut used CSS
+   `@media (min-width:768px)` for the row/stack switch, so in a narrow *container* on a wide *viewport*
+   the search stayed inline and **collided with the trail** (the reported bug). Fixed by toggling a
+   `.vds-scope--stack` class off the already-measured bar width (`navWidth < 768`) — the search stacks
+   below the trail whenever the *bar* is narrow, correct inside any layout. Also threaded `min-width: 0`
+   through `__crumb` / `__crumb-main` so the active label truncates instead of pushing into the search,
+   and added a **`window` resize listener** alongside the `ResizeObserver` (belt-and-suspenders for
+   envs that throttle RO delivery). Verified row-mode at 1020px: search inline at 200px, 12px gap, zero
+   crumb/search overlap; stacked-mode at 658px: search full-width below the trail.

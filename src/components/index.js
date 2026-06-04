@@ -5,8 +5,11 @@
 export { Surface } from './Surface/index.js'
 export { Card } from './Card/index.js'
 export { StatTile } from './StatTile/index.js'
+export { Sparkline } from './Sparkline/index.js'
+export { Table } from './Table/index.js'
 export { Stack } from './Stack/index.js'
 export { Inline } from './Inline/index.js'
+export { Grid } from './Grid/index.js'
 export { Divider } from './Divider/index.js'
 
 // Controls & content
@@ -21,3 +24,11 @@ export { Spinner } from './Spinner/index.js'
 export { Button } from './Button/index.js'
 export { Badge } from './Badge/index.js'
 export { Text, Heading } from './Text/index.js'
+
+// Composites — domain components assembled from the primitives above.
+export {
+  ScopeNavigator,
+  defaultTypeConfig,
+  defaultStatusConfig,
+  defaultSortOptions,
+} from './ScopeNavigator/index.js'

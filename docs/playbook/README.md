@@ -14,6 +14,7 @@ Read it before extending anything; update it whenever a decision is made.
 | [06-decisions-log.md](06-decisions-log.md) | Why things are the way they are |
 | [07-lessons-learned.md](07-lessons-learned.md) | Gotchas and better approaches |
 | [09-layout-grid.md](09-layout-grid.md) | Container, 12-col grid, spacing scopes |
+| [10-depth.md](10-depth.md) | Elevation ladder, z-index scale, scrim, per-mode depth |
 
 See also [`CLAUDE.md`](../../CLAUDE.md) (project rules for agents + engineers) and
 [`CONTRIBUTING.md`](../../CONTRIBUTING.md) (human contributor guide).

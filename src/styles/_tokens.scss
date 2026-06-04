@@ -108,6 +108,17 @@ $clay: ( // accent — terracotta
   --vds-shadow-md: 0 4px 12px -2px rgb(11 25 45 / 0.14), 0 2px 6px -2px rgb(11 25 45 / 0.10);
   --vds-shadow-lg: 0 12px 28px -6px rgb(11 25 45 / 0.20), 0 6px 12px -6px rgb(11 25 45 / 0.14);
 
+  // Stacking order — every floating layer references one of these; never a
+  // hand-written z-index. Gaps leave room to slot a layer in without renumbering.
+  --vds-z-base:     0;
+  --vds-z-raised:   10;   // in-component lift (e.g. Table sticky header)
+  --vds-z-sticky:   100;  // page-level sticky toolbars / headers
+  --vds-z-dropdown: 200;  // menus, selects, popovers, comboboxes
+  --vds-z-drawer:   300;  // side drawers / sheets
+  --vds-z-modal:    400;  // modal dialogs
+  --vds-z-toast:    500;  // toasts / notifications
+  --vds-z-tooltip:  600;  // tooltips — always on top
+
   --vds-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --vds-dur-fast: 120ms;
   --vds-dur-base: 200ms;
@@ -136,9 +147,10 @@ $clay: ( // accent — terracotta
   // ---- Tier 2 · semantic (LIGHT is default) --------------------------------
   // Light neutrals are GRAPHITE (a true cool grey, no navy cast). Dark mode
   // uses Midnight (the #0b192d product navy) — see the .dark block below.
-  --vds-canvas:         var(--vds-graphite-50);
-  --vds-surface:        var(--vds-white);
-  --vds-surface-raised: var(--vds-white);
+  --vds-canvas:          var(--vds-graphite-50);
+  --vds-surface:         var(--vds-white);
+  --vds-surface-raised:  var(--vds-white);
+  --vds-surface-overlay: var(--vds-white); // light = shadow-led, so tone stays white
   --vds-line:           var(--vds-graphite-200);
   --vds-line-strong:    var(--vds-graphite-300);
   --vds-ink:            var(--vds-graphite-900);
@@ -161,14 +173,18 @@ $clay: ( // accent — terracotta
   --vds-info-soft:      var(--vds-midnight-50);
 
   --vds-focus-ring:     var(--vds-midnight-500);
+
+  // Scrim — the dim behind overlays (modals / drawers). Midnight navy.
+  --vds-scrim:          rgb(11 25 45 / 0.45);
 }
 
 // ---- Tier 2 · semantic (DARK overrides) ------------------------------------
 .dark {
   // Dark canvas IS the shipped product background (#0b192d = midnight-950).
-  --vds-canvas:         var(--vds-midnight-950);
-  --vds-surface:        var(--vds-midnight-900);
-  --vds-surface-raised: var(--vds-midnight-800);
+  --vds-canvas:          var(--vds-midnight-950);
+  --vds-surface:         var(--vds-midnight-900);
+  --vds-surface-raised:  var(--vds-midnight-800);
+  --vds-surface-overlay: var(--vds-midnight-700); // dark = lightness-led: higher = lighter
   --vds-line:           var(--vds-midnight-800);
   --vds-line-strong:    var(--vds-midnight-700);
   --vds-ink:            var(--vds-midnight-50);
@@ -190,6 +206,10 @@ $clay: ( // accent — terracotta
   --vds-info-soft:      color-mix(in oklab, var(--vds-midnight-400) 16%, transparent);
 
   --vds-focus-ring:     var(--vds-midnight-400);
+
+  // Deeper scrim in dark — the canvas is already near-black, so the dim needs
+  // more weight to separate the overlay from it.
+  --vds-scrim:          rgb(2 6 12 / 0.65);
 
   color-scheme: dark;
 }

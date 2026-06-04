@@ -14,13 +14,17 @@ import { cx } from '../../lib/cx.js'
  * - padding:   spacing step 0–8, or null    (default 4 → --vds-space-4 / 16px)
  * - radius:    'sm' | 'md' | 'lg' | 'xl'     (default 'lg')
  * - bordered:  1px line border               (default true)
- * - elevation: 'none'|'xs'|'sm'|'md'|'lg'    (default 'none')
- * - raised:    use --vds-surface-raised bg   (default false)
+ * - elevation: semantic depth level — 'flat'|'resting'|'raised'|'overlay'|'floating'
+ *              (default 'resting'). The level binds surface tone + shadow together;
+ *              see docs/playbook/10-depth.md. DEPRECATED values 'none'|'xs'|'sm'|'md'|'lg'
+ *              still work for one cycle (shadow-only, surface unchanged).
+ * - raised:    DEPRECATED — use elevation="raised". Forces --vds-surface-raised bg.
  * - all native attributes (onClick, role, aria-*, …)
  *
  * @example
- * <Surface padding={6} elevation="sm">…</Surface>
- * <Surface as="section" radius="md" bordered={false} raised>…</Surface>
+ * <Surface elevation="raised">…</Surface>              // dropdown / popover
+ * <Surface elevation="overlay" padding={6}>…</Surface> // modal / drawer
+ * <Surface as="section" radius="md" bordered={false}>…</Surface>
  */
 export const Surface = forwardRef(function Surface(
   {
@@ -28,7 +32,7 @@ export const Surface = forwardRef(function Surface(
     padding = 4,
     radius = 'lg',
     bordered = true,
-    elevation = 'none',
+    elevation = 'resting',
     raised = false,
     className,
     children,
@@ -42,7 +46,7 @@ export const Surface = forwardRef(function Surface(
       className={cx(
         'vds-surface',
         padding != null && `vds-surface--pad-${padding}`,
-        `vds-surface--radius-${radius}`,
+        radius != null && `vds-surface--radius-${radius}`,
         bordered && 'vds-surface--bordered',
         elevation !== 'none' && `vds-surface--elev-${elevation}`,
         raised && 'vds-surface--raised',
