@@ -5,12 +5,11 @@
 @use '../../styles/typography' as type;
 
 .vds-input {
-  // Input is intentionally NEUTRAL — graphite chrome + a graphite focus, not
-  // the brand (iris) focus used by Button. Component tokens bind to the
-  // graphite ramp here and lighten under .dark (see override below).
+  // Neutral graphite chrome, but a unified BRAND focus (--vds-focus-ring) to
+  // match Button / Checkbox / Switch. Graphite is only the resting border.
   --vds-input-border: var(--vds-graphite-300);
-  --vds-input-border-focus: var(--vds-graphite-400);
-  --vds-input-ring: color-mix(in oklab, var(--vds-graphite-400) 35%, transparent);
+  --vds-input-border-focus: var(--vds-focus-ring);
+  --vds-input-ring: color-mix(in oklab, var(--vds-focus-ring) 35%, transparent);
   // Subtle graphite for placeholder + leading/trailing icons. Bound to the
   // graphite ramp directly (NOT --vds-ink-subtle, which is midnight) so the
   // input stays neutral regardless of the semantic text tokens.
@@ -85,8 +84,8 @@
 // field carries the product's cool navy cast instead of neutral graphite.
 .dark .vds-input {
   --vds-input-border: var(--vds-midnight-700);
-  --vds-input-border-focus: var(--vds-midnight-500);
-  --vds-input-ring: color-mix(in oklab, var(--vds-midnight-500) 40%, transparent);
+  --vds-input-border-focus: var(--vds-focus-ring);
+  --vds-input-ring: color-mix(in oklab, var(--vds-focus-ring) 40%, transparent);
   --vds-input-muted: var(--vds-midnight-400); // lighter so the hint stays visible on dark
   // Darker than --vds-surface (midnight-900) so the field looks recessed.
   --vds-input-fill: var(--vds-midnight-950);

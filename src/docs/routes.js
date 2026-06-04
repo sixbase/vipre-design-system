@@ -5,6 +5,7 @@ import { TypographyPage } from './pages/TypographyPage.jsx'
 import { SpacingPage } from './pages/SpacingPage.jsx'
 import { LayoutPage } from './pages/LayoutPage.jsx'
 import { IconPage } from './pages/IconPage.jsx'
+import { FieldPage } from './pages/FieldPage.jsx'
 import { InputPage } from './pages/InputPage.jsx'
 import { CheckboxPage } from './pages/CheckboxPage.jsx'
 import { SwitchPage } from './pages/SwitchPage.jsx'
@@ -35,6 +36,7 @@ export const NAV = [
     group: 'Primitives',
     items: [
       { path: '/primitives/icon', name: 'Icon', Page: IconPage },
+      { path: '/primitives/field', name: 'Field', Page: FieldPage },
       { path: '/primitives/input', name: 'Input', Page: InputPage },
       { path: '/primitives/checkbox', name: 'Checkbox', Page: CheckboxPage },
       { path: '/primitives/switch', name: 'Switch', Page: SwitchPage },

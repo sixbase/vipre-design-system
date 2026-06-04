@@ -9,6 +9,7 @@ export { Divider } from './Divider/index.js'
 
 // Controls & content
 export { Icon } from './Icon/index.js'
+export { Field } from './Field/index.js'
 export { Input } from './Input/index.js'
 export { Textarea } from './Textarea/index.js'
 export { Checkbox } from './Checkbox/index.js'

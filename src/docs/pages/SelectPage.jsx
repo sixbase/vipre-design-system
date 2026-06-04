@@ -1,6 +1,6 @@
 import { ComponentPage } from '../ComponentPage.jsx'
 import { Section, Preview, IC } from '../primitives.jsx'
-import { Select } from '../../components/index.js'
+import { Select, Field } from '../../components/index.js'
 
 const COL = { display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', maxWidth: 280 }
 const OPTS = (
@@ -37,15 +37,17 @@ export function SelectPage() {
         <Preview
           canvas={
             <div style={COL}>
-              <Select size="sm" defaultValue="active">{OPTS}</Select>
-              <Select size="md" defaultValue="active">{OPTS}</Select>
-              <Select size="lg" defaultValue="active">{OPTS}</Select>
+              <Field label="Status (Small)" htmlFor="sel-sm"><Select size="sm" defaultValue="active">{OPTS}</Select></Field>
+              <Field label="Status (Medium)" htmlFor="sel-md"><Select size="md" defaultValue="active">{OPTS}</Select></Field>
+              <Field label="Status (Large)" htmlFor="sel-lg"><Select size="lg" defaultValue="active">{OPTS}</Select></Field>
             </div>
           }
-          code={`<Select size="sm" defaultValue="active">
-  <option value="active">Active</option>
-  <option value="suspended">Suspended</option>
-</Select>`}
+          code={`<Field label="Status">
+  <Select defaultValue="active">
+    <option value="active">Active</option>
+    <option value="suspended">Suspended</option>
+  </Select>
+</Field>`}
         />
       </Section>
 
@@ -53,12 +55,16 @@ export function SelectPage() {
         <Preview
           canvas={
             <div style={COL}>
-              <Select invalid defaultValue="active" aria-label="Status">{OPTS}</Select>
-              <Select disabled defaultValue="active" aria-label="Status">{OPTS}</Select>
+              <Field label="Status" error="Choose a status" htmlFor="sel-invalid">
+                <Select defaultValue="active">{OPTS}</Select>
+              </Field>
+              <Field label="Status" htmlFor="sel-disabled">
+                <Select disabled defaultValue="active">{OPTS}</Select>
+              </Field>
             </div>
           }
-          code={`<Select invalid>…</Select>
-<Select disabled>…</Select>`}
+          code={`<Field label="Status" error="Choose a status"><Select>…</Select></Field>
+<Field label="Status"><Select disabled>…</Select></Field>`}
         />
       </Section>
     </ComponentPage>
