@@ -4,59 +4,76 @@ import { Section, Preview, IC } from '../primitives.jsx'
 import { StatTile, Badge } from '../../components/index.js'
 
 const GRID = { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '0.75rem', width: '100%', maxWidth: 520 }
+const ROW = { display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%', maxWidth: 360 }
+const TREND = [4, 6, 5, 8, 7, 9, 8, 11]
 
 export function StatTilePage() {
   return (
     <ComponentPage
       title="Stat Tile"
-      description="A KPI tile — a big tabular value with a label, an optional icon, an optional delta, and tone coloring for threshold states. The dashboard workhorse, composed from Surface + Icon. Pass onClick to make it a drill-in button."
+      description="A KPI tile — a prominent tabular value with a label, an optional icon, an optional delta and trend sparkline, plus tone coloring for thresholds. Two layouts (stacked / row) and three value sizes. Composes Surface + Icon + Sparkline; pass onClick for a drill-in button."
       installCode={`import { StatTile } from 'vipre-design-system'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
-            [{ code: 'value' }, { code: 'string | number' }, '—', 'The metric (rendered tabular-nums)'],
+            [{ code: 'value' }, { code: 'string | number' }, '—', 'The metric (tabular-nums)'],
             [{ code: 'label' }, { code: 'string' }, '—', 'The metric name'],
             [{ code: 'icon' }, { code: 'icon component' }, '—', 'Optional leading icon in a tinted box'],
-            [{ code: 'tone' }, { code: "'default' | 'primary' | 'success' | 'warning' | 'danger'" }, { code: "'default'" }, 'Colors the value + icon'],
-            [{ code: 'delta' }, { code: 'ReactNode' }, '—', 'Right-aligned slot, e.g. a Badge'],
-            [{ code: 'onClick' }, { code: '() => void' }, '—', 'Makes the tile an interactive button'],
-            [{ code: '…props' }, { code: 'Surface props' }, '—', 'padding, elevation, radius…'],
+            [{ code: 'tone' }, { code: "'default' | 'primary' | 'success' | 'warning' | 'danger'" }, { code: "'default'" }, 'Colors value / icon / trend'],
+            [{ code: 'size' }, { code: "'sm' | 'md' | 'lg'" }, { code: "'md'" }, 'Value size (heading / title / display)'],
+            [{ code: 'layout' }, { code: "'stacked' | 'row'" }, { code: "'stacked'" }, 'Card (number hero) vs compact row'],
+            [{ code: 'delta' }, { code: 'ReactNode' }, '—', 'e.g. a Badge with the change'],
+            [{ code: 'trend' }, { code: 'number[]' }, '—', 'Renders a tone-tinted Sparkline'],
+            [{ code: 'onClick' }, { code: '() => void' }, '—', 'Makes the tile a button'],
           ],
         },
       ]}
       accessibility={[
         <>With <IC>onClick</IC> it renders a real <IC>{'<button>'}</IC> — keyboard + focus ring included.</>,
-        <>The icon is decorative (<IC>aria-hidden</IC>); meaning lives in the value + label.</>,
+        <>Icon and trend are decorative (<IC>aria-hidden</IC>); meaning lives in the value + label.</>,
         <>Tone colors meet AA contrast on the surface in both themes.</>,
       ]}
     >
-      <Section title="Tones" note="Default plus the four status tones for threshold coloring.">
+      <Section title="Stacked (default)" note="The number is the hero: icon + delta on top, big value, label, optional trend below.">
         <Preview
           canvas={
             <div style={GRID}>
-              <StatTile icon={Monitor} value="1,284" label="Total devices" />
-              <StatTile icon={Shield} value="1,192" label="Protected" tone="success" />
+              <StatTile icon={Monitor} value="1,284" label="Total devices" delta={<Badge tone="success" dot>+3%</Badge>} trend={TREND} />
+              <StatTile icon={Shield} value="1,192" label="Protected" tone="success" trend={TREND} />
               <StatTile icon={Activity} value="64%" label="Avg utilization" tone="warning" />
-              <StatTile icon={TriangleAlert} value="17" label="At risk" tone="danger" />
+              <StatTile icon={TriangleAlert} value="17" label="At risk" tone="danger" delta={<Badge tone="danger" dot>+5</Badge>} />
             </div>
           }
-          code={`<StatTile icon={Monitor} value="1,284" label="Total devices" />
-<StatTile icon={Shield} value="1,192" label="Protected" tone="success" />
-<StatTile icon={Activity} value="64%" label="Avg utilization" tone="warning" />
-<StatTile icon={TriangleAlert} value="17" label="At risk" tone="danger" />`}
+          code={`<StatTile icon={Monitor} value="1,284" label="Total devices"
+  delta={<Badge tone="success" dot>+3%</Badge>} trend={[4,6,5,8,7,9,8,11]} />`}
         />
       </Section>
 
-      <Section title="With a delta" note="Drop a Badge into the delta slot for period-over-period change.">
+      <Section title="Sizes" note="sm / md / lg scale the value (heading → title → display).">
         <Preview
           canvas={
             <div style={GRID}>
-              <StatTile value="92%" label="Uptime" delta={<Badge tone="success" dot>+1.2%</Badge>} />
-              <StatTile value="318" label="New devices" delta={<Badge tone="danger" dot>-8%</Badge>} />
+              <StatTile size="sm" value="1,284" label="Small" />
+              <StatTile size="md" value="1,284" label="Medium" />
+              <StatTile size="lg" value="1,284" label="Large" tone="primary" />
             </div>
           }
-          code={`<StatTile value="92%" label="Uptime" delta={<Badge tone="success" dot>+1.2%</Badge>} />`}
+          code={`<StatTile size="sm" value="1,284" label="Devices" />
+<StatTile size="md" value="1,284" label="Devices" />
+<StatTile size="lg" value="1,284" label="Devices" tone="primary" />`}
+        />
+      </Section>
+
+      <Section title="Row (compact)" note="A dense one-line layout for tight grids and lists — trend / delta sit on the right.">
+        <Preview
+          canvas={
+            <div style={ROW}>
+              <StatTile layout="row" icon={Shield} value="1,192" label="Protected" tone="success" trend={TREND} />
+              <StatTile layout="row" size="sm" icon={Activity} value="64%" label="Avg utilization" tone="warning" delta={<Badge tone="warning" dot>-4%</Badge>} />
+            </div>
+          }
+          code={`<StatTile layout="row" icon={Shield} value="1,192" label="Protected" tone="success" trend={[…]} />`}
         />
       </Section>
 

@@ -1,13 +1,11 @@
 // ============================================================================
-// StatTile — KPI tile. Composes Surface; owns the icon box, value/label type,
-// tone colors, and the interactive (button) affordance.
+// StatTile — KPI tile. Composes Surface; owns icon box, value/label hierarchy,
+// tone colors, sparkline placement, and the interactive (button) affordance.
+// Two layouts: stacked (default, number is the hero) and row (compact).
 // ============================================================================
 @use '../../styles/typography' as type;
 
 .vds-stat {
-  display: flex;
-  align-items: center;
-  gap: var(--vds-space-3);
   width: 100%;
   text-align: left;
   font-family: var(--vds-font-sans);
@@ -20,22 +18,15 @@
     width: 2.25rem;
     height: 2.25rem;
     border-radius: var(--vds-radius-sm);
-    // neutral tinted box by default; tones override below
     background-color: color-mix(in oklab, var(--vds-ink-muted) 12%, transparent);
     color: var(--vds-ink-muted);
-  }
-
-  &__body {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    min-width: 0;
   }
 
   &__value {
     @include type.step(title);
     font-variant-numeric: tabular-nums;
     color: var(--vds-ink);
+    line-height: 1.1;
   }
 
   &__label {
@@ -43,10 +34,42 @@
     color: var(--vds-ink-muted);
   }
 
-  &__delta {
-    margin-left: auto;
-    flex-shrink: 0;
+  &__delta { flex-shrink: 0; }
+  &__spark { flex-shrink: 0; }
+
+  // ---- layout: stacked (default) ----
+  &--stacked {
+    display: flex;
+    flex-direction: column;
+    gap: var(--vds-space-1);
+
+    .vds-stat__top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--vds-space-2);
+    }
+    .vds-stat__top .vds-stat__delta { margin-left: auto; }
+    .vds-stat__value { margin-top: var(--vds-space-1); }
+    .vds-stat__spark { margin-top: var(--vds-space-3); width: 100%; }
   }
+
+  // ---- layout: row (compact) ----
+  &--row {
+    display: flex;
+    align-items: center;
+    gap: var(--vds-space-3);
+
+    .vds-stat__body { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+    .vds-stat__spark { margin-left: auto; }
+    .vds-stat__delta { margin-left: auto; }
+    .vds-stat__spark + .vds-stat__delta { margin-left: var(--vds-space-2); }
+  }
+
+  // ---- sizes (value step) ----
+  &--size-sm .vds-stat__value { @include type.step(heading); }
+  &--size-md .vds-stat__value { @include type.step(title); }
+  &--size-lg .vds-stat__value { @include type.step(display); }
 
   // ---- interactive (drill-in) ----
   &--interactive {
@@ -65,7 +88,7 @@
     }
   }
 
-  // ---- tones (color the value + icon box) ----
+  // ---- tones (color the value + icon box; trend tinted via Sparkline tone) ----
   &--primary {
     .vds-stat__value { color: var(--vds-primary); }
     .vds-stat__icon { background-color: var(--vds-primary-soft); color: var(--vds-primary); }
