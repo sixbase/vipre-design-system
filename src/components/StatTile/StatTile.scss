@@ -83,8 +83,9 @@
     background-size: 400% 100%;
     animation: vds-stat-shimmer 1.4s ease infinite;
 
-    &--value { width: 4.5rem; height: 1.5rem; }
-    &--label { width: 6rem; height: 0.75rem; margin-top: 0.4rem; }
+    &--label { width: 6rem; height: 0.75rem; }
+    // gap between the label bar and the value bar (label renders first)
+    &--value { width: 4.5rem; height: 1.5rem; margin-top: 0.5rem; }
   }
 
   // ---- layout: stacked (default) ----
@@ -163,6 +164,27 @@
   &--danger {
     --vds-stat-accent: var(--vds-danger);
     --vds-stat-soft: var(--vds-danger-soft);
+  }
+
+  // ---- chromatic tones (categorical: no good/bad meaning) ----
+  // Color the icon glyph + soft chip; the sparkline follows automatically since
+  // sparkTone derives from tone. Light uses the 600 step; dark flips to the
+  // vivid 400 (below), mirroring the status tones' per-mode treatment.
+  @each $fam in azure, harbor, emerald, amber, rose, orchid, clay {
+    &--#{$fam} {
+      --vds-stat-accent: var(--vds-#{$fam}-600);
+      --vds-stat-soft: color-mix(in oklab, var(--vds-#{$fam}-600) 16%, transparent);
+    }
+  }
+}
+
+// Dark mode — vivid 400 step for the chromatic tone accents (parity with light).
+.dark .vds-stat {
+  @each $fam in azure, harbor, emerald, amber, rose, orchid, clay {
+    &--#{$fam} {
+      --vds-stat-accent: var(--vds-#{$fam}-400);
+      --vds-stat-soft: color-mix(in oklab, var(--vds-#{$fam}-400) 16%, transparent);
+    }
   }
 }
 
