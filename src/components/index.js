@@ -5,6 +5,9 @@
 export { Surface } from './Surface/index.js'
 export { Card } from './Card/index.js'
 export { StatTile } from './StatTile/index.js'
+
+// Data viz (recharts-based, token-themed)
+export { AreaChart, BarChart, LineChart } from './charts/index.js'
 export { Stack } from './Stack/index.js'
 export { Inline } from './Inline/index.js'
 export { Divider } from './Divider/index.js'

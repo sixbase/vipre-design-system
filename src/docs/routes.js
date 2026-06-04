@@ -15,6 +15,7 @@ import { ButtonPage } from './pages/ButtonPage.jsx'
 import { BadgePage } from './pages/BadgePage.jsx'
 import { CardPage } from './pages/CardPage.jsx'
 import { StatTilePage } from './pages/StatTilePage.jsx'
+import { ChartsPage } from './pages/ChartsPage.jsx'
 
 /* Single source of truth for both the sidebar nav and the hash router. */
 export const NAV = [
@@ -53,6 +54,7 @@ export const NAV = [
       { path: '/components/badge', name: 'Badge', Page: BadgePage },
       { path: '/components/card', name: 'Card', Page: CardPage },
       { path: '/components/stat-tile', name: 'Stat Tile', Page: StatTilePage },
+      { path: '/components/charts', name: 'Charts', Page: ChartsPage },
     ],
   },
 ]

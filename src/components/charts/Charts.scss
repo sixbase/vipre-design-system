@@ -1,0 +1,51 @@
+// ============================================================================
+// Charts — token-driven recharts wrappers. Series colors + axis/grid come from
+// props (CSS vars); this file styles the custom tooltip and tames recharts
+// focus outlines.
+// ============================================================================
+.vds-chart {
+  width: 100%;
+
+  // recharts puts a focusable wrapper around the svg; hide the UA outline
+  .recharts-wrapper:focus,
+  .recharts-surface:focus {
+    outline: none;
+  }
+}
+
+.vds-chart__tooltip {
+  background-color: var(--vds-surface);
+  border: 1px solid var(--vds-line);
+  border-radius: var(--vds-radius-md);
+  box-shadow: var(--vds-shadow-md);
+  padding: var(--vds-space-2) var(--vds-space-3);
+  font-family: var(--vds-font-sans);
+  min-width: 8rem;
+
+  &-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--vds-ink-muted);
+    margin-bottom: var(--vds-space-1);
+  }
+
+  &-row {
+    display: flex;
+    align-items: center;
+    gap: var(--vds-space-2);
+    padding: 0.1rem 0;
+    font-size: 0.8125rem;
+    color: var(--vds-ink);
+  }
+
+  &-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+
+  &-name { color: var(--vds-ink-muted); margin-right: auto; }
+  &-value { font-variant-numeric: tabular-nums; font-weight: 500; }
+}

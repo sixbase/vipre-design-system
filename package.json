@@ -33,5 +33,8 @@
     "react-dom": "^19.2.0",
     "sass": "^1.80.0",
     "vite": "^8.0.0"
+  },
+  "dependencies": {
+    "recharts": "^3.8.1"
   }
 }
