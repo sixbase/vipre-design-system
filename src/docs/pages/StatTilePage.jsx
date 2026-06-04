@@ -23,7 +23,7 @@ export function StatTilePage() {
             [{ code: 'caption' }, { code: 'ReactNode' }, '—', 'Small secondary line (context)'],
             [{ code: 'icon' }, { code: 'icon component' }, '—', 'Leading icon'],
             [{ code: 'iconVariant' }, { code: "'outline' | 'soft'" }, { code: "'outline'" }, 'Ringed (transparent) vs filled chip'],
-            [{ code: 'tone' }, { code: "'default' | 'primary' | 'success' | 'warning' | 'danger'" }, { code: "'default'" }, 'Colors value + icon'],
+            [{ code: 'tone' }, { code: "'default' | 'primary' | 'success' | 'warning' | 'danger'" }, { code: "'default'" }, 'Colors the icon (value stays ink)'],
             [{ code: 'size' }, { code: "'sm' | 'md' | 'lg'" }, { code: "'md'" }, 'Value size'],
             [{ code: 'layout' }, { code: "'row' | 'stacked'" }, { code: "'row'" }, 'Compact row (default) vs stacked card'],
             [{ code: 'delta' }, { code: "'+3%' | number | { value, direction } | node" }, '—', 'Signed value, auto-colored'],
