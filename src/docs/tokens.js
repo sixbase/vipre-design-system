@@ -78,7 +78,7 @@ export const SEMANTIC_GROUPS = [
   {
     title: 'Surfaces',
     rows: [
-      { token: '--vds-canvas', ref: 'midnight-50 → 950', usage: 'Page background — the base canvas everything sits on (dark = the #0b192d product bg)' },
+      { token: '--vds-canvas', ref: 'graphite-50 → midnight-950', usage: 'Page background — graphite grey in light, the #0b192d product navy in dark' },
       { token: '--vds-surface', ref: 'white → midnight-900', usage: 'Cards, panels, inputs — surfaces that lift off the canvas' },
       { token: '--vds-surface-raised', ref: 'white → midnight-800', usage: 'Raised surfaces — popovers, menus, dropdowns' },
     ],
@@ -86,16 +86,16 @@ export const SEMANTIC_GROUPS = [
   {
     title: 'Text',
     rows: [
-      { token: '--vds-ink', ref: 'midnight-950 → 50', usage: 'Primary text, headings, input values — maximum readability' },
-      { token: '--vds-ink-muted', ref: 'midnight-700 → 300', usage: 'Secondary labels, captions, supporting copy' },
-      { token: '--vds-ink-subtle', ref: 'midnight-500 → 400', usage: 'Placeholders, metadata, lowest-emphasis text' },
+      { token: '--vds-ink', ref: 'graphite-900 → midnight-50', usage: 'Primary text, headings, input values — maximum readability' },
+      { token: '--vds-ink-muted', ref: 'graphite-600 → midnight-300', usage: 'Secondary labels, captions, supporting copy' },
+      { token: '--vds-ink-subtle', ref: 'graphite-500 → midnight-400', usage: 'Placeholders, metadata, lowest-emphasis text' },
     ],
   },
   {
     title: 'Borders',
     rows: [
-      { token: '--vds-line', ref: 'midnight-200 → 800', usage: 'Card borders, dividers, table cell lines — subtle structure' },
-      { token: '--vds-line-strong', ref: 'midnight-300 → 700', usage: 'Input hover borders, selected outlines — more emphasis' },
+      { token: '--vds-line', ref: 'graphite-200 → midnight-800', usage: 'Card borders, dividers, table cell lines — subtle structure' },
+      { token: '--vds-line-strong', ref: 'graphite-300 → midnight-700', usage: 'Input hover borders, selected outlines — more emphasis' },
     ],
   },
   {

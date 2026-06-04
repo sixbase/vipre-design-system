@@ -1,0 +1,85 @@
+// ============================================================================
+// StatTile — KPI tile. Composes Surface; owns the icon box, value/label type,
+// tone colors, and the interactive (button) affordance.
+// ============================================================================
+@use '../../styles/typography' as type;
+
+.vds-stat {
+  display: flex;
+  align-items: center;
+  gap: var(--vds-space-3);
+  width: 100%;
+  text-align: left;
+  font-family: var(--vds-font-sans);
+
+  &__icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--vds-radius-sm);
+    // neutral tinted box by default; tones override below
+    background-color: color-mix(in oklab, var(--vds-ink-muted) 12%, transparent);
+    color: var(--vds-ink-muted);
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  &__value {
+    @include type.step(title);
+    font-variant-numeric: tabular-nums;
+    color: var(--vds-ink);
+  }
+
+  &__label {
+    @include type.step(detail);
+    color: var(--vds-ink-muted);
+  }
+
+  &__delta {
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  // ---- interactive (drill-in) ----
+  &--interactive {
+    cursor: pointer;
+    transition:
+      border-color var(--vds-dur-fast) var(--vds-ease-out),
+      background-color var(--vds-dur-fast) var(--vds-ease-out);
+
+    &:hover {
+      border-color: var(--vds-line-strong);
+      background-color: var(--vds-canvas);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--vds-focus-ring);
+      outline-offset: 2px;
+    }
+  }
+
+  // ---- tones (color the value + icon box) ----
+  &--primary {
+    .vds-stat__value { color: var(--vds-primary); }
+    .vds-stat__icon { background-color: var(--vds-primary-soft); color: var(--vds-primary); }
+  }
+  &--success {
+    .vds-stat__value { color: var(--vds-success); }
+    .vds-stat__icon { background-color: var(--vds-success-soft); color: var(--vds-success); }
+  }
+  &--warning {
+    .vds-stat__value { color: var(--vds-warning); }
+    .vds-stat__icon { background-color: var(--vds-warning-soft); color: var(--vds-warning); }
+  }
+  &--danger {
+    .vds-stat__value { color: var(--vds-danger); }
+    .vds-stat__icon { background-color: var(--vds-danger-soft); color: var(--vds-danger); }
+  }
+}

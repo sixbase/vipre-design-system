@@ -134,16 +134,16 @@ $clay: ( // accent — terracotta
   --vds-columns: 12;
 
   // ---- Tier 2 · semantic (LIGHT is default) --------------------------------
-  // Neutrals are Midnight (the Vipre navy), not graphite — the whole surface
-  // and text system carries the product's cool navy cast.
-  --vds-canvas:         var(--vds-midnight-50);
+  // Light neutrals are GRAPHITE (a true cool grey, no navy cast). Dark mode
+  // uses Midnight (the #0b192d product navy) — see the .dark block below.
+  --vds-canvas:         var(--vds-graphite-50);
   --vds-surface:        var(--vds-white);
   --vds-surface-raised: var(--vds-white);
-  --vds-line:           var(--vds-midnight-200);
-  --vds-line-strong:    var(--vds-midnight-300);
-  --vds-ink:            var(--vds-midnight-950);
-  --vds-ink-muted:      var(--vds-midnight-700);
-  --vds-ink-subtle:     var(--vds-midnight-500);
+  --vds-line:           var(--vds-graphite-200);
+  --vds-line-strong:    var(--vds-graphite-300);
+  --vds-ink:            var(--vds-graphite-900);
+  --vds-ink-muted:      var(--vds-graphite-600);
+  --vds-ink-subtle:     var(--vds-graphite-500);
 
   --vds-primary:        var(--vds-midnight-600); // brand uses midnight tones
   --vds-primary-hover:  var(--vds-midnight-700);
