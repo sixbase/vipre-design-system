@@ -15,11 +15,12 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.5rem;   // sized to roughly the value+label block; per-size below
+    height: 2.5rem;
     border-radius: var(--vds-radius-sm);
-    background-color: color-mix(in oklab, var(--vds-ink-muted) 12%, transparent);
-    color: var(--vds-ink-muted);
+    // Default tone: a clearly-visible neutral chip (stronger tint + ink glyph).
+    background-color: color-mix(in oklab, var(--vds-ink-muted) 20%, transparent);
+    color: var(--vds-ink);
   }
 
   &__value {
@@ -66,10 +67,19 @@
     .vds-stat__spark + .vds-stat__delta { margin-left: var(--vds-space-2); }
   }
 
-  // ---- sizes (value step) ----
-  &--size-sm .vds-stat__value { @include type.step(heading); }
-  &--size-md .vds-stat__value { @include type.step(title); }
-  &--size-lg .vds-stat__value { @include type.step(display); }
+  // ---- sizes (value step + icon chip scaled to the value+label height) ----
+  &--size-sm {
+    .vds-stat__value { @include type.step(heading); }
+    .vds-stat__icon { width: 2.5rem; height: 2.5rem; }
+  }
+  &--size-md {
+    .vds-stat__value { @include type.step(title); }
+    .vds-stat__icon { width: 3rem; height: 3rem; }
+  }
+  &--size-lg {
+    .vds-stat__value { @include type.step(display); }
+    .vds-stat__icon { width: 3.25rem; height: 3.25rem; }
+  }
 
   // ---- interactive (drill-in) ----
   &--interactive {

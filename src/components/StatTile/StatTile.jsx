@@ -37,9 +37,11 @@ export const StatTile = forwardRef(function StatTile(
   const sparkTone = tone === 'default' ? 'muted' : tone
   const hasTrend = Array.isArray(trend) && trend.length >= 2
 
+  // glyph ~ the value's size so the icon reads as a peer of the number
+  const iconGlyph = { sm: 'md', md: 'lg', lg: 'lg' }[size] ?? 'lg'
   const iconEl = icon && (
     <span className="vds-stat__icon" aria-hidden="true">
-      <Icon as={icon} size={size === 'lg' ? 'md' : 'sm'} />
+      <Icon as={icon} size={iconGlyph} />
     </span>
   )
   const deltaEl = delta != null && <span className="vds-stat__delta">{delta}</span>
