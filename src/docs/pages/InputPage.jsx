@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Search, X, Mail } from 'lucide-react'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { Section, Preview, IC } from '../primitives.jsx'
-import { Input, Textarea, Icon, Text } from '../../components/index.js'
+import { Input, Textarea, Icon, Text, Field } from '../../components/index.js'
 
 const FIELD_COL = { display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', maxWidth: 360 }
 const SIZES = ['sm', 'md', 'lg']
@@ -45,28 +45,6 @@ const sizeCode = (s) => `<Input size="${s}" placeholder="you@company.com" />
 <Input size="${s}" leading={<Icon as={Mail} size="${s === 'sm' ? 'xs' : 'sm'}" />} />
 <Input size="${s}" invalid defaultValue="ada@" />
 <Input size="${s}" disabled defaultValue="ACC-2041" />`
-
-/* A field with a label (or eyebrow) above, optional help / error below. */
-function LabeledField({ label, eyebrow, htmlFor, help, error, children }) {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
-      <Text as="label" htmlFor={htmlFor} variant={eyebrow ? 'eyebrow' : 'detail'} tone="muted">
-        {label}
-      </Text>
-      {children}
-      {help && !error && (
-        <Text as="span" id={`${htmlFor}-help`} variant="detail" tone="muted">
-          {help}
-        </Text>
-      )}
-      {error && (
-        <Text as="span" id={`${htmlFor}-error`} role="alert" variant="detail" tone="danger">
-          {error}
-        </Text>
-      )}
-    </div>
-  )
-}
 
 function SearchDemo({ size = 'md' }) {
   const [value, setValue] = useState('')
@@ -154,22 +132,20 @@ export function InputPage() {
           canvas={
             <div style={FIELD_COL}>
               {SIZES.map((s) => (
-                <LabeledField
+                <Field
                   key={s}
                   label={`Workspace name (${SIZE_LABEL[s]})`}
                   htmlFor={`ex-ws-${s}`}
                   help="Lowercase letters, numbers and dashes only."
                 >
-                  <Input id={`ex-ws-${s}`} size={s} placeholder="acme-prod" aria-describedby={`ex-ws-${s}-help`} />
-                </LabeledField>
+                  <Input size={s} placeholder="acme-prod" />
+                </Field>
               ))}
             </div>
           }
-          code={`<label htmlFor="ws">Workspace name</label>
-<Input id="ws" size="md" aria-describedby="ws-help" placeholder="acme-prod" />
-<Text id="ws-help" variant="detail" tone="muted">
-  Lowercase letters, numbers and dashes only.
-</Text>`}
+          code={`<Field label="Workspace name" help="Lowercase letters, numbers and dashes only.">
+  <Input placeholder="acme-prod" />
+</Field>`}
         />
       </Section>
 
@@ -178,16 +154,15 @@ export function InputPage() {
           canvas={
             <div style={FIELD_COL}>
               {SIZES.map((s) => (
-                <LabeledField key={s} label={`Primary contact (${SIZE_LABEL[s]})`} eyebrow htmlFor={`ex-eb-${s}`}>
-                  <Input id={`ex-eb-${s}`} size={s} placeholder="Full name" />
-                </LabeledField>
+                <Field key={s} label={`Primary contact (${SIZE_LABEL[s]})`} eyebrow htmlFor={`ex-eb-${s}`}>
+                  <Input size={s} placeholder="Full name" />
+                </Field>
               ))}
             </div>
           }
-          code={`<Text as="label" htmlFor="contact" variant="eyebrow" tone="muted">
-  Primary contact
-</Text>
-<Input id="contact" size="md" placeholder="Full name" />`}
+          code={`<Field label="Primary contact" eyebrow>
+  <Input placeholder="Full name" />
+</Field>`}
         />
       </Section>
 
@@ -196,9 +171,9 @@ export function InputPage() {
           canvas={
             <div style={FIELD_COL}>
               {SIZES.map((s) => (
-                <LabeledField key={s} label={`Notes (${SIZE_LABEL[s]})`} htmlFor={`ex-notes-${s}`}>
-                  <Textarea id={`ex-notes-${s}`} size={s} rows={s === 'sm' ? 2 : 3} placeholder="Add a note…" />
-                </LabeledField>
+                <Field key={s} label={`Notes (${SIZE_LABEL[s]})`} htmlFor={`ex-notes-${s}`}>
+                  <Textarea size={s} rows={s === 'sm' ? 2 : 3} placeholder="Add a note…" />
+                </Field>
               ))}
             </div>
           }
