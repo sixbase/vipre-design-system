@@ -46,12 +46,18 @@ function resolveDelta(delta, invert) {
  * - caption:     small secondary line (e.g. "of 1,400 total")
  * - icon:        optional leading icon component
  * - iconVariant: 'outline' (ringed, transparent — default) | 'soft' (filled chip)
- * - tone:        'default' | 'primary' | 'success' | 'warning' | 'danger'
+ * - tone:        'default' | 'primary' | 'success' | 'warning' | 'danger', or a
+ *                chromatic family for a categorical (no good/bad) accent:
+ *                'azure'|'harbor'|'emerald'|'amber'|'rose'|'orchid'|'clay'.
+ *                Colors the icon glyph + soft chip; the sparkline follows.
  * - size:        'sm' | 'md' | 'lg'   (value size)
  * - layout:      'row' (default, Vipre's most-used) | 'stacked' (card)
  * - delta:       '+3%' | -8 | { value, direction } | a node. Auto arrow + color.
  * - invertDelta: treat "down" as good (e.g. error counts)   (default false)
  * - trend:       number[] → Sparkline (colored by the delta when present)
+ * - trendTone:   override the sparkline color for a categorical series with no
+ *                good/bad meaning — any Sparkline tone, incl. chromatic families
+ *                ('azure'|'harbor'|'emerald'|'amber'|'rose'|'orchid'|'clay').
  * - loading:     show a skeleton    (default false)
  * - onClick:     makes the tile a button
  *
@@ -76,6 +82,7 @@ export const StatTile = forwardRef(function StatTile(
     delta,
     invertDelta = false,
     trend,
+    trendTone,
     loading = false,
     onClick,
     className,
@@ -87,7 +94,7 @@ export const StatTile = forwardRef(function StatTile(
   const d = resolveDelta(delta, invertDelta)
   const formatted = formatValue(value, prefix, suffix)
   const hasTrend = !loading && Array.isArray(trend) && trend.length >= 2
-  const sparkTone = d && !d.node ? (d.good ? 'success' : 'danger') : tone === 'default' ? 'muted' : tone
+  const sparkTone = trendTone ?? (d && !d.node ? (d.good ? 'success' : 'danger') : tone === 'default' ? 'muted' : tone)
   const iconGlyph = { sm: 'md', md: 'lg', lg: 'lg' }[size] ?? 'lg'
 
   const iconEl = icon && (
@@ -129,6 +136,7 @@ export const StatTile = forwardRef(function StatTile(
       onClick={onClick}
       aria-busy={loading || undefined}
       padding={size === 'lg' ? 5 : 4}
+      elevation="sm"
       className={cx(
         'vds-stat',
         `vds-stat--${layout}`,
