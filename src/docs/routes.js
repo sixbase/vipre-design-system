@@ -6,6 +6,10 @@ import { SpacingPage } from './pages/SpacingPage.jsx'
 import { LayoutPage } from './pages/LayoutPage.jsx'
 import { IconPage } from './pages/IconPage.jsx'
 import { InputPage } from './pages/InputPage.jsx'
+import { CheckboxPage } from './pages/CheckboxPage.jsx'
+import { SwitchPage } from './pages/SwitchPage.jsx'
+import { SelectPage } from './pages/SelectPage.jsx'
+import { SpinnerPage } from './pages/SpinnerPage.jsx'
 import { ButtonPage } from './pages/ButtonPage.jsx'
 import { BadgePage } from './pages/BadgePage.jsx'
 
@@ -32,6 +36,10 @@ export const NAV = [
     items: [
       { path: '/primitives/icon', name: 'Icon', Page: IconPage },
       { path: '/primitives/input', name: 'Input', Page: InputPage },
+      { path: '/primitives/checkbox', name: 'Checkbox', Page: CheckboxPage },
+      { path: '/primitives/switch', name: 'Switch', Page: SwitchPage },
+      { path: '/primitives/select', name: 'Select', Page: SelectPage },
+      { path: '/primitives/spinner', name: 'Spinner', Page: SpinnerPage },
     ],
   },
   {

@@ -11,6 +11,10 @@
 @use '../components/Icon/Icon';
 @use '../components/Input/Input';
 @use '../components/Textarea/Textarea';
+@use '../components/Checkbox/Checkbox';
+@use '../components/Switch/Switch';
+@use '../components/Select/Select';
+@use '../components/Spinner/Spinner';
 @use '../components/Button/Button';
 @use '../components/Badge/Badge';
 // Text/Heading have no component styles — they use the typescale classes
