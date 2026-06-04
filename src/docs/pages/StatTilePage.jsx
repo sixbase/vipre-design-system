@@ -25,7 +25,7 @@ export function StatTilePage() {
             [{ code: 'iconVariant' }, { code: "'outline' | 'soft'" }, { code: "'outline'" }, 'Ringed (transparent) vs filled chip'],
             [{ code: 'tone' }, { code: "'default' | 'primary' | 'success' | 'warning' | 'danger'" }, { code: "'default'" }, 'Colors value + icon'],
             [{ code: 'size' }, { code: "'sm' | 'md' | 'lg'" }, { code: "'md'" }, 'Value size'],
-            [{ code: 'layout' }, { code: "'stacked' | 'row'" }, { code: "'stacked'" }, 'Card vs compact row'],
+            [{ code: 'layout' }, { code: "'row' | 'stacked'" }, { code: "'row'" }, 'Compact row (default) vs stacked card'],
             [{ code: 'delta' }, { code: "'+3%' | number | { value, direction } | node" }, '—', 'Auto arrow + color'],
             [{ code: 'invertDelta' }, { code: 'boolean' }, { code: 'false' }, '"Down" is good (e.g. error counts)'],
             [{ code: 'trend' }, { code: 'number[]' }, '—', 'Sparkline, colored by the delta'],
@@ -40,18 +40,18 @@ export function StatTilePage() {
         <><IC>loading</IC> sets <IC>aria-busy</IC>; tone colors meet AA contrast in both themes.</>,
       ]}
     >
-      <Section title="Stacked (default)" note="Number is the hero: icon + delta on top, value, label, optional caption + trend.">
+      <Section title="Row (default)" note="The dense one-line layout Vipre uses most — icon, label over value, with trend / delta on the right. This is the default; no layout prop needed.">
         <Preview
           canvas={
-            <div style={GRID}>
-              <StatTile icon={Monitor} value={1284} label="Total devices" caption="of 1,400 seats" delta="+3%" trend={TREND} />
+            <div style={ROW}>
+              <StatTile icon={Monitor} value={1284} label="Total devices" delta="+3%" trend={TREND} />
               <StatTile icon={Shield} value={1192} label="Protected" tone="success" delta="+1.2%" trend={TREND} />
               <StatTile icon={Activity} value={64} suffix="%" label="Avg utilization" tone="warning" delta="-4%" />
               <StatTile icon={TriangleAlert} value={17} label="At risk" tone="danger" delta="+5" invertDelta />
             </div>
           }
-          code={`<StatTile icon={Monitor} value={1284} label="Total devices"
-  caption="of 1,400 seats" delta="+3%" trend={[…]} />`}
+          code={`<StatTile icon={Monitor} value={1284} label="Total devices" delta="+3%" trend={[…]} />
+{/* layout="row" is the default */}`}
         />
       </Section>
 
@@ -128,15 +128,15 @@ export function StatTilePage() {
         />
       </Section>
 
-      <Section title="Row (compact)" note="Dense one-line layout — trend / delta on the right.">
+      <Section title="Stacked (card)" note="The card form — number as the hero, icon + delta on top. Opt in with layout=&quot;stacked&quot;.">
         <Preview
           canvas={
-            <div style={ROW}>
-              <StatTile layout="row" icon={Shield} value={1192} label="Protected" tone="success" trend={TREND} />
-              <StatTile layout="row" size="sm" icon={Activity} value={64} suffix="%" label="Avg utilization" delta="-4%" />
+            <div style={GRID}>
+              <StatTile layout="stacked" icon={Shield} value={1192} label="Protected" tone="success" delta="+1.2%" trend={TREND} />
+              <StatTile layout="stacked" icon={Activity} value={64} suffix="%" label="Avg utilization" tone="warning" delta="-4%" />
             </div>
           }
-          code={`<StatTile layout="row" icon={Shield} value={1192} label="Protected" tone="success" trend={[…]} />`}
+          code={`<StatTile layout="stacked" icon={Shield} value={1192} label="Protected" trend={[…]} />`}
         />
       </Section>
 

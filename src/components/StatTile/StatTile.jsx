@@ -48,7 +48,7 @@ function resolveDelta(delta, invert) {
  * - iconVariant: 'outline' (ringed, transparent — default) | 'soft' (filled chip)
  * - tone:        'default' | 'primary' | 'success' | 'warning' | 'danger'
  * - size:        'sm' | 'md' | 'lg'   (value size)
- * - layout:      'stacked' | 'row'
+ * - layout:      'row' (default, Vipre's most-used) | 'stacked' (card)
  * - delta:       '+3%' | -8 | { value, direction } | a node. Auto arrow + color.
  * - invertDelta: treat "down" as good (e.g. error counts)   (default false)
  * - trend:       number[] → Sparkline (colored by the delta when present)
@@ -72,7 +72,7 @@ export const StatTile = forwardRef(function StatTile(
     iconVariant = 'outline',
     tone = 'default',
     size = 'md',
-    layout = 'stacked',
+    layout = 'row',
     delta,
     invertDelta = false,
     trend,
