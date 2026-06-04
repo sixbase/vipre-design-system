@@ -11,7 +11,7 @@ export function StatTilePage() {
   return (
     <ComponentPage
       title="Stat Tile"
-      description="A KPI tile — a prominent value with a label, optional icon, a structured delta (signed, auto-colored), an optional caption and trend sparkline, plus loading and empty states. Two layouts (stacked / row) and three sizes. Composes Surface + Icon + Sparkline."
+      description="A KPI tile — a prominent value with a label, an optional icon, a caption, and a trend sparkline, plus loading and empty states. Two layouts (row / stacked) and three sizes. Composes Surface + Icon + Sparkline."
       installCode={`import { StatTile } from 'vipre-design-system'`}
       props={[
         {
@@ -26,9 +26,7 @@ export function StatTilePage() {
             [{ code: 'tone' }, { code: "'default' | 'primary' | 'success' | 'warning' | 'danger'" }, { code: "'default'" }, 'Colors the icon (value stays ink)'],
             [{ code: 'size' }, { code: "'sm' | 'md' | 'lg'" }, { code: "'md'" }, 'Value size'],
             [{ code: 'layout' }, { code: "'row' | 'stacked'" }, { code: "'row'" }, 'Compact row (default) vs stacked card'],
-            [{ code: 'delta' }, { code: "'+3%' | number | { value, direction } | node" }, '—', 'Signed value, auto-colored'],
-            [{ code: 'invertDelta' }, { code: 'boolean' }, { code: 'false' }, '"Down" is good (e.g. error counts)'],
-            [{ code: 'trend' }, { code: 'number[]' }, '—', 'Sparkline, colored by the delta'],
+            [{ code: 'trend' }, { code: 'number[]' }, '—', 'Sparkline (colored by tone / trendTone)'],
             [{ code: 'loading' }, { code: 'boolean' }, { code: 'false' }, 'Skeleton placeholder'],
             [{ code: 'onClick' }, { code: '() => void' }, '—', 'Makes the tile a button'],
           ],
@@ -36,21 +34,21 @@ export function StatTilePage() {
       ]}
       accessibility={[
         <>With <IC>onClick</IC> it renders a real <IC>{'<button>'}</IC> — keyboard + focus ring included.</>,
-        <>Icon and trend are decorative (<IC>aria-hidden</IC>); the +/- sign conveys direction and color reinforces good/bad.</>,
+        <>Icon and trend are decorative (<IC>aria-hidden</IC>); the value + label carry the meaning.</>,
         <><IC>loading</IC> sets <IC>aria-busy</IC>; tone colors meet AA contrast in both themes.</>,
       ]}
     >
-      <Section title="Row (default)" note="The dense one-line layout Vipre uses most — icon, label over value, with trend / delta on the right. This is the default; no layout prop needed.">
+      <Section title="Row (default)" note="The dense one-line layout Vipre uses most — icon, label over value, optional trend on the right. This is the default; no layout prop needed.">
         <Preview
           canvas={
             <div style={ROW}>
-              <StatTile icon={Monitor} value={1284} label="Total devices" delta="+3%" trend={TREND} />
-              <StatTile icon={Shield} value={1192} label="Protected" tone="success" delta="+1.2%" trend={TREND} />
-              <StatTile icon={Activity} value={64} suffix="%" label="Avg utilization" tone="warning" delta="-4%" />
-              <StatTile icon={TriangleAlert} value={17} label="At risk" tone="danger" delta="+5" invertDelta />
+              <StatTile icon={Monitor} value={1284} label="Total devices" trend={TREND} />
+              <StatTile icon={Shield} value={1192} label="Protected" tone="success" trend={TREND} />
+              <StatTile icon={Activity} value={64} suffix="%" label="Avg utilization" tone="warning" />
+              <StatTile icon={TriangleAlert} value={17} label="At risk" tone="danger" />
             </div>
           }
-          code={`<StatTile icon={Monitor} value={1284} label="Total devices" delta="+3%" trend={[…]} />
+          code={`<StatTile icon={Monitor} value={1284} label="Total devices" trend={[…]} />
 {/* layout="row" is the default */}`}
         />
       </Section>
@@ -81,22 +79,6 @@ export function StatTilePage() {
           }
           code={`<StatTile icon={Mail} … />                     {/* outline — default */}
 <StatTile icon={Mail} … iconVariant="soft" />  {/* filled chip */}`}
-        />
-      </Section>
-
-      <Section title="Delta" note="The +/- shows direction; color auto-derives (green good / red bad). Use invertDelta where down is good — note 'At risk +5' reads red.">
-        <Preview
-          canvas={
-            <div style={GRID}>
-              <StatTile value={92} suffix="%" label="Uptime" delta="+1.2%" />
-              <StatTile value={318} label="New devices" delta="-8%" />
-              <StatTile value={17} label="At risk" delta="+5" invertDelta />
-              <StatTile value={4} label="Incidents" delta="-2" invertDelta />
-            </div>
-          }
-          code={`<StatTile value={92} suffix="%" label="Uptime" delta="+1.2%" />   {/* + = green */}
-<StatTile value={318} label="New devices" delta="-8%" />          {/* - = red */}
-<StatTile value={17} label="At risk" delta="+5" invertDelta />    {/* + but BAD = red */}`}
         />
       </Section>
 
@@ -142,12 +124,12 @@ export function StatTilePage() {
         />
       </Section>
 
-      <Section title="Stacked (card)" note="The card form — number as the hero, icon + delta on top. Opt in with layout=&quot;stacked&quot;.">
+      <Section title="Stacked (card)" note="The card form — number as the hero, icon on top. Opt in with layout=&quot;stacked&quot;.">
         <Preview
           canvas={
             <div style={GRID}>
-              <StatTile layout="stacked" icon={Shield} value={1192} label="Protected" tone="success" delta="+1.2%" trend={TREND} />
-              <StatTile layout="stacked" icon={Activity} value={64} suffix="%" label="Avg utilization" tone="warning" delta="-4%" />
+              <StatTile layout="stacked" icon={Shield} value={1192} label="Protected" tone="success" trend={TREND} />
+              <StatTile layout="stacked" icon={Activity} value={64} suffix="%" label="Avg utilization" tone="warning" />
             </div>
           }
           code={`<StatTile layout="stacked" icon={Shield} value={1192} label="Protected" trend={[…]} />`}
