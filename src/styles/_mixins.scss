@@ -22,10 +22,14 @@
     transform var(--vds-dur-base) var(--vds-ease-out),
     border-color var(--vds-dur-base) var(--vds-ease-out);
 
+  // Hover = clearly clickable. A BRAND-colored border is the unmistakable cue
+  // (a faint grey shift reads as "nothing"); paired with a real lift + a big
+  // shadow jump (xs → lg). The border color survives reduced-motion, so the
+  // affordance never disappears even when the translate is dropped.
   &:hover {
-    border-color: var(--vds-line-strong);
-    box-shadow: var(--vds-shadow-md);
-    transform: translateY(-2px);
+    border-color: var(--vds-primary);
+    box-shadow: var(--vds-shadow-lg);
+    transform: translateY(-3px);
   }
   // Pressed: drop back down for tactile feedback (shadow shrinks, lift removed).
   &:active {
