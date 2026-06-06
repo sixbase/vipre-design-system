@@ -88,7 +88,11 @@
     align-items: center;
     gap: var(--vds-space-2);
     min-width: 0; // thread shrinkability down to the label
-    min-height: 40px;
+    // 46px = caret(28) + padding(8·2) + border(1·2). The drill-down caret is the
+    // tallest child, so caret-bearing crumbs render 46px; pin min-height to match
+    // so a caret-less crumb (e.g. the active leaf scope) is the same height — not
+    // the shorter 40px it would otherwise fall back to.
+    min-height: 46px;
     padding: var(--vds-space-2) var(--vds-space-3);
     border-radius: var(--vds-radius-md);
     border: 1px solid var(--vds-line);
