@@ -41,17 +41,17 @@ export function StatTilePage() {
         <><IC>loading</IC> sets <IC>aria-busy</IC>; tone colors meet AA contrast in both themes.</>,
       ]}
     >
-      <Section title="Row (default)" note="The dense one-line layout Vipre uses most — icon, label over value, optional trend on the right. This is the default; no layout prop needed.">
+      <Section title="Row (default)" note="The dense one-line layout Vipre uses most — icon, label over value, optional trend on the right. These tiles are clickable (most are) — hover to feel the drill-in lift. This is the default; no layout prop needed.">
         <Preview
           canvas={
             <div style={ROW}>
-              <StatTile icon={Monitor} value={1284} label="Total devices" trend={TREND} />
-              <StatTile icon={Shield} value={1192} label="Protected" tone="success" trend={TREND} />
-              <StatTile icon={Activity} value={64} suffix="%" label="Avg utilization" tone="warning" />
-              <StatTile icon={TriangleAlert} value={17} label="At risk" tone="danger" />
+              <StatTile icon={Monitor} value={1284} label="Total devices" trend={TREND} onClick={() => {}} />
+              <StatTile icon={Shield} value={1192} label="Protected" tone="success" trend={TREND} onClick={() => {}} />
+              <StatTile icon={Activity} value={64} suffix="%" label="Avg utilization" tone="warning" onClick={() => {}} />
+              <StatTile icon={TriangleAlert} value={17} label="At risk" tone="danger" onClick={() => {}} />
             </div>
           }
-          code={`<StatTile icon={Monitor} value={1284} label="Total devices" trend={[…]} />
+          code={`<StatTile icon={Monitor} value={1284} label="Total devices" trend={[…]} onClick={openDevices} />
 {/* layout="row" is the default */}`}
         />
       </Section>

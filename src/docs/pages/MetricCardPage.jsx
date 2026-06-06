@@ -44,7 +44,7 @@ export function MetricCardPage() {
         <>The breakdown is a <IC>{'<dl>'}</IC> (label/value pairs); delta color is paired with a +/− sign, never color alone.</>,
       ]}
     >
-      <Section title="Anatomy" note="The full card: header (icon chip + title + period), hero value, delta badge with caption, a target progress bar, and a breakdown list.">
+      <Section title="Anatomy" note="The full card: header (icon chip + title + period), hero value, delta badge with caption, a target progress bar, and a breakdown list. It's clickable (most cards are) — hover to feel the drill-in lift.">
         <Preview
           canvas={
             <div style={ONE}>
@@ -58,6 +58,7 @@ export function MetricCardPage() {
                 deltaCaption="vs last quarter"
                 progress={{ value: 87, label: 'Quarterly target: $2.8M' }}
                 breakdown={REVENUE_BREAKDOWN}
+                onClick={() => {}}
               />
             </div>
           }
@@ -75,6 +76,7 @@ export function MetricCardPage() {
     { label: 'Recurring revenue', value: '$1.62M' },
     { label: 'Average deal size', value: '$34.2K' },
   ]}
+  onClick={openRevenue}
 />`}
         />
       </Section>
