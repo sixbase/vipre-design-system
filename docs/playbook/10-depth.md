@@ -16,11 +16,12 @@ the surfaces well enough.
 
 1. **Tone** — a raised surface uses a different background (`canvas` → `surface` → `surface-raised` → `surface-overlay`).
 2. **Line** — a 1px `--vds-line` border separates resting surfaces before any shadow.
-3. **Shadow** — only when an element *floats free* of the page (menus, modals, toasts).
+3. **Shadow** — resting surfaces get only a whisper (`shadow-xs`); reserve `shadow-md`+ for
+   elements that *float free* of the page (menus, modals, toasts).
 4. **Stack order** (`z-index`) — decides which floating thing wins when two overlap.
 
-> Rule of thumb: if it's resting *on* the page, separate it with tone + line. If it's
-> floating *over* the page, add a shadow and a z-index.
+> Rule of thumb: if it's resting *on* the page, separate it with tone + line + a whisper
+> shadow-xs. If it's floating *over* the page, add a real shadow (md/lg) and a z-index.
 
 ## The elevation ladder
 
@@ -30,7 +31,7 @@ matches what it *is*; the level decides surface, border, shadow, and stack order
 | Level | Role | Surface token | Border | Light shadow | Dark cue | z-index | Components |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | **0** | `flat` | `--vds-canvas` | none | none | none | base | page background, inline table cells |
-| **1** | `resting` | `--vds-surface` | `--vds-line` | none (or `shadow-xs`) | surface 1 step lighter than canvas | — | Card, Panel, Table shell, StatTile |
+| **1** | `resting` | `--vds-surface` | `--vds-line` | `shadow-xs` (whisper) | surface 1 step lighter than canvas | — | Card, Panel, Table shell, StatTile, MetricCard |
 | **2** | `raised` | `--vds-surface-raised` | `--vds-line` | `shadow-md` | surface lighter + hairline | `dropdown` | Menu, Select, Popover, Combobox, hover Card |
 | **3** | `overlay` | `--vds-surface-overlay` | `--vds-line` | `shadow-lg` + **scrim** | surface lighter still + scrim | `drawer` / `modal` | Drawer, Modal, Dialog |
 | **4** | `floating` | `--vds-surface-raised` | none | `shadow-lg` | surface lift | `toast` / `tooltip` | Toast, Tooltip |
@@ -103,7 +104,7 @@ out for now** — it reads richer than "restrained." Revisit only if a design ca
 
 | Component | Level | Notes |
 | --- | --- | --- |
-| Card / Panel / StatTile | 1 `resting` | tone + line; no shadow at rest |
+| Card / Panel / StatTile / MetricCard | 1 `resting` | tone + line + whisper `shadow-xs`; interactive ones lift to `shadow-md` on hover |
 | Table shell | 1 `resting` | sticky header uses `--vds-z-raised` |
 | Menu / Select / Popover | 2 `raised` | shadow-md (light) over `surface-raised`; `z-dropdown` |
 | Drawer | 3 `overlay` | `surface-overlay` + scrim; `z-drawer` |
@@ -130,16 +131,18 @@ The level drives surface token + shadow together, so it implies the surface — 
 `raised` boolean is **deprecated**. Back-compat: the old values `none|xs|sm|md|lg` still render
 (shadow-only, surface unchanged) for one cycle, so scope-navigator is unaffected.
 
-**Carry-over (not blocking):**
-- `StatTile` still passes the deprecated `elevation="sm"`. It renders identically; migrating it
-  is a *design* call, not a mechanical one — a `resting` tile per this doc carries no shadow, so
-  moving it means deciding whether StatTile keeps its soft shadow. Left for a deliberate pass.
-- Re-vendor into scope-navigator (`src/vds/` source + rebuilt `src/vipre.css`) only when the
-  prototype actually needs the new tokens/levels — not required today.
+**Data-tile alignment (done):** `Card`, `StatTile`, and `MetricCard` are now all level-1
+`resting` and look like siblings — `--vds-surface` + `--vds-line` + a whisper `shadow-xs`.
+Previously they had drifted apart (StatTile = borderless + `shadow-sm`; MetricCard = borderless
++ `raised`/`shadow-md`). Interactive `StatTile`/`MetricCard` lift on hover (MetricCard → `shadow-md`).
+
+**Carry-over (not blocking):** re-vendor into scope-navigator (`src/vds/` source + rebuilt
+`src/vipre.css`) only when the prototype actually needs the new tokens/levels — not required today.
 
 ## Rules
 
-- **Don't shadow resting surfaces.** A card on the page gets tone + line, not a drop-shadow.
+- **Resting surfaces get only a whisper.** A card at rest is tone + line + `shadow-xs` — never
+  `shadow-md`+ (that reads as floating). Lift to a real shadow only on hover or when it floats.
 - **One scrim at a time.** Stacking two overlays (modal over drawer) shares a single scrim; the
   topmost owns it.
 - **Never hand-write `z-index`.** Use a `--vds-z-*` token. A magic number is a bug.

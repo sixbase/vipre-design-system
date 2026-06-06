@@ -4,6 +4,7 @@
 // Two layouts: stacked (default, number is the hero) and row (compact).
 // ============================================================================
 @use '../../styles/typography' as type;
+@use '../../styles/mixins' as mix;
 
 .vds-stat {
   width: 100%;
@@ -11,11 +12,8 @@
   text-align: left;
   font-family: var(--vds-font-sans);
 
-  // Tile corner = 6px. NOTE: 6px isn't in the global radius scale
-  // (sm 4 / md 8 / lg 12 / xl 16) — component-scoped one-off; promote to a
-  // token if reused. Overrides Surface's default radius (loads after Surface).
-  --vds-stat-radius: 0.375rem; // 6px
-  border-radius: var(--vds-stat-radius);
+  // Corner = Surface's default radius-lg (12px) — the shared metrics-family
+  // value (StatTile + MetricCard match). No component-scoped override.
 
   // tone → accent (icon glyph) + soft (filled-chip bg). Set per tone below.
   --vds-stat-accent: var(--vds-ink-muted);
@@ -138,22 +136,8 @@
     .vds-stat__icon { width: 3.25rem; height: 3.25rem; }
   }
 
-  // ---- interactive (drill-in) ----
-  &--interactive {
-    cursor: pointer;
-    transition:
-      border-color var(--vds-dur-fast) var(--vds-ease-out),
-      background-color var(--vds-dur-fast) var(--vds-ease-out);
-
-    &:hover {
-      border-color: var(--vds-line-strong);
-      background-color: var(--vds-canvas);
-    }
-    &:focus-visible {
-      outline: 2px solid var(--vds-focus-ring);
-      outline-offset: 2px;
-    }
-  }
+  // ---- interactive (drill-in) — shared metrics-family recipe ----
+  &--interactive { @include mix.interactive-card; }
 
   // ---- tones (color ONLY the icon glyph + soft chip; the value stays ink) ----
   &--primary {

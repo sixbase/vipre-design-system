@@ -469,3 +469,12 @@ light+dark: open/flip/clamp/select/close, `aria-checked`, dark tokens flip (trig
 surface, panel overlay surface). **Not yet dogfooded into the prototype** (and `ScopeNavigator` not
 yet migrated onto `Popover`) — both are follow-ups; re-vendor `src/vds/` + rebuilt `vipre.css` to
 close the loop when desired.
+
+**Addendum (resting = whisper shadow; data tiles aligned):** chose to define level-1 `resting`
+as tone + line **+ a whisper `shadow-xs`** (not shadowless) — a touch of lift so data tiles feel
+placed, not painted on, while staying restrained. `Surface`'s `--elev-resting` now carries
+`shadow-xs` (so it's the default for every resting surface, incl. Card). Aligned the three data
+tiles that had drifted onto different levels: **StatTile** (was borderless + `shadow-sm`) and
+**MetricCard** (was borderless + `raised`/`shadow-md`) both dropped to `elevation="resting"` with
+the default border — so Card/StatTile/MetricCard are now visual siblings. MetricCard's hover lift
+retuned `shadow-lg → shadow-md` (resting xs → raised md). 10-depth.md updated to match.

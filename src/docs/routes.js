@@ -61,12 +61,19 @@ export const NAV = [
       { path: '/components/button', name: 'Button', Page: ButtonPage },
       { path: '/components/badge', name: 'Badge', Page: BadgePage },
       { path: '/components/card', name: 'Card', Page: CardPage },
-      { path: '/components/stat-tile', name: 'Stat Tile', Page: StatTilePage },
-      { path: '/components/metric-card', name: 'Metric Card', Page: MetricCardPage },
       { path: '/components/sparkline', name: 'Sparkline', Page: SparklinePage },
       { path: '/components/table', name: 'Table', Page: TablePage },
       { path: '/components/scope-navigator', name: 'Scope Navigator', Page: ScopeNavigatorPage },
       { path: '/components/timeframe-select', name: 'Timeframe Select', Page: TimeframeSelectPage },
+    ],
+  },
+  {
+    // One KPI family, two densities: Stat Tile (compact) and Metric Card (hero).
+    // Shared visual language — soft icon chip, 12px corners, resting elevation.
+    group: 'Metrics',
+    items: [
+      { path: '/metrics/stat-tile', name: 'Stat Tile', Page: StatTilePage },
+      { path: '/metrics/metric-card', name: 'Metric Card', Page: MetricCardPage },
     ],
   },
 ]

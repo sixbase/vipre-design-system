@@ -1,0 +1,49 @@
+// ============================================================================
+// Shared style mixins — reusable recipes that would otherwise drift if copied
+// into each component. Consume with `@use '../../styles/mixins' as mix;`.
+// ============================================================================
+
+// ---- interactive-card -------------------------------------------------------
+// The drill-in affordance for clickable cards/tiles (StatTile, MetricCard, …).
+// Assumes the element rests at elevation="resting" (surface + 1px line +
+// whisper shadow-xs) and is rendered as a <button>. Defines the FULL state set
+// so the family behaves identically everywhere:
+//   rest    → (the component's own resting style)
+//   hover   → border strengthens, shadow grows xs→md, lifts 2px (rises to cursor)
+//   active  → settles back to the surface (translateY 0) + shadow-sm = "pressed"
+//   focus   → keyboard focus ring (independent of hover; :focus-visible only)
+// Honors prefers-reduced-motion by dropping the translate (depth cue stays).
+@mixin interactive-card {
+  cursor: pointer;
+  text-align: left;
+  appearance: none;
+  transition:
+    box-shadow var(--vds-dur-base) var(--vds-ease-out),
+    transform var(--vds-dur-base) var(--vds-ease-out),
+    border-color var(--vds-dur-base) var(--vds-ease-out);
+
+  &:hover {
+    border-color: var(--vds-line-strong);
+    box-shadow: var(--vds-shadow-md);
+    transform: translateY(-2px);
+  }
+  // Pressed: drop back down for tactile feedback (shadow shrinks, lift removed).
+  &:active {
+    transform: translateY(0);
+    box-shadow: var(--vds-shadow-sm);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--vds-focus-ring);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition:
+      box-shadow var(--vds-dur-base) var(--vds-ease-out),
+      border-color var(--vds-dur-base) var(--vds-ease-out);
+    &:hover,
+    &:active {
+      transform: none;
+    }
+  }
+}

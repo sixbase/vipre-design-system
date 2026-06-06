@@ -139,7 +139,7 @@ export function MetricCardPage() {
         />
       </Section>
 
-      <Section title="Interactive (drill-in)" note="Pass onClick to make the whole card a button. It lifts on hover (shadow grows, nudges up 2px) and shows a keyboard focus ring. Static cards stay flat — no false affordance.">
+      <Section title="Interactive (drill-in)" note="Most cards are clickable. Pass onClick (or interactive) and the card becomes a button with the shared metrics-family states: hover lifts it (shadow grows, nudges up 2px, border strengthens), press settles it back down, and keyboard focus shows a ring. Static cards stay flat — no false affordance.">
         <Preview
           canvas={
             <div style={ONE}>
@@ -161,7 +161,7 @@ export function MetricCardPage() {
         />
       </Section>
 
-      <Section title="In a grid" note="Drop cards into <Grid> — auto-fit columns that stack to one on small screens. No media queries; never overflows.">
+      <Section title="In a grid" note="A real dashboard: clickable KPI cards in a <Grid> — auto-fit columns that stack to one on small screens. Hover any card to feel the drill-in lift; no media queries, never overflows.">
         <Preview
           canvas={
             <Grid min="18rem" gap={4}>
@@ -174,6 +174,7 @@ export function MetricCardPage() {
                 delta="+12.5%"
                 deltaCaption="vs last quarter"
                 progress={{ value: 87, label: 'Target: $2.8M' }}
+                onClick={() => {}}
               />
               <MetricCard
                 icon={Users}
@@ -184,12 +185,13 @@ export function MetricCardPage() {
                 delta="+18%"
                 deltaCaption="vs last quarter"
                 progress={{ value: 64, label: 'Target: 640' }}
+                onClick={() => {}}
               />
             </Grid>
           }
           code={`<Grid min="18rem" gap={4}>
-  <MetricCard … />
-  <MetricCard … />
+  <MetricCard … onClick={openRevenue} />
+  <MetricCard … onClick={openCustomers} />
 </Grid>`}
         />
       </Section>

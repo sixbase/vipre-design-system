@@ -24,13 +24,14 @@ export function StatTilePage() {
             [{ code: 'label' }, { code: 'string' }, '—', 'The metric name'],
             [{ code: 'caption' }, { code: 'ReactNode' }, '—', 'Small secondary line (context)'],
             [{ code: 'icon' }, { code: 'icon component' }, '—', 'Leading icon'],
-            [{ code: 'iconVariant' }, { code: "'outline' | 'soft'" }, { code: "'outline'" }, 'Ringed (transparent) vs filled chip'],
+            [{ code: 'iconVariant' }, { code: "'soft' | 'outline'" }, { code: "'soft'" }, 'Filled tinted chip (family standard) vs ringed (transparent)'],
             [{ code: 'tone' }, { code: "'default' | 'primary' | 'success' | 'warning' | 'danger'" }, { code: "'default'" }, 'Colors the icon (value stays ink)'],
             [{ code: 'size' }, { code: "'sm' | 'md' | 'lg'" }, { code: "'md'" }, 'Value size'],
             [{ code: 'layout' }, { code: "'row' | 'stacked'" }, { code: "'row'" }, 'Compact row (default) vs stacked card'],
             [{ code: 'trend' }, { code: 'number[]' }, '—', 'Sparkline (colored by tone / trendTone)'],
             [{ code: 'loading' }, { code: 'boolean' }, { code: 'false' }, 'Skeleton placeholder'],
-            [{ code: 'onClick' }, { code: '() => void' }, '—', 'Makes the tile a button'],
+            [{ code: 'onClick' }, { code: '() => void' }, '—', 'Makes the tile a button (hover lift + focus ring)'],
+            [{ code: 'interactive' }, { code: 'boolean' }, { code: 'false' }, 'Force the hover affordance without onClick'],
           ],
         },
       ]}
@@ -71,16 +72,16 @@ export function StatTilePage() {
         />
       </Section>
 
-      <Section title="Icon variant" note="'outline' (default) is a ring; 'soft' fills the chip with the tone tint. Same icon, two treatments.">
+      <Section title="Icon variant" note="'soft' (default) fills the chip with the tone tint — the metrics-family standard shared with Metric Card; 'outline' is a quieter ring. Same icon, two treatments.">
         <Preview
           canvas={
             <div style={GRID}>
-              <StatTile icon={Mail} value={175} label="Outline (default)" tone="primary" />
-              <StatTile icon={Mail} value={175} label="Soft" tone="primary" iconVariant="soft" />
+              <StatTile icon={Mail} value={175} label="Soft (default)" tone="primary" />
+              <StatTile icon={Mail} value={175} label="Outline" tone="primary" iconVariant="outline" />
             </div>
           }
-          code={`<StatTile icon={Mail} … />                     {/* outline — default */}
-<StatTile icon={Mail} … iconVariant="soft" />  {/* filled chip */}`}
+          code={`<StatTile icon={Mail} … />                        {/* soft — default */}
+<StatTile icon={Mail} … iconVariant="outline" />  {/* ringed */}`}
         />
       </Section>
 
@@ -138,26 +139,26 @@ export function StatTilePage() {
         />
       </Section>
 
-      <Section title="Responsive grid" note="Wrap tiles in <Grid> — auto-fit columns at a min width that stack to one column on small screens. No media queries; never overflows. (Resize the preview / your window to see it reflow.)">
+      <Section title="Responsive grid" note="A row of clickable KPI tiles in <Grid> — auto-fit columns that stack to one on small screens. Hover any tile to feel the drill-in lift. No media queries; never overflows. (Resize the preview / your window to see it reflow.)">
         <Preview
           canvas={
             <Grid min="14rem" gap={3} style={{ maxWidth: 520 }}>
-              <StatTile icon={Users} value={42} label="Distributors" tone="primary" />
-              <StatTile icon={Shield} value={47} label="Resellers" tone="success" />
-              <StatTile icon={Mail} value={324} label="Customers" tone="primary" />
+              <StatTile icon={Users} value={42} label="Distributors" tone="primary" onClick={() => {}} />
+              <StatTile icon={Shield} value={47} label="Resellers" tone="success" onClick={() => {}} />
+              <StatTile icon={Mail} value={324} label="Customers" tone="primary" onClick={() => {}} />
             </Grid>
           }
           code={`import { Grid, StatTile } from 'vipre-design-system'
 
 <Grid min="14rem" gap={3}>
-  <StatTile icon={Users} value={42} label="Distributors" />
-  <StatTile icon={Shield} value={47} label="Resellers" />
-  <StatTile icon={Mail} value={324} label="Customers" />
+  <StatTile icon={Users} value={42} label="Distributors" onClick={openDistributors} />
+  <StatTile icon={Shield} value={47} label="Resellers" onClick={openResellers} />
+  <StatTile icon={Mail} value={324} label="Customers" onClick={openCustomers} />
 </Grid>`}
         />
       </Section>
 
-      <Section title="Interactive (drill-in)" note="Pass onClick to make the whole tile a button.">
+      <Section title="Interactive (drill-in)" note="Most tiles are clickable. Pass onClick (or interactive) and the tile becomes a button with the shared metrics-family states: hover lifts it (shadow grows, nudges up 2px, border strengthens), press settles it back down, and keyboard focus shows a ring. Static tiles stay flat — no false affordance.">
         <Preview
           canvas={
             <div style={GRID}>

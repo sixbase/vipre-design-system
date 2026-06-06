@@ -1,9 +1,11 @@
 // ============================================================================
 // MetricCard — flagship KPI card. Composes Surface; owns the header (soft icon
 // chip + title + period), the hero value + delta, the target progress bar, and
-// the breakdown list. Borderless + raised so it floats on the canvas.
+// the breakdown list. Rests at level 1 (surface + line + whisper shadow-xs),
+// matching Card / StatTile; interactive cards lift to raised on hover.
 // ============================================================================
 @use '../../styles/typography' as type;
+@use '../../styles/mixins' as mix;
 
 .vds-metric {
   display: flex;
@@ -16,32 +18,9 @@
   --vds-metric-accent: var(--vds-primary);
   --vds-metric-soft: var(--vds-primary-soft);
 
-  // ---- interactive (drill-in): the whole card is a <button> ----
-  // Reset button chrome, then lift on hover (shadow md → lg + a 2px nudge up).
-  &--interactive {
-    cursor: pointer;
-    text-align: left;
-    appearance: none;
-    transition:
-      box-shadow var(--vds-dur-base) var(--vds-ease-out),
-      transform var(--vds-dur-base) var(--vds-ease-out);
-
-    &:hover {
-      box-shadow: var(--vds-shadow-lg);
-      transform: translateY(-2px);
-    }
-    &:focus-visible {
-      outline: 2px solid var(--vds-focus-ring);
-      outline-offset: 2px;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    &--interactive {
-      transition: box-shadow var(--vds-dur-base) var(--vds-ease-out);
-      &:hover { transform: none; }
-    }
-  }
+  // ---- interactive (drill-in) — shared metrics-family recipe ----
+  // The whole card is a <button>; rest → hover lift → pressed → focus ring.
+  &--interactive { @include mix.interactive-card; }
 
   // ---- header ----
   &__header {

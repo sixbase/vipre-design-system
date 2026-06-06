@@ -258,9 +258,7 @@ export const MetricCard = forwardRef(function MetricCard(
       as={isInteractive ? 'button' : 'div'}
       type={isInteractive ? 'button' : undefined}
       onClick={onClick}
-      bordered={false}
-      elevation="raised"
-      radius="xl"
+      elevation="resting"
       padding={6}
       className={cx(
         'vds-metric',
