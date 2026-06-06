@@ -1,6 +1,7 @@
+import { Eye, Pencil, Trash2 } from 'lucide-react'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { Section, Preview, Kbd, IC } from '../primitives.jsx'
-import { Button } from '../../components/index.js'
+import { Button, Icon, Inline } from '../../components/index.js'
 
 export function ButtonPage() {
   return (
@@ -14,6 +15,7 @@ export function ButtonPage() {
           rows: [
             [{ code: 'variant' }, { code: "'primary' | 'secondary' | 'ghost' | 'danger'" }, { code: "'primary'" }, 'Visual weight of the action'],
             [{ code: 'size' }, { code: "'sm' | 'md' | 'lg'" }, { code: "'md'" }, 'Control height + type step'],
+            [{ code: 'iconOnly' }, { code: 'boolean' }, { code: 'false' }, 'Square the button for a lone icon (needs aria-label)'],
             [{ code: 'disabled' }, { code: 'boolean' }, { code: 'false' }, 'Disables interaction (opacity 0.5)'],
             [{ code: 'type' }, { code: "'button' | 'submit'" }, { code: "'button'" }, 'Native button type'],
             [{ code: '…props' }, { code: 'ButtonHTMLAttributes' }, '—', 'onClick, aria-*, etc. spread to <button>'],
@@ -56,6 +58,22 @@ export function ButtonPage() {
           code={`<Button size="sm">Small</Button>
 <Button size="md">Medium</Button>   {/* default */}
 <Button size="lg">Large</Button>`}
+        />
+      </Section>
+
+      <Section title="Icon-only" note="Square buttons for a lone icon — ideal as low-emphasis row actions. Always pass an aria-label.">
+        <Preview
+          canvas={
+            <Inline gap={1}>
+              <Button variant="ghost" size="sm" iconOnly aria-label="View"><Icon as={Eye} size="sm" /></Button>
+              <Button variant="ghost" size="sm" iconOnly aria-label="Edit"><Icon as={Pencil} size="sm" /></Button>
+              <Button variant="ghost" size="sm" iconOnly aria-label="Delete"><Icon as={Trash2} size="sm" /></Button>
+              <Button variant="secondary" iconOnly aria-label="Edit"><Icon as={Pencil} size="sm" /></Button>
+            </Inline>
+          }
+          code={`<Button variant="ghost" size="sm" iconOnly aria-label="Edit">
+  <Icon as={Pencil} size="sm" />
+</Button>`}
         />
       </Section>
 

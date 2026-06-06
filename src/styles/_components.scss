@@ -11,11 +11,14 @@
 // Composites
 @use '../components/Card/Card';
 @use '../components/StatTile/StatTile';
+@use '../components/MetricCard/MetricCard';
 @use '../components/Sparkline/Sparkline';
 @use '../components/Table/Table';
 @use '../components/ScopeNavigator/ScopeNavigator';
+@use '../components/TimeframeSelect/TimeframeSelect';
 
 // Controls
+@use '../components/Popover/Popover';
 @use '../components/Icon/Icon';
 @use '../components/Field/Field';
 @use '../components/Input/Input';

@@ -112,7 +112,7 @@ export const SEMANTIC_GROUPS = [
     title: 'Status',
     rows: [
       { token: '--vds-success', ref: 'emerald-600 → 400', usage: 'Healthy, protected, success confirmations' },
-      { token: '--vds-warning', ref: 'amber-600 → 400', usage: 'Needs attention but not broken — at-risk, low-stock' },
+      { token: '--vds-warning', ref: 'amber-400', usage: 'Needs attention but not broken — at-risk, low-stock' },
       { token: '--vds-danger', ref: 'rose-600 → 400', usage: 'Errors, threats, destructive actions' },
       { token: '--vds-info', ref: 'midnight-600 → 400', usage: 'Neutral informational notes and callouts' },
     ],

@@ -5,6 +5,7 @@
 export { Surface } from './Surface/index.js'
 export { Card } from './Card/index.js'
 export { StatTile } from './StatTile/index.js'
+export { MetricCard } from './MetricCard/index.js'
 export { Sparkline } from './Sparkline/index.js'
 export { Table } from './Table/index.js'
 export { Stack } from './Stack/index.js'
@@ -20,6 +21,7 @@ export { Textarea } from './Textarea/index.js'
 export { Checkbox } from './Checkbox/index.js'
 export { Switch } from './Switch/index.js'
 export { Select } from './Select/index.js'
+export { Popover, menuKeyDown } from './Popover/index.js'
 export { Spinner } from './Spinner/index.js'
 export { Button } from './Button/index.js'
 export { Badge } from './Badge/index.js'
@@ -32,3 +34,9 @@ export {
   defaultStatusConfig,
   defaultSortOptions,
 } from './ScopeNavigator/index.js'
+export {
+  TimeframeSelect,
+  DEFAULT_TIMEFRAMES,
+  CALENDAR_TIMEFRAMES,
+  resolveTimeframe,
+} from './TimeframeSelect/index.js'

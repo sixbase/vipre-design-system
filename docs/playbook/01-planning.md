@@ -30,6 +30,8 @@ Structure and delivery mirror `sixbase/claude-design-system`; the aesthetic is f
 | `Button` | `variant` (primary/secondary/ghost/danger) × `size` (sm/md/lg) | ✅ |
 | `Badge` | `tone` (neutral/primary/success/warning/danger/info), `dot` | ✅ |
 | `ScopeNavigator` | `path`, `onNavigate`, `rootItems`, `typeConfig`, `statusConfig`, `onSearch`, `actions` — the MSP hierarchy breadcrumb (composite: Surface + Input + Icon) | ✅ |
+| `Popover` | `trigger`, `placement` (bottom/top × start/end, auto-flip), `role`, controlled/uncontrolled — the anchored-overlay primitive (flip + viewport clamp + Esc + focus return + ARIA) | ✅ |
+| `TimeframeSelect` | `variant` (dropdown/segmented), `options`, `value`/`onChange`, `allowCustom`, `size` — dashboard time-window control (composes Popover) | ✅ |
 
 ## Roadmap — the data-dense set MSP needs
 

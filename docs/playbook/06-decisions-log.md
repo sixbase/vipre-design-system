@@ -436,3 +436,36 @@ exercised in-browser). Registered in the barrel (under a new **Composites** sect
    and added a **`window` resize listener** alongside the `ResizeObserver` (belt-and-suspenders for
    envs that throttle RO delivery). Verified row-mode at 1020px: search inline at 200px, 12px gap, zero
    crumb/search overlap; stacked-mode at 658px: search full-width below the trail.
+
+## Popover primitive + TimeframeSelect (2026-06-04)
+
+Added a reusable **`Popover`** primitive and a **`TimeframeSelect`** component built on it.
+
+**Why a primitive first.** Audited the existing `ScopeNavigator` dropdown and found its placement
+only clamps **horizontally** (it always opens *downward*, never flips), has **no Escape-to-close**,
+and **never returns focus** to the trigger. Fine for a bar pinned to the top of the screen, but a
+timeframe control can live anywhere (page header, card, near the viewport bottom) and would clip.
+Rather than copy a flawed pattern, the placement/dismissal/focus/ARIA logic now lives once in
+`Popover`:
+- **Placement:** opens on `placement` (bottom/top × start/end), **flips to the opposite side** when
+  there isn't room, **clamps left/right** into the viewport, and **caps panel height** to the
+  available space (scrolls instead of overflowing). Recomputes on scroll + resize.
+- **Dismissal/focus:** outside-`mousedown` and `Escape` both close; Escape (and the render-prop
+  `close()`) **return focus to the trigger**. Focus moves into the panel's first focusable on open.
+- **ARIA:** clones the trigger to wire `aria-haspopup` / `aria-expanded` / `aria-controls` to the
+  panel's `id` + `role` (`dialog|menu|listbox`). Composes `Surface elevation="overlay"`.
+Registered under **Controls** (`Popover`); docs at `/primitives/popover`.
+
+**TimeframeSelect — the common patterns in one component.** `variant="dropdown"` (default) is a pill
+trigger (Calendar + label + chevron) → preset menu (`role="menu"` of `menuitemradio`, arrow-key
+roving focus, check on the active item) built on `Popover`; `variant="segmented"` is an inline
+quick-toggle (`role="group"` of `aria-pressed` buttons) for wide toolbars. `allowCustom` adds a
+start/end range (two DS `Input type="date"` + Apply). Presets are `{ id, label }`; the component
+**resolves the concrete `{ start, end }` Dates** from the id at selection time (`resolveTimeframe`,
+relative to now) so `onChange` hands consumers real dates without hardcoding. Ships
+`DEFAULT_TIMEFRAMES` (rolling 24h/7d/30d/90d/12mo) + `CALENDAR_TIMEFRAMES` (Today/WTD/MTD/YTD…).
+Registered under **Composites**; docs at `/components/timeframe-select`. Verified in-browser
+light+dark: open/flip/clamp/select/close, `aria-checked`, dark tokens flip (trigger `midnight-900`
+surface, panel overlay surface). **Not yet dogfooded into the prototype** (and `ScopeNavigator` not
+yet migrated onto `Popover`) — both are follow-ups; re-vendor `src/vds/` + rebuilt `vipre.css` to
+close the loop when desired.

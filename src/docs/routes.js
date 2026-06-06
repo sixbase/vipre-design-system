@@ -11,14 +11,17 @@ import { InputPage } from './pages/InputPage.jsx'
 import { CheckboxPage } from './pages/CheckboxPage.jsx'
 import { SwitchPage } from './pages/SwitchPage.jsx'
 import { SelectPage } from './pages/SelectPage.jsx'
+import { PopoverPage } from './pages/PopoverPage.jsx'
 import { SpinnerPage } from './pages/SpinnerPage.jsx'
 import { ButtonPage } from './pages/ButtonPage.jsx'
 import { BadgePage } from './pages/BadgePage.jsx'
 import { CardPage } from './pages/CardPage.jsx'
 import { StatTilePage } from './pages/StatTilePage.jsx'
+import { MetricCardPage } from './pages/MetricCardPage.jsx'
 import { SparklinePage } from './pages/SparklinePage.jsx'
 import { TablePage } from './pages/TablePage.jsx'
 import { ScopeNavigatorPage } from './pages/ScopeNavigatorPage.jsx'
+import { TimeframeSelectPage } from './pages/TimeframeSelectPage.jsx'
 
 /* Single source of truth for both the sidebar nav and the hash router. */
 export const NAV = [
@@ -48,6 +51,7 @@ export const NAV = [
       { path: '/primitives/checkbox', name: 'Checkbox', Page: CheckboxPage },
       { path: '/primitives/switch', name: 'Switch', Page: SwitchPage },
       { path: '/primitives/select', name: 'Select', Page: SelectPage },
+      { path: '/primitives/popover', name: 'Popover', Page: PopoverPage },
       { path: '/primitives/spinner', name: 'Spinner', Page: SpinnerPage },
     ],
   },
@@ -58,9 +62,11 @@ export const NAV = [
       { path: '/components/badge', name: 'Badge', Page: BadgePage },
       { path: '/components/card', name: 'Card', Page: CardPage },
       { path: '/components/stat-tile', name: 'Stat Tile', Page: StatTilePage },
+      { path: '/components/metric-card', name: 'Metric Card', Page: MetricCardPage },
       { path: '/components/sparkline', name: 'Sparkline', Page: SparklinePage },
       { path: '/components/table', name: 'Table', Page: TablePage },
       { path: '/components/scope-navigator', name: 'Scope Navigator', Page: ScopeNavigatorPage },
+      { path: '/components/timeframe-select', name: 'Timeframe Select', Page: TimeframeSelectPage },
     ],
   },
 ]

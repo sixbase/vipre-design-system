@@ -43,3 +43,23 @@ The ScopeNavigator bar is always navy in both themes (product chrome). Its light
 (translucent borders/hover fills) are expressed as `color-mix(in oklab, var(--vds-white) 15%,
 transparent)` — token-bound, not `rgba(255,255,255,.15)`. Keeps the "no raw values" rule intact even
 for a surface that deliberately ignores the light/dark flip.
+
+## Overlay placement: always solve BOTH axes (flip + clamp), in a shared primitive
+
+The first dropdown (`ScopeNavigator`) only clamped its popover **horizontally** and always opened
+**downward**. That's invisible-fine for a top-pinned bar (there's always room below) but is a latent
+bug the moment the same pattern is reused lower on the page — the panel clips off the bottom. The fix
+isn't per-component tweaks; it's a single **`Popover` primitive** that flips vertically when room is
+tight, clamps both axes, caps its height, and owns Escape + focus-return + ARIA. New overlays should
+**compose `Popover`** rather than re-position by hand. (Migrating `ScopeNavigator` onto it is the
+natural next step — its bespoke `useLayoutEffect` clamp predates the primitive.)
+
+## Verifying popovers in-browser: dispatch a real MouseEvent, and read state inside one eval
+
+Two gotchas QA-ing the timeframe dropdown in the headless preview: (1) the popover's outside-`mousedown`
+listener closes it whenever the harness's pointer lands elsewhere **between** tool calls, so an
+`open` from one call is often already closed by the next — verify **open + interact + assert inside a
+single `preview_eval`**. (2) `element.click()` was flaky at triggering React's synthetic `onClick`;
+`el.dispatchEvent(new MouseEvent('click', { bubbles: true, view: window }))` is reliable. A screenshot
+taken right after an opening `eval` *does* preserve the open state (read-only), so eval-then-screenshot
+is the way to capture an open overlay.

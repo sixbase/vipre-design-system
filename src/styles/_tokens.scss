@@ -165,7 +165,7 @@ $clay: ( // accent — terracotta
   // Light = darker 600 step (AA-readable on white); dark mode uses the vibrant 400.
   --vds-success:        var(--vds-emerald-600);
   --vds-success-soft:   var(--vds-emerald-50);
-  --vds-warning:        var(--vds-amber-600);
+  --vds-warning:        var(--vds-amber-400); // brighter gold both modes (amber-600 reads muddy)
   --vds-warning-soft:   var(--vds-amber-50);
   --vds-danger:         var(--vds-rose-600);
   --vds-danger-soft:    var(--vds-rose-50);

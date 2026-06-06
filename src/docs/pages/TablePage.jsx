@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { ShieldCheck, Mail, Globe, Database } from 'lucide-react'
+import { ShieldCheck, Mail, Globe, Database, Eye, Pencil, Trash2 } from 'lucide-react'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { Section, Preview, IC } from '../primitives.jsx'
 import { Table, Badge, Button, Text, Icon, Inline, Stack } from '../../components/index.js'
@@ -52,6 +52,78 @@ function ProductCellCompact({ icon, name }) {
   )
 }
 
+/* Responsive demo — drop the table into a width-constrained frame so it can be
+   exercised at phone / tablet / full widths. The frame is also drag-resizable
+   (resize: horizontal). The table keeps columns readable via minWidth and
+   scrolls horizontally when the frame is narrower than that. */
+const WIDTH_PRESETS = [
+  { label: 'Mobile · 375', w: 375 },
+  { label: 'Tablet · 768', w: 768 },
+  { label: 'Full', w: null },
+]
+
+function ResponsiveDemo() {
+  const [w, setW] = useState(375)
+  return (
+    <Stack gap={3}>
+      <Inline gap={1}>
+        {WIDTH_PRESETS.map((p) => (
+          <Button
+            key={p.label}
+            size="sm"
+            variant={w === p.w ? 'secondary' : 'ghost'}
+            onClick={() => setW(p.w)}
+          >
+            {p.label}
+          </Button>
+        ))}
+      </Inline>
+      <div
+        style={{
+          width: w == null ? '100%' : w,
+          maxWidth: '100%',
+          resize: 'horizontal',
+          overflow: 'hidden',
+          padding: '0.5rem',
+          border: '1px dashed var(--vds-line-strong)',
+          borderRadius: 8,
+        }}
+      >
+        <Table
+          minWidth={640}
+          columns={[
+            { key: 'name', header: 'Device' },
+            { key: 'owner', header: 'Owner' },
+            { key: 'status', header: 'Status', render: (r) => <Badge tone={r.tone} dot>{r.status}</Badge> },
+            { key: 'seen', header: 'Last seen' },
+            { key: 'risk', header: 'Risk', align: 'right', render: (r) => `${r.risk}%` },
+          ]}
+          data={DEVICES}
+        />
+      </div>
+    </Stack>
+  )
+}
+
+/* Row actions — a trailing column of icon-only ghost Buttons. Each action is a
+   real Button (focusable, labelled); the icon is decorative. Right-align the
+   column so the controls sit at the row's edge. */
+function RowActions({ label, onView, onEdit, onDelete }) {
+  return (
+    <Inline gap={1} justify="end">
+      <Button variant="ghost" size="sm" iconOnly aria-label={`View ${label}`} onClick={onView}>
+        <Icon as={Eye} size="sm" />
+      </Button>
+      <Button variant="ghost" size="sm" iconOnly aria-label={`Edit ${label}`} onClick={onEdit}>
+        <Icon as={Pencil} size="sm" />
+      </Button>
+      <Button variant="ghost" size="sm" iconOnly aria-label={`Delete ${label}`} onClick={onDelete}>
+        <Icon as={Trash2} size="sm" />
+      </Button>
+    </Inline>
+  )
+}
+
 /* ---- live sorting demo (sorting is controlled — the page owns the order) ---- */
 function SortableDemo() {
   const [sort, setSort] = useState({ key: 'risk', direction: 'desc' })
@@ -87,7 +159,11 @@ function SelectableDemo() {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-        <Text variant="caption" tone="muted">{selected.length} selected</Text>
+        {/* tabular-nums keeps every digit the same width, so "Clear" doesn't
+            shift left/right as the count changes (1 is narrower than 4 otherwise). */}
+        <Text variant="caption" tone="muted" style={{ fontVariantNumeric: 'tabular-nums' }}>
+          {selected.length} selected
+        </Text>
         <Button size="sm" variant="ghost" disabled={selected.length === 0} onClick={() => setSelected([])}>
           Clear
         </Button>
@@ -186,6 +262,18 @@ export function TablePage() {
       </Section>
 
       <Section
+        title="Responsive"
+        note="The table fills its container and follows it as it resizes. Pass minWidth to keep columns readable — below it the shell scrolls horizontally instead of crushing columns. Use the presets, drag the frame's bottom-right corner, or just resize the window to test."
+      >
+        <Preview
+          canvas={<ResponsiveDemo />}
+          code={`// minWidth keeps columns readable; the shell scrolls below it.
+// No media queries needed — it reacts to its container, not the viewport.
+<Table minWidth={640} columns={columns} data={devices} />`}
+        />
+      </Section>
+
+      <Section
         title="Leading product cell"
         note="A common first-column pattern: a product icon + name (with an optional secondary line). Compose it in a column's render() from existing primitives — Inline, Icon, Stack, Text — no bespoke markup."
       >
@@ -273,6 +361,61 @@ const columns = [
   ]}
   data={products}
 />`}
+        />
+      </Section>
+
+      <Section
+        title="Row actions"
+        note="Per-row actions are just a trailing column: render a right-aligned Inline of icon-only ghost Buttons. Each Button needs an aria-label since there's no visible text."
+      >
+        <Preview
+          canvas={
+            <Table
+              columns={[
+                {
+                  key: 'name',
+                  header: 'Product',
+                  render: (r) => <ProductCell icon={r.icon} name={r.name} category={r.category} />,
+                },
+                { key: 'seats', header: 'Seats', align: 'right', render: (r) => r.seats.toLocaleString() },
+                {
+                  key: 'actions',
+                  header: '',
+                  align: 'right',
+                  width: '1%',
+                  render: (r) => <RowActions label={r.name} />,
+                },
+              ]}
+              data={PRODUCTS}
+            />
+          }
+          code={`import { Eye, Pencil, Trash2 } from 'lucide-react'
+import { Button, Icon, Inline } from 'vipre-design-system'
+
+const columns = [
+  // …data columns
+  {
+    key: 'actions',
+    header: '',
+    align: 'right',
+    width: '1%',          // shrink-to-fit so the controls hug the row edge
+    render: (r) => (
+      <Inline gap={1} justify="end">
+        <Button variant="ghost" size="sm" iconOnly aria-label={\`View \${r.name}\`}>
+          <Icon as={Eye} size="sm" />
+        </Button>
+        <Button variant="ghost" size="sm" iconOnly aria-label={\`Edit \${r.name}\`}>
+          <Icon as={Pencil} size="sm" />
+        </Button>
+        <Button variant="ghost" size="sm" iconOnly aria-label={\`Delete \${r.name}\`}>
+          <Icon as={Trash2} size="sm" />
+        </Button>
+      </Inline>
+    ),
+  },
+]
+
+<Table columns={columns} data={products} />`}
         />
       </Section>
 
