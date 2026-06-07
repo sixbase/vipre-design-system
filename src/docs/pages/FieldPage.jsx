@@ -1,4 +1,5 @@
 import { ComponentPage } from '../ComponentPage.jsx'
+import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, IC } from '../primitives.jsx'
 import { Field, Input, Select } from '../../components/index.js'
 
@@ -7,6 +8,7 @@ const COL = { display: 'flex', flexDirection: 'column', gap: '1.25rem', width: '
 export function FieldPage() {
   return (
     <ComponentPage
+      colors={COMPONENT_COLORS.Field}
       title="Field"
       description="The canonical wrapper for a labelled form control. It renders the label above and optional help / error text below, and wires the accessibility for you — injecting id, aria-describedby, and (when error is set) invalid onto the child control. Use it around every Input, Select, and Textarea so labels read identically everywhere."
       installCode={`import { Field, Input } from 'vipre-design-system'`}

@@ -1,10 +1,12 @@
 import { ComponentPage } from '../ComponentPage.jsx'
+import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, IC } from '../primitives.jsx'
 import { Badge } from '../../components/index.js'
 
 export function BadgePage() {
   return (
     <ComponentPage
+      colors={COMPONENT_COLORS.Badge}
       title="Badge"
       description="A compact status pill with six tones and an optional leading status dot. Soft-tinted background paired with matching ink, sized off the small end of the typescale so it reads as a label."
       installCode={`import { Badge } from 'vipre-design-system'`}

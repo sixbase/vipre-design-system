@@ -1,4 +1,5 @@
 import { ComponentPage } from '../ComponentPage.jsx'
+import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, IC } from '../primitives.jsx'
 import { Select, Field } from '../../components/index.js'
 
@@ -14,6 +15,7 @@ const OPTS = (
 export function SelectPage() {
   return (
     <ComponentPage
+      colors={COMPONENT_COLORS.Select}
       title="Select"
       description="A single-choice dropdown. The trigger keeps Input's neutral-graphite chrome, but the open list is the same Popover menu TimeframeSelect uses — so it flips, clamps, and dismisses like every other dropdown, and its options share one look (hover, active fill, check affix)."
       installCode={`import { Select } from 'vipre-design-system'`}

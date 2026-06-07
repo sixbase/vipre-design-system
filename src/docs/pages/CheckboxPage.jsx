@@ -1,4 +1,5 @@
 import { ComponentPage } from '../ComponentPage.jsx'
+import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, IC } from '../primitives.jsx'
 import { Checkbox } from '../../components/index.js'
 
@@ -7,6 +8,7 @@ const COL = { display: 'flex', flexDirection: 'column', gap: '0.75rem' }
 export function CheckboxPage() {
   return (
     <ComponentPage
+      colors={COMPONENT_COLORS.Checkbox}
       title="Checkbox"
       description="A labelled checkbox with checked, unchecked, and indeterminate (some-selected) states. Renders a real input behind a styled box, wrapped in a label so the text toggles it."
       installCode={`import { Checkbox } from 'vipre-design-system'`}

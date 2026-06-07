@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ComponentPage } from '../ComponentPage.jsx'
+import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, IC } from '../primitives.jsx'
 import { Text } from '../../components/index.js'
 import {
@@ -24,6 +25,7 @@ function Demo({ children: render, ...rest }) {
 export function TimeframeSelectPage() {
   return (
     <ComponentPage
+      colors={COMPONENT_COLORS.TimeframeSelect}
       title="Timeframe Select"
       description="The time-window control for dashboards and reports. One component, the common patterns: a compact preset dropdown, a segmented quick-toggle, and an optional custom start/end range. The dropdown is built on the Popover primitive, so it flips above the trigger and stays on-screen wherever it sits. onChange returns the chosen option with resolved { start, end } dates."
       installCode={`import { TimeframeSelect, DEFAULT_TIMEFRAMES } from 'vipre-design-system'`}

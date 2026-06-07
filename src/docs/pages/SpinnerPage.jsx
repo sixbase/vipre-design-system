@@ -1,10 +1,12 @@
 import { ComponentPage } from '../ComponentPage.jsx'
+import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, IC } from '../primitives.jsx'
 import { Spinner, Button } from '../../components/index.js'
 
 export function SpinnerPage() {
   return (
     <ComponentPage
+      colors={COMPONENT_COLORS.Spinner}
       title="Spinner"
       description={'An indeterminate loading indicator. Inherits the surrounding text color by default, so it sits naturally inside buttons and text; set tone="primary" for a branded spinner.'}
       installCode={`import { Spinner } from 'vipre-design-system'`}

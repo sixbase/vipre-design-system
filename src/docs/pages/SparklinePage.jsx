@@ -1,4 +1,5 @@
 import { ComponentPage } from '../ComponentPage.jsx'
+import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, IC } from '../primitives.jsx'
 import { Sparkline } from '../../components/index.js'
 
@@ -9,6 +10,7 @@ const DOWN = [11, 9, 10, 7, 8, 5, 4, 3]
 export function SparklinePage() {
   return (
     <ComponentPage
+      colors={COMPONENT_COLORS.Sparkline}
       title="Sparkline"
       description="A tiny inline trend chart drawn as a single SVG — no charting dependency. Inherits a tone color (line + soft area fill). Designed to sit inside a Stat Tile, a table cell, or next to a metric."
       installCode={`import { Sparkline } from 'vipre-design-system'`}

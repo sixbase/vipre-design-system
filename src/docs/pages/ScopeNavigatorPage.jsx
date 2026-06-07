@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { Section, Preview, IC } from '../primitives.jsx'
 import { ScopeNavigator } from '../../components/index.js'
+import { COMPONENT_COLORS } from '../colorUsage.js'
 
 /* ----------------------------------------------------------------------------
    A small demo account tree (distributor → reseller → customer) with statuses
@@ -110,6 +111,7 @@ export function ScopeNavigatorPage() {
           ],
         },
       ]}
+      colors={COMPONENT_COLORS.ScopeNavigator}
       accessibility={[
         <>The bar is a real <IC>{'<nav>'}</IC>; every segment, caret, and result is a focusable <IC>{'<button>'}</IC> with a visible <IC>:focus-visible</IC> ring.</>,
         <>Status is never color-only — each dot carries a <IC>title</IC> with the status meaning, and the dropdown filter lists labels.</>,

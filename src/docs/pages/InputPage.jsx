@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Search, X, Mail } from 'lucide-react'
 import { ComponentPage } from '../ComponentPage.jsx'
+import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, IC } from '../primitives.jsx'
 import { Input, Textarea, Icon, Text, Field } from '../../components/index.js'
 
@@ -75,6 +76,7 @@ function SearchDemo({ size = 'md' }) {
 export function InputPage() {
   return (
     <ComponentPage
+      colors={COMPONENT_COLORS.Input}
       title="Input"
       description="A single-line text field. Three sizes (sm/md/lg) that match Button; each supports the same states — default, with a leading icon, invalid, and disabled. Optional leading/trailing slots compose search fields. The forwarded ref points at the underlying input."
       installCode={`import { Input } from 'vipre-design-system'`}
