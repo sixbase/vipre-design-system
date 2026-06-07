@@ -4,29 +4,12 @@
 
 // Every ramp is the same 11-step scale: 50…950. Pure white is the standalone
 // --vds-white token, not a graphite step.
+// ---- Neutrals ----
 export const GRAPHITE = {
   50: '#f7f8fa', 100: '#eff1f5', 200: '#e2e6ed', 300: '#cbd2dd', 400: '#9aa4b4',
   500: '#6b7585', 600: '#4d5666', 700: '#3a424f', 800: '#262c36', 900: '#161b22',
   950: '#0d1117',
 }
-
-/* Unified chromatic family — OKLCH, one shared lightness + chroma ladder. */
-export const EMERALD = {
-  50: '#edfbf0', 100: '#d6f4dd', 200: '#b4eac1', 300: '#8bd8a0', 400: '#5dbf7c',
-  500: '#2ca45b', 600: '#008542', 700: '#006a34', 800: '#025227', 900: '#023e1c',
-  950: '#022d13',
-}
-export const AMBER = {
-  50: '#fff6e7', 100: '#fbe9ca', 200: '#f6d59f', 300: '#e9bc6d', 400: '#d39c30',
-  500: '#b48008', 600: '#906606', 700: '#735101', 800: '#593e03', 900: '#432e02',
-  950: '#322100',
-}
-export const ROSE = {
-  50: '#fff4f3', 100: '#fee4e1', 200: '#ffccc7', 300: '#ffaaa2', 400: '#f0837b',
-  500: '#d7615b', 600: '#b64340', 700: '#95312f', 800: '#742423', 900: '#571c1a',
-  950: '#3f1513',
-}
-
 /* Midnight — the product's navy surface family, anchored so 950 = #0B192D
    (the real shipped background). Tokens: --vds-midnight-{step}. */
 export const MIDNIGHT = {
@@ -35,42 +18,75 @@ export const MIDNIGHT = {
   950: '#0b192d',
 }
 
-/* Azure — brand primary; a vivid cerulean (hue 237) kept distinct from the
-   Midnight navy (257) by hue + chroma, on the shared OKLCH ladder. */
-export const AZURE = {
-  50: '#f0f8fe', 100: '#d7efff', 200: '#b4e1fe', 300: '#7cceff', 400: '#3eb3f0',
-  500: '#0596d2', 600: '#0178a8', 700: '#005f87', 800: '#014969', 900: '#013750',
-  950: '#00283c',
+/* Chromatic family — OKLCH, one shared lightness + chroma ladder, varying only
+   hue. Ordered around the colour wheel (red → magenta). */
+export const ROSE = { // danger — red (hue 25)
+  50: '#fff4f3', 100: '#fee4e1', 200: '#ffccc7', 300: '#ffaaa2', 400: '#f0837b',
+  500: '#d7615b', 600: '#b64340', 700: '#95312f', 800: '#742423', 900: '#571c1a',
+  950: '#3f1513',
 }
-
-export const HARBOR = {
-  50: '#e7fcf9', 100: '#cbf6ef', 200: '#9eebe1', 300: '#63dbcd', 400: '#0cc0b1',
-  500: '#01a094', 600: '#068076', 700: '#00665e', 800: '#044f48', 900: '#003b36',
-  950: '#002c27',
-}
-export const ORCHID = {
-  50: '#fcf3ff', 100: '#f9e2fe', 200: '#f2cafb', 300: '#e3acf0', 400: '#cc8adc',
-  500: '#b269c3', 600: '#944da4', 700: '#783a86', 800: '#5d2c68', 900: '#45214e',
-  950: '#321838',
-}
-export const CLAY = {
+export const CLAY = { // accent — terracotta (hue 54)
   50: '#fff5ee', 100: '#ffe6d6', 200: '#ffcfb0', 300: '#fbb07e', 400: '#e88e4e',
   500: '#cf6d1b', 600: '#a85504', 700: '#874201', 800: '#693200', 900: '#502502',
   950: '#3b1a01',
 }
+export const AMBER = { // warning — gold (hue 80)
+  50: '#fff6e7', 100: '#fbe9ca', 200: '#f6d59f', 300: '#e9bc6d', 400: '#d39c30',
+  500: '#b48008', 600: '#906606', 700: '#735101', 800: '#593e03', 900: '#432e02',
+  950: '#322100',
+}
+export const LIME = { // accent — yellow-green (hue 128)
+  50: '#f3f9ed', 100: '#e4f1d5', 200: '#cde4b2', 300: '#afd184', 400: '#8fb756',
+  500: '#729a30', 600: '#587c18', 700: '#45630c', 800: '#354c08', 900: '#273906',
+  950: '#1c2a05',
+}
+export const EMERALD = { // success — green (hue 152)
+  50: '#edfbf0', 100: '#d6f4dd', 200: '#b4eac1', 300: '#8bd8a0', 400: '#5dbf7c',
+  500: '#2ca45b', 600: '#008542', 700: '#006a34', 800: '#025227', 900: '#023e1c',
+  950: '#022d13',
+}
+export const HARBOR = { // info — teal (hue 185)
+  50: '#e7fcf9', 100: '#cbf6ef', 200: '#9eebe1', 300: '#63dbcd', 400: '#0cc0b1',
+  500: '#01a094', 600: '#068076', 700: '#00665e', 800: '#044f48', 900: '#003b36',
+  950: '#002c27',
+}
+export const AZURE = { // brand accent — cerulean (hue 236)
+  50: '#f0f8fe', 100: '#d7efff', 200: '#b4e1fe', 300: '#7cceff', 400: '#3eb3f0',
+  500: '#0596d2', 600: '#0178a8', 700: '#005f87', 800: '#014969', 900: '#013750',
+  950: '#00283c',
+}
+export const PURPLE = { // accent — blue-violet (hue 296)
+  50: '#f7f5ff', 100: '#ede7ff', 200: '#ddd3ff', 300: '#c9b6ff', 400: '#af94f1',
+  500: '#9377d6', 600: '#775cb1', 700: '#5e4890', 800: '#493770', 900: '#362955',
+  950: '#271d3e',
+}
+export const ORCHID = { // accent — violet (hue 320)
+  50: '#fcf3ff', 100: '#f9e2fe', 200: '#f2cafb', 300: '#e3acf0', 400: '#cc8adc',
+  500: '#b269c3', 600: '#944da4', 700: '#783a86', 800: '#5d2c68', 900: '#45214e',
+  950: '#321838',
+}
+export const MAGENTA = { // accent — hot pink (hue 348)
+  50: '#fff3f8', 100: '#ffe2ef', 200: '#ffc8e2', 300: '#f8a7d0', 400: '#e482b6',
+  500: '#c7649a', 600: '#a44b7c', 700: '#843a63', 800: '#672b4c', 900: '#4e2039',
+  950: '#39172a',
+}
 
 export const PRIMITIVES = [
-  // Neutrals
+  // Neutrals first
   { name: 'Graphite', shades: GRAPHITE },
   { name: 'Midnight', shades: MIDNIGHT },
-  // Unified chromatic family (OKLCH ladder, varied hue)
-  { name: 'Azure', shades: AZURE },
-  { name: 'Harbor', shades: HARBOR },
-  { name: 'Emerald', shades: EMERALD },
-  { name: 'Amber', shades: AMBER },
+  // Chromatic family — colour-wheel order (red → orange → gold → lime → green →
+  // teal → blue → purple → violet → magenta)
   { name: 'Rose', shades: ROSE },
-  { name: 'Orchid', shades: ORCHID },
   { name: 'Clay', shades: CLAY },
+  { name: 'Amber', shades: AMBER },
+  { name: 'Lime', shades: LIME },
+  { name: 'Emerald', shades: EMERALD },
+  { name: 'Harbor', shades: HARBOR },
+  { name: 'Azure', shades: AZURE },
+  { name: 'Purple', shades: PURPLE },
+  { name: 'Orchid', shades: ORCHID },
+  { name: 'Magenta', shades: MAGENTA },
 ]
 
 /* Semantic tokens, grouped by purpose. `ref` shows light → dark mapping. */
@@ -81,6 +97,17 @@ export const SEMANTIC_GROUPS = [
       { token: '--vds-canvas', ref: 'graphite-50 → midnight-950', usage: 'Page background — graphite grey in light, the #0b192d product navy in dark' },
       { token: '--vds-surface', ref: 'white → midnight-900', usage: 'Cards, panels, inputs — surfaces that lift off the canvas' },
       { token: '--vds-surface-raised', ref: 'white → midnight-800', usage: 'Raised surfaces — popovers, menus, dropdowns' },
+      { token: '--vds-surface-overlay', ref: 'white → midnight-700', usage: 'Highest float — overlays/sheets; light stays white (shadow-led)' },
+      { token: '--vds-surface-disabled', ref: 'graphite-100 → midnight-900', usage: 'Inert control or field background — disabled inputs, buttons' },
+      { token: '--vds-surface-sunken', ref: 'white → midnight-950', usage: 'Recessed wells — form-field fills (flush in light, recessed below the surface in dark)' },
+    ],
+  },
+  {
+    title: 'Interaction states',
+    rows: [
+      { token: '--vds-surface-hover', ref: 'graphite-100 → midnight-900', usage: 'Hover fill for rows, list & menu items, nav rails' },
+      { token: '--vds-surface-selected', ref: 'graphite-200 → midnight-800', usage: 'Selected/active row background — a neutral chip from the rail’s own ramp' },
+      { token: '--vds-surface-selected-hover', ref: 'graphite-300 → midnight-700', usage: 'A selected row while hovered' },
     ],
   },
   {
@@ -89,11 +116,14 @@ export const SEMANTIC_GROUPS = [
       { token: '--vds-ink', ref: 'graphite-900 → midnight-50', usage: 'Primary text, headings, input values — maximum readability' },
       { token: '--vds-ink-muted', ref: 'graphite-600 → midnight-300', usage: 'Secondary labels, captions, supporting copy' },
       { token: '--vds-ink-subtle', ref: 'graphite-500 → midnight-400', usage: 'Placeholders, metadata, lowest-emphasis text' },
+      { token: '--vds-ink-disabled', ref: 'graphite-400 → midnight-600', usage: 'Greyed-out labels on disabled controls' },
+      { token: '--vds-ink-inverse', ref: 'graphite-50 → midnight-950', usage: 'Text on a dark/inverted chip (e.g. tooltip) — flips with the theme' },
     ],
   },
   {
     title: 'Borders',
     rows: [
+      { token: '--vds-line-subtle', ref: 'graphite-100 → midnight-900', usage: 'Faintest hairline — zebra stripes, nested dividers' },
       { token: '--vds-line', ref: 'graphite-200 → midnight-800', usage: 'Card borders, dividers, table cell lines — subtle structure' },
       { token: '--vds-line-strong', ref: 'graphite-300 → midnight-700', usage: 'Input hover borders, selected outlines — more emphasis' },
     ],
@@ -103,8 +133,10 @@ export const SEMANTIC_GROUPS = [
     rows: [
       { token: '--vds-primary', ref: 'midnight-600 → 300', usage: 'Primary button fill, active state, primary links' },
       { token: '--vds-primary-hover', ref: 'midnight-700 → 200', usage: 'Hover state for primary actions' },
+      { token: '--vds-primary-active', ref: 'midnight-800 → 100', usage: 'Pressed/active state for primary actions' },
       { token: '--vds-on-primary', ref: 'white → midnight-950', usage: 'Text/icons on a primary-colored background' },
       { token: '--vds-primary-soft', ref: 'midnight-50 → midnight@16%', usage: 'Tinted brand backgrounds — ghost hover, soft badges' },
+      { token: '--vds-primary-soft-hover', ref: 'midnight-100 → midnight@24%', usage: 'Hover on a soft-brand fill' },
       { token: '--vds-focus-ring', ref: 'midnight-500 → 400', usage: 'Keyboard focus outline via :focus-visible — never decorative' },
     ],
   },
@@ -112,9 +144,50 @@ export const SEMANTIC_GROUPS = [
     title: 'Status',
     rows: [
       { token: '--vds-success', ref: 'emerald-600 → 400', usage: 'Healthy, protected, success confirmations' },
+      { token: '--vds-success-hover', ref: 'emerald-700 → 300', usage: 'Hover for a solid success fill' },
+      { token: '--vds-on-success', ref: 'white → emerald-950', usage: 'Text/icons on a solid success fill' },
+      { token: '--vds-success-soft', ref: 'emerald-50 → emerald@16%', usage: 'Tinted success background — badges, banners' },
+      { token: '--vds-success-soft-hover', ref: 'emerald-100 → emerald@24%', usage: 'Hover on a soft success fill' },
       { token: '--vds-warning', ref: 'amber-400', usage: 'Needs attention but not broken — at-risk, low-stock' },
+      { token: '--vds-warning-hover', ref: 'amber-500 → 300', usage: 'Hover for a solid warning fill' },
+      { token: '--vds-on-warning', ref: 'amber-950', usage: 'Dark ink on the bright gold warning fill' },
+      { token: '--vds-warning-soft', ref: 'amber-50 → amber@16%', usage: 'Tinted warning background' },
+      { token: '--vds-warning-soft-hover', ref: 'amber-100 → amber@24%', usage: 'Hover on a soft warning fill' },
       { token: '--vds-danger', ref: 'rose-600 → 400', usage: 'Errors, threats, destructive actions' },
+      { token: '--vds-danger-hover', ref: 'rose-700 → 300', usage: 'Hover for a solid danger fill' },
+      { token: '--vds-on-danger', ref: 'white → rose-950', usage: 'Text/icons on a solid danger fill' },
+      { token: '--vds-danger-soft', ref: 'rose-50 → rose@16%', usage: 'Tinted danger background' },
+      { token: '--vds-danger-soft-hover', ref: 'rose-100 → rose@24%', usage: 'Hover on a soft danger fill' },
       { token: '--vds-info', ref: 'midnight-600 → 400', usage: 'Neutral informational notes and callouts' },
+      { token: '--vds-info-hover', ref: 'midnight-700 → 300', usage: 'Hover for a solid info fill' },
+      { token: '--vds-on-info', ref: 'white → midnight-950', usage: 'Text/icons on a solid info fill' },
+      { token: '--vds-info-soft', ref: 'midnight-50 → midnight@16%', usage: 'Tinted info background' },
+      { token: '--vds-info-soft-hover', ref: 'midnight-100 → midnight@24%', usage: 'Hover on a soft info fill' },
+    ],
+  },
+  {
+    title: 'Accents',
+    rows: [
+      { token: '--vds-accent-rose', ref: 'rose-600 → 400', usage: 'Categorical / data-viz accent — red (no danger meaning)' },
+      { token: '--vds-accent-rose-soft', ref: 'rose-50 → rose@16%', usage: 'Soft red tint background' },
+      { token: '--vds-accent-clay', ref: 'clay-600 → 400', usage: 'Categorical / data-viz accent — terracotta' },
+      { token: '--vds-accent-clay-soft', ref: 'clay-50 → clay@16%', usage: 'Soft terracotta tint background' },
+      { token: '--vds-accent-amber', ref: 'amber-600 → 400', usage: 'Categorical / data-viz accent — gold (no warning meaning)' },
+      { token: '--vds-accent-amber-soft', ref: 'amber-50 → amber@16%', usage: 'Soft gold tint background' },
+      { token: '--vds-accent-lime', ref: 'lime-600 → 400', usage: 'Categorical / data-viz accent — yellow-green lime' },
+      { token: '--vds-accent-lime-soft', ref: 'lime-50 → lime@16%', usage: 'Soft lime tint background' },
+      { token: '--vds-accent-emerald', ref: 'emerald-600 → 400', usage: 'Categorical / data-viz accent — green (no success meaning)' },
+      { token: '--vds-accent-emerald-soft', ref: 'emerald-50 → emerald@16%', usage: 'Soft green tint background' },
+      { token: '--vds-accent-harbor', ref: 'harbor-600 → 400', usage: 'Categorical / data-viz accent — teal' },
+      { token: '--vds-accent-harbor-soft', ref: 'harbor-50 → harbor@16%', usage: 'Soft teal tint background' },
+      { token: '--vds-accent-azure', ref: 'azure-600 → 400', usage: 'Categorical / data-viz accent — cerulean. Tags, chart series' },
+      { token: '--vds-accent-azure-soft', ref: 'azure-50 → azure@16%', usage: 'Soft azure tint background' },
+      { token: '--vds-accent-purple', ref: 'purple-600 → 400', usage: 'Categorical / data-viz accent — blue-violet purple' },
+      { token: '--vds-accent-purple-soft', ref: 'purple-50 → purple@16%', usage: 'Soft purple tint background' },
+      { token: '--vds-accent-orchid', ref: 'orchid-600 → 400', usage: 'Categorical / data-viz accent — violet' },
+      { token: '--vds-accent-orchid-soft', ref: 'orchid-50 → orchid@16%', usage: 'Soft violet tint background' },
+      { token: '--vds-accent-magenta', ref: 'magenta-600 → 400', usage: 'Categorical / data-viz accent — hot pink magenta' },
+      { token: '--vds-accent-magenta-soft', ref: 'magenta-50 → magenta@16%', usage: 'Soft magenta tint background' },
     ],
   },
 ]

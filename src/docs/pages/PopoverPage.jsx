@@ -1,10 +1,12 @@
 import { ComponentPage } from '../ComponentPage.jsx'
+import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, IC } from '../primitives.jsx'
 import { Popover, Button, Text, menuKeyDown } from '../../components/index.js'
 
 export function PopoverPage() {
   return (
     <ComponentPage
+      colors={COMPONENT_COLORS.Popover}
       title="Popover"
       description="The anchored-overlay primitive. A trigger opens a floating Surface positioned next to it — and kept on-screen: it flips above the trigger when there isn't room below, clamps left/right into the viewport, and caps its height so it scrolls instead of overflowing. Outside-click and Escape both dismiss it; Escape returns focus to the trigger. Every dropdown, menu, and combobox should compose this rather than re-solving placement and focus."
       installCode={`import { Popover } from 'vipre-design-system'`}

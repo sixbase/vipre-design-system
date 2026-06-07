@@ -1,5 +1,6 @@
 import { Shield, Monitor, TriangleAlert, Activity, Users, Mail, Paperclip } from 'lucide-react'
 import { ComponentPage } from '../ComponentPage.jsx'
+import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, IC } from '../primitives.jsx'
 import { StatTile, Grid } from '../../components/index.js'
 
@@ -12,6 +13,7 @@ const TREND = [4, 6, 5, 8, 7, 9, 8, 11]
 export function StatTilePage() {
   return (
     <ComponentPage
+      colors={COMPONENT_COLORS.StatTile}
       title="Stat Tile"
       description="A KPI tile — a prominent value with a label, an optional icon, a caption, and a trend sparkline, plus loading and empty states. Two layouts (row / stacked) and three sizes. Composes Surface + Icon + Sparkline."
       installCode={`import { StatTile } from 'vipre-design-system'`}

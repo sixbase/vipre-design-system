@@ -1,6 +1,7 @@
 import { HomePage } from './pages/HomePage.jsx'
 import { InstallationPage } from './pages/InstallationPage.jsx'
 import { ColorsPage } from './pages/ColorsPage.jsx'
+import { ColorUsagePage } from './pages/ColorUsagePage.jsx'
 import { TypographyPage } from './pages/TypographyPage.jsx'
 import { SpacingPage } from './pages/SpacingPage.jsx'
 import { LayoutPage } from './pages/LayoutPage.jsx'
@@ -20,8 +21,11 @@ import { StatTilePage } from './pages/StatTilePage.jsx'
 import { MetricCardPage } from './pages/MetricCardPage.jsx'
 import { SparklinePage } from './pages/SparklinePage.jsx'
 import { TablePage } from './pages/TablePage.jsx'
+import { SideNavPage } from './pages/SideNavPage.jsx'
+import { PageHeaderPage } from './pages/PageHeaderPage.jsx'
 import { ScopeNavigatorPage } from './pages/ScopeNavigatorPage.jsx'
 import { TimeframeSelectPage } from './pages/TimeframeSelectPage.jsx'
+import { ProductDashboardPage } from './pages/ProductDashboardPage.jsx'
 
 /* Single source of truth for both the sidebar nav and the hash router. */
 export const NAV = [
@@ -36,6 +40,7 @@ export const NAV = [
     group: 'Foundation',
     items: [
       { path: '/foundation/colors', name: 'Colors', Page: ColorsPage },
+      { path: '/foundation/color-usage', name: 'Color usage', Page: ColorUsagePage },
       { path: '/foundation/typography', name: 'Typography', Page: TypographyPage },
       { path: '/foundation/spacing', name: 'Spacing', Page: SpacingPage },
       { path: '/foundation/layout', name: 'Layout', Page: LayoutPage },
@@ -63,6 +68,8 @@ export const NAV = [
       { path: '/components/card', name: 'Card', Page: CardPage },
       { path: '/components/sparkline', name: 'Sparkline', Page: SparklinePage },
       { path: '/components/table', name: 'Table', Page: TablePage },
+      { path: '/components/side-nav', name: 'Side Nav', Page: SideNavPage },
+      { path: '/components/page-header', name: 'Page Header', Page: PageHeaderPage },
       { path: '/components/scope-navigator', name: 'Scope Navigator', Page: ScopeNavigatorPage },
       { path: '/components/timeframe-select', name: 'Timeframe Select', Page: TimeframeSelectPage },
     ],
@@ -74,6 +81,14 @@ export const NAV = [
     items: [
       { path: '/metrics/stat-tile', name: 'Stat Tile', Page: StatTilePage },
       { path: '/metrics/metric-card', name: 'Metric Card', Page: MetricCardPage },
+    ],
+  },
+  {
+    // Page templates — full-screen compositions of the components above. A
+    // template is documented by its regions/slots; the body is swappable.
+    group: 'Templates',
+    items: [
+      { path: '/templates/product-dashboard', name: 'Product Dashboard', Page: ProductDashboardPage },
     ],
   },
 ]

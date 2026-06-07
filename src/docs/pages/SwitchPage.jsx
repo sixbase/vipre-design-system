@@ -1,4 +1,5 @@
 import { ComponentPage } from '../ComponentPage.jsx'
+import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, IC } from '../primitives.jsx'
 import { Switch } from '../../components/index.js'
 
@@ -7,6 +8,7 @@ const COL = { display: 'flex', flexDirection: 'column', gap: '0.75rem' }
 export function SwitchPage() {
   return (
     <ComponentPage
+      colors={COMPONENT_COLORS.Switch}
       title="Switch"
       description="An on/off toggle for settings that apply immediately (dark mode, a filter, a feature flag). For 'select then submit' choices, use a Checkbox instead."
       installCode={`import { Switch } from 'vipre-design-system'`}

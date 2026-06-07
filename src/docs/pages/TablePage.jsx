@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { ShieldCheck, Mail, Globe, Database, Eye, Pencil, Trash2 } from 'lucide-react'
 import { ComponentPage } from '../ComponentPage.jsx'
+import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, IC } from '../primitives.jsx'
 import { Table, Badge, Button, Text, Icon, Inline, Stack } from '../../components/index.js'
 
@@ -186,6 +187,7 @@ function SelectableDemo() {
 export function TablePage() {
   return (
     <ComponentPage
+      colors={COMPONENT_COLORS.Table}
       title="Table"
       description="A data-driven table: declare your columns, hand it your data, and it renders the head and body — owning alignment, density, zebra striping, a sticky header, sortable headers, row selection, row-click drill-in, and loading / empty states. Composes Surface for the bordered, rounded shell."
       installCode={`import { Table } from 'vipre-design-system'`}

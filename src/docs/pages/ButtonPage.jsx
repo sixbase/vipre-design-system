@@ -1,11 +1,13 @@
 import { Eye, Pencil, Trash2 } from 'lucide-react'
 import { ComponentPage } from '../ComponentPage.jsx'
+import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, Kbd, IC } from '../primitives.jsx'
 import { Button, Icon, Inline } from '../../components/index.js'
 
 export function ButtonPage() {
   return (
     <ComponentPage
+      colors={COMPONENT_COLORS.Button}
       title="Button"
       description="The primary interactive element. Four variants to match the weight of the action, three sizes, an opacity-based disabled state, and a visible keyboard focus ring. Forwards all native button props."
       installCode={`import { Button } from 'vipre-design-system'`}

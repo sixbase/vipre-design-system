@@ -1,5 +1,6 @@
 import { DollarSign, Users, ShieldCheck, TrendingDown } from 'lucide-react'
 import { ComponentPage } from '../ComponentPage.jsx'
+import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, IC } from '../primitives.jsx'
 import { MetricCard, Grid } from '../../components/index.js'
 
@@ -14,6 +15,7 @@ const REVENUE_BREAKDOWN = [
 export function MetricCardPage() {
   return (
     <ComponentPage
+      colors={COMPONENT_COLORS.MetricCard}
       title="Metric Card"
       description="A flagship KPI card — the rich counterpart to Stat Tile. It stacks a header (soft icon chip + title + period), a hero value with a signed delta badge, an optional target progress bar, and an optional breakdown list. Reach for it when one metric is the hero of a panel and deserves context; use Stat Tile for dense one-line KPIs. Composes Surface + Icon + Badge + Divider."
       installCode={`import { MetricCard } from 'vipre-design-system'`}

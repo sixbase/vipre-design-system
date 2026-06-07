@@ -1,10 +1,11 @@
 import { Heading, Text } from '../components/index.js'
-import { Section, Code, PropsTable, A11yList } from './primitives.jsx'
+import { Section, Code, PropsTable, A11yList, ColorUsage } from './primitives.jsx'
 
 /* ----------------------------------------------------------------------------
    ComponentPage — fixed anatomy for every component, matching Mason:
-     title → description → Installation → [example sections] → Props → Accessibility
-   `props` is an array of { name?, headers, rows }; `accessibility` is nodes[].
+     title → description → Installation → [examples] → Props → Colors → Accessibility
+   `props` is an array of { name?, headers, rows }; `accessibility` is nodes[];
+   `colors` is { scope, rows } (see colorUsage.js) and renders a Colors section.
    -------------------------------------------------------------------------- */
 
 export function ComponentPage({
@@ -13,6 +14,7 @@ export function ComponentPage({
   installCode,
   children,
   props = [],
+  colors = null,
   accessibility = [],
 }) {
   return (
@@ -42,6 +44,15 @@ export function ComponentPage({
               <PropsTable headers={table.headers} rows={table.rows} />
             </div>
           ))}
+        </Section>
+      )}
+
+      {colors && (
+        <Section
+          title="Colors"
+          note="The color tokens this component paints with, resolved to live hex for the current theme — toggle light/dark to compare. Adjust the value at its source on the Colors page; this updates everywhere the token is used."
+        >
+          <ColorUsage scope={colors.scope} rows={colors.rows} />
         </Section>
       )}
 
