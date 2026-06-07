@@ -199,25 +199,29 @@ $magenta: ( // accent — hot pink (hue 348)
   --vds-primary-soft:       var(--vds-midnight-50);
   --vds-primary-soft-hover: var(--vds-midnight-100); // hover on a soft-brand fill
 
-  // ---- Status — each a full family: solid · hover · on(text) · soft · soft-hover.
+  // ---- Status — each a full family: solid · hover · active · on(text) · soft · soft-hover.
   // Light uses the darker 600 step (AA-readable on white); dark uses the vibrant 400.
   --vds-success:            var(--vds-emerald-600);
   --vds-success-hover:      var(--vds-emerald-700);
+  --vds-success-active:     var(--vds-emerald-800); // pressed / active
   --vds-on-success:         var(--vds-white);
   --vds-success-soft:       var(--vds-emerald-50);
   --vds-success-soft-hover: var(--vds-emerald-100);
   --vds-warning:            var(--vds-amber-400); // brighter gold both modes (amber-600 reads muddy)
   --vds-warning-hover:      var(--vds-amber-500);
+  --vds-warning-active:     var(--vds-amber-600); // pressed / active
   --vds-on-warning:         var(--vds-amber-950); // dark ink on bright gold
   --vds-warning-soft:       var(--vds-amber-50);
   --vds-warning-soft-hover: var(--vds-amber-100);
   --vds-danger:             var(--vds-rose-600);
   --vds-danger-hover:       var(--vds-rose-700);
+  --vds-danger-active:      var(--vds-rose-800); // pressed / active
   --vds-on-danger:          var(--vds-white);
   --vds-danger-soft:        var(--vds-rose-50);
   --vds-danger-soft-hover:  var(--vds-rose-100);
   --vds-info:               var(--vds-midnight-600); // info uses the midnight palette
   --vds-info-hover:         var(--vds-midnight-700);
+  --vds-info-active:        var(--vds-midnight-800); // pressed / active
   --vds-on-info:            var(--vds-white);
   --vds-info-soft:          var(--vds-midnight-50);
   --vds-info-soft-hover:    var(--vds-midnight-100);
@@ -290,21 +294,25 @@ $magenta: ( // accent — hot pink (hue 348)
   // ---- Status — vibrant 400 solids; dark text rides on top via on-{status}. ----
   --vds-success:            var(--vds-emerald-400);
   --vds-success-hover:      var(--vds-emerald-300);
+  --vds-success-active:     var(--vds-emerald-200); // pressed / active
   --vds-on-success:         var(--vds-emerald-950);
   --vds-success-soft:       color-mix(in oklab, var(--vds-emerald-400) 16%, transparent);
   --vds-success-soft-hover: color-mix(in oklab, var(--vds-emerald-400) 24%, transparent);
   --vds-warning:            var(--vds-amber-400);
   --vds-warning-hover:      var(--vds-amber-300);
+  --vds-warning-active:     var(--vds-amber-200); // pressed / active
   --vds-on-warning:         var(--vds-amber-950);
   --vds-warning-soft:       color-mix(in oklab, var(--vds-amber-400) 16%, transparent);
   --vds-warning-soft-hover: color-mix(in oklab, var(--vds-amber-400) 24%, transparent);
   --vds-danger:             var(--vds-rose-400);
   --vds-danger-hover:       var(--vds-rose-300);
+  --vds-danger-active:      var(--vds-rose-200); // pressed / active
   --vds-on-danger:          var(--vds-rose-950);
   --vds-danger-soft:        color-mix(in oklab, var(--vds-rose-400) 16%, transparent);
   --vds-danger-soft-hover:  color-mix(in oklab, var(--vds-rose-400) 24%, transparent);
   --vds-info:               var(--vds-midnight-400); // info uses the midnight palette
   --vds-info-hover:         var(--vds-midnight-300);
+  --vds-info-active:        var(--vds-midnight-200); // pressed / active
   --vds-on-info:            var(--vds-midnight-950);
   --vds-info-soft:          color-mix(in oklab, var(--vds-midnight-400) 16%, transparent);
   --vds-info-soft-hover:    color-mix(in oklab, var(--vds-midnight-400) 24%, transparent);
