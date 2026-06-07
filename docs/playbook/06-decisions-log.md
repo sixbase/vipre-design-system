@@ -4,6 +4,42 @@ Every significant choice, with rationale. Append; don't rewrite history.
 
 ---
 
+### Button split into `variant` × `tone`; added `loading`, `fullWidth`, `:active`
+
+**Phase:** v2 / component API
+**Context:** The new color buildout (#6) shipped full `success`/`warning`/`danger`/`info`
+families (solid·hover·on·soft·soft-hover), but `Button` predated it and conflated emphasis +
+intent into a single 4-value `variant` (`primary`/`secondary`/`ghost`/`danger`) — so only one
+status color (`danger`) was reachable and the `-soft` tokens went unused by any component.
+**Decision:**
+- **Two orthogonal axes:** `variant` = emphasis (`solid`·`soft`·`outline`·`ghost`) × `tone` =
+  intent (`primary`·`neutral`·`success`·`warning`·`danger`·`info`). Any pair is valid.
+- **SCSS pattern:** each **tone** class sets local `--_btn-*` custom props (fill/hover/active/on/
+  soft/soft-hover/text/line); each **variant** class consumes them. Keeps the rule count at
+  *(variants + tones)*, not *(variants × tones)*, and every value stays token-bound.
+- **Backward-compatible:** legacy `variant` values map internally —
+  `primary→solid/primary`, `secondary→outline/neutral`, `ghost→ghost/primary`,
+  `danger→solid/danger`. An explicit `tone` always overrides the legacy default tone. `neutral`
+  reuses the surface/ink ramps (canvas→surface-hover) so `outline/neutral` stays pixel-identical
+  to the old `secondary`.
+- **`loading`** swaps in the existing `Spinner` (the JSDoc used to show this hand-rolled), sets
+  `aria-busy`, and disables the control; for `iconOnly` the spinner replaces the icon.
+- **`fullWidth`** stretches to 100%.
+- **Two token fixes folded in:** `danger`'s hover was a raw `filter: brightness(.95)` (a
+  non-token escape hatch) → now uses `--vds-danger-hover`; and no variant had a `:active` state
+  though `--vds-primary-active` existed. Added `--vds-{success,warning,danger,info}-active`
+  (light 800 / dark 200 steps; warning 600/200) in both `_tokens.scss` and `docs/tokens.js`, and
+  wired `:active` on `solid` (fill-active) and `soft`/`outline`/`ghost` (soft-hover).
+- **Scoped out:** polymorphic `as`/link rendering (a11y + ref complexity) — deferred as a
+  follow-up; accent palette deliberately NOT exposed as button tones (data-viz only, would
+  dilute action hierarchy).
+**Verified:** in-browser computed styles for every variant + tone resolve through the token
+chain; `loading` exposes `aria-busy`/disabled/spinner; `--vds-danger-active` resolves to rose-800;
+`npm run build:lib` emits the new classes + tokens into both bundles.
+**Status:** active
+
+---
+
 ### More vibrant palette + Azure pulled off the Midnight hue; purged utility-CSS refs
 
 **Phase:** v2 / palette refinement
