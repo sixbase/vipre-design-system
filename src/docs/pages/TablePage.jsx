@@ -7,10 +7,10 @@ import { Table, Badge, Button, Text, Icon, Inline, Stack } from '../../component
 
 /* Sample fleet rows — mirrors the kind of data Vipre tables actually carry. */
 const DEVICES = [
-  { id: 'd1', name: 'MBP-014', owner: 'A. Okafor', status: 'Protected', tone: 'success', seen: '2 min ago', risk: 4 },
-  { id: 'd2', name: 'WIN-221', owner: 'J. Park', status: 'At risk', tone: 'warning', seen: '1 hr ago', risk: 62 },
-  { id: 'd3', name: 'LNX-007', owner: 'M. Díaz', status: 'Threat', tone: 'danger', seen: '5 hr ago', risk: 91 },
-  { id: 'd4', name: 'MBP-052', owner: 'R. Singh', status: 'Protected', tone: 'success', seen: 'just now', risk: 2 },
+  { id: 'd1', name: 'MBP-014', owner: 'A. Okafor', status: 'Protected', tone: 'success', seen: '2 min ago', risk: 4, os: 'macOS 14', ip: '10.0.4.21' },
+  { id: 'd2', name: 'WIN-221', owner: 'J. Park', status: 'At risk', tone: 'warning', seen: '1 hr ago', risk: 62, os: 'Windows 11', ip: '10.0.7.88' },
+  { id: 'd3', name: 'LNX-007', owner: 'M. Díaz', status: 'Threat', tone: 'danger', seen: '5 hr ago', risk: 91, os: 'Ubuntu 22', ip: '10.0.2.13' },
+  { id: 'd4', name: 'MBP-052', owner: 'R. Singh', status: 'Protected', tone: 'success', seen: 'just now', risk: 2, os: 'macOS 14', ip: '10.0.4.57' },
 ]
 
 const STATUS_COL = {
@@ -244,8 +244,11 @@ export function TablePage() {
               columns={[
                 { key: 'name', header: 'Device' },
                 { key: 'owner', header: 'Owner' },
+                { key: 'os', header: 'OS' },
+                { key: 'ip', header: 'IP address' },
                 STATUS_COL,
                 { key: 'seen', header: 'Last seen', align: 'right' },
+                { key: 'risk', header: 'Risk', align: 'right', render: (r) => `${r.risk}%` },
               ]}
               data={DEVICES}
             />
@@ -254,9 +257,13 @@ export function TablePage() {
   columns={[
     { key: 'name', header: 'Device' },
     { key: 'owner', header: 'Owner' },
+    { key: 'os', header: 'OS' },
+    { key: 'ip', header: 'IP address' },
     { key: 'status', header: 'Status',
       render: (r) => <Badge tone={r.tone} dot>{r.status}</Badge> },
     { key: 'seen', header: 'Last seen', align: 'right' },
+    { key: 'risk', header: 'Risk', align: 'right',
+      render: (r) => \`\${r.risk}%\` },
   ]}
   data={devices}
 />`}
