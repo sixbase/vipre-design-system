@@ -1,4 +1,4 @@
-import { Shield, Monitor, Building2, Search, ChevronRight, Bell, TriangleAlert, CircleCheck } from 'lucide-react'
+import { Shield, Monitor, Building2, Search, ChevronRight, Bell, TriangleAlert, CircleCheck } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, IC } from '../primitives.jsx'
@@ -13,7 +13,7 @@ export function IconPage() {
       colors={COMPONENT_COLORS.Icon}
       title="Icon"
       description="A presentation wrapper that gives any SVG a consistent size and tone. It ships no icons of its own — pass a lucide-react icon (the prototype's icon set) via the `as` prop, or raw SVG as children. Color inherits from surrounding text unless a tone is set."
-      installCode={`import { Icon } from 'vipre-design-system'\nimport { Shield } from 'lucide-react'`}
+      installCode={`import { Icon } from 'vipre-design-system'\nimport { Shield } from '@icons'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],

@@ -69,11 +69,11 @@ const TREE = [
 /* Path to a deep customer, used to demo the collapse behavior. */
 const DEEP_PATH = [TREE[0], TREE[0].children[0], TREE[0].children[0].children[0]]
 
-function ScopeDemo({ initialPath = [] }) {
+function ScopeDemo({ initialPath = [], variant }) {
   const [path, setPath] = useState(initialPath)
   return (
     <div style={{ width: '100%', flex: '1 1 100%' }}>
-      <ScopeNavigator path={path} onNavigate={setPath} rootItems={TREE} />
+      <ScopeNavigator path={path} onNavigate={setPath} rootItems={TREE} variant={variant} />
     </div>
   )
 }
@@ -96,6 +96,7 @@ export function ScopeNavigatorPage() {
             [{ code: 'typeConfig' }, { code: 'Record<type, {label,icon,tone}>' }, { code: 'Vipre taxonomy' }, 'How each entity type renders (key order = level)'],
             [{ code: 'statusConfig' }, { code: 'Record<status, {label,tone,description}>' }, { code: 'active/trial/suspended' }, 'Status dots + dropdown filter (key order = sort)'],
             [{ code: 'sortOptions' }, { code: '{value,label}[]' }, { code: 'defaultSortOptions' }, 'Sort choices in the dropdown toolbar'],
+            [{ code: 'variant' }, { code: "'full' | 'basic'" }, { code: "'full'" }, "'basic' = a denser, lower-chrome trail (same dropdown)"],
             [{ code: 'teleportedSegments' }, { code: 'Set<id>' }, '—', 'Segment ids to flash-highlight after a jump'],
           ],
         },
@@ -127,6 +128,22 @@ export function ScopeNavigatorPage() {
           popover
           canvas={<ScopeDemo />}
           code={`<ScopeNavigator
+  path={path}
+  onNavigate={setPath}
+  rootItems={accounts}
+/>`}
+        />
+      </Section>
+
+      <Section
+        title="Basic (compact)"
+        note="A denser, lower-chrome trail for tighter layouts — shorter pills, smaller chips, caret, and chevrons. Behaviour and the drill-down dropdown are identical to the full variant; only the bar's footprint shrinks."
+      >
+        <Preview
+          popover
+          canvas={<ScopeDemo variant="basic" initialPath={[TREE[0], TREE[0].children[0]]} />}
+          code={`<ScopeNavigator
+  variant="basic"
   path={path}
   onNavigate={setPath}
   rootItems={accounts}

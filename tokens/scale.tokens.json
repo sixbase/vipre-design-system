@@ -1,0 +1,149 @@
+{
+  "font": {
+    "family": {
+      "sans": {
+        "$type": "fontFamily",
+        "$value": "'Rubik', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+      }
+    }
+  },
+  "radius": {
+    "$type": "dimension",
+    "sm": {
+      "$value": "0.25rem"
+    },
+    "md": {
+      "$value": "0.5rem"
+    },
+    "lg": {
+      "$value": "0.75rem"
+    },
+    "xl": {
+      "$value": "1rem"
+    }
+  },
+  "space": {
+    "0": {
+      "$value": "0"
+    },
+    "1": {
+      "$value": "0.25rem"
+    },
+    "2": {
+      "$value": "0.5rem"
+    },
+    "3": {
+      "$value": "0.75rem"
+    },
+    "4": {
+      "$value": "1rem"
+    },
+    "5": {
+      "$value": "1.25rem"
+    },
+    "6": {
+      "$value": "1.5rem"
+    },
+    "8": {
+      "$value": "2rem"
+    },
+    "10": {
+      "$value": "2.5rem"
+    },
+    "12": {
+      "$value": "3rem"
+    },
+    "16": {
+      "$value": "4rem"
+    },
+    "20": {
+      "$value": "5rem"
+    },
+    "24": {
+      "$value": "6rem"
+    },
+    "$type": "dimension"
+  },
+  "shadow": {
+    "$type": "shadow",
+    "xs": {
+      "$value": "0 1px 2px 0 rgb(11 25 45 / 0.08)"
+    },
+    "sm": {
+      "$value": "0 1px 3px 0 rgb(11 25 45 / 0.10), 0 1px 2px -1px rgb(11 25 45 / 0.10)"
+    },
+    "md": {
+      "$value": "0 4px 12px -2px rgb(11 25 45 / 0.14), 0 2px 6px -2px rgb(11 25 45 / 0.10)"
+    },
+    "lg": {
+      "$value": "0 12px 28px -6px rgb(11 25 45 / 0.20), 0 6px 12px -6px rgb(11 25 45 / 0.14)"
+    }
+  },
+  "z-index": {
+    "$type": "number",
+    "base": {
+      "$value": 0
+    },
+    "raised": {
+      "$value": 10
+    },
+    "sticky": {
+      "$value": 100
+    },
+    "dropdown": {
+      "$value": 200
+    },
+    "drawer": {
+      "$value": 300
+    },
+    "modal": {
+      "$value": 400
+    },
+    "toast": {
+      "$value": 500
+    },
+    "tooltip": {
+      "$value": 600
+    }
+  },
+  "motion": {
+    "easing": {
+      "out": {
+        "$type": "cubicBezier",
+        "$value": [
+          0.16,
+          1,
+          0.3,
+          1
+        ]
+      }
+    },
+    "duration": {
+      "$type": "duration",
+      "fast": {
+        "$value": "120ms"
+      },
+      "base": {
+        "$value": "200ms"
+      }
+    }
+  },
+  "layout": {
+    "container": {
+      "$type": "dimension",
+      "$value": "1200px"
+    },
+    "gutter": {
+      "$type": "dimension",
+      "$value": "{space.6}"
+    },
+    "section": {
+      "$type": "dimension",
+      "$value": "{space.12}"
+    },
+    "columns": {
+      "$type": "number",
+      "$value": 12
+    }
+  }
+}

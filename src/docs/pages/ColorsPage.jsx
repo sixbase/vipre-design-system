@@ -1,4 +1,4 @@
-import { Copy } from 'lucide-react'
+import { Copy } from '@icons'
 import { DocPage } from '../DocPage.jsx'
 import { Section } from '../primitives.jsx'
 import { Text, Icon } from '../../components/index.js'

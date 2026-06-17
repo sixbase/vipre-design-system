@@ -1,0 +1,256 @@
+{
+  "color": {
+    "$type": "color",
+    "surface": {
+      "canvas": {
+        "$value": "{palette.midnight.950}"
+      },
+      "default": {
+        "$value": "{palette.midnight.900}"
+      },
+      "raised": {
+        "$value": "{palette.midnight.800}"
+      },
+      "overlay": {
+        "$value": "{palette.midnight.700}"
+      },
+      "disabled": {
+        "$value": "{palette.midnight.900}"
+      },
+      "sunken": {
+        "$value": "{palette.midnight.950}"
+      },
+      "hover": {
+        "$value": "{palette.midnight.900}"
+      },
+      "selected": {
+        "$value": "{palette.midnight.800}"
+      },
+      "selected-hover": {
+        "$value": "{palette.midnight.700}"
+      }
+    },
+    "border": {
+      "subtle": {
+        "$value": "{palette.midnight.900}"
+      },
+      "default": {
+        "$value": "{palette.midnight.800}"
+      },
+      "strong": {
+        "$value": "{palette.midnight.700}"
+      }
+    },
+    "text": {
+      "default": {
+        "$value": "{palette.midnight.50}"
+      },
+      "muted": {
+        "$value": "{palette.midnight.300}"
+      },
+      "subtle": {
+        "$value": "{palette.midnight.400}"
+      },
+      "disabled": {
+        "$value": "{palette.midnight.600}"
+      },
+      "inverse": {
+        "$value": "{palette.midnight.950}"
+      }
+    },
+    "action": {
+      "primary": {
+        "default": {
+          "$value": "{palette.midnight.300}"
+        },
+        "hover": {
+          "$value": "{palette.midnight.200}"
+        },
+        "active": {
+          "$value": "{palette.midnight.100}"
+        },
+        "on": {
+          "$value": "{palette.midnight.950}"
+        },
+        "soft": {
+          "$value": "#98b6dd29"
+        },
+        "soft-hover": {
+          "$value": "#98b6dd3d"
+        }
+      }
+    },
+    "status": {
+      "success": {
+        "default": {
+          "$value": "{palette.emerald.400}"
+        },
+        "hover": {
+          "$value": "{palette.emerald.300}"
+        },
+        "active": {
+          "$value": "{palette.emerald.200}"
+        },
+        "on": {
+          "$value": "{palette.emerald.950}"
+        },
+        "soft": {
+          "$value": "#5dbf7c29"
+        },
+        "soft-hover": {
+          "$value": "#5dbf7c3d"
+        }
+      },
+      "warning": {
+        "default": {
+          "$value": "{palette.amber.400}"
+        },
+        "hover": {
+          "$value": "{palette.amber.300}"
+        },
+        "active": {
+          "$value": "{palette.amber.200}"
+        },
+        "on": {
+          "$value": "{palette.amber.950}"
+        },
+        "soft": {
+          "$value": "#d39c3029"
+        },
+        "soft-hover": {
+          "$value": "#d39c303d"
+        }
+      },
+      "danger": {
+        "default": {
+          "$value": "{palette.rose.400}"
+        },
+        "hover": {
+          "$value": "{palette.rose.300}"
+        },
+        "active": {
+          "$value": "{palette.rose.200}"
+        },
+        "on": {
+          "$value": "{palette.rose.950}"
+        },
+        "soft": {
+          "$value": "#f0837b29"
+        },
+        "soft-hover": {
+          "$value": "#f0837b3d"
+        }
+      },
+      "info": {
+        "default": {
+          "$value": "{palette.midnight.400}"
+        },
+        "hover": {
+          "$value": "{palette.midnight.300}"
+        },
+        "active": {
+          "$value": "{palette.midnight.200}"
+        },
+        "on": {
+          "$value": "{palette.midnight.950}"
+        },
+        "soft": {
+          "$value": "#618bc229"
+        },
+        "soft-hover": {
+          "$value": "#618bc23d"
+        }
+      }
+    },
+    "accent": {
+      "rose": {
+        "default": {
+          "$value": "{palette.rose.400}"
+        },
+        "soft": {
+          "$value": "#f0837b29"
+        }
+      },
+      "clay": {
+        "default": {
+          "$value": "{palette.clay.400}"
+        },
+        "soft": {
+          "$value": "#e88e4e29"
+        }
+      },
+      "amber": {
+        "default": {
+          "$value": "{palette.amber.400}"
+        },
+        "soft": {
+          "$value": "#d39c3029"
+        }
+      },
+      "lime": {
+        "default": {
+          "$value": "{palette.lime.400}"
+        },
+        "soft": {
+          "$value": "#8fb75629"
+        }
+      },
+      "emerald": {
+        "default": {
+          "$value": "{palette.emerald.400}"
+        },
+        "soft": {
+          "$value": "#5dbf7c29"
+        }
+      },
+      "harbor": {
+        "default": {
+          "$value": "{palette.harbor.400}"
+        },
+        "soft": {
+          "$value": "#0cc0b129"
+        }
+      },
+      "azure": {
+        "default": {
+          "$value": "{palette.azure.400}"
+        },
+        "soft": {
+          "$value": "#3eb3f029"
+        }
+      },
+      "purple": {
+        "default": {
+          "$value": "{palette.purple.400}"
+        },
+        "soft": {
+          "$value": "#af94f129"
+        }
+      },
+      "orchid": {
+        "default": {
+          "$value": "{palette.orchid.400}"
+        },
+        "soft": {
+          "$value": "#cc8adc29"
+        }
+      },
+      "magenta": {
+        "default": {
+          "$value": "{palette.magenta.400}"
+        },
+        "soft": {
+          "$value": "#e482b629"
+        }
+      }
+    },
+    "focus": {
+      "ring": {
+        "$value": "{palette.midnight.400}"
+      }
+    },
+    "scrim": {
+      "$value": "#02060ca6"
+    }
+  }
+}

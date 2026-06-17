@@ -2,7 +2,7 @@ import { useState } from 'react'
 import {
   Mail, Send, Monitor, ScrollText, ShieldAlert, SlidersHorizontal,
   KeyRound, Users, Tag, Building2, User, ArrowUpRight,
-} from 'lucide-react'
+} from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, IC } from '../primitives.jsx'

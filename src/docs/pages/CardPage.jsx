@@ -1,7 +1,7 @@
 import { ComponentPage } from '../ComponentPage.jsx'
 import { Section, Preview, IC } from '../primitives.jsx'
 import { Card, Button, Text, StatTile } from '../../components/index.js'
-import { Monitor, Shield } from 'lucide-react'
+import { Monitor, Shield } from '@icons'
 
 export function CardPage() {
   return (

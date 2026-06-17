@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { ShieldCheck, Mail, Globe, Database, Eye, Pencil, Trash2 } from 'lucide-react'
+import { ShieldCheck, Mail, Globe, Database, Eye, Pencil, Trash2 } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, IC } from '../primitives.jsx'
@@ -298,7 +298,7 @@ export function TablePage() {
               data={PRODUCTS}
             />
           }
-          code={`import { ShieldCheck } from 'lucide-react'
+          code={`import { ShieldCheck } from '@icons'
 import { Icon, Inline, Stack, Text } from 'vipre-design-system'
 
 const columns = [
@@ -391,7 +391,7 @@ const columns = [
               data={PRODUCTS}
             />
           }
-          code={`import { Eye, Pencil, Trash2 } from 'lucide-react'
+          code={`import { Eye, Pencil, Trash2 } from '@icons'
 import { Button, Icon, Inline } from 'vipre-design-system'
 
 const columns = [

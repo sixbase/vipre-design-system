@@ -22,10 +22,12 @@ import { MetricCardPage } from './pages/MetricCardPage.jsx'
 import { SparklinePage } from './pages/SparklinePage.jsx'
 import { TablePage } from './pages/TablePage.jsx'
 import { SideNavPage } from './pages/SideNavPage.jsx'
+import { CurrentLeftNavPage } from './pages/CurrentLeftNavPage.jsx'
 import { PageHeaderPage } from './pages/PageHeaderPage.jsx'
 import { ScopeNavigatorPage } from './pages/ScopeNavigatorPage.jsx'
 import { TimeframeSelectPage } from './pages/TimeframeSelectPage.jsx'
 import { ProductDashboardPage } from './pages/ProductDashboardPage.jsx'
+import { CurrentNavShellPage } from './pages/CurrentNavShellPage.jsx'
 
 /* Single source of truth for both the sidebar nav and the hash router. */
 export const NAV = [
@@ -69,6 +71,7 @@ export const NAV = [
       { path: '/components/sparkline', name: 'Sparkline', Page: SparklinePage },
       { path: '/components/table', name: 'Table', Page: TablePage },
       { path: '/components/side-nav', name: 'Side Nav', Page: SideNavPage },
+      { path: '/components/current-left-nav', name: 'Current Left Nav', Page: CurrentLeftNavPage },
       { path: '/components/page-header', name: 'Page Header', Page: PageHeaderPage },
       { path: '/components/scope-navigator', name: 'Scope Navigator', Page: ScopeNavigatorPage },
       { path: '/components/timeframe-select', name: 'Timeframe Select', Page: TimeframeSelectPage },
@@ -89,6 +92,7 @@ export const NAV = [
     group: 'Templates',
     items: [
       { path: '/templates/product-dashboard', name: 'Product Dashboard', Page: ProductDashboardPage },
+      { path: '/templates/current-nav-shell', name: 'Current Nav Shell', Page: CurrentNavShellPage },
     ],
   },
 ]
