@@ -1,4 +1,4 @@
-import { DollarSign, Users, ShieldCheck, TrendingDown } from 'lucide-react'
+import { DollarSign, Users, ShieldCheck, TrendingDown } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, IC } from '../primitives.jsx'

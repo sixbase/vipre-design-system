@@ -18,6 +18,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:tokens": "sass src/styles/tokens.entry.scss dist/vipre-tokens.css --no-source-map --style=expanded",
+    "build:tokens:dtcg": "node style-dictionary.config.mjs",
     "build:styles": "sass src/styles/styles.entry.scss dist/vipre.css --no-source-map --style=expanded",
     "build:lib": "npm run build:tokens && npm run build:styles",
     "preview": "vite preview"
@@ -27,11 +28,16 @@
     "react-dom": ">=18"
   },
   "devDependencies": {
+    "@iconify-json/material-symbols": "^1.2.78",
+    "@svgr/core": "^8.1.0",
+    "@svgr/plugin-jsx": "^8.1.0",
     "@vitejs/plugin-react": "^6.0.0",
     "lucide-react": "^1.17.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "sass": "^1.80.0",
+    "style-dictionary": "^4.4.0",
+    "unplugin-icons": "^23.0.1",
     "vite": "^8.0.0"
   }
 }

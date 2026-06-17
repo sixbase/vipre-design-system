@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Mail, Download } from 'lucide-react'
+import { Mail, Download } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, IC } from '../primitives.jsx'

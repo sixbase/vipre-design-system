@@ -2,7 +2,7 @@ import { useState } from 'react'
 import {
   Mail, Send, Monitor, ScrollText, ShieldAlert, SlidersHorizontal,
   KeyRound, Users, Tag, Building2, User, ArrowUpRight,
-} from 'lucide-react'
+} from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { Section, Preview, IC } from '../primitives.jsx'
 import { ScopeNavigator, SideNav, PageHeader, TimeframeSelect } from '../../components/index.js'
