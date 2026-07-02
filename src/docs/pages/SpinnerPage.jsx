@@ -8,21 +8,21 @@ export function SpinnerPage() {
     <ComponentPage
       colors={COMPONENT_COLORS.Spinner}
       title="Spinner"
-      description={'An indeterminate loading indicator. Inherits the surrounding text color by default, so it sits naturally inside buttons and text; set tone="primary" for a branded spinner.'}
+      description={'A spinning loader for when you don\'t know how long a wait will take. By default it takes the color of the text around it, so it fits right into buttons and text; set tone="primary" for a brand-colored one.'}
       installCode={`import { Spinner } from 'vipre-design-system'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
             [{ code: 'size' }, { code: "'sm' | 'md' | 'lg'" }, { code: "'md'" }, '16 / 20 / 24px'],
-            [{ code: 'tone' }, { code: "'current' | 'primary'" }, { code: "'current'" }, 'Color — inherits text, or brand'],
-            [{ code: 'label' }, { code: 'string' }, { code: "'Loading'" }, 'Accessible name (role=status)'],
+            [{ code: 'tone' }, { code: "'current' | 'primary'" }, { code: "'current'" }, 'Color — matches the text, or uses the brand'],
+            [{ code: 'label' }, { code: 'string' }, { code: "'Loading'" }, 'A name for screen readers (role=status)'],
           ],
         },
       ]}
       accessibility={[
-        <>Exposed via <IC>role="status"</IC> + <IC>aria-label</IC> so the loading state is announced.</>,
-        <>Honors <IC>prefers-reduced-motion</IC> — the ring stops spinning.</>,
+        <>It uses <IC>role="status"</IC> and <IC>aria-label</IC> so screen readers say it's loading.</>,
+        <>It respects <IC>prefers-reduced-motion</IC> — the ring stops spinning for people who turn motion off.</>
       ]}
     >
       <Section title="Sizes">
@@ -40,7 +40,7 @@ export function SpinnerPage() {
         />
       </Section>
 
-      <Section title="Tone" note="Default inherits text color; primary uses the brand.">
+      <Section title="Tone" note="The default matches the text color; primary uses the brand color.">
         <Preview
           canvas={
             <>
@@ -55,7 +55,7 @@ export function SpinnerPage() {
         />
       </Section>
 
-      <Section title="In a button" note="Pair with a disabled Button for a pending action.">
+      <Section title="In a button" note="Put it in a disabled Button to show an action is still working.">
         <Preview
           canvas={
             <Button disabled>

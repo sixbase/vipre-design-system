@@ -12,23 +12,23 @@ export function IconPage() {
     <ComponentPage
       colors={COMPONENT_COLORS.Icon}
       title="Icon"
-      description="A presentation wrapper that gives any SVG a consistent size and tone. It ships no icons of its own — pass a lucide-react icon (the prototype's icon set) via the `as` prop, or raw SVG as children. Color inherits from surrounding text unless a tone is set."
+      description="A wrapper that gives any SVG the same size and color rules. It comes with no icons of its own — pass a lucide-react icon (the prototype's icon set) through the `as` prop, or plain SVG as children. The icon takes the color of the text around it unless you set a tone."
       installCode={`import { Icon } from 'vipre-design-system'\nimport { Shield } from '@icons'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
-            [{ code: 'as' }, { code: 'ComponentType' }, '—', 'Icon component to render (e.g. a lucide icon)'],
+            [{ code: 'as' }, { code: 'ComponentType' }, '—', 'The icon to show (e.g. a lucide icon)'],
             [{ code: 'size' }, { code: "'xs' | 'sm' | 'md' | 'lg'" }, { code: "'md'" }, '14 / 16 / 20 / 24px'],
-            [{ code: 'tone' }, { code: "'current' | 'muted' | 'subtle' | 'primary' | 'success' | 'warning' | 'danger' | 'info'" }, { code: "'current'" }, 'Color; default inherits text color'],
-            [{ code: 'label' }, { code: 'string' }, '—', 'Accessible name; omit for decorative icons'],
+            [{ code: 'tone' }, { code: "'current' | 'muted' | 'subtle' | 'primary' | 'success' | 'warning' | 'danger' | 'info'" }, { code: "'current'" }, 'Color; by default matches the text color'],
+            [{ code: 'label' }, { code: 'string' }, '—', 'A name screen readers can read; leave it off for decoration-only icons'],
           ],
         },
       ]}
       accessibility={[
-        <>With <IC>label</IC>, the icon is exposed as <IC>role="img"</IC> with that name.</>,
-        <>Without <IC>label</IC> it is <IC>aria-hidden</IC> — correct for icons next to text.</>,
-        <>Tone colors meet AA contrast on canvas/surface in both themes.</>,
+        <>With a <IC>label</IC>, the icon shows up as <IC>role="img"</IC> with that name for screen readers.</>,
+        <>Without a <IC>label</IC> it is <IC>aria-hidden</IC> — the right choice for icons sitting next to text.</>,
+        <>Tone colors stay easy to read (AA contrast) on canvas and surface in both light and dark.</>,
       ]}
     >
       <Section title="Sizes">
@@ -45,7 +45,7 @@ export function IconPage() {
         />
       </Section>
 
-      <Section title="In context" note="Icons inherit the surrounding text color by default — pair them with labels.">
+      <Section title="In context" note="By default icons take the color of the text next to them — always pair them with a label.">
         <Preview
           canvas={
             <>

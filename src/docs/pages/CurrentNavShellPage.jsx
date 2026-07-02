@@ -180,9 +180,9 @@ function GenericBody({ title }) {
       <div style={cell(12)}>
         <Card title={title} padding={5}>
           <p style={{ margin: 0, color: 'var(--vds-ink-muted)', fontSize: '0.875rem' }}>
-            This page is a stub in the prototype — the frame is identical across every destination, so
-            wiring a real screen here means swapping only this body. Use the rail to feel the navigation
-            between products and pages.
+            This page is a placeholder in the prototype — the frame is the same everywhere, so building
+            a real screen here means swapping only this body. Use the rail to feel how you move between
+            products and pages.
           </p>
         </Card>
       </div>
@@ -282,12 +282,12 @@ export function CurrentNavShellPage() {
   return (
     <ComponentPage
       title="Current Nav Shell"
-      description="A full-page application shell built around Current Left Nav — the production VIPRE chrome, captured so we can prototype and improve on it. The rail is persistent (always navy); the content region (page header + body) swaps per selected page. Click through products and pages to feel the current navigation; the body is wired with real DS widgets on a few pages and stubbed on the rest. Composed from CurrentLeftNav + PageHeader + TimeframeSelect + StatTile / Card / Table."
+      description="A whole-page app layout built around Current Left Nav — the real VIPRE frame, saved so we can prototype and improve on it. The rail stays put (always navy); the content area (page header + body) changes per page you pick. Click through products and pages to feel how it navigates today; a few pages use real widgets and the rest are placeholders. Made from CurrentLeftNav + PageHeader + TimeframeSelect + StatTile / Card / Table."
       installCode={`import { CurrentLeftNav, PageHeader } from 'vipre-design-system'`}
     >
       <Section
         title="Live shell"
-        note="A working prototype, not a static mock. Click Overview, drill into IES → Message Logs or EDR → Devices to see real widgets; the rail lights the product that owns the active page and keeps it expanded. SafeSend starts collapsed; SAT and Archive are locked. Toggle the page theme — the rail stays navy on purpose (Current Left Nav is not theme-following), so the chrome is stable while the workspace adapts."
+        note="A working prototype, not a picture. Click Overview, or go into IES → Message Logs or EDR → Devices to see real widgets; the rail lights up the product that holds the current page and keeps it open. SafeSend starts closed; SAT and Archive are locked. Flip the page theme — the rail stays navy on purpose (Current Left Nav doesn't follow the theme), so the frame stays steady while the workspace changes."
       >
         <Preview
           canvas={<ShellDemo />}
@@ -321,9 +321,9 @@ export function CurrentNavShellPage() {
       <Section title="Regions">
         <div className="vds-text vds-text--body" style={{ display: 'grid', gap: '0.75rem', maxWidth: 720 }}>
           {[
-            ['Product rail', 'Persistent navy chrome. Switch product / page, collapse cards, jump to a “full portal”, hit the account footer.', <IC key="a">CurrentLeftNav</IC>],
-            ['Page header', 'Orients the page (product eyebrow + title) and scopes time. Title is the only required slot.', <IC key="b">PageHeader</IC>],
-            ['Body', 'The swappable content. Same frame everywhere — wiring a screen means replacing only this region.', <span key="c"><IC>StatTile</IC> / <IC>Card</IC> / <IC>Table</IC></span>],
+            ['Product rail', 'Navy frame that stays put. Switch product or page, close cards, jump to a “full portal”, use the account footer.', <IC key="a">CurrentLeftNav</IC>],
+            ['Page header', 'Says what the page is (product eyebrow + title) and sets the timeframe. Only the title is required.', <IC key="b">PageHeader</IC>],
+            ['Body', 'The part that changes. Same frame everywhere — building a screen means replacing only this part.', <span key="c"><IC>StatTile</IC> / <IC>Card</IC> / <IC>Table</IC></span>],
           ].map(([region, resp, comp]) => (
             <div key={region} style={{ display: 'grid', gridTemplateColumns: '8rem 1fr', gap: '0.75rem', alignItems: 'start' }}>
               <strong style={{ color: 'var(--vds-ink)' }}>{region}</strong>

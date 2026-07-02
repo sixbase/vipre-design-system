@@ -44,34 +44,34 @@ export function PageHeaderPage() {
     <ComponentPage
       colors={COMPONENT_COLORS.PageHeader}
       title="Page Header"
-      description="The header band that opens a page inside an app shell. Everything below the title is an optional slot — eyebrow, icon medallion, status meta, subtitle, right-aligned actions, an in-page tab strip, and a filter row — so the same component spans a bare title through a rich multi-row header. Composes Icon."
+      description="The band at the top of a page. Only the title is required — everything else is an optional slot: a small line above (eyebrow), an icon in a soft circle, status badges, a subtitle, buttons on the right, a row of tabs, and a filter row. So the same component works for a plain title or a full, busy header. Uses Icon."
       installCode={`import { PageHeader } from 'vipre-design-system'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
             [{ code: 'title' }, { code: 'string | node' }, '—', 'The heading'],
-            [{ code: 'as' }, { code: 'tag' }, { code: "'h1'" }, 'Element for the title'],
-            [{ code: 'eyebrow' }, { code: 'node' }, '—', 'Small context line above the title'],
-            [{ code: 'icon' }, { code: 'icon component' }, '—', 'Leading icon, shown in a soft medallion'],
-            [{ code: 'iconTone' }, { code: "'primary'|'success'|'warning'|'danger'|'info'" }, { code: "'primary'" }, 'Medallion color'],
-            [{ code: 'subtitle' }, { code: 'node' }, '—', 'Description line under the title'],
-            [{ code: 'meta' }, { code: 'node' }, '—', 'Beside the title — status badges, counts'],
-            [{ code: 'actions' }, { code: 'node' }, '—', 'Right-aligned controls (buttons, TimeframeSelect…)'],
-            [{ code: 'tabs' }, { code: 'node' }, '—', 'In-page tab strip below the title block'],
-            [{ code: 'filters' }, { code: 'node' }, '—', 'Filter row below the tabs'],
+            [{ code: 'as' }, { code: 'tag' }, { code: "'h1'" }, 'The HTML tag for the title'],
+            [{ code: 'eyebrow' }, { code: 'node' }, '—', 'A small line above the title'],
+            [{ code: 'icon' }, { code: 'icon component' }, '—', 'Icon shown first, inside a soft circle'],
+            [{ code: 'iconTone' }, { code: "'primary'|'success'|'warning'|'danger'|'info'" }, { code: "'primary'" }, 'Color of the circle'],
+            [{ code: 'subtitle' }, { code: 'node' }, '—', 'A line of description under the title'],
+            [{ code: 'meta' }, { code: 'node' }, '—', 'Next to the title — status badges or counts'],
+            [{ code: 'actions' }, { code: 'node' }, '—', 'Controls on the right (buttons, TimeframeSelect…)'],
+            [{ code: 'tabs' }, { code: 'node' }, '—', 'A row of tabs below the title'],
+            [{ code: 'filters' }, { code: 'node' }, '—', 'A filter row below the tabs'],
           ],
         },
       ]}
       accessibility={[
-        <>The title renders as an <IC>{'<h1>'}</IC> by default (override with <IC>as</IC>) so each page exposes one top-level heading.</>,
-        <>The icon medallion is decorative (<IC>aria-hidden</IC>); meaning is carried by the title and meta, never by color alone.</>,
-        <>Slots are plain nodes — actions, tabs, and filters bring their own roles and focus behavior from the controls you pass in.</>,
+        <>The title is an <IC>{'<h1>'}</IC> by default (change it with <IC>as</IC>) so each page has one main heading.</>,
+        <>The icon circle is just for looks (<IC>aria-hidden</IC>); the title and meta carry the meaning, never color alone.</>,
+        <>Slots are plain content — actions, tabs, and filters bring their own roles and keyboard behavior from the controls you put in them.</>,
       ]}
     >
       <Section
         title="Minimal"
-        note="The Overview case — just a title and a timeframe control. Most dashboard pages need nothing more."
+        note="The Overview case — just a title and a timeframe picker. Most dashboard pages need nothing more."
       >
         <Preview
           canvas={
@@ -85,7 +85,7 @@ export function PageHeaderPage() {
 
       <Section
         title="Every slot"
-        note="The complex form — icon medallion, eyebrow, title with a status badge, subtitle, actions, an in-page tab strip, and a filter row. Pages slot in only the parts they need."
+        note="The full version — icon circle, eyebrow, title with a status badge, subtitle, actions, a row of tabs, and a filter row. Pages use only the parts they need."
       >
         <Preview
           canvas={

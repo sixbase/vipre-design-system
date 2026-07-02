@@ -189,29 +189,29 @@ export function TablePage() {
     <ComponentPage
       colors={COMPONENT_COLORS.Table}
       title="Table"
-      description="A data-driven table: declare your columns, hand it your data, and it renders the head and body — owning alignment, density, zebra striping, a sticky header, sortable headers, row selection, row-click drill-in, and loading / empty states. Composes Surface for the bordered, rounded shell."
+      description="A table that builds itself. You tell it your columns and hand it your data, and it draws the whole thing. It handles alignment, row height, striped rows, a header that stays put, sortable columns, row picking, clicking a row to open it, and loading and empty states. The rounded, bordered box comes from Surface."
       installCode={`import { Table } from 'vipre-design-system'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
-            [{ code: 'columns' }, { code: 'Column[]' }, '—', 'Column definitions (see below)'],
-            [{ code: 'data' }, { code: 'object[]' }, '—', 'Row objects'],
-            [{ code: 'getRowKey' }, { code: '(row, i) => key' }, { code: 'row.id ?? i' }, 'Stable key per row'],
-            [{ code: 'density' }, { code: "'comfortable' | 'compact'" }, { code: 'comfortable' }, 'Cell padding rhythm'],
-            [{ code: 'zebra' }, { code: 'boolean' }, { code: 'false' }, 'Striped rows'],
-            [{ code: 'stickyHeader' }, { code: 'boolean' }, { code: 'false' }, 'Header stays put while the body scrolls'],
-            [{ code: 'maxHeight' }, { code: 'string | number' }, '—', 'Enables a vertical scroll body (pair with stickyHeader)'],
-            [{ code: 'sort' }, { code: '{ key, direction }' }, '—', 'Controlled sort indicator'],
-            [{ code: 'onSortChange' }, { code: '(next) => void' }, '—', 'Fires when a sortable header is clicked'],
-            [{ code: 'selectable' }, { code: 'boolean' }, { code: 'false' }, 'Show the selection column'],
-            [{ code: 'selectedKeys' }, { code: 'array | Set' }, '—', 'Controlled selection'],
-            [{ code: 'onSelectionChange' }, { code: '(keys[]) => void' }, '—', 'Fires when selection changes'],
-            [{ code: 'onRowClick' }, { code: '(row, i) => void' }, '—', 'Makes rows interactive (hover + keyboard)'],
-            [{ code: 'loading' }, { code: 'boolean' }, { code: 'false' }, 'Show skeleton rows'],
-            [{ code: 'skeletonRows' }, { code: 'number' }, { code: '5' }, 'Skeleton row count while loading'],
-            [{ code: 'empty' }, { code: 'ReactNode' }, { code: "'No data'" }, 'Shown when data is empty'],
-            [{ code: 'caption' }, { code: 'ReactNode' }, '—', 'Visually-hidden accessible caption'],
+            [{ code: 'columns' }, { code: 'Column[]' }, '—', 'What each column is (see below)'],
+            [{ code: 'data' }, { code: 'object[]' }, '—', 'One object per row'],
+            [{ code: 'getRowKey' }, { code: '(row, i) => key' }, { code: 'row.id ?? i' }, 'Gives each row a steady id'],
+            [{ code: 'density' }, { code: "'comfortable' | 'compact'" }, { code: 'comfortable' }, 'How tall the rows are'],
+            [{ code: 'zebra' }, { code: 'boolean' }, { code: 'false' }, 'Shades every other row'],
+            [{ code: 'stickyHeader' }, { code: 'boolean' }, { code: 'false' }, 'Keeps the header in place while the rows scroll'],
+            [{ code: 'maxHeight' }, { code: 'string | number' }, '—', 'Caps the height so the rows scroll (use with stickyHeader)'],
+            [{ code: 'sort' }, { code: '{ key, direction }' }, '—', 'Which column is sorted, and which way'],
+            [{ code: 'onSortChange' }, { code: '(next) => void' }, '—', 'Runs when someone clicks a sortable header'],
+            [{ code: 'selectable' }, { code: 'boolean' }, { code: 'false' }, 'Adds a checkbox column'],
+            [{ code: 'selectedKeys' }, { code: 'array | Set' }, '—', 'Which rows are checked'],
+            [{ code: 'onSelectionChange' }, { code: '(keys[]) => void' }, '—', 'Runs when the checked rows change'],
+            [{ code: 'onRowClick' }, { code: '(row, i) => void' }, '—', 'Makes rows clickable (with hover + keyboard)'],
+            [{ code: 'loading' }, { code: 'boolean' }, { code: 'false' }, 'Shows placeholder rows'],
+            [{ code: 'skeletonRows' }, { code: 'number' }, { code: '5' }, 'How many placeholder rows to show while loading'],
+            [{ code: 'empty' }, { code: 'ReactNode' }, { code: "'No data'" }, 'What to show when there are no rows'],
+            [{ code: 'caption' }, { code: 'ReactNode' }, '—', 'A hidden name for screen readers'],
             [{ code: '…props' }, { code: 'Surface props' }, '—', 'radius, elevation, bordered, raised, as…'],
           ],
         },
@@ -219,25 +219,25 @@ export function TablePage() {
           name: 'Column',
           headers: ['Field', 'Type', 'Description'],
           rows: [
-            [{ code: 'key' }, { code: 'string' }, 'Row property to read, and the sort key'],
-            [{ code: 'header' }, { code: 'ReactNode' }, 'Column label (defaults to the key)'],
-            [{ code: 'align' }, { code: "'left' | 'center' | 'right'" }, "Cell alignment ('right' uses tabular numerics)"],
+            [{ code: 'key' }, { code: 'string' }, 'Which field to read from the row, and what to sort by'],
+            [{ code: 'header' }, { code: 'ReactNode' }, 'The column title (uses the key if you skip it)'],
+            [{ code: 'align' }, { code: "'left' | 'center' | 'right'" }, "Which side the cell sits on ('right' lines up numbers neatly)"],
             [{ code: 'width' }, { code: 'string' }, 'Any CSS width (e.g. "120px", "20%")'],
-            [{ code: 'render' }, { code: '(row, i) => node' }, 'Custom cell content (badges, links, actions…)'],
-            [{ code: 'sortable' }, { code: 'boolean' }, 'Mark the header clickable'],
+            [{ code: 'render' }, { code: '(row, i) => node' }, 'Your own cell content (badges, links, actions…)'],
+            [{ code: 'sortable' }, { code: 'boolean' }, 'Makes the header clickable to sort'],
           ],
         },
       ]}
       accessibility={[
-        <>Renders a real <IC>{'<table>'}</IC> with <IC>scope="col"</IC> headers, so screen readers announce row/column relationships.</>,
-        <>Sortable headers are <IC>{'<button>'}</IC>s inside the <IC>{'<th>'}</IC> and set <IC>aria-sort</IC> to reflect the active direction.</>,
-        <>Interactive rows (<IC>onRowClick</IC>) are keyboard-focusable and respond to <IC>Enter</IC> / <IC>Space</IC>.</>,
-        <>The sort caret is decorative (<IC>aria-hidden</IC>) — direction is conveyed by <IC>aria-sort</IC>, not color alone.</>,
-        <>Pass <IC>caption</IC> to give the table an accessible name; it is visually hidden but read by assistive tech.</>,
-        <>A leading product icon is decorative — <IC>Icon</IC> is <IC>aria-hidden</IC> by default, so the meaning rides on the adjacent name text.</>,
+        <>It draws a real <IC>{'<table>'}</IC> with <IC>scope="col"</IC> headers, so screen readers can tell which cell belongs to which row and column.</>,
+        <>Sortable headers are <IC>{'<button>'}</IC>s inside the <IC>{'<th>'}</IC>, and they set <IC>aria-sort</IC> to say which way it's sorted.</>,
+        <>Clickable rows (<IC>onRowClick</IC>) can be reached with the keyboard and open with <IC>Enter</IC> or <IC>Space</IC>.</>,
+        <>The little sort arrow is just for looks (<IC>aria-hidden</IC>) — the sort direction comes from <IC>aria-sort</IC>, not from color.</>,
+        <>Pass <IC>caption</IC> to give the table a name. It's hidden on screen but read out by screen readers.</>,
+        <>The product icon at the front of a row is just for looks — <IC>Icon</IC> is <IC>aria-hidden</IC> by default, so the meaning comes from the name next to it.</>
       ]}
     >
-      <Section title="Basic" note="Declare columns, pass data. A column's render() returns custom cell content.">
+      <Section title="Basic" note="List your columns and hand over your data. A column's render() lets you draw your own cell content.">
         <Preview
           canvas={
             <Table
@@ -272,7 +272,7 @@ export function TablePage() {
 
       <Section
         title="Responsive"
-        note="The table fills its container and follows it as it resizes. Pass minWidth to keep columns readable — below it the shell scrolls horizontally instead of crushing columns. Use the presets, drag the frame's bottom-right corner, or just resize the window to test."
+        note="The table fills its box and shrinks or grows with it. Pass minWidth so the columns never get too squished — once the box gets narrower than that, the table scrolls sideways instead. Try the buttons, drag the frame's bottom-right corner, or just resize the window."
       >
         <Preview
           canvas={<ResponsiveDemo />}
@@ -284,7 +284,7 @@ export function TablePage() {
 
       <Section
         title="Leading product cell"
-        note="A common first-column pattern: a product icon + name (with an optional secondary line). Compose it in a column's render() from existing primitives — Inline, Icon, Stack, Text — no bespoke markup."
+        note="A common first-column look: a product icon and name, with an optional second line under it. Build it in a column's render() from parts you already have — Inline, Icon, Stack, Text — no custom markup."
       >
         <Preview
           canvas={
@@ -331,7 +331,7 @@ const columns = [
 
       <Section
         title="Compact product cell"
-        note="For dense screens: pair density=&quot;compact&quot; with a single-line cell — a smaller Icon + a caption-sized name, no secondary text."
+        note="For packed screens: use density=&quot;compact&quot; with a one-line cell — a smaller Icon and a small name, no second line."
       >
         <Preview
           canvas={
@@ -375,7 +375,7 @@ const columns = [
 
       <Section
         title="Row actions"
-        note="Per-row actions are just a trailing column: render a right-aligned Inline of icon-only ghost Buttons. Each Button needs an aria-label since there's no visible text."
+        note="Row buttons are just one more column at the end: a right-aligned Inline of icon-only ghost Buttons. Each Button needs an aria-label because there's no words to read."
       >
         <Preview
           canvas={
@@ -428,7 +428,7 @@ const columns = [
         />
       </Section>
 
-      <Section title="Sortable" note="Sorting is controlled: the header sets the indicator and fires onSortChange; you order the data.">
+      <Section title="Sortable" note="You're in charge of sorting. Clicking a header shows the arrow and calls onSortChange; then you put the rows in order.">
         <Preview
           canvas={<SortableDemo />}
           code={`const [sort, setSort] = useState({ key: 'risk', direction: 'desc' })
@@ -446,7 +446,7 @@ const data = useMemo(() => sortRows(devices, sort), [sort])
         />
       </Section>
 
-      <Section title="Selection" note="A checkbox column with a select-all header (indeterminate when partial). Controlled via selectedKeys.">
+      <Section title="Selection" note="A checkbox column with a select-all box at the top (it shows a dash when only some rows are picked). You control it with selectedKeys.">
         <Preview
           canvas={<SelectableDemo />}
           code={`const [selected, setSelected] = useState([])
@@ -461,7 +461,7 @@ const data = useMemo(() => sortRows(devices, sort), [sort])
         />
       </Section>
 
-      <Section title="Compact + zebra" note="Denser rhythm for log-like data, with zebra striping for scanability.">
+      <Section title="Compact + zebra" note="Tighter rows for log-style data, with striped rows so they're easy to scan.">
         <Preview
           canvas={
             <Table
@@ -480,7 +480,7 @@ const data = useMemo(() => sortRows(devices, sort), [sort])
         />
       </Section>
 
-      <Section title="Interactive rows" note="Pass onRowClick to make each row a focusable, clickable drill-in.">
+      <Section title="Interactive rows" note="Pass onRowClick to make each row clickable so you can open it.">
         <Preview
           canvas={
             <Table

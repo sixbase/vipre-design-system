@@ -46,18 +46,18 @@ export function DepthPage() {
   return (
     <DocPage
       title="Depth"
-      description="How Vipre shows that one surface sits above another — restrained by design. Reach for the gentlest tool that separates the surfaces: tone, then a line, then a shadow, and only then stacking order."
+      description="How Vipre shows that one surface sits on top of another — kept subtle on purpose. Use the gentlest way to tell two surfaces apart: color first, then a line, then a shadow, and only then stacking order."
     >
-      <Section title="The priority order" note="Use these in order. Don't jump to a heavier tool when a lighter one already separates the surfaces.">
+      <Section title="The priority order" note="Try these in order. Don't jump to a heavier one when a lighter one already tells the surfaces apart.">
         <ol className="vds-depth-order">
-          <li><span className="vds-depth-order__n">1</span><div><strong>Tone</strong> — a raised surface uses a different background (<IC>canvas</IC> → <IC>surface</IC> → <IC>surface-raised</IC> → <IC>surface-overlay</IC>).</div></li>
-          <li><span className="vds-depth-order__n">2</span><div><strong>Line</strong> — a 1px <IC>--vds-line</IC> border separates resting surfaces before any shadow.</div></li>
-          <li><span className="vds-depth-order__n">3</span><div><strong>Shadow</strong> — only when an element <em>floats free</em> of the page (menus, modals, toasts).</div></li>
-          <li><span className="vds-depth-order__n">4</span><div><strong>Stack order</strong> — a <IC>--vds-z-*</IC> token decides which floating thing wins when two overlap.</div></li>
+          <li><span className="vds-depth-order__n">1</span><div><strong>Color</strong> — a surface that sits higher up uses a different background (<IC>canvas</IC> → <IC>surface</IC> → <IC>surface-raised</IC> → <IC>surface-overlay</IC>).</div></li>
+          <li><span className="vds-depth-order__n">2</span><div><strong>Line</strong> — a 1px <IC>--vds-line</IC> border tells two flat surfaces apart before you reach for a shadow.</div></li>
+          <li><span className="vds-depth-order__n">3</span><div><strong>Shadow</strong> — only when something <em>lifts off</em> the page (menus, modals, toasts).</div></li>
+          <li><span className="vds-depth-order__n">4</span><div><strong>Stack order</strong> — a <IC>--vds-z-*</IC> token decides which floating thing shows on top when two overlap.</div></li>
         </ol>
       </Section>
 
-      <Section title="Elevation ladder" note="Five semantic levels, named by role — not by look. Each tile below is a real <Surface elevation={level} /> — the level binds surface tone, border, and shadow together.">
+      <Section title="Elevation ladder" note="Five levels, named for their job — not their look. Each tile below is a real <Surface elevation={level} /> — the level sets the background, border, and shadow all at once.">
         <div className="vds-elev-ladder">
           {LEVELS.map((l) => (
             <div key={l.key} className="vds-elev-item">
@@ -77,7 +77,7 @@ export function DepthPage() {
         </div>
       </Section>
 
-      <Section title="Shadow scale" note="Midnight-tinted for a cool cast. Reserved for floating elements — resting surfaces use tone + line instead. In dark mode these recede on purpose; depth comes from the surface ladder.">
+      <Section title="Shadow scale" note="Tinted with navy for a cool look. Only for things that float — flat surfaces use color and a line instead. In dark mode the shadows fade on purpose; depth comes from the surface colors.">
         <div className="vds-shadow-row">
           {SHADOWS.map((s) => (
             <div key={s} className="vds-shadow-item">
@@ -88,7 +88,7 @@ export function DepthPage() {
         </div>
       </Section>
 
-      <Section title="Surface ladder" note="The tone half of depth. Light mode is shadow-led, so surfaces barely change. Dark mode is lightness-led — higher = lighter — so each rung steps up the Midnight ramp. Toggle the theme (top-left) to see the difference.">
+      <Section title="Surface ladder" note="The color side of depth. In light mode shadows do the work, so the surfaces barely change. In dark mode color does the work — higher up means lighter — so each step gets a lighter navy. Flip the theme (top-left) to see the difference.">
         <div className="vds-swatches vds-swatches--semantic">
           {SURFACES.map((s) => (
             <div key={s.token} className="vds-swatch">
@@ -100,7 +100,7 @@ export function DepthPage() {
         </div>
       </Section>
 
-      <Section title="Stacking order" note="One source of truth for z-index. Components never hand-write a number — they reference a token. Gaps of 100 leave room to slot a layer in later.">
+      <Section title="Stacking order" note="One place that decides z-index. Components never type a number — they use a token. The gaps of 100 leave room to add a layer in between later.">
         <div className="vds-zstack">
           {Z_STACK.map((z, i) => (
             <div
@@ -118,7 +118,7 @@ export function DepthPage() {
         />
       </Section>
 
-      <Section title="Scrim" note="The dim behind overlays (level 3). Navy in light, deeper near-black in dark. It keeps the page behind from competing with the dialog on top.">
+      <Section title="Scrim" note="The dark layer behind overlays (level 3). Navy in light mode, near-black in dark. It dims the page so it doesn't fight with the dialog on top.">
         <div className="vds-scrim-demo">
           <div className="vds-scrim-demo__bg">
             <Text variant="caption" tone="muted">Page content behind the overlay…</Text>
@@ -127,7 +127,7 @@ export function DepthPage() {
           <div className="vds-scrim-demo__scrim" />
           <div className="vds-scrim-demo__dialog">
             <Text variant="body">Confirm action</Text>
-            <Text variant="caption" tone="muted">A level-3 overlay sits on surface-overlay with shadow-lg, over the scrim.</Text>
+            <Text variant="caption" tone="muted">A level-3 overlay sits on surface-overlay with shadow-lg, above the dimmed page.</Text>
           </div>
         </div>
       </Section>

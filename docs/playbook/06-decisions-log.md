@@ -514,3 +514,19 @@ tiles that had drifted onto different levels: **StatTile** (was borderless + `sh
 **MetricCard** (was borderless + `raised`/`shadow-md`) both dropped to `elevation="resting"` with
 the default border — so Card/StatTile/MetricCard are now visual siblings. MetricCard's hover lift
 retuned `shadow-lg → shadow-md` (resting xs → raised md). 10-depth.md updated to match.
+
+**Typography — line-height ramp + tabular numerals (leading was undefined; numerals unaligned).**
+The typescale bakes an optical line-height into each `$scale` step (large text tight, small text
+looser), but there was **no reusable line-height token** and the docs specimens were single-line
+`nowrap` — so leading was invisible and un-overridable when copy wrapped. Added a **`--vds-leading-*`
+unitless ramp** (`none 1 · tight 1.2 · snug 1.35 · normal 1.5 · relaxed 1.7`) in the scale tier of
+`_tokens.scss`, exposed as `.vds-text--leading-*` utilities and a **`leading` prop** on `Text`/`Heading`
+for multi-line overrides — additive, the baked per-step values are unchanged (no ripple through
+components). The Typography page gained a **Line height** section: the ramp table (wrapping specimen
+so leading reads) + a **combination matrix** (3 scales × tight/normal/relaxed) that shows how much air
+a line needs shifting with size. Also added **tabular numerals** — `.vds-text--tabular` (+ `tabular`
+prop) applying `font-variant-numeric: tabular-nums` — a real gap for a data-dense DS where table/metric
+figures must column-align and not jitter as they update; documented with a proportional-vs-tabular demo.
+Completed the **Semantic mapping** table (had omitted `body-lg`/`caption`/`micro`/`nano`). `tokens.js`
+gained `LEADING` to mirror the ramp. Verified in-browser (matrix computes 20px×1.2/1.5/1.7 = 24/30/34px;
+tabular column right-aligns) and both CSS bundles rebuild clean.

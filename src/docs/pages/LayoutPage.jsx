@@ -6,7 +6,7 @@ export function LayoutPage() {
   return (
     <DocPage
       title="Layout"
-      description="The structural rhythm for screens: a centered max-width container, a 12-column grid with a consistent gutter, and a fixed vertical section rhythm. Page composition uses these tokens; it never invents new layout values."
+      description="The rules for laying out a screen: a centered box that stops growing at a set width, a 12-column grid with even gaps, and set spacing between sections. Pages use these tokens and never make up new layout sizes."
     >
       <Section title="Tokens">
         <PropsTable
@@ -15,7 +15,7 @@ export function LayoutPage() {
         />
       </Section>
 
-      <Section title="12-column grid" note="Columns split into common ratios — halves (6+6), thirds (4+4+4), wide+narrow (8+4). Gutter is --vds-gutter (24px).">
+      <Section title="12-column grid" note="Split the columns into simple splits — halves (6+6), thirds (4+4+4), or wide+narrow (8+4). The gap between columns is --vds-gutter (24px).">
         <div className="vds-grid-demo">
           {Array.from({ length: 12 }).map((_, i) => (
             <span key={i} />

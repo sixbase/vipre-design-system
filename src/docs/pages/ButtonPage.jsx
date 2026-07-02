@@ -9,33 +9,33 @@ export function ButtonPage() {
     <ComponentPage
       colors={COMPONENT_COLORS.Button}
       title="Button"
-      description="The primary interactive element. Styling splits across two axes — variant (emphasis: solid · soft · outline · ghost) and tone (intent: primary · neutral · success · warning · danger · info) — so any weight pairs with any intent. Three sizes, a built-in loading state, an opacity-based disabled state, and a visible keyboard focus ring. Forwards all native button props."
+      description="A button people click. Two choices: variant is how loud it looks (solid, soft, outline, ghost) and tone is its job and color (primary, neutral, success, warning, danger, info). Any look works with any color. Three sizes, a spinner for loading, a faded look when off, and a ring you can see when you tab to it. Passes through all normal button props."
       installCode={`import { Button } from 'vipre-design-system'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
-            [{ code: 'variant' }, { code: "'solid' | 'soft' | 'outline' | 'ghost'" }, { code: "'solid'" }, 'Visual emphasis of the action'],
-            [{ code: 'tone' }, { code: "'primary' | 'neutral' | 'success' | 'warning' | 'danger' | 'info'" }, { code: "'primary'" }, 'Intent / color of the action'],
-            [{ code: 'size' }, { code: "'sm' | 'md' | 'lg'" }, { code: "'md'" }, 'Control height + type step'],
-            [{ code: 'loading' }, { code: 'boolean' }, { code: 'false' }, 'Show a spinner, set aria-busy, and block interaction'],
-            [{ code: 'fullWidth' }, { code: 'boolean' }, { code: 'false' }, 'Stretch to fill the container'],
-            [{ code: 'iconOnly' }, { code: 'boolean' }, { code: 'false' }, 'Square the button for a lone icon (needs aria-label)'],
-            [{ code: 'disabled' }, { code: 'boolean' }, { code: 'false' }, 'Disables interaction (opacity 0.5)'],
-            [{ code: 'type' }, { code: "'button' | 'submit'" }, { code: "'button'" }, 'Native button type'],
-            [{ code: '…props' }, { code: 'ButtonHTMLAttributes' }, '—', 'onClick, aria-*, etc. spread to <button>'],
+            [{ code: 'variant' }, { code: "'solid' | 'soft' | 'outline' | 'ghost'" }, { code: "'solid'" }, 'How loud the button looks'],
+            [{ code: 'tone' }, { code: "'primary' | 'neutral' | 'success' | 'warning' | 'danger' | 'info'" }, { code: "'primary'" }, 'The button’s job and color'],
+            [{ code: 'size' }, { code: "'sm' | 'md' | 'lg'" }, { code: "'md'" }, 'How tall the button is and its text size'],
+            [{ code: 'loading' }, { code: 'boolean' }, { code: 'false' }, 'Show a spinner and stop clicks while it works'],
+            [{ code: 'fullWidth' }, { code: 'boolean' }, { code: 'false' }, 'Stretch to fill the space it sits in'],
+            [{ code: 'iconOnly' }, { code: 'boolean' }, { code: 'false' }, 'Make it a square for a single icon (needs aria-label)'],
+            [{ code: 'disabled' }, { code: 'boolean' }, { code: 'false' }, 'Turn it off and fade it (opacity 0.5)'],
+            [{ code: 'type' }, { code: "'button' | 'submit'" }, { code: "'button'" }, 'The normal button type'],
+            [{ code: '…props' }, { code: 'ButtonHTMLAttributes' }, '—', 'onClick, aria-*, and more, passed to <button>'],
           ],
         },
       ]}
       accessibility={[
         <>Keyboard: <Kbd>Enter</Kbd> and <Kbd>Space</Kbd> activate the button.</>,
-        <>Focus ring uses <IC>--vds-focus-ring</IC> and shows only for keyboard nav (<IC>:focus-visible</IC>).</>,
-        <><IC>loading</IC> sets <IC>aria-busy</IC> and disables the control so the action can't be re-fired.</>,
+        <>The focus ring uses <IC>--vds-focus-ring</IC> and only shows when you tab to it (<IC>:focus-visible</IC>).</>,
+        <><IC>loading</IC> sets <IC>aria-busy</IC> and turns the button off so it can’t be clicked twice.</>,
         <>Disabled uses <IC>opacity</IC> + <IC>pointer-events: none</IC> — never a new gray.</>,
-        <>Icon-only buttons must be given an <IC>aria-label</IC>.</>,
+        <>Icon-only buttons must have an <IC>aria-label</IC> so screen readers know what they do.</>,
       ]}
     >
-      <Section title="Variants" note="Four levels of emphasis, from a solid fill down to a transparent ghost.">
+      <Section title="Variants" note="Four levels of loudness, from a solid fill down to a see-through ghost.">
         <Preview
           canvas={
             <>
@@ -52,7 +52,7 @@ export function ButtonPage() {
         />
       </Section>
 
-      <Section title="Tones" note="Intent color, independent of emphasis. Any tone pairs with any variant — shown here as soft fills.">
+      <Section title="Tones" note="The color for the button’s job. Any tone works with any look — shown here as soft fills.">
         <Preview
           canvas={
             <>
@@ -85,7 +85,7 @@ export function ButtonPage() {
         />
       </Section>
 
-      <Section title="Loading" note="Swaps in a Spinner, sets aria-busy, and blocks clicks. Keep the label so width stays stable.">
+      <Section title="Loading" note="Shows a spinner, sets aria-busy, and blocks clicks. Keep the label so the width doesn’t jump.">
         <Preview
           canvas={
             <>
@@ -99,7 +99,7 @@ export function ButtonPage() {
         />
       </Section>
 
-      <Section title="Icon-only" note="Square buttons for a lone icon — ideal as low-emphasis row actions. Always pass an aria-label.">
+      <Section title="Icon-only" note="Square buttons for a single icon — great as quiet actions in table rows. Always pass an aria-label.">
         <Preview
           canvas={
             <Inline gap={1}>
@@ -115,7 +115,7 @@ export function ButtonPage() {
         />
       </Section>
 
-      <Section title="Full width" note="Stretches to fill its container — common in forms, modals, and narrow side panels.">
+      <Section title="Full width" note="Stretches to fill the space around it — handy in forms, pop-ups, and skinny side panels.">
         <Preview
           canvas={
             <div style={{ width: '100%', maxWidth: '20rem' }}>

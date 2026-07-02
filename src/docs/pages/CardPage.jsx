@@ -7,22 +7,22 @@ export function CardPage() {
   return (
     <ComponentPage
       title="Card"
-      description="A titled container built on Surface — an optional header (title + actions) above a body. Use Surface directly for a bare panel; use Card when the content needs a labelled header."
+      description="A box with a title. It's built on Surface and adds an optional header (a title and some buttons) above the body. Want a plain box? Use Surface. Want a box with a labelled top? Use Card."
       installCode={`import { Card } from 'vipre-design-system'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
-            [{ code: 'title' }, { code: 'ReactNode' }, '—', 'Header text (rendered as a subheading)'],
-            [{ code: 'actions' }, { code: 'ReactNode' }, '—', 'Right-aligned header slot (button, menu…)'],
-            [{ code: 'padding' }, { code: '0–8' }, { code: '5' }, 'Surface padding step (20px)'],
+            [{ code: 'title' }, { code: 'ReactNode' }, '—', 'The title at the top of the card'],
+            [{ code: 'actions' }, { code: 'ReactNode' }, '—', 'Buttons or menus, placed on the right of the header'],
+            [{ code: 'padding' }, { code: '0–8' }, { code: '5' }, 'How much space inside the card (each step is 20px)'],
             [{ code: '…props' }, { code: 'Surface props' }, '—', 'radius, elevation, bordered, raised, as…'],
           ],
         },
       ]}
       accessibility={[
-        <>The title renders as an <IC>{'<h3>'}</IC> — keep the surrounding heading order logical.</>,
-        <>Card composes Surface, so all visual decisions come from the Surface tokens.</>,
+        <>The title is an <IC>{'<h3>'}</IC>, so make sure the headings around it still go in order.</>,
+        <>Card is built on Surface, so the way it looks comes from the Surface tokens.</>
       ]}
     >
       <Section title="With header + actions">
@@ -34,7 +34,7 @@ export function CardPage() {
               style={{ maxWidth: 420 }}
             >
               <Text variant="body" tone="muted">
-                Card composes Surface for the box, and adds the header row. The body is whatever
+                Card uses Surface for the box and adds the header row on top. The body is whatever
                 you put inside.
               </Text>
             </Card>
@@ -45,7 +45,7 @@ export function CardPage() {
         />
       </Section>
 
-      <Section title="Composing tiles" note="A common dashboard pattern: a Card wrapping a grid of StatTiles.">
+      <Section title="Composing tiles" note="A common dashboard pattern: a Card wrapped around a grid of StatTiles.">
         <Preview
           canvas={
             <Card title="Fleet" style={{ maxWidth: 420 }}>

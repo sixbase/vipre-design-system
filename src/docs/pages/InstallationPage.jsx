@@ -6,7 +6,7 @@ export function InstallationPage() {
   return (
     <DocPage
       title="Installation"
-      description="How to consume the Vipre Design System in a React app. Two delivery paths — tokens only (lightest), or tokens + components."
+      description="How to use the Vipre Design System in a React app. Two ways to add it — just the tokens (the lightest), or the tokens plus the components."
     >
       <Section title="Requirements">
         <ul className="vds-a11y">
@@ -22,7 +22,7 @@ npm install ../vipre-design-system`}</Code>
 
       <Section
         title="2a. Tokens only (the bridge)"
-        note="Lightest path — pull in just the CSS custom properties and use them directly. They're plain variables, so they work in any styling layer. What the prototypes use today."
+        note="The lightest way — grab just the CSS variables and use them straight. They're plain variables, so they work with any styling setup. This is what the prototypes use today."
       >
         <Code>{`@import "vipre-design-system/tokens.css";
 
@@ -36,7 +36,7 @@ npm install ../vipre-design-system`}</Code>
 
       <Section
         title="2b. Tokens + components"
-        note="Full path — import the stylesheet once, then use the React components."
+        note="The full way — import the stylesheet once, then use the React components."
       >
         <Code>{`// app entry (main.jsx)
 import "vipre-design-system/styles.css";`}</Code>
@@ -53,10 +53,10 @@ export function Toolbar() {
 }`}</Code>
       </Section>
 
-      <Section title="Dark mode" note="Add the dark class to your root element. Every semantic token flips automatically.">
+      <Section title="Dark mode" note="Add the dark class to your root element. Every named token switches over on its own.">
         <Code>{`<html class="dark"> … </html>`}</Code>
         <Text variant="caption" tone="subtle">
-          Light is the default; no class needed for light mode.
+          Light is the default; you don't need any class for light mode.
         </Text>
       </Section>
     </DocPage>

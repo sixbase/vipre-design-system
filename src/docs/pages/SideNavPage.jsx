@@ -77,18 +77,18 @@ export function SideNavPage() {
     <ComponentPage
       colors={COMPONENT_COLORS.SideNav}
       title="Side Nav"
-      description="The product navigation rail — the left-hand chrome of an application shell. One data-driven composite owns the whole rail: a brand header, collapsible product groups (each with items, an optional “full portal” escape link, and a locked / no-entitlement state), an account-admin footer cluster, and an arbitrary footer slot. It follows the ambient theme, so pass className=&quot;dark&quot; to force the product navy. Composes Icon."
+      description="The left-side menu bar for an app. One component builds the whole rail: a logo at the top, product groups you can open and close (each with links, an optional “full portal” link out, and a locked state when you don't have that product), an account and admin cluster pinned to the bottom, and a spare slot below it. It matches the current theme, so pass className=&quot;dark&quot; to force the navy look. Uses Icon."
       installCode={`import { SideNav } from 'vipre-design-system'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
-            [{ code: 'brand' }, { code: 'node' }, '—', 'Header content (logo / wordmark)'],
-            [{ code: 'groups' }, { code: 'Group[]' }, { code: '[]' }, 'The scrollable middle — products / sections'],
-            [{ code: 'footerItems' }, { code: 'Item[]' }, { code: '[]' }, 'Account / admin cluster pinned to the bottom'],
-            [{ code: 'footer' }, { code: 'node' }, '—', 'Slot below the footer items (e.g. a theme toggle)'],
-            [{ code: 'activeId' }, { code: 'string' }, '—', 'Id of the active item (drives the highlight)'],
-            [{ code: 'onSelect' }, { code: '(id, item) => void' }, '—', 'Fired on any item / escape-link click'],
+            [{ code: 'brand' }, { code: 'node' }, '—', 'What goes at the top (logo or name)'],
+            [{ code: 'groups' }, { code: 'Group[]' }, { code: '[]' }, 'The scrolling middle — your products or sections'],
+            [{ code: 'footerItems' }, { code: 'Item[]' }, { code: '[]' }, 'Account and admin links pinned to the bottom'],
+            [{ code: 'footer' }, { code: 'node' }, '—', 'A spare slot below those links (like a theme toggle)'],
+            [{ code: 'activeId' }, { code: 'string' }, '—', 'Id of the current item — it gets highlighted'],
+            [{ code: 'onSelect' }, { code: '(id, item) => void' }, '—', 'Runs when any item or portal link is clicked'],
             [{ code: 'className' }, { code: 'string' }, '—', "Extra classes — pass 'dark' to force the navy rail"],
           ],
         },
@@ -96,40 +96,40 @@ export function SideNavPage() {
           name: 'Group shape',
           headers: ['Field', 'Type', 'Description'],
           rows: [
-            [{ code: 'id' }, { code: 'string' }, 'Stable unique id'],
-            [{ code: 'label' }, { code: 'string' }, 'Group / product name (omit for a headerless list)'],
-            [{ code: 'icon' }, { code: 'icon component' }, 'Leading icon (product variant)'],
-            [{ code: 'variant' }, { code: "'product' | 'section'" }, "'product' = collapsible header; 'section' = static eyebrow label"],
-            [{ code: 'collapsible' }, { code: 'boolean' }, 'Product groups collapse by default; set false to pin open'],
-            [{ code: 'defaultOpen' }, { code: 'boolean' }, 'Initial expanded state (default true)'],
-            [{ code: 'locked' }, { code: 'boolean' }, 'No entitlement — shows a padlock, hides items'],
-            [{ code: 'lockHint' }, { code: 'string' }, 'Tooltip on a locked group'],
-            [{ code: 'items' }, { code: 'Item[]' }, 'The group’s nav rows'],
-            [{ code: 'escape' }, { code: 'Item' }, 'A trailing “full portal” link out of the curated set'],
+            [{ code: 'id' }, { code: 'string' }, 'A unique id that stays the same'],
+            [{ code: 'label' }, { code: 'string' }, 'Group or product name (leave out for a list with no header)'],
+            [{ code: 'icon' }, { code: 'icon component' }, 'Icon shown first (product style)'],
+            [{ code: 'variant' }, { code: "'product' | 'section'" }, "'product' = a header you can open and close; 'section' = a fixed label"],
+            [{ code: 'collapsible' }, { code: 'boolean' }, 'Product groups can close; set false to keep it open'],
+            [{ code: 'defaultOpen' }, { code: 'boolean' }, 'Whether it starts open (default true)'],
+            [{ code: 'locked' }, { code: 'boolean' }, "You don't have this product — shows a padlock and hides its items"],
+            [{ code: 'lockHint' }, { code: 'string' }, 'Tooltip shown on a locked group'],
+            [{ code: 'items' }, { code: 'Item[]' }, 'The links inside the group'],
+            [{ code: 'escape' }, { code: 'Item' }, 'A “full portal” link out to the full app'],
           ],
         },
         {
           name: 'Item shape',
           headers: ['Field', 'Type', 'Description'],
           rows: [
-            [{ code: 'id' }, { code: 'string' }, 'Stable unique id (matched against activeId)'],
-            [{ code: 'label' }, { code: 'string' }, 'Display label'],
-            [{ code: 'icon' }, { code: 'icon component' }, 'Leading icon'],
-            [{ code: 'badge' }, { code: 'string | number' }, 'Trailing count pill'],
-            [{ code: 'locked' }, { code: 'boolean' }, 'Disabled row with a padlock'],
+            [{ code: 'id' }, { code: 'string' }, 'A unique id (compared to activeId)'],
+            [{ code: 'label' }, { code: 'string' }, 'The text shown'],
+            [{ code: 'icon' }, { code: 'icon component' }, 'Icon shown first'],
+            [{ code: 'badge' }, { code: 'string | number' }, 'A small count pill at the end'],
+            [{ code: 'locked' }, { code: 'boolean' }, 'Greyed-out row with a padlock'],
           ],
         },
       ]}
       accessibility={[
-        <>The rail is a real <IC>{'<nav>'}</IC>; every group header, item, and escape link is a focusable <IC>{'<button>'}</IC> with a visible <IC>:focus-visible</IC> ring.</>,
-        <>A collapsible group header exposes <IC>aria-expanded</IC>; the active item carries <IC>aria-current="page"</IC>.</>,
-        <>Locked products are disabled and their padlock has an accessible label — entitlement is never conveyed by color alone.</>,
-        <>Decorative icons are <IC>aria-hidden</IC>; the lock icons expose a label.</>,
+        <>The rail is a real <IC>{'<nav>'}</IC>; every group header, item, and portal link is a <IC>{'<button>'}</IC> you can tab to, with a visible <IC>:focus-visible</IC> ring.</>,
+        <>A group header you can open and close has <IC>aria-expanded</IC>; the current item has <IC>aria-current="page"</IC>.</>,
+        <>Locked products are turned off and their padlock has a label a screen reader can read — color alone never tells you it's locked.</>,
+        <>Icons that are just for looks are <IC>aria-hidden</IC>; the lock icons have a label.</>,
       ]}
     >
       <Section
         title="Anatomy"
-        note="The full Vipre Symphony rail. IES is the entitled product — expand/collapse it from its header, click an item to make it active, or take the “full portal” door out to the legacy portal. SafeSend and EDR are locked (no entitlement). The account-admin cluster and a footer slot pin to the bottom. Rendered with className=&quot;dark&quot; to force the product navy."
+        note="The full Vipre Symphony rail. IES is the product you have — open or close it from its header, click an item to select it, or take the “full portal” door out to the old portal. SafeSend and EDR are locked (you don't have them). The account and admin cluster and a spare slot sit at the bottom. Shown with className=&quot;dark&quot; to force the navy look."
       >
         <Preview
           canvas={<Rail groups={GROUPS} footerItems={FOOTER_ITEMS} footer={<div className="vds-text vds-text--detail vds-text--tone-subtle" style={{ padding: '0.375rem 0.5rem' }}>☾ Dark mode</div>} />}
@@ -161,7 +161,7 @@ export function SideNavPage() {
 
       <Section
         title="Light theme"
-        note="The rail follows the ambient theme — omit className=&quot;dark&quot; and it renders as a light rail (canvas surface, dark ink, soft-blue active tint). The 1px right border keeps it separated from the content."
+        note="The rail matches the current theme — leave out className=&quot;dark&quot; and it turns light (light background, dark text, soft-blue highlight). A 1px border on the right keeps it separate from the content."
       >
         <Preview
           canvas={<Rail groups={GROUPS} footerItems={FOOTER_ITEMS} dark={false} footer={<div className="vds-text vds-text--detail vds-text--tone-subtle" style={{ padding: '0.375rem 0.5rem' }}>☀ Light mode</div>} />}
@@ -172,7 +172,7 @@ export function SideNavPage() {
 
       <Section
         title="Section variant"
-        note="For a flat, functional grouping (no products / entitlements), set variant:'section' — a static uppercase eyebrow label that’s always expanded. Items still support icons, badges, and the active highlight."
+        note="For a plain grouping (no products or locks), set variant:'section' — a fixed uppercase label that's always open. Items still get icons, badges, and the highlight."
       >
         <Preview
           canvas={<Rail groups={SECTION_GROUPS} footerItems={[{ id: 'settings', label: 'Settings', icon: SlidersHorizontal }]} />}
