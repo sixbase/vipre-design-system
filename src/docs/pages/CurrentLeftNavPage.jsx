@@ -82,18 +82,18 @@ export function CurrentLeftNavPage() {
   return (
     <ComponentPage
       title="Current Left Nav"
-      description="The VIPRE product navigation rail as it ships today, captured as a component. A data-driven composite that owns the whole rail: a centered brand lockup, a standalone Overview entry, a stack of product cards (each a bordered translucent panel with a brand glyph, collapsible sub-pages and a “full portal” escape link), locked teaser rows for un-entitled products, and a pinned account/admin footer. Unlike SideNav it is intentionally NOT theme-following — it reproduces the production navy chrome, driven entirely by local --vds-clnav-* knobs. Composes Icon."
+      description="The VIPRE left menu bar the way it looks today, saved as a component. One component builds the whole rail: a centered logo at the top, a standalone Overview entry, a stack of product cards (each a bordered see-through panel with a product icon, sub-pages you can open and close, and a “full portal” link out), locked teaser rows for products you don't have, and a pinned account and admin footer. Unlike SideNav, this one does NOT match the theme on purpose — it always shows the navy look, set by its own --vds-clnav-* values. Uses Icon."
       installCode={`import { CurrentLeftNav } from 'vipre-design-system'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
-            [{ code: 'brand' }, { code: 'node' }, '—', 'Centered header content (logo / wordmark)'],
-            [{ code: 'overview' }, { code: '{ id, label, icon }' }, '—', 'Optional standalone top item'],
-            [{ code: 'groups' }, { code: 'Group[]' }, { code: '[]' }, 'The scrollable product stack'],
-            [{ code: 'footerItems' }, { code: 'FooterItem[]' }, { code: '[]' }, 'Account / admin cluster pinned to the bottom'],
-            [{ code: 'activeId' }, { code: 'string' }, '—', 'Id of the active item (drives the row highlight)'],
-            [{ code: 'onSelect' }, { code: '(id, item) => void' }, '—', 'Fired on any item / overview / escape-link click'],
+            [{ code: 'brand' }, { code: 'node' }, '—', 'Centered content at the top (logo or name)'],
+            [{ code: 'overview' }, { code: '{ id, label, icon }' }, '—', 'An optional single item at the top'],
+            [{ code: 'groups' }, { code: 'Group[]' }, { code: '[]' }, 'The scrolling stack of products'],
+            [{ code: 'footerItems' }, { code: 'FooterItem[]' }, { code: '[]' }, 'Account and admin links pinned to the bottom'],
+            [{ code: 'activeId' }, { code: 'string' }, '—', 'Id of the current item — it gets highlighted'],
+            [{ code: 'onSelect' }, { code: '(id, item) => void' }, '—', 'Runs when any item, overview, or portal link is clicked'],
             [{ code: 'className' }, { code: 'string' }, '—', 'Extra classes'],
           ],
         },
@@ -101,41 +101,41 @@ export function CurrentLeftNavPage() {
           name: 'Group shape',
           headers: ['Field', 'Type', 'Description'],
           rows: [
-            [{ code: 'id' }, { code: 'string' }, 'Stable unique id'],
+            [{ code: 'id' }, { code: 'string' }, 'A unique id that stays the same'],
             [{ code: 'label' }, { code: 'string' }, 'Product name'],
-            [{ code: 'icon' }, { code: 'icon component' }, 'Leading brand glyph'],
-            [{ code: 'active' }, { code: 'boolean' }, 'The product the current page lives in — gives the filled accent toggle'],
-            [{ code: 'collapsible' }, { code: 'boolean' }, 'Card collapses by default; set false to pin open'],
-            [{ code: 'defaultOpen' }, { code: 'boolean' }, 'Initial expanded state (default true)'],
-            [{ code: 'locked' }, { code: 'boolean' }, 'No entitlement — renders a flat teaser row with a padlock'],
-            [{ code: 'lockHint' }, { code: 'string' }, 'Tooltip on a locked row'],
-            [{ code: 'items' }, { code: 'Item[]' }, 'The card’s sub-page rows'],
-            [{ code: 'escape' }, { code: '{ id, label?, icon? }' }, 'A trailing “full portal” link out of the curated set'],
+            [{ code: 'icon' }, { code: 'icon component' }, 'The product icon shown first'],
+            [{ code: 'active' }, { code: 'boolean' }, 'The product the current page is in — gives it the filled toggle'],
+            [{ code: 'collapsible' }, { code: 'boolean' }, 'The card can close; set false to keep it open'],
+            [{ code: 'defaultOpen' }, { code: 'boolean' }, 'Whether it starts open (default true)'],
+            [{ code: 'locked' }, { code: 'boolean' }, "You don't have this product — shows a flat teaser row with a padlock"],
+            [{ code: 'lockHint' }, { code: 'string' }, 'Tooltip shown on a locked row'],
+            [{ code: 'items' }, { code: 'Item[]' }, 'The sub-page rows inside the card'],
+            [{ code: 'escape' }, { code: '{ id, label?, icon? }' }, 'A “full portal” link out to the full app'],
           ],
         },
         {
           name: 'Item / FooterItem shape',
           headers: ['Field', 'Type', 'Description'],
           rows: [
-            [{ code: 'id' }, { code: 'string' }, 'Stable unique id (matched against activeId)'],
-            [{ code: 'label' }, { code: 'string' }, 'Display label'],
-            [{ code: 'icon' }, { code: 'icon component' }, 'Leading icon'],
-            [{ code: 'badge' }, { code: 'string | number' }, 'Trailing count pill (Item only)'],
-            [{ code: 'trailingIcon' }, { code: 'icon component' }, 'Footer-only trailing action (e.g. log out)'],
-            [{ code: 'onTrailingClick' }, { code: '(item) => void' }, 'Footer-only trailing action handler'],
+            [{ code: 'id' }, { code: 'string' }, 'A unique id (compared to activeId)'],
+            [{ code: 'label' }, { code: 'string' }, 'The text shown'],
+            [{ code: 'icon' }, { code: 'icon component' }, 'Icon shown first'],
+            [{ code: 'badge' }, { code: 'string | number' }, 'A small count pill at the end (Item only)'],
+            [{ code: 'trailingIcon' }, { code: 'icon component' }, 'A footer-only button at the end (e.g. log out)'],
+            [{ code: 'onTrailingClick' }, { code: '(item) => void' }, 'What that footer-only button does'],
           ],
         },
       ]}
       accessibility={[
-        <>The rail is a real <IC>{'<nav>'}</IC>; the overview entry, each card header, every sub-page row and escape link is a focusable <IC>{'<button>'}</IC> with a visible <IC>:focus-visible</IC> ring.</>,
-        <>A collapsible card header exposes <IC>aria-expanded</IC>; the active item carries <IC>aria-current="page"</IC>.</>,
-        <>Locked products expose their padlock with an accessible label — entitlement is never conveyed by color alone.</>,
-        <>The footer trailing action (log out) is its own labelled button, separate from the row’s primary navigation target.</>,
+        <>The rail is a real <IC>{'<nav>'}</IC>; the overview entry, each card header, every sub-page row, and portal link is a <IC>{'<button>'}</IC> you can tab to, with a visible <IC>:focus-visible</IC> ring.</>,
+        <>A card header you can open and close has <IC>aria-expanded</IC>; the current item has <IC>aria-current="page"</IC>.</>,
+        <>Locked products give their padlock a label a screen reader can read — color alone never tells you it's locked.</>,
+        <>The footer button at the end (log out) is its own labelled button, separate from where the row itself takes you.</>,
       ]}
     >
       <Section
         title="Anatomy"
-        note="The full Symphony rail. IES is expanded; SafeSend is collapsed (click its header to open it); EDR is the active product — note the filled accent toggle. SAT and Archive are locked (no entitlement). Click any sub-page to move the active highlight."
+        note="The full Symphony rail. IES is open; SafeSend is closed (click its header to open it); EDR is the current product — see the filled toggle. SAT and Archive are locked (you don't have them). Click any sub-page to move the highlight."
       >
         <Preview
           canvas={<Rail />}

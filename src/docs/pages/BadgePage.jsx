@@ -8,25 +8,25 @@ export function BadgePage() {
     <ComponentPage
       colors={COMPONENT_COLORS.Badge}
       title="Badge"
-      description="A compact status pill with six tones and an optional leading status dot. Soft-tinted background paired with matching ink, sized off the small end of the typescale so it reads as a label."
+      description="A small status pill in six colors, with an optional dot in front. It has a soft tinted background and matching text, and uses small text so it reads like a label."
       installCode={`import { Badge } from 'vipre-design-system'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
-            [{ code: 'tone' }, { code: "'neutral' | 'primary' | 'success' | 'warning' | 'danger' | 'info'" }, { code: "'neutral'" }, 'Semantic color of the pill'],
-            [{ code: 'dot' }, { code: 'boolean' }, { code: 'false' }, 'Show a leading status dot'],
-            [{ code: '…props' }, { code: 'HTMLAttributes<span>' }, '—', 'Spread to the root <span>'],
+            [{ code: 'tone' }, { code: "'neutral' | 'primary' | 'success' | 'warning' | 'danger' | 'info'" }, { code: "'neutral'" }, 'The pill’s color and what it means'],
+            [{ code: 'dot' }, { code: 'boolean' }, { code: 'false' }, 'Show a small dot in front'],
+            [{ code: '…props' }, { code: 'HTMLAttributes<span>' }, '—', 'Passed to the <span> around it'],
           ],
         },
       ]}
       accessibility={[
-        <>The dot is decorative — it carries <IC>aria-hidden="true"</IC>; meaning lives in the text.</>,
-        <>All tone pairings meet WCAG AA contrast in both light and dark themes.</>,
-        <>Don't rely on color alone — keep the label explicit (e.g. "At risk", not just amber).</>,
+        <>The dot is just for looks — it has <IC>aria-hidden="true"</IC>; the meaning is in the words.</>,
+        <>Every color pairing has enough contrast to pass WCAG AA in both light and dark themes.</>,
+        <>Don’t lean on color alone — spell out the label (say "At risk", not just amber).</>,
       ]}
     >
-      <Section title="Tones" note="Six tones mapped to semantic status colors.">
+      <Section title="Tones" note="Six colors, each standing for a kind of status.">
         <Preview
           canvas={
             <>
@@ -44,7 +44,7 @@ export function BadgePage() {
         />
       </Section>
 
-      <Section title="With status dot" note="Add a dot for live/health states in dense tables.">
+      <Section title="With status dot" note="Add a dot to show live or health states in packed tables.">
         <Preview
           canvas={
             <>

@@ -17,36 +17,36 @@ export function MetricCardPage() {
     <ComponentPage
       colors={COMPONENT_COLORS.MetricCard}
       title="Metric Card"
-      description="A flagship KPI card — the rich counterpart to Stat Tile. It stacks a header (soft icon chip + title + period), a hero value with a signed delta badge, an optional target progress bar, and an optional breakdown list. Reach for it when one metric is the hero of a panel and deserves context; use Stat Tile for dense one-line KPIs. Composes Surface + Icon + Badge + Divider."
+      description="A big, detailed number card — the fancy cousin of Stat Tile. Top to bottom it has a header (an icon chip, a title, and a time period), one big number with a badge showing how much it went up or down, an optional bar showing progress toward a goal, and an optional list of extra numbers. Use it when one number is the star of the panel and needs some backstory; use Stat Tile for quick one-line numbers. Built from Surface + Icon + Badge + Divider."
       installCode={`import { MetricCard } from 'vipre-design-system'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
-            [{ code: 'icon' }, { code: 'icon component' }, '—', 'Leading icon, rendered in a soft chip'],
-            [{ code: 'iconTone' }, { code: "'primary' | 'success' | … | chromatic" }, { code: "'primary'" }, 'Chip color (semantic or a chromatic family)'],
-            [{ code: 'title' }, { code: 'string' }, '—', 'Metric name'],
-            [{ code: 'period' }, { code: 'string' }, '—', 'Sub-line under the title'],
-            [{ code: 'value' }, { code: 'string | number' }, '—', 'Hero value; numbers are locale-formatted'],
-            [{ code: 'prefix / suffix' }, { code: 'string' }, '—', 'Wrap the value (e.g. "£", "%")'],
-            [{ code: 'delta' }, { code: "string | number | { value, direction } | node" }, '—', 'Signed change → auto arrow + color'],
-            [{ code: 'invertDelta' }, { code: 'boolean' }, { code: 'false' }, 'Treat "down" as good (e.g. error counts)'],
-            [{ code: 'deltaCaption' }, { code: 'string' }, '—', 'Muted text after the delta (e.g. "vs last quarter")'],
-            [{ code: 'progress' }, { code: '{ value, label?, caption? }' }, '—', 'Target attainment bar (value 0–100)'],
-            [{ code: 'progressTone' }, { code: "'azure' | 'primary' | 'success' | 'danger' | 'match'" }, { code: "'azure'" }, "Bar fill; 'match' follows the delta color"],
-            [{ code: 'breakdown' }, { code: '{ label, value }[]' }, '—', 'Divided footer list of secondary stats'],
-            [{ code: 'onClick' }, { code: '() => void' }, '—', 'Makes the whole card a button (hover lift + focus ring)'],
-            [{ code: 'interactive' }, { code: 'boolean' }, { code: 'false' }, 'Force the hover affordance without onClick'],
+            [{ code: 'icon' }, { code: 'icon component' }, '—', 'The icon shown in a soft chip'],
+            [{ code: 'iconTone' }, { code: "'primary' | 'success' | … | chromatic" }, { code: "'primary'" }, 'The chip color (a named tone or a color family)'],
+            [{ code: 'title' }, { code: 'string' }, '—', 'The name of the number'],
+            [{ code: 'period' }, { code: 'string' }, '—', 'A small line under the title'],
+            [{ code: 'value' }, { code: 'string | number' }, '—', 'The big number; plain numbers get commas added'],
+            [{ code: 'prefix / suffix' }, { code: 'string' }, '—', 'Text before or after the number (e.g. "£", "%")'],
+            [{ code: 'delta' }, { code: "string | number | { value, direction } | node" }, '—', 'The change; picks the arrow and color for you'],
+            [{ code: 'invertDelta' }, { code: 'boolean' }, { code: 'false' }, 'Treats "down" as good news (e.g. error counts)'],
+            [{ code: 'deltaCaption' }, { code: 'string' }, '—', 'Quiet text after the change (e.g. "vs last quarter")'],
+            [{ code: 'progress' }, { code: '{ value, label?, caption? }' }, '—', 'A bar showing how close you are to a goal (0–100)'],
+            [{ code: 'progressTone' }, { code: "'azure' | 'primary' | 'success' | 'danger' | 'match'" }, { code: "'azure'" }, "The bar color; 'match' copies the change color"],
+            [{ code: 'breakdown' }, { code: '{ label, value }[]' }, '—', 'A list of extra numbers at the bottom'],
+            [{ code: 'onClick' }, { code: '() => void' }, '—', 'Turns the whole card into a button (lifts on hover, shows a focus ring)'],
+            [{ code: 'interactive' }, { code: 'boolean' }, { code: 'false' }, 'Adds the hover lift even without onClick'],
           ],
         },
       ]}
       accessibility={[
-        <>The icon chip is decorative (<IC>aria-hidden</IC>); the title + value carry the meaning.</>,
+        <>The icon chip is just for looks (<IC>aria-hidden</IC>); the title and number carry the meaning.</>,
         <>The progress bar is a real <IC>role="progressbar"</IC> with <IC>aria-valuenow/min/max</IC>.</>,
-        <>The breakdown is a <IC>{'<dl>'}</IC> (label/value pairs); delta color is paired with a +/− sign, never color alone.</>,
+        <>The extra numbers are a <IC>{'<dl>'}</IC> (name and value pairs). The change always has a + or − sign, so it never relies on color alone.</>
       ]}
     >
-      <Section title="Anatomy" note="The full card: header (icon chip + title + period), hero value, delta badge with caption, a target progress bar, and a breakdown list. It's clickable (most cards are) — hover to feel the drill-in lift.">
+      <Section title="Anatomy" note="The whole card: header (icon chip, title, period), the big number, a change badge with a caption, a goal bar, and a list of extra numbers. It's clickable (most cards are) — hover to feel it lift.">
         <Preview
           canvas={
             <div style={ONE}>
@@ -83,7 +83,7 @@ export function MetricCardPage() {
         />
       </Section>
 
-      <Section title="Progress color" note="The bar defaults to azure (a bright brand blue). Set progressTone=&quot;match&quot; to tie it to performance — it turns green when the delta is good, red when it's not.">
+      <Section title="Progress color" note="The bar is azure (a bright brand blue) by default. Set progressTone=&quot;match&quot; to make it follow the number — green when the change is good, red when it's not.">
         <Preview
           canvas={
             <Grid min="17rem" gap={4}>
@@ -117,7 +117,7 @@ export function MetricCardPage() {
         />
       </Section>
 
-      <Section title="Minimal" note="Every block past the value is optional. Drop the progress bar and breakdown for a compact hero — header, value, delta.">
+      <Section title="Minimal" note="Everything after the number is optional. Leave off the bar and the extra numbers for a small card — just header, number, and change.">
         <Preview
           canvas={
             <div style={ONE}>
@@ -143,7 +143,7 @@ export function MetricCardPage() {
         />
       </Section>
 
-      <Section title="Interactive (drill-in)" note="Most cards are clickable. Pass onClick (or interactive) and the card becomes a button with the shared metrics-family states: hover lifts it (shadow grows, nudges up 2px, border strengthens), press settles it back down, and keyboard focus shows a ring. Static cards stay flat — no false affordance.">
+      <Section title="Interactive (drill-in)" note="Most cards are clickable. Pass onClick (or interactive) and the card becomes a button that acts like the rest of the number family: hover lifts it (bigger shadow, moves up 2px, darker border), pressing puts it back down, and keyboard focus shows a ring. Cards that don't do anything stay flat, so they never look clickable when they aren't.">
         <Preview
           canvas={
             <div style={ONE}>
@@ -165,7 +165,7 @@ export function MetricCardPage() {
         />
       </Section>
 
-      <Section title="In a grid" note="A real dashboard: clickable KPI cards in a <Grid> — auto-fit columns that stack to one on small screens. Hover any card to feel the drill-in lift; no media queries, never overflows.">
+      <Section title="In a grid" note="A real dashboard: clickable cards in a <Grid> — columns that fit themselves and stack into one on small screens. Hover any card to feel it lift; no media queries, and it never spills over.">
         <Preview
           canvas={
             <Grid min="18rem" gap={4}>

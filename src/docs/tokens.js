@@ -202,19 +202,28 @@ export const SEMANTIC_GROUPS = [
   },
 ]
 
-/* Type scale — mirrors $scale in _typography.scss, with usage. */
+/* Type scale — mirrors $scale in _typography.scss. px / lh in pixels. */
 export const TYPE_SCALE = [
-  { token: 'text--display', kind: 'h', level: 'display', size: '30 / 36 · 600', usage: 'Empty-state hero, large metric numbers' },
-  { token: 'text--title', kind: 'h', level: 'title', size: '24 / 32 · 600', usage: 'Page H1 — the primary title for a screen' },
-  { token: 'text--heading', kind: 'h', level: 'heading', size: '20 / 28 · 600', usage: 'Section H2, panel titles' },
-  { token: 'text--subheading', kind: 'h', level: 'subheading', size: '16 / 24 · 500', usage: 'Card / panel titles, form section labels' },
-  { token: 'text--body-lg', kind: 't', variant: 'body-lg', size: '15 / 22 · 400', usage: 'Emphasized body, section intros' },
-  { token: 'text--body', kind: 't', variant: 'body', size: '14 / 20 · 400', usage: 'Default UI text — the workhorse' },
-  { token: 'text--caption', kind: 't', variant: 'caption', size: '13 / 18 · 400', usage: 'Secondary text, supporting copy' },
-  { token: 'text--detail', kind: 't', variant: 'detail', size: '12 / 16 · 400', usage: 'Dense tables, metadata, timestamps' },
-  { token: 'text--micro', kind: 't', variant: 'micro', size: '11 / 14 · 500', usage: 'Badges, tight labels in dense lists' },
-  { token: 'text--eyebrow', kind: 't', variant: 'eyebrow', size: '11 · 600 · upper', usage: 'Uppercase overlines above headings' },
-  { token: 'text--nano', kind: 't', variant: 'nano', size: '10 · 500', usage: 'Smallest tags, chart axis labels' },
+  { token: 'text--display', name: 'display', kind: 'h', level: 'display', px: 30, lh: 36, weight: 600, tracking: '-0.022em', usage: 'Empty-state hero, large metric numbers' },
+  { token: 'text--title', name: 'title', kind: 'h', level: 'title', px: 24, lh: 32, weight: 600, tracking: '-0.017em', usage: 'Page H1 — the primary title for a screen' },
+  { token: 'text--heading', name: 'heading', kind: 'h', level: 'heading', px: 20, lh: 28, weight: 600, tracking: '-0.012em', usage: 'Section H2, panel titles' },
+  { token: 'text--subheading', name: 'subheading', kind: 'h', level: 'subheading', px: 16, lh: 24, weight: 500, tracking: '-0.006em', usage: 'Card / panel titles, form section labels' },
+  { token: 'text--body-lg', name: 'body-lg', kind: 't', variant: 'body-lg', px: 15, lh: 22, weight: 400, tracking: null, usage: 'Emphasized body, section intros' },
+  { token: 'text--body', name: 'body', kind: 't', variant: 'body', px: 14, lh: 20, weight: 400, tracking: null, usage: 'Default UI text — the workhorse' },
+  { token: 'text--caption', name: 'caption', kind: 't', variant: 'caption', px: 13, lh: 18, weight: 400, tracking: null, usage: 'Secondary text, supporting copy' },
+  { token: 'text--detail', name: 'detail', kind: 't', variant: 'detail', px: 12, lh: 16, weight: 400, tracking: null, usage: 'Dense tables, metadata, timestamps' },
+  { token: 'text--micro', name: 'micro', kind: 't', variant: 'micro', px: 11, lh: 14, weight: 500, tracking: null, usage: 'Badges, tight labels in dense lists' },
+  { token: 'text--eyebrow', name: 'eyebrow', kind: 't', variant: 'eyebrow', px: 11, lh: 14, weight: 600, tracking: '0.04em', usage: 'Uppercase overlines above headings' },
+  { token: 'text--nano', name: 'nano', kind: 't', variant: 'nano', px: 10, lh: 14, weight: 500, tracking: '0.03em', usage: 'Smallest tags, chart axis labels' },
+]
+
+/* Line-height ramp — mirrors --vds-leading-* in _tokens.scss. Unitless. */
+export const LEADING = [
+  { token: '--vds-leading-none', value: '1', usage: 'One-line things: numbers, icons, labels' },
+  { token: '--vds-leading-tight', value: '1.2', usage: 'Big headings' },
+  { token: '--vds-leading-snug', value: '1.35', usage: 'Small headings and packed lists' },
+  { token: '--vds-leading-normal', value: '1.5', usage: 'Regular paragraphs — the usual pick' },
+  { token: '--vds-leading-relaxed', value: '1.7', usage: 'Long blocks of reading' },
 ]
 
 /* Spacing scale — mirrors --vds-space-* in _tokens.scss, with usage. */

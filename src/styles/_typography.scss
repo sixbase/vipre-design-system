@@ -49,6 +49,22 @@ $scale: (
   text-transform: uppercase;
 }
 
+// Tabular numerals — equal-width digits so figures line up in columns and don't
+// jitter as they change. Essential for tables, metrics and any live-updating
+// number. Orthogonal to size: layer onto any step.
+.vds-text--tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+// Line-height overrides — for multi-line text that needs a leading other than
+// the step's baked-in optical value. Orthogonal to size, like tone.
+.vds-text--leading-none    { line-height: var(--vds-leading-none); }
+.vds-text--leading-tight   { line-height: var(--vds-leading-tight); }
+.vds-text--leading-snug    { line-height: var(--vds-leading-snug); }
+.vds-text--leading-normal  { line-height: var(--vds-leading-normal); }
+.vds-text--leading-relaxed { line-height: var(--vds-leading-relaxed); }
+
 // Tone (color) modifiers — orthogonal to size.
 .vds-text--tone-default { color: var(--vds-ink); }
 .vds-text--tone-muted   { color: var(--vds-ink-muted); }

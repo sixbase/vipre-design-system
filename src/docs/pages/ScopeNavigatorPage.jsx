@@ -82,47 +82,47 @@ export function ScopeNavigatorPage() {
   return (
     <ComponentPage
       title="Scope Navigator"
-      description="The MSP hierarchy breadcrumb — the top bar that lets an operator walk an account tree (distributor → reseller → customer), drill into any level via a searchable / sortable / filterable dropdown, and jump scope. The middle of a deep trail collapses into a “…” menu as space tightens, and every popover stays inside the viewport. Composes Surface + Input + Icon."
+      description="The top bar that shows where you are in the account tree (distributor → reseller → customer) and lets you move around it. Open any level's dropdown to search, sort, filter, and jump to another account. When the trail gets too long, the middle folds into a “…” menu, and every dropdown stays on screen. Uses Surface + Input + Icon."
       installCode={`import { ScopeNavigator } from 'vipre-design-system'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
-            [{ code: 'path' }, { code: 'Entity[]' }, { code: '[]' }, 'Root→current entities; [] = the root scope'],
-            [{ code: 'onNavigate' }, { code: '(next: Entity[]) => void' }, '—', 'Fired on any drill / jump'],
-            [{ code: 'rootItems' }, { code: 'Entity[]' }, { code: '[]' }, 'Top-level entities in the root dropdown'],
-            [{ code: 'rootLabel' }, { code: 'string' }, { code: "'All Accounts'" }, 'Label for the root segment'],
-            [{ code: 'rootIcon' }, { code: 'icon component' }, { code: 'Boxes' }, 'Icon for the root segment'],
-            [{ code: 'typeConfig' }, { code: 'Record<type, {label,icon,tone}>' }, { code: 'Vipre taxonomy' }, 'How each entity type renders (key order = level)'],
-            [{ code: 'statusConfig' }, { code: 'Record<status, {label,tone,description}>' }, { code: 'active/trial/suspended' }, 'Status dots + dropdown filter (key order = sort)'],
-            [{ code: 'sortOptions' }, { code: '{value,label}[]' }, { code: 'defaultSortOptions' }, 'Sort choices in the dropdown toolbar'],
-            [{ code: 'variant' }, { code: "'full' | 'basic'" }, { code: "'full'" }, "'basic' = a denser, lower-chrome trail (same dropdown)"],
-            [{ code: 'teleportedSegments' }, { code: 'Set<id>' }, '—', 'Segment ids to flash-highlight after a jump'],
+            [{ code: 'path' }, { code: 'Entity[]' }, { code: '[]' }, 'The trail from root to where you are now; [] = the root'],
+            [{ code: 'onNavigate' }, { code: '(next: Entity[]) => void' }, '—', 'Runs whenever you move or jump'],
+            [{ code: 'rootItems' }, { code: 'Entity[]' }, { code: '[]' }, 'The top-level accounts in the root dropdown'],
+            [{ code: 'rootLabel' }, { code: 'string' }, { code: "'All Accounts'" }, 'Text for the first segment'],
+            [{ code: 'rootIcon' }, { code: 'icon component' }, { code: 'Boxes' }, 'Icon for the first segment'],
+            [{ code: 'typeConfig' }, { code: 'Record<type, {label,icon,tone}>' }, { code: 'Vipre taxonomy' }, 'How each account type looks (order = the levels)'],
+            [{ code: 'statusConfig' }, { code: 'Record<status, {label,tone,description}>' }, { code: 'active/trial/suspended' }, 'Status dots and the dropdown filter (order = sort order)'],
+            [{ code: 'sortOptions' }, { code: '{value,label}[]' }, { code: 'defaultSortOptions' }, 'The sort choices in the dropdown'],
+            [{ code: 'variant' }, { code: "'full' | 'basic'" }, { code: "'full'" }, "'basic' = a tighter, plainer trail (same dropdown)"],
+            [{ code: 'teleportedSegments' }, { code: 'Set<id>' }, '—', 'Segment ids to flash after a jump'],
           ],
         },
         {
           name: 'Entity shape',
           headers: ['Field', 'Type', 'Description'],
           rows: [
-            [{ code: 'id' }, { code: 'string' }, 'Stable unique id'],
-            [{ code: 'name' }, { code: 'string' }, 'Display name'],
+            [{ code: 'id' }, { code: 'string' }, 'A unique id that stays the same'],
+            [{ code: 'name' }, { code: 'string' }, 'The name shown'],
             [{ code: 'type' }, { code: 'string' }, 'A key in typeConfig (distributor / reseller / customer)'],
             [{ code: 'status' }, { code: 'string' }, 'A key in statusConfig'],
-            [{ code: 'children' }, { code: 'Entity[]' }, 'Direct descendants (drives the drill-down dropdown)'],
+            [{ code: 'children' }, { code: 'Entity[]' }, 'The accounts directly below it (what the dropdown lists)'],
           ],
         },
       ]}
       colors={COMPONENT_COLORS.ScopeNavigator}
       accessibility={[
-        <>The bar is a real <IC>{'<nav>'}</IC>; every segment, caret, and result is a focusable <IC>{'<button>'}</IC> with a visible <IC>:focus-visible</IC> ring.</>,
-        <>Status is never color-only — each dot carries a <IC>title</IC> with the status meaning, and the dropdown filter lists labels.</>,
-        <>Decorative icons are <IC>aria-hidden</IC>; the caret exposes <IC>aria-expanded</IC>, and the collapsed “…” menu has an accessible label.</>,
-        <>The teleport highlight respects <IC>prefers-reduced-motion</IC>.</>,
+        <>The bar is a real <IC>{'<nav>'}</IC>; every segment, arrow, and result is a <IC>{'<button>'}</IC> you can tab to, with a visible <IC>:focus-visible</IC> ring.</>,
+        <>Status is never shown by color alone — each dot has a <IC>title</IC> that says what it means, and the dropdown filter lists the names.</>,
+        <>Icons that are just for looks are <IC>aria-hidden</IC>; the arrow has <IC>aria-expanded</IC>, and the folded “…” menu has a label.</>,
+        <>The flash after a jump obeys <IC>prefers-reduced-motion</IC>.</>,
       ]}
     >
       <Section
         title="At the root"
-        note="The default state — “All Accounts”. Open the caret to drill into the top-level distributors; search, sort, and filter inside the dropdown. The bar follows the ambient theme — toggle the docs theme to see it on the product navy."
+        note="The starting state — “All Accounts”. Open the arrow to go into the top-level distributors; search, sort, and filter inside the dropdown. The bar matches the current theme — flip the docs theme to see it on the navy."
       >
         <Preview
           popover
@@ -137,7 +137,7 @@ export function ScopeNavigatorPage() {
 
       <Section
         title="Basic (compact)"
-        note="A denser, lower-chrome trail for tighter layouts — shorter pills, smaller chips, caret, and chevrons. Behaviour and the drill-down dropdown are identical to the full variant; only the bar's footprint shrinks."
+        note="A tighter, plainer trail for small spaces — shorter pills, smaller chips, arrow, and chevrons. It works exactly like the full version and has the same dropdown; only the bar takes less room."
       >
         <Preview
           popover
@@ -153,7 +153,7 @@ export function ScopeNavigatorPage() {
 
       <Section
         title="Drilled in"
-        note="A path of distributor → reseller → customer. The current scope is the solid pill on the right; ancestors are translucent. Each segment’s caret drills into its own children."
+        note="A trail of distributor → reseller → customer. Where you are now is the solid pill on the right; the ones above it are faded. Each segment's arrow opens its own children."
       >
         <Preview
           popover
@@ -164,7 +164,7 @@ export function ScopeNavigatorPage() {
 
       <Section
         title="Responsive collapse"
-        note="Narrow the window (or this canvas): the middle of the trail folds into a “…” menu, always keeping the root and the current scope visible. The collapse is width-estimated, so it’s flicker-free."
+        note="Make the window (or this canvas) narrower: the middle of the trail folds into a “…” menu, but the root and where you are now always stay visible. It measures the width first, so it doesn't flicker."
       >
         <Preview
           canvas={

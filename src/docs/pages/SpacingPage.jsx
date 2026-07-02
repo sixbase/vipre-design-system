@@ -6,9 +6,9 @@ export function SpacingPage() {
   return (
     <DocPage
       title="Spacing"
-      description="A single 4px-based scale for all component internals — padding, gaps, and stacks. Use spacing tokens, never raw pixel values."
+      description="One set of sizes, all built on 4px, for every gap and bit of padding inside components. Always use a spacing token, never a raw pixel number."
     >
-      <Section title="Scale" note="Bar length is the actual token value.">
+      <Section title="Scale" note="The bar's length is the real size of the token.">
         <div className="vds-type-table">
           {SPACING.map((s) => (
             <div key={s.token} className="vds-scale-row">

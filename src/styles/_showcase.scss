@@ -124,13 +124,21 @@
 .vds-page__desc { max-width: 64ch; margin-bottom: 0.5rem; }
 
 // Section heading — border-top separator, like the Mason prose h2.
+// Generous vertical rhythm so sections breathe and scan as distinct blocks.
 .vds-section-h {
-  margin: 2.5rem 0 0.75rem;
-  padding-top: 1.5rem;
+  margin: 4rem 0 0.9rem;
+  padding-top: 2.75rem;
   border-top: 1px solid var(--vds-line);
 }
 
-.vds-section-note { max-width: 64ch; margin: 0 0 1rem; }
+// The first section sits right under the page description — no need to push it
+// as far down as the between-section gaps.
+section:first-of-type > .vds-section-h {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+}
+
+.vds-section-note { max-width: 64ch; margin: 0 0 1.5rem; }
 
 // Standalone code block (e.g. Installation).
 .vds-code {
@@ -462,9 +470,169 @@
 .vds-scale-size { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.6875rem; color: var(--vds-ink-subtle); }
 .vds-scale-usage { font-size: 0.75rem; line-height: 1.5; color: var(--vds-ink-muted); }
 
+// A small monospace annotation used beside specimens.
+.vds-mono-note {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.75rem;
+  color: var(--vds-ink-subtle);
+}
+
+// ── Font family ────────────────────────────────────────────────────────────
+.vds-font-family {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  padding: 0.5rem 0 0.25rem;
+}
+
+.vds-font-family__specimen {
+  font-size: 4rem;
+  line-height: 1;
+  font-weight: 500;
+  color: var(--vds-ink);
+  flex: none;
+}
+
+.vds-font-family__name { font-size: 1.125rem; font-weight: 600; color: var(--vds-ink); }
+
+// ── Type scale ─────────────────────────────────────────────────────────────
+// Specimen on the left (wraps freely, so larger steps reveal their line-height),
+// a quiet spec column on the right.
+.vds-typescale { display: flex; flex-direction: column; }
+
+.vds-typescale__row {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  align-items: baseline;
+  gap: 0.5rem 2rem;
+  padding: 1.15rem 0;
+  border-top: 1px solid var(--vds-line);
+  &:first-child { border-top: 0; }
+}
+
+.vds-typescale__specimen {
+  min-width: 0;
+  color: var(--vds-ink);
+  > * { margin: 0; }  // let the specimen wrap; no clamp, no ellipsis
+}
+
+.vds-typescale__spec { display: flex; flex-direction: column; gap: 0.2rem; }
+.vds-typescale__name { font-size: 0.875rem; font-weight: 500; color: var(--vds-ink); }
+.vds-typescale__nums {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.6875rem;
+  color: var(--vds-ink-subtle);
+}
+.vds-typescale__usage { font-size: 0.75rem; line-height: 1.45; color: var(--vds-ink-muted); }
+
+// ── Line height ────────────────────────────────────────────────────────────
+.vds-leading-caption { max-width: 60ch; margin: 2.75rem 0 1.5rem; }
+
+// Leading matrix: leading columns across the top, one band per size. Generous
+// gaps so each column and band reads as its own space.
+.vds-leading-grid {
+  display: grid;
+  grid-template-columns: 96px repeat(var(--cols, 3), 1fr);
+  column-gap: 3rem;
+}
+
+.vds-leading-grid__corner { grid-row: 1; }
+
+.vds-leading-grid__col {
+  grid-row: 1;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--vds-ink);
+  text-transform: capitalize;
+  padding-bottom: 1.25rem;
+}
+
+.vds-leading-grid__val {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  color: var(--vds-ink-subtle);
+}
+
+// Each size is a band: label + N cells, sharing a top rule.
+.vds-leading-grid__band {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: start;
+  padding: 2.5rem 0;
+  border-top: 1px solid var(--vds-line);
+}
+
+.vds-leading-grid__label {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.6875rem;
+  color: var(--vds-ink-subtle);
+}
+
+.vds-leading-grid__cell { min-width: 0; color: var(--vds-ink); > * { margin: 0; } }
+
+// ── Weight ─────────────────────────────────────────────────────────────────
+.vds-weights { display: flex; flex-direction: column; }
+
+.vds-weights__row {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr auto;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--vds-line);
+  &:first-child { border-top: 0; }
+}
+
+.vds-weights__specimen { font-size: 1.75rem; line-height: 1; color: var(--vds-ink); }
+.vds-weights__name { font-size: 0.875rem; color: var(--vds-ink); text-transform: capitalize; }
+.vds-weights__val {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.75rem;
+  color: var(--vds-ink-subtle);
+}
+
+// ── Numerals ───────────────────────────────────────────────────────────────
+.vds-numerals { display: flex; gap: 1rem; margin-top: 0.25rem; }
+
+.vds-numerals__col {
+  flex: 1;
+  max-width: 15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1rem 1.25rem;
+  text-align: right;
+  font-size: 0.9375rem;
+  color: var(--vds-ink);
+  border: 1px solid var(--vds-line);
+  border-radius: var(--vds-radius-md);
+  background-color: var(--vds-surface);
+}
+
+.vds-numerals__head {
+  text-align: left;
+  margin-bottom: 0.15rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vds-ink-muted);
+}
+
+.vds-numerals__col--tabular .vds-numerals__head { color: var(--vds-primary); }
+
 @media (max-width: 640px) {
   .vds-type-row { grid-template-columns: 1fr; gap: 0.25rem; }
   .vds-type-value { text-align: left; }
+
+  .vds-typescale__row { grid-template-columns: 1fr; gap: 0.5rem; }
+
+  // Stack the leading matrix: each band becomes label + stacked cells.
+  .vds-leading-grid { grid-template-columns: 1fr; }
+  .vds-leading-grid__col, .vds-leading-grid__corner { display: none; }
+  .vds-leading-grid__band { grid-template-columns: 1fr; gap: 0.75rem; }
 }
 
 // Spacing bar + layout grid demo.

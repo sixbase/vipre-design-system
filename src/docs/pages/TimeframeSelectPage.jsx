@@ -27,32 +27,32 @@ export function TimeframeSelectPage() {
     <ComponentPage
       colors={COMPONENT_COLORS.TimeframeSelect}
       title="Timeframe Select"
-      description="The time-window control for dashboards and reports. One component, the common patterns: a compact preset dropdown, a segmented quick-toggle, and an optional custom start/end range. The dropdown is built on the Popover primitive, so it flips above the trigger and stays on-screen wherever it sits. onChange returns the chosen option with resolved { start, end } dates."
+      description="The pick-a-time-range control for dashboards and reports. One component, the common shapes: a small dropdown of presets, a row of quick-toggle buttons, and an optional custom start/end range. The dropdown is built on Popover, so it flips above the button and stays on screen wherever it sits. onChange gives you back the chosen option with real { start, end } dates."
       installCode={`import { TimeframeSelect, DEFAULT_TIMEFRAMES } from 'vipre-design-system'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
-            [{ code: 'variant' }, { code: "'dropdown' | 'segmented'" }, { code: "'dropdown'" }, 'Preset menu pill, or inline quick-toggle buttons'],
-            [{ code: 'options' }, { code: '{ id, label }[]' }, { code: 'DEFAULT_TIMEFRAMES' }, 'The preset ranges to offer'],
-            [{ code: 'value' }, { code: 'string' }, '—', 'Controlled selected preset id'],
-            [{ code: 'defaultValue' }, { code: 'string' }, 'first option', 'Uncontrolled initial selection'],
-            [{ code: 'onChange' }, { code: '(sel) => void' }, '—', 'Fires with { id, label, start, end }'],
-            [{ code: 'allowCustom' }, { code: 'boolean' }, { code: 'false' }, 'Show a custom start/end range (dropdown only)'],
-            [{ code: 'size' }, { code: "'sm' | 'md'" }, { code: "'md'" }, 'Control height'],
-            [{ code: 'placement' }, { code: 'Popover placement' }, { code: "'bottom-start'" }, 'Where the menu opens (it flips if tight)'],
-            [{ code: 'label' }, { code: 'string' }, { code: "'Timeframe'" }, 'Accessible name'],
+            [{ code: 'variant' }, { code: "'dropdown' | 'segmented'" }, { code: "'dropdown'" }, 'A dropdown pill, or a row of quick-toggle buttons'],
+            [{ code: 'options' }, { code: '{ id, label }[]' }, { code: 'DEFAULT_TIMEFRAMES' }, 'The preset ranges to show'],
+            [{ code: 'value' }, { code: 'string' }, '—', 'The chosen preset id (you control it)'],
+            [{ code: 'defaultValue' }, { code: 'string' }, 'first option', 'What starts selected (component controls it)'],
+            [{ code: 'onChange' }, { code: '(sel) => void' }, '—', 'Runs with { id, label, start, end }'],
+            [{ code: 'allowCustom' }, { code: 'boolean' }, { code: 'false' }, 'Also let the user pick a custom start/end (dropdown only)'],
+            [{ code: 'size' }, { code: "'sm' | 'md'" }, { code: "'md'" }, 'How tall the control is'],
+            [{ code: 'placement' }, { code: 'Popover placement' }, { code: "'bottom-start'" }, 'Where the menu opens (it flips if space is tight)'],
+            [{ code: 'label' }, { code: 'string' }, { code: "'Timeframe'" }, 'The name screen readers read'],
           ],
         },
       ]}
       accessibility={[
-        <>The dropdown trigger carries <IC>aria-haspopup</IC> / <IC>aria-expanded</IC> / <IC>aria-controls</IC>; the menu is a <IC>role="menu"</IC> of <IC>menuitemradio</IC> options with <IC>aria-checked</IC>.</>,
-        <><IC>↑</IC>/<IC>↓</IC>/<IC>Home</IC>/<IC>End</IC> move between options; <IC>Esc</IC> closes and returns focus to the trigger.</>,
-        <>The segmented variant is a <IC>role="group"</IC> of <IC>aria-pressed</IC> buttons.</>,
-        <>Custom-range date fields are labelled (<IC>Start date</IC> / <IC>End date</IC>) and the end can't precede the start.</>,
+        <>The dropdown button has <IC>aria-haspopup</IC> / <IC>aria-expanded</IC> / <IC>aria-controls</IC>; the menu is a <IC>role="menu"</IC> of <IC>menuitemradio</IC> options with <IC>aria-checked</IC>.</>,
+        <><IC>↑</IC>/<IC>↓</IC>/<IC>Home</IC>/<IC>End</IC> move between options; <IC>Esc</IC> closes it and puts focus back on the button.</>,
+        <>The button-row version is a <IC>role="group"</IC> of <IC>aria-pressed</IC> buttons.</>,
+        <>The custom-range date fields are labelled (<IC>Start date</IC> / <IC>End date</IC>) and the end can't be before the start.</>,
       ]}
     >
-      <Section title="Dropdown (default)" note="A compact pill that opens a menu of preset ranges. The selected range shows a check.">
+      <Section title="Dropdown (default)" note="A small pill that opens a menu of preset ranges. The one you pick gets a check.">
         <Preview
           popover
           reserve={300}
@@ -66,7 +66,7 @@ export function TimeframeSelectPage() {
         />
       </Section>
 
-      <Section title="Segmented" note="All the common ranges, one click each. Best on a wide dashboard toolbar.">
+      <Section title="Segmented" note="Every common range as a button, one click each. Best on a wide toolbar.">
         <Preview
           canvas={
             <Demo>{(setTf) => <TimeframeSelect variant="segmented" defaultValue="7d" onChange={setTf} />}</Demo>

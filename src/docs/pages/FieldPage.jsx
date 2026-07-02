@@ -10,28 +10,28 @@ export function FieldPage() {
     <ComponentPage
       colors={COMPONENT_COLORS.Field}
       title="Field"
-      description="The canonical wrapper for a labelled form control. It renders the label above and optional help / error text below, and wires the accessibility for you — injecting id, aria-describedby, and (when error is set) invalid onto the child control. Use it around every Input, Select, and Textarea so labels read identically everywhere."
+      description="The standard wrapper that puts a label on a form control. It shows the label on top and optional help or error text below, and hooks up the accessibility for you — adding id, aria-describedby, and (when there’s an error) invalid onto the control inside. Wrap it around every Input, Select, and Textarea so labels look the same everywhere."
       installCode={`import { Field, Input } from 'vipre-design-system'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
-            [{ code: 'label' }, { code: 'ReactNode' }, '—', 'Label rendered above the control'],
-            [{ code: 'eyebrow' }, { code: 'boolean' }, { code: 'false' }, 'Render the label as an uppercase overline'],
-            [{ code: 'help' }, { code: 'ReactNode' }, '—', 'Muted helper text below'],
-            [{ code: 'error' }, { code: 'ReactNode' }, '—', 'Danger message (role=alert); also marks the control invalid'],
-            [{ code: 'htmlFor' }, { code: 'string' }, 'auto', 'Control id (generated if omitted)'],
+            [{ code: 'label' }, { code: 'ReactNode' }, '—', 'The label shown above the control'],
+            [{ code: 'eyebrow' }, { code: 'boolean' }, { code: 'false' }, 'Show the label as small all-caps text'],
+            [{ code: 'help' }, { code: 'ReactNode' }, '—', 'Quiet helper text below'],
+            [{ code: 'error' }, { code: 'ReactNode' }, '—', 'Red error message (role=alert); also flags the control as wrong'],
+            [{ code: 'htmlFor' }, { code: 'string' }, 'auto', 'The control’s id (made for you if you skip it)'],
             [{ code: 'children' }, { code: 'one control' }, '—', 'The Input / Select / Textarea to label'],
           ],
         },
       ]}
       accessibility={[
-        <>Associates the <IC>{'<label>'}</IC> with the control via <IC>htmlFor</IC>/<IC>id</IC>.</>,
-        <>Links <IC>help</IC>/<IC>error</IC> through <IC>aria-describedby</IC>; <IC>error</IC> also sets <IC>invalid</IC>.</>,
-        <>The error message uses <IC>role="alert"</IC> so it's announced when it appears.</>,
+        <>Ties the <IC>{'<label>'}</IC> to the control with <IC>htmlFor</IC>/<IC>id</IC>.</>,
+        <>Connects <IC>help</IC>/<IC>error</IC> through <IC>aria-describedby</IC>; <IC>error</IC> also sets <IC>invalid</IC>.</>,
+        <>The error message uses <IC>role="alert"</IC> so screen readers read it out when it shows up.</>,
       ]}
     >
-      <Section title="Label, help, error, eyebrow" note="One wrapper, the same rhythm and type for every field.">
+      <Section title="Label, help, error, eyebrow" note="One wrapper, the same spacing and text for every field.">
         <Preview
           canvas={
             <div style={COL}>

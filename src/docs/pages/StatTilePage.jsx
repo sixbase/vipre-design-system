@@ -15,35 +15,35 @@ export function StatTilePage() {
     <ComponentPage
       colors={COMPONENT_COLORS.StatTile}
       title="Stat Tile"
-      description="A KPI tile — a prominent value with a label, an optional icon, a caption, and a trend sparkline, plus loading and empty states. Two layouts (row / stacked) and three sizes. Composes Surface + Icon + Sparkline."
+      description="A small number tile — a big value with a label, plus an optional icon, a caption, and a tiny trend line. It has loading and empty states too. Two layouts (row or stacked) and three sizes. Built from Surface + Icon + Sparkline."
       installCode={`import { StatTile } from 'vipre-design-system'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
-            [{ code: 'value' }, { code: 'string | number' }, '—', 'Numbers are locale-formatted; empty → "—"'],
-            [{ code: 'prefix / suffix' }, { code: 'string' }, '—', 'Wrap the value (e.g. "$", "%")'],
-            [{ code: 'label' }, { code: 'string' }, '—', 'The metric name'],
-            [{ code: 'caption' }, { code: 'ReactNode' }, '—', 'Small secondary line (context)'],
-            [{ code: 'icon' }, { code: 'icon component' }, '—', 'Leading icon'],
-            [{ code: 'iconVariant' }, { code: "'soft' | 'outline'" }, { code: "'soft'" }, 'Filled tinted chip (family standard) vs ringed (transparent)'],
-            [{ code: 'tone' }, { code: "'default' | 'primary' | 'success' | 'warning' | 'danger'" }, { code: "'default'" }, 'Colors the icon (value stays ink)'],
-            [{ code: 'size' }, { code: "'sm' | 'md' | 'lg'" }, { code: "'md'" }, 'Value size'],
-            [{ code: 'layout' }, { code: "'row' | 'stacked'" }, { code: "'row'" }, 'Compact row (default) vs stacked card'],
-            [{ code: 'trend' }, { code: 'number[]' }, '—', 'Sparkline (colored by tone / trendTone)'],
-            [{ code: 'loading' }, { code: 'boolean' }, { code: 'false' }, 'Skeleton placeholder'],
-            [{ code: 'onClick' }, { code: '() => void' }, '—', 'Makes the tile a button (hover lift + focus ring)'],
-            [{ code: 'interactive' }, { code: 'boolean' }, { code: 'false' }, 'Force the hover affordance without onClick'],
+            [{ code: 'value' }, { code: 'string | number' }, '—', 'Plain numbers get commas added; empty shows "—"'],
+            [{ code: 'prefix / suffix' }, { code: 'string' }, '—', 'Text before or after the value (e.g. "$", "%")'],
+            [{ code: 'label' }, { code: 'string' }, '—', 'The name of the number'],
+            [{ code: 'caption' }, { code: 'ReactNode' }, '—', 'A small extra line for context'],
+            [{ code: 'icon' }, { code: 'icon component' }, '—', 'The icon at the front'],
+            [{ code: 'iconVariant' }, { code: "'soft' | 'outline'" }, { code: "'soft'" }, 'A filled tinted chip (the family standard) or a see-through ring'],
+            [{ code: 'tone' }, { code: "'default' | 'primary' | 'success' | 'warning' | 'danger'" }, { code: "'default'" }, 'Colors the icon (the number stays dark)'],
+            [{ code: 'size' }, { code: "'sm' | 'md' | 'lg'" }, { code: "'md'" }, 'How big the number is'],
+            [{ code: 'layout' }, { code: "'row' | 'stacked'" }, { code: "'row'" }, 'A tight one-line row (default) or a stacked card'],
+            [{ code: 'trend' }, { code: 'number[]' }, '—', 'A tiny trend line (colored by tone / trendTone)'],
+            [{ code: 'loading' }, { code: 'boolean' }, { code: 'false' }, 'Shows a placeholder while data loads'],
+            [{ code: 'onClick' }, { code: '() => void' }, '—', 'Turns the tile into a button (lifts on hover, shows a focus ring)'],
+            [{ code: 'interactive' }, { code: 'boolean' }, { code: 'false' }, 'Adds the hover lift even without onClick'],
           ],
         },
       ]}
       accessibility={[
-        <>With <IC>onClick</IC> it renders a real <IC>{'<button>'}</IC> — keyboard + focus ring included.</>,
-        <>Icon and trend are decorative (<IC>aria-hidden</IC>); the value + label carry the meaning.</>,
-        <><IC>loading</IC> sets <IC>aria-busy</IC>; tone colors meet AA contrast in both themes.</>,
+        <>With <IC>onClick</IC> it becomes a real <IC>{'<button>'}</IC> — keyboard and focus ring come with it.</>,
+        <>The icon and trend line are just for looks (<IC>aria-hidden</IC>); the number and label carry the meaning.</>,
+        <><IC>loading</IC> sets <IC>aria-busy</IC>; the tone colors pass AA contrast in both light and dark modes.</>
       ]}
     >
-      <Section title="Row (default)" note="The dense one-line layout Vipre uses most — icon, label over value, optional trend on the right. These tiles are clickable (most are) — hover to feel the drill-in lift. This is the default; no layout prop needed.">
+      <Section title="Row (default)" note="The tight one-line layout Vipre uses most — icon, label over value, and an optional trend line on the right. These tiles are clickable (most are) — hover to feel it lift. This is the default, so you don't need a layout prop.">
         <Preview
           canvas={
             <div style={ROW}>
@@ -58,7 +58,7 @@ export function StatTilePage() {
         />
       </Section>
 
-      <Section title="Icons" note="Pick an icon that matches the metric. The ring is neutral; the glyph carries the tone (green / blue / red).">
+      <Section title="Icons" note="Pick an icon that fits the number. The ring stays plain; the icon itself carries the color (green / blue / red).">
         <Preview
           canvas={
             <div style={GRID}>
@@ -74,7 +74,7 @@ export function StatTilePage() {
         />
       </Section>
 
-      <Section title="Icon variant" note="'soft' (default) fills the chip with the tone tint — the metrics-family standard shared with Metric Card; 'outline' is a quieter ring. Same icon, two treatments.">
+      <Section title="Icon variant" note="'soft' (default) fills the chip with a light tint — the standard the number family shares with Metric Card; 'outline' is a quieter ring. Same icon, two looks.">
         <Preview
           canvas={
             <div style={GRID}>
@@ -87,7 +87,7 @@ export function StatTilePage() {
         />
       </Section>
 
-      <Section title="Value formatting" note="Pass a raw number; it's locale-formatted. prefix / suffix wrap it.">
+      <Section title="Value formatting" note="Pass a plain number and it gets commas added. prefix / suffix add text before or after it.">
         <Preview
           canvas={
             <div style={GRID}>
@@ -104,7 +104,7 @@ export function StatTilePage() {
         />
       </Section>
 
-      <Section title="Loading" note="Skeleton while data resolves (sets aria-busy; respects reduced-motion).">
+      <Section title="Loading" note="A placeholder while data loads (sets aria-busy; respects reduced-motion).">
         <Preview
           canvas={
             <div style={GRID}>
@@ -116,7 +116,7 @@ export function StatTilePage() {
         />
       </Section>
 
-      <Section title="Sizes" note="sm / md / lg scale the value (heading → title → display).">
+      <Section title="Sizes" note="sm / md / lg change how big the number is (heading → title → display).">
         <Preview
           canvas={
             <div style={GRID}>
@@ -129,7 +129,7 @@ export function StatTilePage() {
         />
       </Section>
 
-      <Section title="Stacked (card)" note="The card form — number as the hero, icon on top. Opt in with layout=&quot;stacked&quot;.">
+      <Section title="Stacked (card)" note="The card shape — the number is the star, with the icon on top. Turn it on with layout=&quot;stacked&quot;.">
         <Preview
           canvas={
             <div style={GRID}>
@@ -141,7 +141,7 @@ export function StatTilePage() {
         />
       </Section>
 
-      <Section title="Responsive grid" note="A row of clickable KPI tiles in <Grid> — auto-fit columns that stack to one on small screens. Hover any tile to feel the drill-in lift. No media queries; never overflows. (Resize the preview / your window to see it reflow.)">
+      <Section title="Responsive grid" note="A row of clickable tiles in <Grid> — columns that fit themselves and stack into one on small screens. Hover any tile to feel it lift. No media queries, and it never spills over. (Resize the preview or your window to watch it rearrange.)">
         <Preview
           canvas={
             <Grid min="14rem" gap={3} style={{ maxWidth: 520 }}>
@@ -160,7 +160,7 @@ export function StatTilePage() {
         />
       </Section>
 
-      <Section title="Interactive (drill-in)" note="Most tiles are clickable. Pass onClick (or interactive) and the tile becomes a button with the shared metrics-family states: hover lifts it (shadow grows, nudges up 2px, border strengthens), press settles it back down, and keyboard focus shows a ring. Static tiles stay flat — no false affordance.">
+      <Section title="Interactive (drill-in)" note="Most tiles are clickable. Pass onClick (or interactive) and the tile becomes a button that acts like the rest of the number family: hover lifts it (bigger shadow, moves up 2px, darker border), pressing puts it back down, and keyboard focus shows a ring. Tiles that don't do anything stay flat, so they never look clickable when they aren't.">
         <Preview
           canvas={
             <div style={GRID}>

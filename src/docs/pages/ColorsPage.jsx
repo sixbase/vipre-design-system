@@ -68,13 +68,13 @@ export function ColorsPage() {
   return (
     <DocPage
       title="Colors"
-      description="A 3-tier model: primitive ramps → semantic tokens → components. Components always consume semantic tokens, never primitives directly — that's what makes light/dark work: same token names, different values. Tip: click any swatch to copy its hex."
+      description="Colors come in three layers: raw color sets → named tokens → components. Components always use the named tokens, never the raw colors. That's the trick that makes light and dark mode work: the names stay the same, only the colors behind them change. Tip: click any swatch to copy its hex."
     >
       <Section title={<>Semantic tokens <span className="vds-scale-badge vds-scale-badge--primary">Use these</span></>}>
         <Text variant="body" tone="muted" className="vds-section-desc">
-          The tokens you reference in components. They resolve to different values in
-          light and dark automatically. If you're building UI, this is the only section
-          you need.
+          These are the named tokens you use in components. Each one picks the right
+          color for light or dark mode on its own. If you're building UI, this is the
+          only section you need.
         </Text>
         {SEMANTIC_GROUPS.map((group) => (
           <div key={group.title}>
@@ -88,11 +88,11 @@ export function ColorsPage() {
 
       <Section title={<>Primitive ramps <span className="vds-scale-badge vds-scale-badge--secondary">Reference only</span></>}>
         <Text variant="body" tone="muted" className="vds-section-desc">
-          Raw values organized by hue. Components should never reference these directly —
-          always go through a semantic token. Two neutrals — graphite (cool grey) and
-          midnight (the Vipre navy) — plus one unified chromatic family generated in OKLCH
-          on a single lightness + chroma ladder, so every hue shares the same sophistication
-          and keeps contrast consistent.
+          The raw colors, sorted by hue. Components should never use these straight —
+          always go through a named token. There are two greys — graphite (a cool grey)
+          and midnight (the Vipre navy) — plus one set of bright colors. All the bright
+          colors are built the same way, so they look like a matched family and keep
+          the same readability.
         </Text>
         {PRIMITIVES.map((ramp) => (
           <div key={ramp.name}>

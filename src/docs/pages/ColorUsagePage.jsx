@@ -13,7 +13,7 @@ export function ColorUsagePage() {
   return (
     <DocPage
       title="Color usage"
-      description="Which color tokens each component paints with, resolved to live hex for the current theme. Components only ever consume semantic tokens (+ a few primitive family ramps for categorical tints), so to adjust a color, change it once at its source on the Colors page and every component below follows. Toggle light/dark to compare."
+      description="This shows which color tokens each component uses, with the real hex for the mode you're in. Components only use named tokens (plus a few raw color sets for tags and labels), so to change a color, change it once on the Colors page and every component here updates. Flip light and dark to compare."
     >
       {COLOR_USAGE_ORDER.map((name) => {
         const entry = COMPONENT_COLORS[name]

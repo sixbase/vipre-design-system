@@ -120,6 +120,17 @@ $magenta: ( // accent — hot pink (hue 348)
   --vds-font-sans: 'Rubik', ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
+  // Line-height ramp — unitless, so it scales with font-size. The typescale in
+  // _typography.scss bakes an optical line-height into each step (large text
+  // rides tight, small text loosens); reach for these tokens only when text
+  // wraps to multiple lines and needs a leading override (e.g. body prose,
+  // multi-line labels). Match the leading to the role, not the size.
+  --vds-leading-none:    1;     // single-line: numerals, icons, tight labels
+  --vds-leading-tight:   1.2;   // display & headings — big text needs less air
+  --vds-leading-snug:    1.35;  // subheads, dense data rows, compact UI copy
+  --vds-leading-normal:  1.5;   // body copy — the readable default for prose
+  --vds-leading-relaxed: 1.7;   // long-form / generous reading passages
+
   --vds-radius-sm: 0.25rem;  // 4px — default for controls (buttons, inputs, badges)
   --vds-radius-md: 0.5rem;   // 8px — cards, panels, larger surfaces
   --vds-radius-lg: 0.75rem;  // 12px

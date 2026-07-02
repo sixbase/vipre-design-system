@@ -10,22 +10,22 @@ export function CheckboxPage() {
     <ComponentPage
       colors={COMPONENT_COLORS.Checkbox}
       title="Checkbox"
-      description="A labelled checkbox with checked, unchecked, and indeterminate (some-selected) states. Renders a real input behind a styled box, wrapped in a label so the text toggles it."
+      description="A checkbox with a label. It can be checked, unchecked, or show a dash when only some things are picked. There’s a real checkbox hidden behind the pretty box, wrapped in a label so clicking the text flips it too."
       installCode={`import { Checkbox } from 'vipre-design-system'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
-            [{ code: 'indeterminate' }, { code: 'boolean' }, { code: 'false' }, 'The "some selected" dash state'],
-            [{ code: 'children' }, { code: 'ReactNode' }, '—', 'Optional label content'],
+            [{ code: 'indeterminate' }, { code: 'boolean' }, { code: 'false' }, 'The dash look for “some are picked”'],
+            [{ code: 'children' }, { code: 'ReactNode' }, '—', 'The label text (optional)'],
             [{ code: '…props' }, { code: 'InputHTMLAttributes' }, '—', 'checked, defaultChecked, onChange, disabled…'],
           ],
         },
       ]}
       accessibility={[
-        <>Wraps a real <IC>{'<input type="checkbox">'}</IC> — full keyboard + screen-reader support.</>,
-        <>Focus ring uses <IC>--vds-focus-ring</IC> on the box via <IC>:focus-visible</IC>.</>,
-        <><IC>indeterminate</IC> is a visual/AT state only — resolve it to checked/unchecked in your state.</>,
+        <>Wraps a real <IC>{'<input type="checkbox">'}</IC> — works with the keyboard and screen readers.</>,
+        <>The focus ring uses <IC>--vds-focus-ring</IC> on the box when you tab to it (<IC>:focus-visible</IC>).</>,
+        <><IC>indeterminate</IC> is only how it looks — in your own data it still has to end up checked or unchecked.</>,
       ]}
     >
       <Section title="States">
@@ -47,7 +47,7 @@ export function CheckboxPage() {
         />
       </Section>
 
-      <Section title="Without a label" note="Omit children for use inside a table header or row.">
+      <Section title="Without a label" note="Leave out the text when it sits in a table header or row.">
         <Preview
           canvas={<Checkbox aria-label="Select row" />}
           code={`<Checkbox aria-label="Select row" />`}

@@ -160,12 +160,12 @@ export function ProductDashboardPage() {
   return (
     <ComponentPage
       title="Product Dashboard"
-      description="The page template behind the Vipre Symphony Overview — a persistent shell (scope navigator + product rail) wrapping a swappable content region (page header + a 12-column body grid). Every product page is a different body inside the same frame, so the chrome is built once and the body changes per page. Composed from ScopeNavigator + SideNav + PageHeader; the body fills with DS metrics, charts, and tables (stubbed here as placeholders while we study spacing)."
+      description="The page layout behind the Vipre Symphony Overview — a frame that stays put (scope bar + product rail) wrapped around a content area that changes (page header + a 12-column body grid). Every product page is a different body inside the same frame, so you build the frame once and just swap the body per page. Made from ScopeNavigator + SideNav + PageHeader; the body fills with metrics, charts, and tables (shown here as grey placeholders while we work on spacing)."
       installCode={`import { ScopeNavigator, SideNav, PageHeader } from 'vipre-design-system'`}
     >
       <Section
         title="Anatomy"
-        note="The full shell. The scope bar and product rail are persistent chrome; the content region is what changes per page. Drill the scope bar, switch products in the rail, change the timeframe — then picture each grey block as a real widget. The body is a 12-column grid: a 4-up KPI row, a hero visualization beside a secondary chart, then two ranked lists. It opens in the light theme — use the toggle above the frame to flip the chrome to navy."
+        note="The full frame. The scope bar and product rail stay put; the content area changes per page. Move around the scope bar, switch products in the rail, change the timeframe — then imagine each grey block as a real widget. The body is a 12-column grid: a row of 4 KPIs, a big chart next to a smaller one, then two ranked lists. It opens light — use the toggle above the frame to flip it to navy."
       >
         <Preview canvas={<ShellDemo />} code={`<div className="app-shell">
   <ScopeNavigator className="dark" path={path} onNavigate={setPath} rootItems={tree} />
@@ -189,10 +189,10 @@ export function ProductDashboardPage() {
       <Section title="Regions">
         <div className="vds-text vds-text--body" style={{ display: 'grid', gap: '0.75rem', maxWidth: 720 }}>
           {[
-            ['Scope bar', 'Which account am I acting on (MSP context switch). Persistent.', <IC key="a">ScopeNavigator</IC>],
-            ['Product rail', 'Switch product / section; entitlement & "full portal" live here. Persistent.', <IC key="b">SideNav</IC>],
-            ['Page header', 'Orient the page + scope time. Title is the only required slot.', <IC key="c">PageHeader</IC>],
-            ['Body grid', 'The swappable content — KPI row first, then a 12-col grid of widgets.', <span key="d"><IC>Grid</IC> + metrics / charts / tables</span>],
+            ['Scope bar', 'Which account am I working on. Stays put.', <IC key="a">ScopeNavigator</IC>],
+            ['Product rail', 'Switch product or section; locks and "full portal" live here. Stays put.', <IC key="b">SideNav</IC>],
+            ['Page header', 'Says what the page is and sets the timeframe. Only the title is required.', <IC key="c">PageHeader</IC>],
+            ['Body grid', 'The part that changes — KPI row first, then a 12-column grid of widgets.', <span key="d"><IC>Grid</IC> + metrics / charts / tables</span>],
           ].map(([region, resp, comp]) => (
             <div key={region} style={{ display: 'grid', gridTemplateColumns: '8rem 1fr', gap: '0.75rem', alignItems: 'start' }}>
               <strong style={{ color: 'var(--vds-ink)' }}>{region}</strong>

@@ -78,41 +78,41 @@ export function InputPage() {
     <ComponentPage
       colors={COMPONENT_COLORS.Input}
       title="Input"
-      description="A single-line text field. Three sizes (sm/md/lg) that match Button; each supports the same states — default, with a leading icon, invalid, and disabled. Optional leading/trailing slots compose search fields. The forwarded ref points at the underlying input."
+      description="A box for one line of text. Three sizes (sm/md/lg) that match Button; each has the same looks — normal, with an icon in front, wrong, and turned off. You can add things before or after the text to build a search box. The ref points at the real input inside."
       installCode={`import { Input } from 'vipre-design-system'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
-            [{ code: 'size' }, { code: "'sm' | 'md' | 'lg'" }, { code: "'md'" }, 'Control height + type step (matches Button)'],
-            [{ code: 'invalid' }, { code: 'boolean' }, { code: 'false' }, 'Danger border + aria-invalid'],
-            [{ code: 'leading' }, { code: 'ReactNode' }, '—', 'Slot before the field (e.g. an Icon)'],
-            [{ code: 'trailing' }, { code: 'ReactNode' }, '—', 'Slot after the field (e.g. a clear button)'],
+            [{ code: 'size' }, { code: "'sm' | 'md' | 'lg'" }, { code: "'md'" }, 'How tall it is and its text size (matches Button)'],
+            [{ code: 'invalid' }, { code: 'boolean' }, { code: 'false' }, 'Red border + aria-invalid to show something’s wrong'],
+            [{ code: 'leading' }, { code: 'ReactNode' }, '—', 'Something before the text (like an Icon)'],
+            [{ code: 'trailing' }, { code: 'ReactNode' }, '—', 'Something after the text (like a clear button)'],
             [{ code: '…props' }, { code: 'InputHTMLAttributes' }, '—', 'value, onChange, placeholder, disabled, type…'],
           ],
         },
       ]}
       accessibility={[
-        <>Always pair with a <IC>{'<label>'}</IC> or <IC>aria-label</IC>.</>,
-        <><IC>invalid</IC> sets <IC>aria-invalid</IC>; link the error with <IC>aria-describedby</IC>.</>,
-        <>Focus is shown on the whole field via <IC>:focus-within</IC> using the input's graphite ring.</>,
+        <>Always give it a <IC>{'<label>'}</IC> or <IC>aria-label</IC> so people know what it’s for.</>,
+        <><IC>invalid</IC> sets <IC>aria-invalid</IC>; connect the error text with <IC>aria-describedby</IC>.</>,
+        <>The whole box lights up when you click into it (<IC>:focus-within</IC>) using the input’s graphite ring.</>,
       ]}
     >
       {/* ---- Buckets by size; each shows every state ---- */}
-      <Section title="Small" note={'size="sm" · 32px tall — dense tables, toolbars, inline filters.'}>
+      <Section title="Small" note={'size="sm" · 32px tall — packed tables, toolbars, inline filters.'}>
         <Preview canvas={<SizeBucket size="sm" />} code={sizeCode('sm')} />
       </Section>
 
-      <Section title="Medium" note={'size="md" · 36px tall — the default for most forms.'}>
+      <Section title="Medium" note={'size="md" · 36px tall — the go-to for most forms.'}>
         <Preview canvas={<SizeBucket size="md" />} code={sizeCode('md')} />
       </Section>
 
-      <Section title="Large" note={'size="lg" · 44px tall — prominent or touch-friendly fields.'}>
+      <Section title="Large" note={'size="lg" · 44px tall — big fields or ones easy to tap.'}>
         <Preview canvas={<SizeBucket size="lg" />} code={sizeCode('lg')} />
       </Section>
 
       {/* ---- Composition patterns (size-independent) ---- */}
-      <Section title="Search field" note="Compose leading + trailing slots — the clear button appears once there's text. Shown at all three sizes.">
+      <Section title="Search field" note="Put an icon in front and a clear button after — the clear button shows up once you type. Shown at all three sizes.">
         <Preview
           canvas={
             <div style={FIELD_COL}>
@@ -129,7 +129,7 @@ export function InputPage() {
         />
       </Section>
 
-      <Section title="With help text" note="A muted hint below the field, linked with aria-describedby. Shown at all three sizes.">
+      <Section title="With help text" note="A quiet hint below the field, connected with aria-describedby. Shown at all three sizes.">
         <Preview
           canvas={
             <div style={FIELD_COL}>
@@ -151,7 +151,7 @@ export function InputPage() {
         />
       </Section>
 
-      <Section title="With eyebrow label" note="An uppercase overline label using the eyebrow type step. Shown at all three sizes.">
+      <Section title="With eyebrow label" note="A small all-caps label sitting above the field. Shown at all three sizes.">
         <Preview
           canvas={
             <div style={FIELD_COL}>
@@ -168,7 +168,7 @@ export function InputPage() {
         />
       </Section>
 
-      <Section title="Multi-line (Textarea)" note="For longer, paragraph-style input. A sibling primitive that shares the Input look, at all three sizes.">
+      <Section title="Multi-line (Textarea)" note="For longer text that runs over many lines. A close cousin of Input that looks the same, at all three sizes.">
         <Preview
           canvas={
             <div style={FIELD_COL}>
