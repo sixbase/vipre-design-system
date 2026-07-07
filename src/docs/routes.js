@@ -62,6 +62,7 @@ import { DeviceListTemplatePage } from './pages/DeviceListTemplatePage.jsx'
 import { PolicyListTemplatePage } from './pages/PolicyListTemplatePage.jsx'
 import { EntityDetailTemplatePage } from './pages/EntityDetailTemplatePage.jsx'
 import { TextareaPage } from './pages/TextareaPage.jsx'
+import { MspMenuPilotPage } from './pages/MspMenuPilotPage.jsx'
 
 /* Single source of truth for both the sidebar nav and the hash router. */
 export const NAV = [
@@ -171,6 +172,13 @@ export const NAV = [
     items: [
       { path: '/metrics/stat-tile', name: 'Stat Tile', Page: StatTilePage },
       { path: '/metrics/metric-card', name: 'Metric Card', Page: MetricCardPage },
+    ],
+  },
+  {
+    // Pilot — isolated artifacts staged for an engineering handoff. Temporary.
+    group: 'Pilot',
+    items: [
+      { path: '/pilot/msp-menu', name: 'MSP Menu (isolated)', Page: MspMenuPilotPage },
     ],
   },
   {
