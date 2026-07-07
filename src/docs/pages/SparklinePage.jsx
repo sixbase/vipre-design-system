@@ -1,6 +1,6 @@
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, Code, IC } from '../primitives.jsx'
 import { Sparkline } from '../../components/index.js'
 
 const ROW = { display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }
@@ -56,6 +56,20 @@ export function SparklinePage() {
           }
           code={`<Sparkline data={[…]} area={false} width={120} height={32} />`}
         />
+      </Section>
+
+      <Section
+        title="Markup"
+        note="The rendered HTML with the vds- classes, for teams not using React. The classes only handle color — the point coordinates are computed from your data (the React component does this for you), so in plain HTML you generate them yourself, server-side or with a few lines of JS."
+      >
+        <Code>{`<!-- tones: vds-sparkline--primary | --success | --warning | --danger | --muted -->
+<svg class="vds-sparkline vds-sparkline--success" width="96" height="28"
+     viewBox="0 0 96 28" aria-hidden="true">
+  <path class="vds-sparkline__area" d="M2,26 L2,19.5 L15.1,14.6 … L94,26 Z"></path>
+  <polyline class="vds-sparkline__line" points="2,19.5 15.1,14.6 …"></polyline>
+</svg>
+
+<!-- meaningful chart: swap aria-hidden for role="img" + aria-label -->`}</Code>
       </Section>
     </ComponentPage>
   )

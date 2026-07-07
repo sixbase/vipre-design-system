@@ -1,6 +1,6 @@
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, Code, IC } from '../primitives.jsx'
 import { Select, Field } from '../../components/index.js'
 
 const COL = { display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', maxWidth: 280 }
@@ -71,6 +71,38 @@ export function SelectPage() {
           code={`<Field label="Status" error="Choose a status"><Select>…</Select></Field>
 <Field label="Status"><Select disabled>…</Select></Field>`}
         />
+      </Section>
+
+      <Section
+        title="Markup"
+        note="The rendered HTML with the vds- classes, for teams not using React. The classes are pure CSS, but the behavior is JS you'd wire yourself: open/close on click, outside-click and Escape to close, arrow keys between options, and keeping the panel on screen. The panel only exists in the DOM while open."
+      >
+        <Code>{`<div class="vds-popover vds-select">
+  <!-- trigger. sizes: vds-select--sm | --md | --lg -->
+  <button type="button" class="vds-select__trigger vds-select--md"
+          aria-haspopup="listbox" aria-expanded="false">
+    <span class="vds-select__value">Active</span>
+    <svg class="vds-icon vds-select__caret" width="16" height="16" aria-hidden="true">…</svg>
+  </button>
+
+  <!-- open panel (rendered only while open) -->
+  <div class="vds-surface vds-surface--radius-md vds-surface--bordered vds-surface--elev-overlay
+              vds-popover__panel vds-select__pop" role="listbox" tabindex="-1">
+    <div class="vds-popover__menu">
+      <button type="button" role="option" aria-selected="true"
+              class="vds-popover__item vds-popover__item--active">
+        <span class="vds-popover__item-label">Active</span>
+        <svg class="vds-icon vds-popover__item-check" width="16" height="16" aria-hidden="true">…</svg>
+      </button>
+      <button type="button" role="option" class="vds-popover__item">
+        <span class="vds-popover__item-label">Suspended</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- invalid: add vds-select--invalid + aria-invalid on the trigger.
+     placeholder (nothing picked): add vds-select--placeholder. -->`}</Code>
       </Section>
     </ComponentPage>
   )

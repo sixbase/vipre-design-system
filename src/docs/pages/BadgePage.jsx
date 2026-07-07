@@ -1,6 +1,6 @@
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, Code, IC } from '../primitives.jsx'
 import { Badge } from '../../components/index.js'
 
 export function BadgePage() {
@@ -63,6 +63,19 @@ export function BadgePage() {
 <Badge tone="warning" dot>At risk</Badge>
 <Badge tone="danger" dot>Threat</Badge>`}
         />
+      </Section>
+
+      <Section
+        title="Markup"
+        note="The rendered HTML with the vds- classes, for teams not using React. One span, one tone modifier. status tones (success / warning / danger) also get role='status' so changes are announced. No JS needed."
+      >
+        <Code>{`<!-- tones: vds-badge--neutral | --primary | --success | --warning | --danger | --info -->
+<span class="vds-badge vds-badge--info">Info</span>
+
+<!-- status tones add role="status"; the dot is decorative -->
+<span class="vds-badge vds-badge--success" role="status">
+  <span class="vds-badge__dot" aria-hidden="true"></span> Protected
+</span>`}</Code>
       </Section>
     </ComponentPage>
   )

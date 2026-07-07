@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Search, X, Mail } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, Code, IC } from '../primitives.jsx'
 import { Input, Textarea, Icon, Text, Field } from '../../components/index.js'
 
 const FIELD_COL = { display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', maxWidth: 360 }
@@ -185,6 +185,37 @@ export function InputPage() {
 <Textarea size="md" rows={3} placeholder="Add a note…" />
 <Textarea size="lg" rows={3} placeholder="Add a note…" />`}
         />
+      </Section>
+
+      <Section
+        title="Markup"
+        note="The rendered HTML with the vds- classes, for teams not using React. The box is a wrapper div; the real <input> sits inside it. No JS needed (a clear button in the trailing slot is your own JS)."
+      >
+        <Code>{`<!-- sizes: vds-input--sm | --md | --lg -->
+<div class="vds-input vds-input--md">
+  <input class="vds-input__field" placeholder="you@company.com" />
+</div>
+
+<!-- with a leading icon and a trailing action -->
+<div class="vds-input vds-input--md">
+  <span class="vds-input__affix vds-input__affix--lead">
+    <svg class="vds-icon" width="16" height="16" aria-hidden="true">…</svg>
+  </span>
+  <input class="vds-input__field" placeholder="Search devices…" />
+  <span class="vds-input__affix vds-input__affix--trail">
+    <button type="button" aria-label="Clear search">…</button>
+  </span>
+</div>
+
+<!-- invalid: add the modifier AND aria-invalid on the input -->
+<div class="vds-input vds-input--md vds-input--invalid">
+  <input class="vds-input__field" aria-invalid="true" value="ada@" />
+</div>
+
+<!-- disabled: add the modifier AND the disabled attribute -->
+<div class="vds-input vds-input--md vds-input--disabled">
+  <input class="vds-input__field" disabled value="ACC-2041" />
+</div>`}</Code>
       </Section>
     </ComponentPage>
   )

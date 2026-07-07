@@ -5,7 +5,7 @@ export function HomePage() {
   return (
     <DocPage
       title="Vipre Design System"
-      description="A fresh, token-first starting point — cool graphite greys, an iris brand accent, and the Rubik type sizes. Written in SCSS, where every value is a named token that switches between light and dark."
+      description="A token-first design system for Vipre's product UI: cool graphite greys, the Vipre midnight navy, and the Rubik typescale. Around 50 components, light and dark mode from one set of named tokens, and responsive by default — fluid type, breakpoint mixins, and components that adapt to their container. It ships the MSP v2 chrome (the navy SideNav and AppShell) and works without React too: the styles compile to one plain CSS bundle with vds- classes, so any front end can use them."
     >
       <Section
         title="Principles"
@@ -15,15 +15,18 @@ export function HomePage() {
           headers={['Principle', 'What it means']}
           rows={[
             ['Tokens only', 'No raw hex or px in components — add a token instead.'],
-            ['Named tokens, not raw colors', 'Components use named tokens (canvas, ink, primary), never the raw color sets.'],
+            ['Named tokens, not raw colors', 'Components use named tokens (canvas, ink, primary), never the raw color ramps.'],
             ['Components own their styles', 'Pages put components together; they never restyle a component.'],
             ['Text goes through Text / Heading', 'Never raw font sizes or heading tags.'],
-            ['Accessibility is a gate', 'Visible focus, WCAG AA contrast, keyboard support.'],
+            ['Accessibility is a gate', 'Visible focus, WCAG AA contrast, keyboard support, reduced motion.'],
           ]}
         />
       </Section>
 
-      <Section title="Install" note="POC: one Vite + React app styled with SCSS.">
+      <Section
+        title="Run the docs"
+        note="This site is the living spec — every example is the real component. See Installation for how to use the system in your own app."
+      >
         <Code>{`npm install\nnpm run dev`}</Code>
       </Section>
     </DocPage>

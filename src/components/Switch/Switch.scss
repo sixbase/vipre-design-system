@@ -2,6 +2,7 @@
 // Switch — track + sliding thumb. Off = neutral graphite track; on = brand.
 // ============================================================================
 @use '../../styles/typography' as type;
+@use '../../styles/breakpoints' as bp;
 
 .vds-switch {
   display: inline-flex;
@@ -71,6 +72,18 @@
 
   &__input:checked ~ &__track .vds-switch__thumb {
     transform: translateX(1rem);
+  }
+
+  // Touch: the invisible input (the real hit area) grows to the minimum tap
+  // target, centered on the 36×20 track — the visual design doesn't change.
+  @include bp.coarse {
+    &__input {
+      width: max(2.25rem, var(--vds-tap-target));
+      height: var(--vds-tap-target);
+      top: 50%;
+      left: calc((2.25rem - max(2.25rem, var(--vds-tap-target))) / 2);
+      transform: translateY(-50%);
+    }
   }
 }
 // No .dark override — line-strong flips to the Midnight ramp automatically.

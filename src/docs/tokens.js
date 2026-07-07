@@ -192,6 +192,8 @@ export const SEMANTIC_GROUPS = [
       { token: '--vds-accent-harbor-soft', ref: 'harbor-50 → harbor@16%', usage: 'Soft teal tint background' },
       { token: '--vds-accent-azure', ref: 'azure-600 → 400', usage: 'Categorical / data-viz accent — cerulean. Tags, chart series' },
       { token: '--vds-accent-azure-soft', ref: 'azure-50 → azure@16%', usage: 'Soft azure tint background' },
+      { token: '--vds-accent-cobalt', ref: 'cobalt-600 → 400', usage: 'Categorical / data-viz accent — brand blue' },
+      { token: '--vds-accent-cobalt-soft', ref: 'cobalt-50 → cobalt@16%', usage: 'Soft cobalt tint background' },
       { token: '--vds-accent-purple', ref: 'purple-600 → 400', usage: 'Categorical / data-viz accent — blue-violet purple' },
       { token: '--vds-accent-purple-soft', ref: 'purple-50 → purple@16%', usage: 'Soft purple tint background' },
       { token: '--vds-accent-orchid', ref: 'orchid-600 → 400', usage: 'Categorical / data-viz accent — violet' },
@@ -202,11 +204,13 @@ export const SEMANTIC_GROUPS = [
   },
 ]
 
-/* Type scale — mirrors $scale in _typography.scss. px / lh in pixels. */
+/* Type scale — mirrors $scale in _typography.scss. px / lh in pixels.
+   display / title / heading are FLUID (clamp): the range shows the size at a
+   320px viewport → full size (reached by ~1120–1280px). Small steps are fixed. */
 export const TYPE_SCALE = [
-  { token: 'text--display', name: 'display', kind: 'h', level: 'display', px: 30, lh: 36, weight: 600, tracking: '-0.022em', usage: 'Empty-state hero, large metric numbers' },
-  { token: 'text--title', name: 'title', kind: 'h', level: 'title', px: 24, lh: 32, weight: 600, tracking: '-0.017em', usage: 'Page H1 — the primary title for a screen' },
-  { token: 'text--heading', name: 'heading', kind: 'h', level: 'heading', px: 20, lh: 28, weight: 600, tracking: '-0.012em', usage: 'Section H2, panel titles' },
+  { token: 'text--display', name: 'display', kind: 'h', level: 'display', px: '24–30', lh: '30–36', weight: 600, tracking: '-0.022em', usage: 'Empty-state hero, large metric numbers · fluid' },
+  { token: 'text--title', name: 'title', kind: 'h', level: 'title', px: '20–24', lh: '28–32', weight: 600, tracking: '-0.017em', usage: 'Page H1 — the primary title for a screen · fluid' },
+  { token: 'text--heading', name: 'heading', kind: 'h', level: 'heading', px: '18–20', lh: '26–28', weight: 600, tracking: '-0.012em', usage: 'Section H2, panel titles · fluid' },
   { token: 'text--subheading', name: 'subheading', kind: 'h', level: 'subheading', px: 16, lh: 24, weight: 500, tracking: '-0.006em', usage: 'Card / panel titles, form section labels' },
   { token: 'text--body-lg', name: 'body-lg', kind: 't', variant: 'body-lg', px: 15, lh: 22, weight: 400, tracking: null, usage: 'Emphasized body, section intros' },
   { token: 'text--body', name: 'body', kind: 't', variant: 'body', px: 14, lh: 20, weight: 400, tracking: null, usage: 'Default UI text — the workhorse' },
@@ -242,12 +246,47 @@ export const SPACING = [
   { token: '--vds-space-24', px: '96px', usage: 'Maximum — page top/bottom margins' },
 ]
 
-/* Layout tokens — structural rhythm. */
+/* Layout tokens — structural rhythm. Some step up with the viewport (see the
+   Responsiveness page); the value shows base → widest. */
 export const LAYOUT = [
   { token: '--vds-container', value: '1200px', usage: 'Max content width, centered' },
-  { token: '--vds-gutter', value: '24px · space-6', usage: 'Gap between grid columns' },
-  { token: '--vds-section', value: '48px · space-12', usage: 'Vertical rhythm between major sections' },
+  { token: '--vds-gutter', value: '24px → 32px at lg', usage: 'Gap between grid columns — opens up on laptops and wider' },
+  { token: '--vds-section', value: '48px → 64px at lg', usage: 'Vertical rhythm between major sections' },
   { token: '--vds-columns', value: '12', usage: 'Base grid column count' },
+  { token: '--vds-page-pad', value: '16px → 24px at md → 32px at lg', usage: 'Page-edge padding — grows as the screen grows' },
+  { token: '--vds-sidenav-w', value: '242px', usage: 'Expanded side navigation rail width' },
+  { token: '--vds-sidenav-w-collapsed', value: '72px', usage: 'Collapsed (icon-only) side navigation rail width' },
+  { token: '--vds-topbar-h', value: '56px', usage: 'Top bar height' },
+  { token: '--vds-nav-accent', value: 'cobalt-600', usage: 'Brandable nav highlight — resellers re-point this one token' },
+]
+
+/* Breakpoints — mirror $breakpoints in _breakpoints.scss. The SCSS mixins are
+   the styling API; the --vds-bp-* tokens are informational, for JS
+   (CSS media queries cannot read custom properties). */
+export const BREAKPOINTS = [
+  { name: 'sm', token: '--vds-bp-sm', value: '640px', usage: 'Large phones, small tablets (portrait)' },
+  { name: 'md', token: '--vds-bp-md', value: '768px', usage: 'Tablets — the sidenav can stay open from here' },
+  { name: 'lg', token: '--vds-bp-lg', value: '1024px', usage: 'Laptops — the full shell fits comfortably' },
+  { name: 'xl', token: '--vds-bp-xl', value: '1280px', usage: 'Desktops — fluid type reaches full size here' },
+  { name: '2xl', token: '--vds-bp-2xl', value: '1536px', usage: 'Wide desktops and large monitors' },
+]
+
+/* Control metrics — shared sm/md/lg control heights + minimum touch target.
+   Mirror the Tier 3 control tokens in _tokens.scss. */
+export const CONTROLS = [
+  { token: '--vds-control-h-sm', value: '32px', usage: 'Small controls — dense toolbars, table row actions' },
+  { token: '--vds-control-h-md', value: '36px', usage: 'Default control height — most buttons, inputs, selects' },
+  { token: '--vds-control-h-lg', value: '44px', usage: 'Large controls — hero forms; already a full touch target' },
+  { token: '--vds-tap-target', value: '44px', usage: 'Minimum hit area on coarse (touch) pointers' },
+]
+
+/* Motion — mirrors the Tier 3 motion tokens in _tokens.scss. */
+export const MOTION = [
+  { token: '--vds-ease-out', value: 'cubic-bezier(0.16, 1, 0.3, 1)', usage: 'Default easing for small state changes' },
+  { token: '--vds-ease-emphatic', value: 'cubic-bezier(0.2, 0, 0, 1)', usage: 'Emphasized decelerate — the MSP v2 nav curve; fast start, soft landing' },
+  { token: '--vds-dur-fast', value: '120ms', usage: 'Hovers, color changes' },
+  { token: '--vds-dur-base', value: '200ms', usage: 'Most transitions' },
+  { token: '--vds-dur-slow', value: '240ms', usage: 'Larger moves — shell panels, sidenav collapse/expand' },
 ]
 
 export const WEIGHTS = [

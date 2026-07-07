@@ -15,6 +15,8 @@
 @use '../components/Sparkline/Sparkline';
 @use '../components/Table/Table';
 @use '../components/SideNav/SideNav';
+@use '../components/AppShell/AppShell';
+@use '../components/TopBar/TopBar';
 @use '../components/CurrentLeftNav/CurrentLeftNav';
 @use '../components/PageHeader/PageHeader';
 @use '../components/ScopeNavigator/ScopeNavigator';
@@ -27,10 +29,43 @@
 @use '../components/Input/Input';
 @use '../components/Textarea/Textarea';
 @use '../components/Checkbox/Checkbox';
+@use '../components/Radio/Radio';
+@use '../components/RadioGroup/RadioGroup';
 @use '../components/Switch/Switch';
 @use '../components/Select/Select';
+@use '../components/Slider/Slider';
+@use '../components/SegmentedControl/SegmentedControl';
 @use '../components/Spinner/Spinner';
 @use '../components/Button/Button';
 @use '../components/Badge/Badge';
+// SearchInput/Combobox layer on Input + Popover classes — keep them after both.
+@use '../components/SearchInput/SearchInput';
+@use '../components/Combobox/Combobox';
+
+// Overlays
+@use '../components/Modal/Modal';
+@use '../components/Drawer/Drawer';
+@use '../components/Toast/Toast';
+@use '../components/Tooltip/Tooltip';
+@use '../components/Menu/Menu';
+@use '../components/CommandPalette/CommandPalette';
+
+// Navigation & wayfinding
+@use '../components/Tabs/Tabs';
+@use '../components/Accordion/Accordion';
+@use '../components/Breadcrumb/Breadcrumb';
+@use '../components/Pagination/Pagination';
+@use '../components/Stepper/Stepper';
+@use '../components/Kbd/Kbd';
+
+// Feedback & display
+@use '../components/Alert/Alert';
+@use '../components/Progress/Progress';
+@use '../components/Skeleton/Skeleton';
+@use '../components/Avatar/Avatar';
+@use '../components/Tag/Tag';
+@use '../components/EmptyState/EmptyState';
+@use '../components/DescriptionList/DescriptionList';
+@use '../components/VisuallyHidden/VisuallyHidden';
 // Text/Heading have no component styles — they use the typescale classes
 // emitted by _typography.scss.

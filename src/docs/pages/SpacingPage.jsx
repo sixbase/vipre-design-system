@@ -6,7 +6,7 @@ export function SpacingPage() {
   return (
     <DocPage
       title="Spacing"
-      description="One set of sizes, all built on 4px, for every gap and bit of padding inside components. Always use a spacing token, never a raw pixel number."
+      description="One set of sizes, all built on 4px, for every gap and bit of padding inside components. Always use a spacing token, never a raw pixel number. Each one is a plain CSS variable (--vds-space-*), so it works in any framework."
     >
       <Section title="Scale" note="The bar's length is the real size of the token.">
         <div className="vds-type-table">

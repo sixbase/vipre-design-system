@@ -3,12 +3,85 @@
 // content column with preview boxes and tables), rendered with Vipre tokens.
 // This is the one place "page composition" styling lives; it never restyles a
 // component, only arranges components + token swatches.
+//
+// Shell responsiveness: from lg up, the classic two-column grid (sticky
+// sidebar + content). Below lg the sidebar becomes an off-canvas drawer opened
+// from a slim sticky top bar (App.jsx owns the open state, Escape/close-on-nav
+// behavior, and the body scroll lock; the classes here own the look).
 // ============================================================================
+@use 'breakpoints' as bp;
 
 .vds-layout {
   display: grid;
   grid-template-columns: 240px 1fr;
   min-height: 100vh;
+
+  @include bp.down(lg) {
+    display: block; // the sidebar leaves the flow (off-canvas drawer)
+  }
+
+  // drawer scrim — mobile only (the element only mounts while the drawer is open)
+  &__scrim {
+    display: none;
+
+    @include bp.down(lg) {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: var(--vds-z-drawer);
+      background-color: var(--vds-scrim);
+
+      @include bp.motion-ok {
+        animation: vds-docs-scrim-in var(--vds-dur-slow) var(--vds-ease-emphatic);
+      }
+    }
+  }
+}
+
+@keyframes vds-docs-scrim-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// ---- Mobile top bar (hidden from lg up — the sidebar is always visible) ----
+.vds-topbar {
+  display: none;
+
+  @include bp.down(lg) {
+    position: sticky;
+    top: 0;
+    z-index: var(--vds-z-sticky);
+    display: flex;
+    align-items: center;
+    gap: var(--vds-space-3);
+    height: var(--vds-topbar-h);
+    padding: 0 var(--vds-page-pad);
+    background-color: var(--vds-surface);
+    border-bottom: 1px solid var(--vds-line);
+  }
+
+  &__menu {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-left: calc(var(--vds-space-2) * -1); // optically flush with the page edge
+    border: 0;
+    border-radius: var(--vds-radius-md);
+    background: none;
+    color: var(--vds-ink);
+    cursor: pointer;
+
+    &:hover { background-color: var(--vds-canvas); }
+    &:focus-visible { outline: 2px solid var(--vds-focus-ring); outline-offset: 2px; }
+  }
+
+  &__brand {
+    display: inline-flex;
+    align-items: center;
+    color: var(--vds-ink); // drives the logo's currentColor
+  }
 }
 
 // ---- Sidebar ---------------------------------------------------------------
@@ -18,6 +91,8 @@
   height: auto;
 }
 
+.vds-logo--topbar { width: 72px; }
+
 .vds-sidebar {
   position: sticky;
   top: 0;
@@ -26,6 +101,37 @@
   padding: 1.5rem;
   border-right: 1px solid var(--vds-line);
   background-color: var(--vds-surface);
+
+  // Below lg: an off-canvas drawer. Parked off the left edge; `.is-open`
+  // (set by App.jsx) slides it in above the scrim.
+  @include bp.down(lg) {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    height: auto;
+    width: min(280px, 84vw);
+    z-index: calc(var(--vds-z-drawer) + 1);
+    border-right: 1px solid var(--vds-line);
+    transform: translateX(-100%);
+    visibility: hidden; // parked drawer is untabbable + invisible to AT
+
+    @include bp.motion-ok {
+      transition:
+        transform var(--vds-dur-slow) var(--vds-ease-emphatic),
+        visibility 0s linear var(--vds-dur-slow);
+    }
+
+    &.is-open {
+      transform: none;
+      visibility: visible;
+      box-shadow: var(--vds-shadow-lg);
+
+      @include bp.motion-ok {
+        transition: transform var(--vds-dur-slow) var(--vds-ease-emphatic);
+      }
+    }
+  }
 
   &__header {
     display: flex;
@@ -95,8 +201,14 @@
 // block caps itself at ~64ch; only the demo surfaces expand to fill the width.
 .vds-content {
   max-width: 1280px;
-  padding: 3rem 2.5rem 5rem;
+  // Horizontal rhythm rides the responsive page-pad token (16 → 24 → 32px).
+  padding: 3rem var(--vds-page-pad) 5rem;
   min-width: 0; // allow the grid column to shrink so nowrap children clip/scroll
+
+  @include bp.down(lg) {
+    padding-top: var(--vds-space-6); // the top bar already anchors the page
+    padding-bottom: var(--vds-space-16);
+  }
 }
 
 .vds-doc-section {
@@ -203,6 +315,13 @@ section:first-of-type > .vds-section-h {
     gap: 0.75rem;
     padding: 2.5rem;
     background-color: var(--vds-surface);
+    // Wide demos (tables, scope trails) scroll inside the box — the page body
+    // never scrolls sideways.
+    overflow-x: auto;
+
+    @include bp.down(sm) {
+      padding: 1.5rem 1rem; // narrow phones: the demo, not the frame, gets the room
+    }
   }
 
   // Opt-in for components with absolutely-positioned overlays (dropdowns, menus):
@@ -211,6 +330,7 @@ section:first-of-type > .vds-section-h {
     overflow: visible;
     .vds-preview__canvas {
       align-items: flex-start;
+      overflow: visible; // the overlay must escape; never trade it for a scrollbar
     }
   }
 
@@ -623,7 +743,7 @@ section:first-of-type > .vds-section-h {
 
 .vds-numerals__col--tabular .vds-numerals__head { color: var(--vds-primary); }
 
-@media (max-width: 640px) {
+@include bp.down(sm) {
   .vds-type-row { grid-template-columns: 1fr; gap: 0.25rem; }
   .vds-type-value { text-align: left; }
 
@@ -633,6 +753,11 @@ section:first-of-type > .vds-section-h {
   .vds-leading-grid { grid-template-columns: 1fr; }
   .vds-leading-grid__col, .vds-leading-grid__corner { display: none; }
   .vds-leading-grid__band { grid-template-columns: 1fr; gap: 0.75rem; }
+
+  // Font-family hero + numerals demo: stack rather than squeeze.
+  .vds-font-family { flex-wrap: wrap; gap: 1rem; }
+  .vds-numerals { flex-direction: column; }
+  .vds-numerals__col { max-width: none; }
 }
 
 // Spacing bar + layout grid demo.
@@ -697,13 +822,21 @@ section:first-of-type > .vds-section-h {
 }
 
 // ---- responsive ------------------------------------------------------------
-@media (max-width: 860px) {
-  .vds-layout { grid-template-columns: 1fr; }
-  .vds-sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--vds-line); }
-  .vds-content { padding: 2rem 1.5rem 4rem; }
+// (The shell itself — sidebar drawer, top bar, content padding — is handled
+// at the top of this file. Here: the token-doc grids reflow on small screens.)
+@include bp.down(md) {
+  // Palette / swatch grids wrap to as many columns as genuinely fit instead of
+  // crushing 11 fixed tracks into slivers.
   .vds-swatches, .vds-swatches--wide, .vds-swatches--iris, .vds-swatches--semantic {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(3.25rem, 1fr));
   }
+
+  // Type specimens: meta drops under the sample instead of squeezing beside it.
+  .vds-specimen { flex-wrap: wrap; }
+
+  // Depth demos: 5-across / 4-across ladders reflow to two columns.
+  .vds-elev-ladder { grid-template-columns: repeat(2, 1fr); }
+  .vds-shadow-row { grid-template-columns: repeat(2, 1fr); }
 }
 
 // ---- depth: priority order -------------------------------------------------

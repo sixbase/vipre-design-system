@@ -1,6 +1,6 @@
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, Code, IC } from '../primitives.jsx'
 import { Checkbox } from '../../components/index.js'
 
 const COL = { display: 'flex', flexDirection: 'column', gap: '0.75rem' }
@@ -52,6 +52,30 @@ export function CheckboxPage() {
           canvas={<Checkbox aria-label="Select row" />}
           code={`<Checkbox aria-label="Select row" />`}
         />
+      </Section>
+
+      <Section
+        title="Markup"
+        note="The rendered HTML with the vds- classes, for teams not using React. A real checkbox does all the work; the styled box is just paint. The only JS is for the indeterminate dash — it can only be set as a DOM property (input.indeterminate = true), never as an attribute."
+      >
+        <Code>{`<label class="vds-checkbox">
+  <input type="checkbox" class="vds-checkbox__input" />
+  <span class="vds-checkbox__box" aria-hidden="true"></span>
+  <span class="vds-checkbox__label">Include archived</span>
+</label>
+
+<!-- no label text: keep an aria-label on the input -->
+<label class="vds-checkbox">
+  <input type="checkbox" class="vds-checkbox__input" aria-label="Select row" />
+  <span class="vds-checkbox__box" aria-hidden="true"></span>
+</label>
+
+<!-- disabled: add the modifier AND the disabled attribute -->
+<label class="vds-checkbox vds-checkbox--disabled">
+  <input type="checkbox" class="vds-checkbox__input" disabled checked />
+  <span class="vds-checkbox__box" aria-hidden="true"></span>
+  <span class="vds-checkbox__label">Disabled</span>
+</label>`}</Code>
       </Section>
     </ComponentPage>
   )

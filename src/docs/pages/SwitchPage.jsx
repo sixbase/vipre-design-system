@@ -1,6 +1,6 @@
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, Code, IC } from '../primitives.jsx'
 import { Switch } from '../../components/index.js'
 
 const COL = { display: 'flex', flexDirection: 'column', gap: '0.75rem' }
@@ -43,6 +43,26 @@ export function SwitchPage() {
 <Switch defaultChecked>On</Switch>
 <Switch disabled>Disabled</Switch>`}
         />
+      </Section>
+
+      <Section
+        title="Markup"
+        note="The rendered HTML with the vds- classes, for teams not using React. It's a real checkbox with role='switch'; the track and thumb are just paint. No JS needed — checking the input moves the thumb."
+      >
+        <Code>{`<label class="vds-switch">
+  <input type="checkbox" role="switch" class="vds-switch__input" />
+  <span class="vds-switch__track" aria-hidden="true">
+    <span class="vds-switch__thumb"></span>
+  </span>
+  <span class="vds-switch__label">Email alerts</span>
+</label>
+
+<!-- disabled: add the modifier AND the disabled attribute -->
+<label class="vds-switch vds-switch--disabled">
+  <input type="checkbox" role="switch" class="vds-switch__input" disabled checked />
+  <span class="vds-switch__track" aria-hidden="true"><span class="vds-switch__thumb"></span></span>
+  <span class="vds-switch__label">Disabled (on)</span>
+</label>`}</Code>
       </Section>
     </ComponentPage>
   )

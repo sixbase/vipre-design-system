@@ -1,6 +1,6 @@
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, Code, IC } from '../primitives.jsx'
 import { Field, Input, Select } from '../../components/index.js'
 
 const COL = { display: 'flex', flexDirection: 'column', gap: '1.25rem', width: '100%', maxWidth: 360 }
@@ -65,6 +65,26 @@ export function FieldPage() {
 <Field label="Primary contact" eyebrow><Input /></Field>
 <Field label="Status"><Select>…</Select></Field>`}
         />
+      </Section>
+
+      <Section
+        title="Markup"
+        note="The rendered HTML with the vds- classes, for teams not using React. No JS needed — but you have to wire the ids yourself: label htmlFor → control id, and aria-describedby → the help or error id. Show either the help line or the error line, not both."
+      >
+        <Code>{`<div class="vds-field">
+  <label for="email" class="vds-field__label">Email</label>
+  <!-- the control goes here (Input / Select / Textarea markup) -->
+  <div class="vds-input vds-input--md">
+    <input id="email" type="email" class="vds-input__field" aria-describedby="email-help" />
+  </div>
+  <span id="email-help" class="vds-field__help">We'll only use this for security alerts.</span>
+</div>
+
+<!-- error state: swap the help line for an alert, and mark the control invalid -->
+<span id="email-error" role="alert" class="vds-field__error">Enter a valid email address</span>
+
+<!-- eyebrow label: small all-caps -->
+<label class="vds-field__label vds-field__label--eyebrow">Primary contact</label>`}</Code>
       </Section>
     </ComponentPage>
   )

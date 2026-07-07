@@ -20,6 +20,8 @@
   // a parent is shrink-to-fit. This is the responsive baseline.
   width: 100%;
   overflow: hidden;          // clip the cells' square corners to the table radius
+  position: relative;        // anchors the scroll-affordance edge fades below
+  timeline-scope: --vds-table-scroll-x; // lets the shell read the body's scroll
   font-family: var(--vds-font-sans);
 
   // per-density cell padding (set by the density modifiers below)
@@ -33,6 +35,48 @@
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    scroll-timeline: --vds-table-scroll-x x; // drives the edge fades below
+  }
+
+  // ---- scroll affordance — edge shadows say "there's more sideways" ----
+  // CSS-only: the shell's ::before/::after are inset ink-tint gradients whose
+  // opacity rides the scroll body's named scroll-timeline. Off-screen columns
+  // to the right show the right shadow; scrolling reveals the left one. When
+  // the table fits (no overflow) the timeline is inactive, the animation never
+  // applies, and the base opacity (0) hides both. Progressive enhancement:
+  // browsers without scroll-timeline just show no shadows.
+  @supports (animation-timeline: scroll()) {
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: var(--vds-space-4);
+      pointer-events: none;
+      z-index: var(--vds-z-raised); // above the sticky header's local lift
+      opacity: 0;
+      animation: linear both;
+      animation-timeline: --vds-table-scroll-x;
+    }
+    &::before {
+      left: 0;
+      background: linear-gradient(
+        to right,
+        color-mix(in oklab, var(--vds-ink) 12%, transparent),
+        transparent
+      );
+      animation-name: vds-table-fade-start;
+    }
+    &::after {
+      right: 0;
+      background: linear-gradient(
+        to left,
+        color-mix(in oklab, var(--vds-ink) 12%, transparent),
+        transparent
+      );
+      animation-name: vds-table-fade-end;
+    }
   }
 
   &__el {
@@ -198,6 +242,73 @@
     padding: var(--vds-space-10) var(--vds-table-pad-x);
   }
 
+  // ---- responsive stacked mode (opt-in via the `responsive` prop) ----
+  // Below ~640px of the table's OWN width (container query — a table in a
+  // split pane stacks just like one on a phone) each row re-renders as a
+  // labelled card: the header row is visually hidden (kept for AT), and every
+  // cell becomes a [column label | value] line via its data-label attribute.
+  // Selection checkboxes and row-click stay live — only the display changes.
+  &--responsive {
+    container-type: inline-size;
+
+    @container (max-width: 639.98px) {
+      // the header row leaves the layout but stays in the accessibility tree
+      .vds-table__head {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      // linearize the table boxes; !important beats the inline `minWidth`
+      // style, which must not force a sideways scroll once rows are stacked
+      .vds-table__el {
+        display: block;
+        min-width: 0 !important;
+      }
+      .vds-table__body { display: block; }
+
+      // each row is a card-like block, separated by the row hairline
+      .vds-table__row {
+        display: block;
+        padding: var(--vds-space-2) 0;
+        border-bottom: 1px solid var(--vds-line);
+
+        &:last-child { border-bottom: none; }
+      }
+
+      // labelled cells: [column header | value] on one line
+      .vds-table__td {
+        display: block;
+        border-bottom: none;
+        padding: var(--vds-space-1) var(--vds-table-pad-x);
+      }
+      .vds-table__td[data-label] {
+        display: grid;
+        grid-template-columns: minmax(6rem, 40%) 1fr;
+        align-items: baseline;
+        gap: var(--vds-space-3);
+
+        &::before {
+          content: attr(data-label);
+          @include type.step(eyebrow);
+          text-transform: uppercase;
+          color: var(--vds-ink-subtle);
+          text-align: left; // never follow a right-aligned numeric column
+        }
+      }
+
+      // right/center alignment still applies to the VALUE inside its track;
+      // the empty state keeps its single centered block.
+      .vds-table__empty { padding: var(--vds-space-10) var(--vds-table-pad-x); }
+    }
+  }
+
   // ---- loading skeleton ----
   &__skeleton {
     display: block;
@@ -218,6 +329,19 @@
 @keyframes vds-table-shimmer {
   0% { background-position: 100% 0; }
   100% { background-position: 0 0; }
+}
+
+// Scroll progress → edge-shadow opacity. The start shadow appears as soon as
+// anything is scrolled past the left edge; the end shadow holds until the last
+// column arrives. (These track scroll position 1:1 — a depth cue, not motion —
+// so they are not gated behind prefers-reduced-motion.)
+@keyframes vds-table-fade-start {
+  0%, 2% { opacity: 0; }
+  10%, 100% { opacity: 1; }
+}
+@keyframes vds-table-fade-end {
+  0%, 90% { opacity: 1; }
+  98%, 100% { opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

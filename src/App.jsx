@@ -23,6 +23,7 @@ function useHashRoute() {
 
 export function App() {
   const [dark, setDark] = useState(false) // light is the default theme
+  const [navOpen, setNavOpen] = useState(false) // mobile off-canvas sidebar
   const path = useHashRoute()
   const route = ROUTE_MAP[path] || ROUTE_MAP['/']
   const Page = route.Page
@@ -32,14 +33,74 @@ export function App() {
     document.documentElement.classList.toggle('dark', dark)
   }, [dark])
 
+  // Mobile drawer: close whenever navigation happens (link tap → hash change).
+  useEffect(() => {
+    setNavOpen(false)
+  }, [path])
+
+  // While the drawer is open: Escape closes it, the page behind stops
+  // scrolling (the drawer itself still scrolls its own nav), and growing the
+  // viewport past lg — where the sidebar is always visible — lets it go so the
+  // scroll lock can't outlive the drawer.
+  useEffect(() => {
+    if (!navOpen) return
+    const onKey = (e) => {
+      if (e.key === 'Escape') setNavOpen(false)
+    }
+    document.addEventListener('keydown', onKey)
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const bpLg =
+      getComputedStyle(document.documentElement).getPropertyValue('--vds-bp-lg').trim() || '1024px'
+    const mq = window.matchMedia(`(min-width: ${bpLg})`)
+    const onResize = () => {
+      if (mq.matches) setNavOpen(false)
+    }
+    mq.addEventListener('change', onResize)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prevOverflow
+      mq.removeEventListener('change', onResize)
+    }
+  }, [navOpen])
+
   function toggleTheme() {
     setDark((d) => !d)
   }
 
   return (
     <div className="vds-layout">
+      {/* ---- Mobile top bar (hidden on desktop — the sidebar is always there) ---- */}
+      <header className="vds-topbar">
+        <button
+          type="button"
+          className="vds-topbar__menu"
+          onClick={() => setNavOpen(true)}
+          aria-label="Open navigation"
+          aria-expanded={navOpen}
+          aria-controls="vds-docs-sidebar"
+        >
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+            <path
+              d="M2 4.5h14M2 9h14M2 13.5h14"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
+        <a href="#/" className="vds-topbar__brand" aria-label="Vipre Design System home">
+          <VipreLogo className="vds-logo vds-logo--topbar" />
+        </a>
+      </header>
+
+      {/* ---- Drawer scrim (mobile only; click closes) ---- */}
+      {navOpen && (
+        <div className="vds-layout__scrim" onClick={() => setNavOpen(false)} aria-hidden="true" />
+      )}
+
       {/* ---- Sidebar ---- */}
-      <aside className="vds-sidebar">
+      <aside id="vds-docs-sidebar" className={`vds-sidebar${navOpen ? ' is-open' : ''}`}>
         <div className="vds-sidebar__header">
           <a href="#/" className="vds-sidebar__brand" aria-label="Vipre Design System home">
             <VipreLogo className="vds-logo" />

@@ -68,7 +68,7 @@ export function ColorsPage() {
   return (
     <DocPage
       title="Colors"
-      description="Colors come in three layers: raw color sets → named tokens → components. Components always use the named tokens, never the raw colors. That's the trick that makes light and dark mode work: the names stay the same, only the colors behind them change. Tip: click any swatch to copy its hex."
+      description="Colors come in three layers: raw color ramps → named tokens → components. Components always use the named tokens, never the raw colors. That's the trick that makes light and dark mode work: the names stay the same, only the colors behind them change. Every token is a plain CSS variable (--vds-…), so it works in any framework. Tip: click any swatch to copy its hex."
     >
       <Section title={<>Semantic tokens <span className="vds-scale-badge vds-scale-badge--primary">Use these</span></>}>
         <Text variant="body" tone="muted" className="vds-section-desc">

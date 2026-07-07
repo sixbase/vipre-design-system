@@ -1,5 +1,5 @@
 import { ComponentPage } from '../ComponentPage.jsx'
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, Code, IC } from '../primitives.jsx'
 import { Card, Button, Text, StatTile } from '../../components/index.js'
 import { Monitor, Shield } from '@icons'
 
@@ -60,6 +60,23 @@ export function CardPage() {
   <StatTile icon={Shield} value="1,192" label="Protected" tone="success" />
 </Card>`}
         />
+      </Section>
+
+      <Section
+        title="Markup"
+        note="The rendered HTML with the vds- classes, for teams not using React. A Card is a Surface with an optional header row. No JS needed."
+      >
+        <Code>{`<!-- padding steps: vds-surface--pad-0 … --pad-8 (default 5 → 20px) -->
+<div class="vds-surface vds-surface--pad-5 vds-surface--radius-lg vds-surface--bordered
+            vds-surface--elev-resting vds-card">
+  <div class="vds-card__header">
+    <h3 class="vds-text vds-heading vds-text--subheading vds-card__title">Package adoption</h3>
+    <div class="vds-card__actions">
+      <button class="vds-button vds-button--ghost vds-button--primary vds-button--sm">View all</button>
+    </div>
+  </div>
+  <!-- body: anything -->
+</div>`}</Code>
       </Section>
     </ComponentPage>
   )

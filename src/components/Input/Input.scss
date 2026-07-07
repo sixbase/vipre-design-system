@@ -3,6 +3,7 @@
 // a flex shell so leading/trailing affixes sit inside one focusable-looking box.
 // ============================================================================
 @use '../../styles/typography' as type;
+@use '../../styles/breakpoints' as bp;
 
 .vds-input {
   // Chrome bound to SEMANTIC tokens so it flips light/dark for free:
@@ -53,10 +54,10 @@
     pointer-events: none;
   }
 
-  // ---- sizes (heights match Button) ----
-  &--sm { height: 2rem;    padding: 0 0.625rem; @include type.step(detail); }
-  &--md { height: 2.25rem; padding: 0 0.75rem;  @include type.step(body); }
-  &--lg { height: 2.75rem; padding: 0 1rem;     @include type.step(body-lg); }
+  // ---- sizes (heights = the shared control-metric tokens, matching Button) ----
+  &--sm { height: var(--vds-control-h-sm); padding: 0 0.625rem; @include type.step(detail); }
+  &--md { height: var(--vds-control-h-md); padding: 0 0.75rem;  @include type.step(body); }
+  &--lg { height: var(--vds-control-h-lg); padding: 0 1rem;     @include type.step(body-lg); }
 
   &__field {
     flex: 1 1 auto;
@@ -82,6 +83,27 @@
 
   // Trailing affix is often an interactive clear button — let it receive clicks.
   &__affix--trail { cursor: pointer; }
+
+  @include bp.coarse {
+    // ≥16px text on touch so iOS doesn't zoom the page when the field focuses.
+    &--md { font-size: 1rem; }
+
+    // Any interactive affix content (e.g. a clear button) grows an invisible
+    // hit-area overlay to the minimum tap target without moving the layout.
+    &__affix > :is(button, a, [role='button']) {
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: max(100%, var(--vds-tap-target));
+        height: max(100%, var(--vds-tap-target));
+      }
+    }
+  }
 }
 // No .dark override needed — every chrome var above resolves through a semantic
 // token that already flips to the Midnight (Vipre navy) ramp in dark mode.

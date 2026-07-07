@@ -10,7 +10,7 @@ const PARAGRAPH =
 // One large step and one small, across the ramp — how much air a line needs
 // shifts with its size.
 const LEADING_DEMO = [
-  { name: 'title', kind: 'h', level: 'title', px: 24 },
+  { name: 'title', kind: 'h', level: 'title', px: '20–24' }, // fluid — 20px narrow → 24px wide
   { name: 'body', kind: 't', variant: 'body', px: 14 },
 ]
 // Same digit count, mixed digit widths — so proportional figures visibly
@@ -152,7 +152,10 @@ export function TypographyPage() {
             becomes (<code className="vds-inline-code">as</code>, like{' '}
             <code className="vds-inline-code">h1</code>).{' '}
             <code className="vds-inline-code">leading</code> and{' '}
-            <code className="vds-inline-code">tabular</code> are optional extras.
+            <code className="vds-inline-code">tabular</code> are optional extras. Not using
+            React? Every size is also a plain CSS class — e.g.{' '}
+            <code className="vds-inline-code">class="vds-text vds-text--body"</code> or{' '}
+            <code className="vds-inline-code">class="vds-text vds-heading vds-text--title"</code>.
           </>
         }
       >

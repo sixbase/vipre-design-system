@@ -1,6 +1,6 @@
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, Code, IC } from '../primitives.jsx'
 import { Popover, Button, Text, menuKeyDown } from '../../components/index.js'
 
 export function PopoverPage() {
@@ -73,6 +73,34 @@ export function PopoverPage() {
           }
           code={`<Popover placement="bottom-end" trigger={…}>…</Popover>`}
         />
+      </Section>
+
+      <Section
+        title="Markup"
+        note="The rendered HTML with the vds- classes, for teams not using React. Almost everything Popover does is JS: measuring and placing the panel (it's position: absolute with inline top/left), flipping when space runs out, outside-click / Escape to close, and moving focus. The panel only exists in the DOM while open."
+      >
+        <Code>{`<div class="vds-popover">
+  <!-- your trigger, with the ARIA the JS keeps in sync -->
+  <button class="vds-button vds-button--outline vds-button--neutral vds-button--md"
+          aria-haspopup="menu" aria-expanded="true" aria-controls="pop-1">
+    Options
+  </button>
+
+  <!-- open panel: a Surface, positioned by JS (inline top/left/max-height) -->
+  <div id="pop-1" class="vds-surface vds-surface--radius-md vds-surface--bordered
+                         vds-surface--elev-overlay vds-popover__panel"
+       role="menu" tabindex="-1" style="position:absolute; top:…; left:…">
+    <!-- the standard dropdown list shared by Select / TimeframeSelect -->
+    <div class="vds-popover__menu">
+      <button type="button" role="menuitem" class="vds-popover__item">Rename</button>
+      <button type="button" role="menuitem" class="vds-popover__item">Duplicate</button>
+      <button type="button" role="menuitem"
+              class="vds-popover__item vds-popover__item--active">Archive</button>
+    </div>
+  </div>
+</div>
+
+<!-- vds-popover__panel--up is added when the panel flips above the trigger -->`}</Code>
       </Section>
     </ComponentPage>
   )

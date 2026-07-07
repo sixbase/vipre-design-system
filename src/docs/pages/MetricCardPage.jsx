@@ -1,7 +1,7 @@
 import { DollarSign, Users, ShieldCheck, TrendingDown } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, Code, IC } from '../primitives.jsx'
 import { MetricCard, Grid } from '../../components/index.js'
 
 const ONE = { width: '100%', maxWidth: 380 }
@@ -198,6 +198,61 @@ export function MetricCardPage() {
   <MetricCard … onClick={openCustomers} />
 </Grid>`}
         />
+      </Section>
+
+      <Section
+        title="Markup"
+        note="The rendered HTML with the vds- classes, for teams not using React. The look is pure CSS; the count-up numbers and the growing bar are JS (the React component animates them when the card scrolls into view — in plain HTML the values just sit there, which is fine). Interactive cards render as a <button>."
+      >
+        <Code>{`<!-- icon chip tones: vds-metric--icon-{primary|success|warning|danger|azure|harbor|emerald|amber|rose|orchid|clay} -->
+<div class="vds-surface vds-surface--radius-lg vds-surface--bordered vds-surface--elev-resting
+            vds-metric vds-metric--icon-orchid">
+  <div class="vds-metric__in">
+    <div class="vds-metric__header">
+      <span class="vds-metric__icon" aria-hidden="true">
+        <svg class="vds-icon" width="20" height="20" aria-hidden="true">…</svg>
+      </span>
+      <div class="vds-metric__heading">
+        <h3 class="vds-metric__title">Total Revenue</h3>
+        <span class="vds-metric__period">Q1 2026 (Jan – Mar)</span>
+      </div>
+    </div>
+
+    <div class="vds-metric__figure">
+      <span class="vds-metric__value">$2.45M</span>
+      <div class="vds-metric__delta">
+        <span class="vds-badge vds-badge--success" role="status">
+          <span class="vds-metric__delta-inner">
+            <svg class="vds-icon" width="14" height="14" aria-hidden="true">…trend arrow…</svg>
+            +12.5%
+          </span>
+        </span>
+        <span class="vds-metric__delta-caption">vs last quarter</span>
+      </div>
+    </div>
+
+    <div class="vds-metric__progress">
+      <div class="vds-metric__progress-head">
+        <span class="vds-metric__progress-label">Quarterly target: $2.8M</span>
+        <span class="vds-metric__progress-pct">87%</span>
+      </div>
+      <div class="vds-metric__bar" role="progressbar" aria-valuenow="87" aria-valuemin="0" aria-valuemax="100">
+        <!-- bar fill tones: --azure | --primary | --success | --danger -->
+        <div class="vds-metric__bar-fill vds-metric__bar-fill--azure" style="width: 87%"></div>
+      </div>
+    </div>
+
+    <div class="vds-divider vds-divider--horizontal" role="separator" aria-orientation="horizontal"></div>
+    <dl class="vds-metric__breakdown">
+      <div class="vds-metric__breakdown-row">
+        <dt class="vds-metric__breakdown-label">Gross margin</dt>
+        <dd class="vds-metric__breakdown-value">42.8%</dd>
+      </div>
+    </dl>
+  </div>
+</div>
+
+<!-- clickable card: <button class="… vds-metric vds-metric--interactive"> -->`}</Code>
       </Section>
     </ComponentPage>
   )

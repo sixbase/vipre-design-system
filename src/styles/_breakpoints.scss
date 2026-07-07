@@ -1,0 +1,77 @@
+// ============================================================================
+// BREAKPOINTS — responsive mixin API. Mixin-only: this partial emits NO CSS
+// on its own; it exists to be @use'd.
+// ----------------------------------------------------------------------------
+// CSS media queries cannot read custom properties, so breakpoints live here as
+// an SCSS map — the ONE source of truth. The same values are also emitted from
+// _tokens.scss as informational --vds-bp-* custom properties for JS consumers
+// (e.g. matchMedia); the mixins below are the real styling API.
+//
+// From a component partial (src/components/{Name}/):
+//   @use '../../styles/breakpoints' as bp;
+//   .vds-thing { @include bp.up(md) { flex-direction: row; } }
+//
+// Mobile-first: author base styles for the smallest screen, then layer
+// `up()` overrides as the viewport grows. Reach for `down()` only when a
+// style genuinely applies *below* a width and unwinding it would be noisier.
+// ============================================================================
+@use 'sass:map';
+@use 'sass:meta';
+
+$breakpoints: (
+  'sm':  640px,   // large phones / small tablets (portrait)
+  'md':  768px,   // tablets — the sidenav can stay open from here
+  'lg':  1024px,  // laptops — full shell (sidenav + topbar) comfortable
+  'xl':  1280px,  // desktops — the fluid typescale reaches full size here
+  '2xl': 1536px,  // wide desktops / large monitors
+);
+
+// Resolve a breakpoint name to its px value. Accepts quoted or unquoted names
+// ('#{...}' normalises `2xl`, which Sass would otherwise parse as a number
+// with an "xl" unit). Errors loudly on a typo — media queries fail silently.
+@function value($name) {
+  $key: '#{$name}';
+  @if not map.has-key($breakpoints, $key) {
+    @error 'Unknown breakpoint `#{$name}`. Use one of: #{map.keys($breakpoints)}.';
+  }
+  @return map.get($breakpoints, $key);
+}
+
+// At this breakpoint and wider (mobile-first — the default choice).
+@mixin up($name) {
+  @media (min-width: value($name)) {
+    @content;
+  }
+}
+
+// Strictly narrower than this breakpoint. -0.02px keeps up(md) and down(md)
+// from both matching at exactly 768px (0.02 dodges browser subpixel rounding).
+@mixin down($name) {
+  @media (max-width: (value($name) - 0.02px)) {
+    @content;
+  }
+}
+
+// Between two breakpoints: at $from and wider, but narrower than $to.
+@mixin between($from, $to) {
+  @media (min-width: value($from)) and (max-width: (value($to) - 0.02px)) {
+    @content;
+  }
+}
+
+// Coarse pointer (finger/touch, not a mouse) — grow hit areas to
+// --vds-tap-target here. Pointer type, not viewport width: a touch laptop is
+// wide AND coarse.
+@mixin coarse {
+  @media (pointer: coarse) {
+    @content;
+  }
+}
+
+// The user has NOT asked for reduced motion — gate every non-essential
+// animation/transition behind this so reduced-motion users get none of it.
+@mixin motion-ok {
+  @media (prefers-reduced-motion: no-preference) {
+    @content;
+  }
+}

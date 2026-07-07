@@ -4,6 +4,7 @@
 // menu TimeframeSelect uses, so options share one look across the system.
 // ============================================================================
 @use '../../styles/typography' as type;
+@use '../../styles/breakpoints' as bp;
 
 .vds-select {
   // Same SEMANTIC chrome as Input/Textarea so the trigger matches the form
@@ -21,6 +22,7 @@
   // Trigger (the closed control)
   // ====================================================================
   &__trigger {
+    position: relative; // anchors the coarse-pointer ::after hit-area overlay
     display: inline-flex;
     align-items: center;
     justify-content: space-between;
@@ -62,10 +64,28 @@
   &--placeholder .vds-select__value { color: var(--vds-input-muted); }
   &__caret { color: var(--vds-input-muted); flex-shrink: 0; }
 
-  // ---- sizes (match Input / native Select) ----
-  &--sm { &.vds-select__trigger { height: 2rem;    @include type.step(detail);  padding: 0 0.5rem  0 0.625rem; } }
-  &--md { &.vds-select__trigger { height: 2.25rem; @include type.step(body);    padding: 0 0.625rem 0 0.75rem; } }
-  &--lg { &.vds-select__trigger { height: 2.75rem; @include type.step(body-lg); padding: 0 0.75rem  0 1rem; } }
+  // ---- sizes (heights = the shared control-metric tokens, matching Input) ----
+  &--sm { &.vds-select__trigger { height: var(--vds-control-h-sm); @include type.step(detail);  padding: 0 0.5rem  0 0.625rem; } }
+  &--md { &.vds-select__trigger { height: var(--vds-control-h-md); @include type.step(body);    padding: 0 0.625rem 0 0.75rem; } }
+  &--lg { &.vds-select__trigger { height: var(--vds-control-h-lg); @include type.step(body-lg); padding: 0 0.75rem  0 1rem; } }
+
+  // Touch: keep the visual height, grow an invisible hit area to the minimum
+  // tap target, and hold trigger text at ≥16px (matches the Input rule; also
+  // dodges any iOS zoom heuristics on form controls).
+  @include bp.coarse {
+    &--md.vds-select__trigger { font-size: 1rem; }
+
+    &--sm.vds-select__trigger::after,
+    &--md.vds-select__trigger::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: max(100%, var(--vds-tap-target));
+      height: max(100%, var(--vds-tap-target));
+    }
+  }
 
   &--invalid {
     &.vds-select__trigger {

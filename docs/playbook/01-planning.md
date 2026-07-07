@@ -6,9 +6,9 @@
 
 A token-driven design system for Vipre's product UI — the MSP **scope navigator** and related SaaS surfaces. It must be:
 
-- **Consumable** by Vipre's front-end team (install the package; import tokens and/or components).
+- **Consumable** by Vipre's front-end team (install the package; import tokens and/or components — or use the CSS bundle framework-agnostically).
 - **Contributable** by designers and others (edit one component folder; everything's co-located).
-- **Coherent** — cool, clinical, data-dense; one accent; the Rubik typescale; light + dark.
+- **Coherent** — cool, clinical, data-dense; one accent; the Rubik typescale; light + dark; every screen size.
 
 Structure and delivery mirror `sixbase/claude-design-system`; the aesthetic is fresh (see [00-principles.md](00-principles.md) and [06-decisions-log.md](06-decisions-log.md)).
 
@@ -17,26 +17,38 @@ Structure and delivery mirror `sixbase/claude-design-system`; the aesthetic is f
 | Foundation | Page | Status |
 | --- | --- | --- |
 | Colors (3-tier, light/dark) | `/foundation/colors` | ✅ |
-| Typography (Rubik, 11 steps) | `/foundation/typography` | ✅ |
+| Typography (Rubik, 11 steps, fluid display/title/heading) | `/foundation/typography` | ✅ |
 | Spacing (4px scale) | `/foundation/spacing` | ✅ |
-| Layout (container, 12-col grid) | `/foundation/layout` | ✅ |
+| Layout (container, 12-col grid, responsive page-pad) | `/foundation/layout` | ✅ |
+| Responsiveness (breakpoint mixins, tap targets, container-first) | `/foundation/responsiveness` | ✅ |
+| Depth (elevation semantics, z-index scale) | `/foundation/depth` | ✅ |
 
 ## Components — status
 
-| Component | API | Status |
-| --- | --- | --- |
-| `Heading` | `level` (display/title/heading/subheading), `as`, `tone` | ✅ |
-| `Text` | `variant` (body-lg…nano), `as`, `tone` | ✅ |
-| `Button` | `variant` (primary/secondary/ghost/danger) × `size` (sm/md/lg) | ✅ |
-| `Badge` | `tone` (neutral/primary/success/warning/danger/info), `dot` | ✅ |
-| `ScopeNavigator` | `path`, `onNavigate`, `rootItems`, `typeConfig`, `statusConfig`, `onSearch`, `actions` — the MSP hierarchy breadcrumb (composite: Surface + Input + Icon) | ✅ |
-| `Popover` | `trigger`, `placement` (bottom/top × start/end, auto-flip), `role`, controlled/uncontrolled — the anchored-overlay primitive (flip + viewport clamp + Esc + focus return + ARIA) | ✅ |
-| `TimeframeSelect` | `variant` (dropdown/segmented), `options`, `value`/`onChange`, `allowCustom`, `size` — dashboard time-window control (composes Popover) | ✅ |
+All ✅ = built, token-bound, documented (with a framework-agnostic Markup section), registered in the barrel + style aggregate + routes.
 
-## Roadmap — the data-dense set MSP needs
+**Layout primitives:** Surface · Stack · Inline · Grid · Divider
 
-Deferred, in rough priority for the scope navigator prototype:
+**Typography:** Text · Heading
 
-Table · Input · Select · Checkbox · Card · Tabs · SideNav · FilterPanel · Modal · Toast · Tooltip · Avatar · ProgressBar · Breadcrumb · Pagination.
+**Controls:** Button · Icon · Field · Input · SearchInput · Textarea · Checkbox · Radio + RadioGroup · Switch · Select · Combobox · Slider · SegmentedControl · Popover · Spinner
 
-When you complete one, move it into the Components status table and add its docs page + route.
+**Overlays:** Modal · Drawer · Menu (+ MenuItem/MenuSeparator/MenuLabel) · Tooltip · Toast (+ ToastProvider/useToast) · CommandPalette
+
+**Navigation:** Tabs (+ TabList/Tab/TabPanel) · Accordion (+ Item/Trigger/Content) · Breadcrumb · Pagination · Stepper · Kbd
+
+**Feedback & display:** Badge · Tag · Avatar (+ AvatarGroup) · Alert · Progress · Skeleton · EmptyState · DescriptionList · VisuallyHidden
+
+**Data & metrics:** Table (sortable, selectable, sticky, opt-in `responsive` stacked-card mode) · StatTile · MetricCard · Sparkline
+
+**App chrome:** AppShell (+ AppShellNavTrigger) · TopBar · SideNav (the MSP v2 navy rail, + ProductTile) · CurrentLeftNav (legacy shipped nav, frozen) · PageHeader · ScopeNavigator · TimeframeSelect
+
+## Templates
+
+Full-page compositions documented under `/templates/*`: Product Dashboard · MSP Shell · Customer Directory · Device List · Policy List · Entity Detail · Current Nav Shell.
+
+## Roadmap
+
+Candidates, not commitments: DatePicker/Calendar · FileUpload · toolbar/DataGrid extensions (column resize, virtualization) · charts beyond Sparkline · Combobox multi-select (tag input) · Figma library sync.
+
+When you complete one, move it into the status list and add its docs page + route.

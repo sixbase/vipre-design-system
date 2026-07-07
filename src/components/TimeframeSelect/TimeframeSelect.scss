@@ -6,18 +6,20 @@
 // fill + focus-ring) so it sits naturally beside other controls.
 // ============================================================================
 @use '../../styles/typography' as type;
+@use '../../styles/breakpoints' as bp;
 
 .vds-timeframe {
   --vds-tf-hover: color-mix(in oklab, var(--vds-ink) 6%, transparent);
 
-  // ---- shared sizing ----
-  &--sm { --vds-tf-h: 2rem; }
-  &--md { --vds-tf-h: 2.25rem; }
+  // ---- shared sizing (bound to the control-metric tokens) ----
+  &--sm { --vds-tf-h: var(--vds-control-h-sm); }
+  &--md { --vds-tf-h: var(--vds-control-h-md); }
 
   // ====================================================================
   // Dropdown trigger pill
   // ====================================================================
   &__trigger {
+    position: relative; // anchors the coarse-pointer ::after hit-area overlay
     display: inline-flex;
     align-items: center;
     gap: var(--vds-space-2);
@@ -111,13 +113,22 @@
     display: flex;
     align-items: center;
     gap: var(--vds-space-2);
+
+    // Narrow screens: the two date inputs stack instead of crushing each other
+    // inside the ~300px popover; the connecting dash reads as noise, drop it.
+    @include bp.down(sm) {
+      flex-direction: column;
+      align-items: stretch;
+
+      .vds-timeframe__custom-dash { display: none; }
+    }
   }
   &__custom-dash { color: var(--vds-ink-subtle); }
   &__apply {
     width: 100%;
     margin-top: var(--vds-space-2);
     padding: var(--vds-space-1) var(--vds-space-2);
-    height: 2rem;
+    height: var(--vds-control-h-sm);
     border: 0;
     border-radius: var(--vds-radius-sm);
     background-color: var(--vds-primary);
@@ -146,8 +157,15 @@
     border: 1px solid var(--vds-line);
     border-radius: var(--vds-radius-md);
     background-color: color-mix(in oklab, var(--vds-ink) 4%, transparent);
+    // Narrow containers: the track scrolls sideways instead of wrapping — a
+    // two-row segmented control stops reading as one choice.
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
   &__seg {
+    position: relative; // anchors the coarse-pointer ::after hit-area overlay
+    flex-shrink: 0;     // segments keep their size; the track scrolls instead
     height: calc(var(--vds-tf-h, 2.25rem) - 4px);
     padding: 0 var(--vds-space-3);
     border: 0;
@@ -174,6 +192,30 @@
       color: var(--vds-ink);
       box-shadow: var(--vds-shadow-xs);
     }
+  }
+
+  // ---- touch (coarse pointer) — tap targets without visual bloat ----
+  @include bp.coarse {
+    // menu rows reach the minimum tap height
+    &__option { min-height: var(--vds-tap-target); }
+
+    // trigger pill + segments grow an invisible, centered hit-area overlay
+    &__trigger::after,
+    &__seg::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: max(100%, var(--vds-tap-target));
+      height: max(100%, var(--vds-tap-target));
+    }
+    // adjacent segments would overlap each other's overlays sideways — keep the
+    // segment overlay vertical-only so every segment stays individually hittable
+    &__seg::after { width: 100%; }
+
+    // the Apply button in the custom-range editor
+    &__apply { min-height: var(--vds-tap-target); }
   }
 }
 

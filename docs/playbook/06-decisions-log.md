@@ -530,3 +530,35 @@ figures must column-align and not jitter as they update; documented with a propo
 Completed the **Semantic mapping** table (had omitted `body-lg`/`caption`/`micro`/`nano`). `tokens.js`
 gained `LEADING` to mirror the ramp. Verified in-browser (matrix computes 20px×1.2/1.5/1.7 = 24/30/34px;
 tabular column right-aligns) and both CSS bundles rebuild clean.
+
+---
+
+**The all-screen-sizes overhaul (July 2026) — responsive foundation + ~30 new components + the MSP v2 rail.**
+One coordinated pass (multi-agent, disjoint file ownership, orchestrator wires the shared registries).
+The decisions that matter going forward:
+
+- **Breakpoints are SCSS mixins, not runtime tokens.** `src/styles/_breakpoints.scss` (`bp.up/down/between/coarse/motion-ok`,
+  sm 640 / md 768 / lg 1024 / xl 1280 / 2xl 1536). CSS custom properties can't drive media queries, so the map is the
+  source of truth; informational `--vds-bp-*` tokens are emitted for JS consumers (AppShell reads `--vds-bp-lg` so JS
+  and SCSS can't drift).
+- **Container-first stays the law; viewport queries are for chrome + coarse pointers.** Components adapt to their own
+  width (`container-type: inline-size` + `@container`; the root is the container, layout lives in an `__in` wrapper).
+  Viewport breakpoints govern shells (AppShell/docs drawer below lg), overlay sizing (<sm full-width modals/drawers),
+  and `bp.coarse` tap targets (`--vds-tap-target: 44px` via invisible hit-area overlays).
+- **Fluid type for the big steps only.** display/title/heading are `clamp()` between 320px and desktop; body sizes fixed.
+- **The v2 SideNav replaces the old theme-following rail** (breaking API: `sections/footerSections/utilities/account/
+  onBack` replace `brand/groups/footerItems`). Fixed midnight chrome in both themes; selection brandable via
+  `--vds-nav-accent` only; concentric radii tile 8 / pill 10 / card 12 (+2 nesting rule); collapse choreography is
+  220ms `--vds-ease-emphatic` with asymmetric label fades and an icon column that never moves (x=36). The old shipped
+  nav lives on, frozen, as `CurrentLeftNav`.
+- **AppShell owns responsiveness of the frame**: nav column ↔ off-canvas drawer below lg (scrim, Escape, scroll lock,
+  focus return); content is a size container so page components respond to the rail collapsing, not the viewport.
+- **Overlay stack is complete and composed**: Modal/Drawer own dialog semantics (trap, lock, return); Menu/Select/
+  Combobox/Breadcrumb-ellipsis compose Popover; Tooltip is its own light primitive on `--vds-z-tooltip`; Toast is a
+  provider + hook. CommandPalette is deliberately self-contained (own scrim/trap) so it never depends on Modal.
+- **Table `responsive` (opt-in)**: below ~640px of container width rows become labelled stacked cards via
+  `data-label`/`::before`; the header row stays in the AT tree. Default table unchanged.
+- **Docs are ELI10 + framework-agnostic**: every component page carries a "Markup" section (the rendered vds- BEM HTML)
+  so the CSS bundle is usable without React; docs site itself is responsive (off-canvas sidebar below lg).
+- **New tokens**: `--vds-ease-emphatic`, `--vds-dur-slow`, `--vds-page-pad` (16→24→32), `--vds-sidenav-w(-collapsed)`,
+  `--vds-topbar-h`, `--vds-nav-accent`, `--vds-control-h-sm/md/lg`, `--vds-tap-target`, `--vds-accent-cobalt(-soft)`.

@@ -28,6 +28,40 @@ import { ScopeNavigatorPage } from './pages/ScopeNavigatorPage.jsx'
 import { TimeframeSelectPage } from './pages/TimeframeSelectPage.jsx'
 import { ProductDashboardPage } from './pages/ProductDashboardPage.jsx'
 import { CurrentNavShellPage } from './pages/CurrentNavShellPage.jsx'
+import { ResponsivenessPage } from './pages/ResponsivenessPage.jsx'
+import { RadioPage } from './pages/RadioPage.jsx'
+import { SliderPage } from './pages/SliderPage.jsx'
+import { SegmentedControlPage } from './pages/SegmentedControlPage.jsx'
+import { SearchInputPage } from './pages/SearchInputPage.jsx'
+import { ComboboxPage } from './pages/ComboboxPage.jsx'
+import { VisuallyHiddenPage } from './pages/VisuallyHiddenPage.jsx'
+import { ModalPage } from './pages/ModalPage.jsx'
+import { DrawerPage } from './pages/DrawerPage.jsx'
+import { ToastPage } from './pages/ToastPage.jsx'
+import { TooltipPage } from './pages/TooltipPage.jsx'
+import { MenuPage } from './pages/MenuPage.jsx'
+import { CommandPalettePage } from './pages/CommandPalettePage.jsx'
+import { TabsPage } from './pages/TabsPage.jsx'
+import { AccordionPage } from './pages/AccordionPage.jsx'
+import { BreadcrumbPage } from './pages/BreadcrumbPage.jsx'
+import { PaginationPage } from './pages/PaginationPage.jsx'
+import { StepperPage } from './pages/StepperPage.jsx'
+import { KbdPage } from './pages/KbdPage.jsx'
+import { AlertPage } from './pages/AlertPage.jsx'
+import { ProgressPage } from './pages/ProgressPage.jsx'
+import { SkeletonPage } from './pages/SkeletonPage.jsx'
+import { AvatarPage } from './pages/AvatarPage.jsx'
+import { TagPage } from './pages/TagPage.jsx'
+import { EmptyStatePage } from './pages/EmptyStatePage.jsx'
+import { DescriptionListPage } from './pages/DescriptionListPage.jsx'
+import { AppShellPage } from './pages/AppShellPage.jsx'
+import { TopBarPage } from './pages/TopBarPage.jsx'
+import { MspShellTemplatePage } from './pages/MspShellTemplatePage.jsx'
+import { CustomerListTemplatePage } from './pages/CustomerListTemplatePage.jsx'
+import { DeviceListTemplatePage } from './pages/DeviceListTemplatePage.jsx'
+import { PolicyListTemplatePage } from './pages/PolicyListTemplatePage.jsx'
+import { EntityDetailTemplatePage } from './pages/EntityDetailTemplatePage.jsx'
+import { TextareaPage } from './pages/TextareaPage.jsx'
 
 /* Single source of truth for both the sidebar nav and the hash router. */
 export const NAV = [
@@ -46,6 +80,7 @@ export const NAV = [
       { path: '/foundation/typography', name: 'Typography', Page: TypographyPage },
       { path: '/foundation/spacing', name: 'Spacing', Page: SpacingPage },
       { path: '/foundation/layout', name: 'Layout', Page: LayoutPage },
+      { path: '/foundation/responsiveness', name: 'Responsiveness', Page: ResponsivenessPage },
       { path: '/foundation/depth', name: 'Depth', Page: DepthPage },
     ],
   },
@@ -55,11 +90,18 @@ export const NAV = [
       { path: '/primitives/icon', name: 'Icon', Page: IconPage },
       { path: '/primitives/field', name: 'Field', Page: FieldPage },
       { path: '/primitives/input', name: 'Input', Page: InputPage },
+      { path: '/primitives/search-input', name: 'Search Input', Page: SearchInputPage },
+      { path: '/primitives/textarea', name: 'Textarea', Page: TextareaPage },
       { path: '/primitives/checkbox', name: 'Checkbox', Page: CheckboxPage },
+      { path: '/primitives/radio', name: 'Radio', Page: RadioPage },
       { path: '/primitives/switch', name: 'Switch', Page: SwitchPage },
       { path: '/primitives/select', name: 'Select', Page: SelectPage },
+      { path: '/primitives/combobox', name: 'Combobox', Page: ComboboxPage },
+      { path: '/primitives/slider', name: 'Slider', Page: SliderPage },
+      { path: '/primitives/segmented-control', name: 'Segmented Control', Page: SegmentedControlPage },
       { path: '/primitives/popover', name: 'Popover', Page: PopoverPage },
       { path: '/primitives/spinner', name: 'Spinner', Page: SpinnerPage },
+      { path: '/primitives/visually-hidden', name: 'Visually Hidden', Page: VisuallyHiddenPage },
     ],
   },
   {
@@ -67,14 +109,59 @@ export const NAV = [
     items: [
       { path: '/components/button', name: 'Button', Page: ButtonPage },
       { path: '/components/badge', name: 'Badge', Page: BadgePage },
+      { path: '/components/tag', name: 'Tag', Page: TagPage },
+      { path: '/components/avatar', name: 'Avatar', Page: AvatarPage },
+      { path: '/components/kbd', name: 'Kbd', Page: KbdPage },
       { path: '/components/card', name: 'Card', Page: CardPage },
+      { path: '/components/description-list', name: 'Description List', Page: DescriptionListPage },
       { path: '/components/sparkline', name: 'Sparkline', Page: SparklinePage },
       { path: '/components/table', name: 'Table', Page: TablePage },
+    ],
+  },
+  {
+    // Floating layers — everything on the z-index scale above the page.
+    group: 'Overlays',
+    items: [
+      { path: '/components/modal', name: 'Modal', Page: ModalPage },
+      { path: '/components/drawer', name: 'Drawer', Page: DrawerPage },
+      { path: '/components/menu', name: 'Menu', Page: MenuPage },
+      { path: '/components/tooltip', name: 'Tooltip', Page: TooltipPage },
+      { path: '/components/toast', name: 'Toast', Page: ToastPage },
+      { path: '/components/command-palette', name: 'Command Palette', Page: CommandPalettePage },
+    ],
+  },
+  {
+    // Wayfinding — moving through pages, steps, and long lists.
+    group: 'Navigation',
+    items: [
+      { path: '/components/tabs', name: 'Tabs', Page: TabsPage },
+      { path: '/components/accordion', name: 'Accordion', Page: AccordionPage },
+      { path: '/components/breadcrumb', name: 'Breadcrumb', Page: BreadcrumbPage },
+      { path: '/components/pagination', name: 'Pagination', Page: PaginationPage },
+      { path: '/components/stepper', name: 'Stepper', Page: StepperPage },
+    ],
+  },
+  {
+    // Status & loading — telling the user what's happening.
+    group: 'Feedback',
+    items: [
+      { path: '/components/alert', name: 'Alert', Page: AlertPage },
+      { path: '/components/progress', name: 'Progress', Page: ProgressPage },
+      { path: '/components/skeleton', name: 'Skeleton', Page: SkeletonPage },
+      { path: '/components/empty-state', name: 'Empty State', Page: EmptyStatePage },
+    ],
+  },
+  {
+    // The app frame — chrome that wraps every product page.
+    group: 'App Chrome',
+    items: [
+      { path: '/components/app-shell', name: 'App Shell', Page: AppShellPage },
       { path: '/components/side-nav', name: 'Side Nav', Page: SideNavPage },
-      { path: '/components/current-left-nav', name: 'Current Left Nav', Page: CurrentLeftNavPage },
+      { path: '/components/top-bar', name: 'Top Bar', Page: TopBarPage },
       { path: '/components/page-header', name: 'Page Header', Page: PageHeaderPage },
       { path: '/components/scope-navigator', name: 'Scope Navigator', Page: ScopeNavigatorPage },
       { path: '/components/timeframe-select', name: 'Timeframe Select', Page: TimeframeSelectPage },
+      { path: '/components/current-left-nav', name: 'Current Left Nav', Page: CurrentLeftNavPage },
     ],
   },
   {
@@ -91,6 +178,11 @@ export const NAV = [
     // template is documented by its regions/slots; the body is swappable.
     group: 'Templates',
     items: [
+      { path: '/templates/msp-shell', name: 'MSP Shell', Page: MspShellTemplatePage },
+      { path: '/templates/customer-list', name: 'Customer Directory', Page: CustomerListTemplatePage },
+      { path: '/templates/device-list', name: 'Device List', Page: DeviceListTemplatePage },
+      { path: '/templates/policy-list', name: 'Policy List', Page: PolicyListTemplatePage },
+      { path: '/templates/entity-detail', name: 'Entity Detail', Page: EntityDetailTemplatePage },
       { path: '/templates/product-dashboard', name: 'Product Dashboard', Page: ProductDashboardPage },
       { path: '/templates/current-nav-shell', name: 'Current Nav Shell', Page: CurrentNavShellPage },
     ],

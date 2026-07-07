@@ -6,7 +6,7 @@ export function LayoutPage() {
   return (
     <DocPage
       title="Layout"
-      description="The rules for laying out a screen: a centered box that stops growing at a set width, a 12-column grid with even gaps, and set spacing between sections. Pages use these tokens and never make up new layout sizes."
+      description="The rules for laying out a screen: a centered box that stops growing at a set width, a 12-column grid with even gaps, and set spacing between sections. Pages use these tokens and never make up new layout sizes. They're plain CSS variables, so any framework can use them."
     >
       <Section title="Tokens">
         <PropsTable

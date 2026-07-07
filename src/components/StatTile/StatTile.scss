@@ -11,6 +11,10 @@
   min-width: 0; // shrink-safe inside a grid/flex cell (no overflow)
   text-align: left;
   font-family: var(--vds-font-sans);
+  // The tile adapts to ITS OWN width (container queries below), not the
+  // viewport — a narrow tile in a wide dashboard grid still tightens up.
+  // Safe with inline-size containment because the width is explicit (100%).
+  container-type: inline-size;
 
   // Corner = Surface's default radius-lg (12px) — the shared metrics-family
   // value (StatTile + MetricCard match). No component-scoped override.
@@ -61,7 +65,10 @@
   }
 
   &__delta { flex-shrink: 0; }
-  &__spark { flex-shrink: 0; }
+  &__spark {
+    flex-shrink: 1; // the trend gives way before anything overflows…
+    min-width: 0;   // …and may shrink below its natural SVG width
+  }
 
   // structured delta chip: signed value, colored by direction (+/- conveys it)
   &__delta--chip {
@@ -93,12 +100,24 @@
     &--value { width: 4.5rem; height: 1.5rem; margin-top: 0.5rem; }
   }
 
-  // ---- layout: stacked (default) ----
-  &--stacked {
+  // ---- inner layout wrapper ----
+  // The ROOT is the query container, and a container query can't restyle the
+  // container itself — so the padding + flex layout live one level in, where
+  // the narrow-tile query below can reach them.
+  &__in {
     display: flex;
+    width: 100%;
+    min-width: 0;
+    padding: var(--vds-space-4);
+  }
+  &--size-lg &__in { padding: var(--vds-space-5); }
+
+  // ---- layout: stacked (default) ----
+  &--stacked &__in {
     flex-direction: column;
     gap: var(--vds-space-1);
-
+  }
+  &--stacked {
     .vds-stat__top {
       display: flex;
       align-items: center;
@@ -111,11 +130,11 @@
   }
 
   // ---- layout: row (compact) ----
-  &--row {
-    display: flex;
+  &--row &__in {
     align-items: center;
     gap: var(--vds-space-3);
-
+  }
+  &--row {
     .vds-stat__body { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
     .vds-stat__spark { margin-left: auto; }
     .vds-stat__delta { margin-left: auto; }
@@ -139,6 +158,26 @@
   // ---- interactive (drill-in) — shared metrics-family recipe ----
   &--interactive { @include mix.interactive-card; }
 
+  // ---- narrow-tile adaptation (container query on the tile's own width) ----
+  // Squeezed tiles (dense grids, phone columns): the value drops one type step,
+  // padding tightens, and the row layout wraps its trend onto a second line
+  // instead of crushing the label. The query resolves against the ROOT (the
+  // container); everything styled here is a descendant — see `__in` above.
+  @container (max-width: 219.98px) {
+    &__in,
+    &--size-lg .vds-stat__in { padding: var(--vds-space-3); }
+
+    &--size-md .vds-stat__value { @include type.step(heading); }
+    &--size-lg .vds-stat__value { @include type.step(title); }
+
+    &--row .vds-stat__in { flex-wrap: wrap; }
+    &--row .vds-stat__spark {
+      margin-left: 0;
+      width: 100%;
+    }
+    &--row .vds-stat__spark + .vds-stat__delta { margin-left: auto; }
+  }
+
   // ---- tones (color ONLY the icon glyph + soft chip; the value stays ink) ----
   &--primary {
     --vds-stat-accent: var(--vds-primary);
@@ -161,7 +200,8 @@
   // Color the icon glyph + soft chip; the sparkline follows automatically since
   // sparkTone derives from tone. Each maps to a semantic ACCENT token, which
   // already carries the light→dark (600→400) flip — no per-mode override needed.
-  @each $fam in azure, harbor, emerald, amber, rose, orchid, clay {
+  // azure / orchid are quoted: they're CSS color keywords (matches MetricCard).
+  @each $fam in "azure", harbor, emerald, amber, rose, "orchid", clay {
     &--#{$fam} {
       --vds-stat-accent: var(--vds-accent-#{$fam});
       --vds-stat-soft: var(--vds-accent-#{$fam}-soft);

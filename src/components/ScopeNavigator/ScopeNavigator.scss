@@ -24,6 +24,7 @@
 // full trail won't fit, so it stays correct inside any layout.
 // ============================================================================
 @use '../../styles/typography' as type;
+@use '../../styles/breakpoints' as bp;
 
 .vds-scope {
   // Popover/menu rows + small bar controls (carets) hover with the SAME relative
@@ -273,7 +274,7 @@
     overscroll-behavior: contain;
     white-space: normal;
 
-    @media (min-width: 640px) {
+    @include bp.up(sm) {
       width: 320px;
     }
   }
@@ -388,7 +389,9 @@
   // a check affix) rather than a separate "Current" tag.
   &__results {
     position: relative;
-    max-height: 352px;
+    // 352px of rows, but never more than half the viewport — keeps the whole
+    // popover (header + search + toolbar + list) on-screen on short phones.
+    max-height: min(352px, 50vh);
     overflow-y: auto;
     overscroll-behavior: contain;
     padding: var(--vds-space-1);
@@ -491,12 +494,12 @@
     z-index: var(--vds-z-dropdown);
     overflow: hidden;
 
-    @media (min-width: 640px) {
+    @include bp.up(sm) {
       width: 256px;
     }
   }
   &__ellipsis-list {
-    max-height: 280px;
+    max-height: min(280px, 50vh); // vh cap keeps the menu on short phone screens
     overflow-y: auto;
     padding: var(--vds-space-1);
   }
@@ -524,6 +527,36 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  // ---- touch (coarse pointer) — tap targets without visual bloat ----
+  @include bp.coarse {
+    // popover rows + ellipsis rows reach the minimum tap height
+    &__item,
+    &__ellipsis-item,
+    &__menu-item {
+      min-height: var(--vds-tap-target);
+    }
+
+    // small round controls (drill-down caret, sort/filter buttons) grow an
+    // invisible, centered hit-area overlay. Vertical-only on the caret so it
+    // can't swallow taps meant for the crumb label beside it.
+    &__caret,
+    &__menu-btn,
+    &__ellipsis {
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: max(100%, var(--vds-tap-target));
+        height: max(100%, var(--vds-tap-target));
+      }
+    }
+    &__caret::after { width: 100%; }
   }
 }
 

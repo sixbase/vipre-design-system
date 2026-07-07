@@ -4,7 +4,7 @@ import {
   Laptop, Monitor, Bell, GraduationCap, Database, UserCog, User, ArrowRight, LogOut,
 } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, Code, IC } from '../primitives.jsx'
 import { CurrentLeftNav } from '../../components/index.js'
 import { VipreLogo } from '../VipreLogo.jsx'
 
@@ -82,7 +82,7 @@ export function CurrentLeftNavPage() {
   return (
     <ComponentPage
       title="Current Left Nav"
-      description="The VIPRE left menu bar the way it looks today, saved as a component. One component builds the whole rail: a centered logo at the top, a standalone Overview entry, a stack of product cards (each a bordered see-through panel with a product icon, sub-pages you can open and close, and a “full portal” link out), locked teaser rows for products you don't have, and a pinned account and admin footer. Unlike SideNav, this one does NOT match the theme on purpose — it always shows the navy look, set by its own --vds-clnav-* values. Uses Icon."
+      description="The VIPRE left menu bar the way it ships today, saved as a component. One component builds the whole rail: a centered logo, a standalone Overview entry, a stack of product cards (each with sub-pages you can open and close, and a “full portal” link out), locked teaser rows for products you don't have, and a pinned account footer. It never follows the theme — it always shows the navy look, set by its own --vds-clnav-* values. This is the faithful snapshot of the shipped nav; new builds should use SideNav instead."
       installCode={`import { CurrentLeftNav } from 'vipre-design-system'`}
       props={[
         {
@@ -164,6 +164,63 @@ export function CurrentLeftNavPage() {
   ]}
 />`}
         />
+      </Section>
+
+      <Section
+        title="Markup"
+        note="The rail's rendered HTML with the vds- classes, for teams not using React. The look (always-navy, cards, locked rows) is pure CSS. Opening and closing a product card, the aria-expanded state, and moving the active highlight are JS you'd wire yourself."
+      >
+        <Code>{`<nav class="vds-clnav" aria-label="Primary">
+  <div class="vds-clnav__header"><!-- brand / logo --></div>
+
+  <div class="vds-clnav__scroll">
+    <!-- standalone Overview entry -->
+    <button type="button" class="vds-clnav__overview vds-clnav__overview--active" aria-current="page">
+      <span class="vds-clnav__overview-icon"><svg class="vds-icon" width="20" height="20" aria-hidden="true">…</svg></span>
+      <span class="vds-clnav__overview-label">Overview</span>
+    </button>
+
+    <div class="vds-clnav__stack">
+      <!-- a product card. current product: add --active. closed: add --collapsed -->
+      <div class="vds-clnav__card vds-clnav__card--active">
+        <button type="button" class="vds-clnav__card-header" aria-expanded="true">
+          <span class="vds-clnav__card-icon"><svg class="vds-icon" width="20" height="20" aria-hidden="true">…</svg></span>
+          <span class="vds-clnav__card-title">EDR</span>
+          <span class="vds-clnav__card-toggle vds-clnav__card-toggle--active"></span>
+        </button>
+        <div class="vds-clnav__card-body">
+          <button type="button" class="vds-clnav__item vds-clnav__item--active" aria-current="page">
+            <span class="vds-clnav__item-glyph"><svg class="vds-icon" width="16" height="16" aria-hidden="true">…</svg></span>
+            <span class="vds-clnav__item-label">Devices</span>
+            <span class="vds-clnav__item-badge">3</span>
+          </button>
+          <button type="button" class="vds-clnav__escape">
+            <span class="vds-clnav__escape-icon">…</span>
+            <span class="vds-clnav__escape-label">full portal</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- a locked teaser row -->
+      <div class="vds-clnav__locked" title="Not in your plan">
+        <span class="vds-clnav__locked-icon">…</span>
+        <span class="vds-clnav__locked-label">SAT</span>
+        <svg class="vds-icon vds-clnav__locked-lock" width="14" height="14" role="img" aria-label="Locked">…</svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- pinned footer -->
+  <div class="vds-clnav__footer">
+    <div class="vds-clnav__footer-item">
+      <button type="button" class="vds-clnav__footer-main">
+        <span class="vds-clnav__footer-icon">…</span>
+        <span class="vds-clnav__footer-label">Profile</span>
+      </button>
+      <button type="button" class="vds-clnav__footer-trailing" aria-label="Sign out">…</button>
+    </div>
+  </div>
+</nav>`}</Code>
       </Section>
     </ComponentPage>
   )

@@ -1,7 +1,7 @@
 import { Eye, Pencil, Trash2 } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, Kbd, IC } from '../primitives.jsx'
+import { Section, Preview, Code, Kbd, IC } from '../primitives.jsx'
 import { Button, Icon, Inline } from '../../components/index.js'
 
 export function ButtonPage() {
@@ -137,6 +137,32 @@ export function ButtonPage() {
           code={`<Button>Default</Button>
 <Button disabled>Disabled</Button>`}
         />
+      </Section>
+
+      <Section
+        title="Markup"
+        note="The rendered HTML with the vds- classes, for teams not using React. Always three modifiers: a variant, a tone, and a size. No JS needed — the loading spinner is a nested Spinner span you add yourself."
+      >
+        <Code>{`<!-- variant: --solid | --soft | --outline | --ghost
+     tone:    --primary | --neutral | --success | --warning | --danger | --info
+     size:    --sm | --md | --lg -->
+<button type="button" class="vds-button vds-button--solid vds-button--primary vds-button--md">
+  Add device
+</button>
+
+<!-- loading: add --loading, aria-busy, disabled, and a Spinner inside -->
+<button type="button" disabled aria-busy="true"
+        class="vds-button vds-button--solid vds-button--primary vds-button--md vds-button--loading">
+  <span class="vds-spinner vds-spinner--sm" role="status" aria-label="Loading"></span> Saving…
+</button>
+
+<!-- icon-only: add --icon and an aria-label -->
+<button type="button" aria-label="Edit"
+        class="vds-button vds-button--ghost vds-button--primary vds-button--sm vds-button--icon">
+  <svg class="vds-icon" width="16" height="16" aria-hidden="true">…</svg>
+</button>
+
+<!-- full width: add vds-button--full -->`}</Code>
       </Section>
     </ComponentPage>
   )

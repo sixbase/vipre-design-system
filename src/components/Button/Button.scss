@@ -7,8 +7,10 @@
 // semantic token.
 // ============================================================================
 @use '../../styles/typography' as type;
+@use '../../styles/breakpoints' as bp;
 
 .vds-button {
+  position: relative; // anchors the coarse-pointer ::after hit-area overlay
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -35,10 +37,25 @@
     pointer-events: none;
   }
 
-  // ---- sizes ----
-  &--sm { height: 2rem;    padding: 0 0.75rem; @include type.step(detail); }
-  &--md { height: 2.25rem; padding: 0 1rem;    @include type.step(body); }
-  &--lg { height: 2.75rem; padding: 0 1.5rem;  @include type.step(body-lg); }
+  // ---- sizes (heights = the shared control-metric tokens) ----
+  &--sm { height: var(--vds-control-h-sm); padding: 0 0.75rem; @include type.step(detail); }
+  &--md { height: var(--vds-control-h-md); padding: 0 1rem;    @include type.step(body); }
+  &--lg { height: var(--vds-control-h-lg); padding: 0 1.5rem;  @include type.step(body-lg); }
+
+  // Touch: sm/md buttons keep their visual height but grow an invisible hit
+  // area to the minimum tap target (lg is already 44px tall).
+  @include bp.coarse {
+    &--sm::after,
+    &--md::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: max(100%, var(--vds-tap-target));
+      height: max(100%, var(--vds-tap-target));
+    }
+  }
 
   // ---- icon-only ----
   // Drop the text padding and square the button to its size's height, so a lone

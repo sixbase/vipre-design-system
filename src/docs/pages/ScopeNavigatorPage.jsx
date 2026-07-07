@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ComponentPage } from '../ComponentPage.jsx'
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, Code, IC } from '../primitives.jsx'
 import { ScopeNavigator } from '../../components/index.js'
 import { COMPONENT_COLORS } from '../colorUsage.js'
 
@@ -175,6 +175,44 @@ export function ScopeNavigatorPage() {
           code={`// Same component — it measures its container and collapses the middle
 // segments into a "…" menu when the full trail won't fit.`}
         />
+      </Section>
+
+      <Section
+        title="Markup"
+        note="The trail's rendered HTML with the vds- classes, for teams not using React — but this component is behavior-heavy. The dropdown (search, sort, filter, jump), the width-measuring collapse into the '…' menu, and the teleport flash are all JS; in plain HTML you get the static trail only."
+      >
+        <Code>{`<nav class="vds-scope" aria-label="Account scope">
+  <div class="vds-scope__trail">
+    <!-- one segment per level; the current one gets --active -->
+    <div class="vds-scope__seg">
+      <div class="vds-scope__crumb vds-scope__crumb--has-caret">
+        <button type="button" class="vds-scope__crumb-main vds-scope__crumb-main--clickable">
+          <span class="vds-scope__chip vds-scope__chip--sm">…type icon…</span>
+          <span class="vds-scope__label">All Accounts</span>
+        </button>
+        <button type="button" class="vds-scope__caret"
+                aria-label="Drill into this scope" aria-expanded="false">
+          <svg class="vds-icon" width="14" height="14" aria-hidden="true">…</svg>
+        </button>
+      </div>
+      <!-- the drill-down panel (vds-scope__pop) is JS-rendered while open -->
+    </div>
+
+    <svg class="vds-scope__sep" aria-hidden="true">…chevron…</svg>
+
+    <div class="vds-scope__seg vds-scope__seg--active">
+      <div class="vds-scope__crumb vds-scope__crumb--active">
+        <button type="button" class="vds-scope__crumb-main">
+          <span class="vds-scope__chip vds-scope__chip--sm">…</span>
+          <span class="vds-scope__label">Acme Manufacturing</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- compact variant: <nav class="vds-scope vds-scope--basic">.
+     collapsed middle: a vds-scope__ellipsis button + its JS-rendered menu. -->`}</Code>
       </Section>
     </ComponentPage>
   )

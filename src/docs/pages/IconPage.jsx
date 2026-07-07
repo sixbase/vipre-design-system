@@ -1,7 +1,7 @@
 import { Shield, Monitor, Building2, Search, ChevronRight, Bell, TriangleAlert, CircleCheck } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, Code, IC } from '../primitives.jsx'
 import { Icon } from '../../components/index.js'
 
 const SIZES = ['xs', 'sm', 'md', 'lg']
@@ -12,13 +12,13 @@ export function IconPage() {
     <ComponentPage
       colors={COMPONENT_COLORS.Icon}
       title="Icon"
-      description="A wrapper that gives any SVG the same size and color rules. It comes with no icons of its own — pass a lucide-react icon (the prototype's icon set) through the `as` prop, or plain SVG as children. The icon takes the color of the text around it unless you set a tone."
+      description="A wrapper that gives any SVG the same size and color rules. It ships no icons of its own — pass an icon component through the `as` prop (the docs use the Material Symbols set via @icons), or plain SVG as children. The icon takes the color of the text around it unless you set a tone."
       installCode={`import { Icon } from 'vipre-design-system'\nimport { Shield } from '@icons'`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
-            [{ code: 'as' }, { code: 'ComponentType' }, '—', 'The icon to show (e.g. a lucide icon)'],
+            [{ code: 'as' }, { code: 'ComponentType' }, '—', 'The icon component to show (e.g. from @icons)'],
             [{ code: 'size' }, { code: "'xs' | 'sm' | 'md' | 'lg'" }, { code: "'md'" }, '14 / 16 / 20 / 24px'],
             [{ code: 'tone' }, { code: "'current' | 'muted' | 'subtle' | 'primary' | 'success' | 'warning' | 'danger' | 'info'" }, { code: "'current'" }, 'Color; by default matches the text color'],
             [{ code: 'label' }, { code: 'string' }, '—', 'A name screen readers can read; leave it off for decoration-only icons'],
@@ -59,6 +59,20 @@ export function IconPage() {
           }
           code={`<Icon as={Bell} tone="primary" />\n<Icon as={TriangleAlert} tone="warning" />`}
         />
+      </Section>
+
+      <Section
+        title="Markup"
+        note="The rendered HTML with the vds- classes, for teams not using React. Icon puts its classes straight on your SVG and sets the size in width/height (14 / 16 / 20 / 24). No JS needed."
+      >
+        <Code>{`<!-- decorative (default): hidden from screen readers -->
+<svg class="vds-icon" width="20" height="20" aria-hidden="true">…</svg>
+
+<!-- toned: add vds-icon--{muted|subtle|primary|success|warning|danger|info} -->
+<svg class="vds-icon vds-icon--success" width="20" height="20" aria-hidden="true">…</svg>
+
+<!-- meaningful: give it a role and a name instead of aria-hidden -->
+<svg class="vds-icon vds-icon--danger" width="20" height="20" role="img" aria-label="Threat">…</svg>`}</Code>
       </Section>
     </ComponentPage>
   )

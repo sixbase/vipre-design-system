@@ -114,11 +114,9 @@ const LOCALS = {
   ...INPUT_LOCALS,
   '--vds-popover-item-hover': 'Menu item hover fill',
   '--vds-tf-hover': 'Segment / option hover fill',
-  '--vds-sidenav-active': 'Active item fill',
-  '--vds-sidenav-active-hover': 'Active item fill (hover)',
-  '--vds-sidenav-hover': 'Item hover fill',
-  '--vds-sidenav-scroll-thumb': 'Scrollbar thumb',
-  '--vds-sidenav-scroll-thumb-hover': 'Scrollbar thumb (hover)',
+  '--vds-nav-accent': 'Selected fill — the brandable nav highlight',
+  '--vds-tile-accent': 'Product tile gradient accent (falls back to --vds-nav-accent)',
+  '--vds-tile-edge': 'Product tile edge / bevel tint',
   '--vds-scope-hover': 'Subtle hover fill (10% ink)',
   '--vds-scope-hover-strong': 'Node / row hover fill (18% ink)',
   '--vds-metric-accent': 'Accent glyph (default = primary; shifts per tone)',
@@ -178,7 +176,7 @@ export const COMPONENT_COLORS = {
   },
   SideNav: {
     scope: 'vds-sidenav',
-    rows: rows(['--vds-canvas', '--vds-focus-ring', '--vds-ink', '--vds-ink-muted', '--vds-ink-subtle', '--vds-line', '--vds-primary', '--vds-sidenav-active', '--vds-sidenav-active-hover', '--vds-sidenav-hover', '--vds-sidenav-scroll-thumb', '--vds-sidenav-scroll-thumb-hover', '--vds-surface-hover', '--vds-surface-selected', '--vds-surface-selected-hover'], LOCALS),
+    rows: rows(['--vds-midnight-950', '--vds-midnight-1000', '--vds-midnight-900', '--vds-midnight-800', '--vds-midnight-700', '--vds-midnight-500', '--vds-midnight-400', '--vds-midnight-300', '--vds-midnight-200', '--vds-nav-accent', '--vds-tile-accent', '--vds-tile-edge', '--vds-white', '--vds-focus-ring'], LOCALS),
   },
   Sparkline: {
     scope: 'vds-sparkline',

@@ -17,6 +17,13 @@ function cellOf(col, row, index) {
   return row?.[col.key]
 }
 
+/* Plain-text column label for the responsive mode's data-label attribute.
+   Node headers can't live in an attribute, so those fall back to the key. */
+function labelOf(col) {
+  const header = col.header ?? col.key
+  return typeof header === 'string' || typeof header === 'number' ? String(header) : String(col.key)
+}
+
 /* The sort glyph — a self-contained caret pair (DS ships no icons). The active
    direction is conveyed by the `--asc`/`--desc` modifier (CSS dims the other). */
 function SortGlyph({ direction }) {
@@ -66,6 +73,13 @@ function SortGlyph({ direction }) {
  * - maxHeight:   CSS max-height for the scroll body (enables vertical scroll)
  * - minWidth:    CSS min-width for the table — below it the shell scrolls
  *                horizontally instead of crushing columns (responsive default)
+ * - responsive:  opt-in stacked mode — below ~640px of the TABLE'S own width
+ *                (container query) rows render as labelled cards: the header
+ *                row hides visually (kept for assistive tech) and each cell
+ *                shows its column header as an inline label. Selection and
+ *                row-click keep working. Column labels come from `header`
+ *                when it's a string (node headers fall back to the key).
+ *                Default off — the classic grid is unchanged.  (default false)
  * - sort:        { key, direction: 'asc' | 'desc' }   — controlled sort indicator
  * - onSortChange: (next: { key, direction }) => void
  * - selectable:  show the selection column          (default false)
@@ -100,6 +114,7 @@ export const Table = forwardRef(function Table(
     stickyHeader = false,
     maxHeight,
     minWidth,
+    responsive = false,
     sort,
     onSortChange,
     selectable = false,
@@ -188,7 +203,11 @@ export const Table = forwardRef(function Table(
             </td>
           )}
           {columns.map((col) => (
-            <td key={col.key} className={cx('vds-table__td', `vds-table__cell--${col.align ?? 'left'}`)}>
+            <td
+              key={col.key}
+              data-label={responsive ? labelOf(col) : undefined}
+              className={cx('vds-table__td', `vds-table__cell--${col.align ?? 'left'}`)}
+            >
               <span className="vds-table__skeleton" aria-hidden="true" />
             </td>
           ))}
@@ -248,6 +267,7 @@ export const Table = forwardRef(function Table(
           {columns.map((col) => (
             <td
               key={col.key}
+              data-label={responsive ? labelOf(col) : undefined}
               className={cx('vds-table__td', `vds-table__cell--${col.align ?? 'left'}`, col.className)}
             >
               {cellOf(col, row, i)}
@@ -270,6 +290,7 @@ export const Table = forwardRef(function Table(
         `vds-table--${density}`,
         zebra && 'vds-table--zebra',
         stickyHeader && 'vds-table--sticky',
+        responsive && 'vds-table--responsive',
         interactiveRows && 'vds-table--row-interactive',
         className,
       )}

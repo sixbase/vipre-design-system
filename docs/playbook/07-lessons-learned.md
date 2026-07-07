@@ -63,3 +63,33 @@ single `preview_eval`**. (2) `element.click()` was flaky at triggering React's s
 `el.dispatchEvent(new MouseEvent('click', { bubbles: true, view: window }))` is reliable. A screenshot
 taken right after an opening `eval` *does* preserve the open state (read-only), so eval-then-screenshot
 is the way to capture an open overlay.
+
+## Container queries can't restyle the container — put layout in an `__in` wrapper
+
+An element with `container-type: inline-size` cannot be the target of its own `@container` rules. The recipe
+(StatTile, MetricCard, DescriptionList): the component ROOT declares the container; all queryable layout (padding,
+gap, flex direction) moves onto a `__in` wrapper just inside it. Costs one div, keeps the public API unchanged.
+
+## Coarse-pointer tap targets: grow the hit area, not the control
+
+`@include bp.coarse` + an invisible `::after` overlay (or growing the hidden native input) brings small controls to
+`--vds-tap-target` (44px) without bloating the desktop design. For adjacent segments (SegmentedControl, TimeframeSelect)
+make the overlay vertical-only so it can't swallow the neighbor's taps.
+
+## Scroll-driven edge fades are the progressive way to say "there's more"
+
+Table shell shadows and PageHeader tab masks ride a named `scroll-timeline`; when the timeline is inactive (content
+fits) the base state hides the affordance, and unsupported browsers simply scroll with no fade. No JS, no resize
+observers.
+
+## Preview screenshots lie about window-scrolled sticky layouts
+
+In the headless preview, a screenshot taken after `window.scrollTo(...)` on a page with a sticky sidebar can composite
+the layout wrong (content bottom-anchored, phantom whitespace) even though `getBoundingClientRect()` reports the truth.
+Verify scrolled/sticky layouts with rect measurements in `preview_eval`; trust screenshots only at scroll 0.
+
+## Multi-agent edits: nobody touches the registries
+
+When several agents build components concurrently, the three shared files (`components/index.js`,
+`styles/_components.scss`, `docs/routes.js`) must be owned by ONE integrator; builders ship a manifest of exact
+export/@use/route lines instead. Same for the playbook — builders suggest entries, the integrator writes them.

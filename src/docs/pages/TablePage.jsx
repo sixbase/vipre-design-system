@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { ShieldCheck, Mail, Globe, Database, Eye, Pencil, Trash2 } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, Code, IC } from '../primitives.jsx'
 import { Table, Badge, Button, Text, Icon, Inline, Stack } from '../../components/index.js'
 
 /* Sample fleet rows — mirrors the kind of data Vipre tables actually carry. */
@@ -212,6 +212,7 @@ export function TablePage() {
             [{ code: 'skeletonRows' }, { code: 'number' }, { code: '5' }, 'How many placeholder rows to show while loading'],
             [{ code: 'empty' }, { code: 'ReactNode' }, { code: "'No data'" }, 'What to show when there are no rows'],
             [{ code: 'caption' }, { code: 'ReactNode' }, '—', 'A hidden name for screen readers'],
+            [{ code: 'responsive' }, { code: 'boolean' }, { code: 'false' }, 'In a narrow spot (under ~640px of container width) each row turns into a small card: every cell shows its column name next to its value. Column names come from string headers. Note: sortable headers are hidden in card mode.'],
             [{ code: '…props' }, { code: 'Surface props' }, '—', 'radius, elevation, bordered, raised, as…'],
           ],
         },
@@ -230,6 +231,7 @@ export function TablePage() {
       ]}
       accessibility={[
         <>It draws a real <IC>{'<table>'}</IC> with <IC>scope="col"</IC> headers, so screen readers can tell which cell belongs to which row and column.</>,
+        <>In <IC>responsive</IC> card mode the header row is only hidden visually — screen readers still get the real table, and each value is labelled by its column name.</>,
         <>Sortable headers are <IC>{'<button>'}</IC>s inside the <IC>{'<th>'}</IC>, and they set <IC>aria-sort</IC> to say which way it's sorted.</>,
         <>Clickable rows (<IC>onRowClick</IC>) can be reached with the keyboard and open with <IC>Enter</IC> or <IC>Space</IC>.</>,
         <>The little sort arrow is just for looks (<IC>aria-hidden</IC>) — the sort direction comes from <IC>aria-sort</IC>, not from color.</>,
@@ -525,6 +527,47 @@ const data = useMemo(() => sortRows(devices, sort), [sort])
           code={`<Table loading skeletonRows={3} columns={columns} data={[]} />
 <Table columns={columns} data={[]} empty="No devices match your filters." />`}
         />
+      </Section>
+
+      <Section
+        title="Markup"
+        note="The rendered HTML with the vds- classes, for teams not using React. The shell and the classes are pure CSS — you write the rows yourself. Sorting, selection, and clickable rows are JS you'd wire: the classes and ARIA below are what the React component sets for you."
+      >
+        <Code>{`<!-- density: vds-table--comfortable | --compact. add-ons: --zebra, --sticky, --responsive -->
+<div class="vds-surface vds-surface--bordered vds-surface--elev-resting vds-table vds-table--comfortable">
+  <div class="vds-table__scroll">
+    <table class="vds-table__el" style="min-width: 640px">
+      <thead class="vds-table__head">
+        <tr>
+          <th scope="col" class="vds-table__th vds-table__cell--left">Device</th>
+          <!-- sortable header: a button inside the th; aria-sort says the direction -->
+          <th scope="col" aria-sort="descending"
+              class="vds-table__th vds-table__cell--right vds-table__th--sortable vds-table__th--active">
+            <button type="button" class="vds-table__sort-btn">
+              <span>Risk</span>
+              <span class="vds-table__sort vds-table__sort--desc" aria-hidden="true">…caret svg…</span>
+            </button>
+          </th>
+        </tr>
+      </thead>
+      <tbody class="vds-table__body">
+        <tr class="vds-table__row">
+          <!-- data-label feeds the responsive card mode's inline column labels -->
+          <td class="vds-table__td vds-table__cell--left" data-label="Device">MBP-014</td>
+          <td class="vds-table__td vds-table__cell--right" data-label="Risk">4%</td>
+        </tr>
+        <!-- empty state -->
+        <tr class="vds-table__row vds-table__row--empty">
+          <td class="vds-table__td vds-table__empty" colspan="2">No data</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- clickable rows (JS): add vds-table--row-interactive on the shell and
+     vds-table__row--interactive + tabindex="0" + role="button" on each row.
+     selection (JS): a vds-table__cell--select column of Checkbox markup. -->`}</Code>
       </Section>
     </ComponentPage>
   )

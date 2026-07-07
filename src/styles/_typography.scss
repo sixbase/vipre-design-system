@@ -6,14 +6,22 @@
 // consumed by the Text / Heading components.
 //
 // Format per step: (font-size  line-height  font-weight  letter-spacing)
+//
+// FLUID LARGE STEPS — display / title / heading use clamp() so big text
+// shrinks gracefully on narrow viewports (~320px) and reaches full size by
+// ~1120–1280px. Line-heights ride the same clamp slope, preserving each
+// step's baked-in optical leading at every width. Everything from
+// subheading down stays FIXED — small UI text must not drift.
+//   display: 24→30px (lh 30→36)   title: 20→24px (lh 28→32)
+//   heading: 18→20px (lh 26→28)
 // ============================================================================
 @use 'sass:map';
 @use 'sass:list';
 
 $scale: (
-  display:    (1.875rem  2.25rem  600  -0.022em),
-  title:      (1.5rem    2rem     600  -0.017em),
-  heading:    (1.25rem   1.75rem  600  -0.012em),
+  display:    (clamp(1.5rem, 1.375rem + 0.625vw, 1.875rem)  clamp(1.875rem, 1.75rem + 0.625vw, 2.25rem)  600  -0.022em),
+  title:      (clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem)      clamp(1.75rem, 1.65rem + 0.5vw, 2rem)        600  -0.017em),
+  heading:    (clamp(1.125rem, 1.075rem + 0.25vw, 1.25rem)  clamp(1.625rem, 1.575rem + 0.25vw, 1.75rem)  600  -0.012em),
   subheading: (1rem      1.5rem   500  -0.006em),
   body-lg:    (0.9375rem 1.375rem 400  0),
   body:       (0.875rem  1.25rem  400  0),

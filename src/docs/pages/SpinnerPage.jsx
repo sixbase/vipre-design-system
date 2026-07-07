@@ -1,6 +1,6 @@
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, Code, IC } from '../primitives.jsx'
 import { Spinner, Button } from '../../components/index.js'
 
 export function SpinnerPage() {
@@ -64,6 +64,17 @@ export function SpinnerPage() {
           }
           code={`<Button disabled><Spinner size="sm" /> Saving…</Button>`}
         />
+      </Section>
+
+      <Section
+        title="Markup"
+        note="The rendered HTML with the vds- classes, for teams not using React. One empty span — the ring and the spin are pure CSS. No JS needed."
+      >
+        <Code>{`<!-- sizes: vds-spinner--sm | --md | --lg -->
+<span class="vds-spinner vds-spinner--md" role="status" aria-label="Loading"></span>
+
+<!-- brand-colored -->
+<span class="vds-spinner vds-spinner--md vds-spinner--primary" role="status" aria-label="Loading"></span>`}</Code>
       </Section>
     </ComponentPage>
   )

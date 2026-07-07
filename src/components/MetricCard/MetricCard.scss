@@ -8,11 +8,12 @@
 @use '../../styles/mixins' as mix;
 
 .vds-metric {
-  display: flex;
-  flex-direction: column;
-  gap: var(--vds-space-5); // 20px between the card's stacked blocks
   width: 100%;
   font-family: var(--vds-font-sans);
+  // The card adapts to ITS OWN width (container query below), not the
+  // viewport — a narrow card in a dashboard grid tightens up wherever it sits.
+  // Safe with inline-size containment because the width is explicit (100%).
+  container-type: inline-size;
 
   // icon chip tone → accent (glyph) + soft (chip bg). Set per tone below.
   --vds-metric-accent: var(--vds-primary);
@@ -21,6 +22,19 @@
   // ---- interactive (drill-in) — shared metrics-family recipe ----
   // The whole card is a <button>; rest → hover lift → pressed → focus ring.
   &--interactive { @include mix.interactive-card; }
+
+  // ---- inner layout wrapper ----
+  // The ROOT is the query container, and a container query can't restyle the
+  // container itself — so the padding + stack layout live one level in, where
+  // the narrow-card query below can reach them (same pattern as StatTile).
+  &__in {
+    display: flex;
+    flex-direction: column;
+    gap: var(--vds-space-5); // 20px between the card's stacked blocks
+    width: 100%;
+    min-width: 0;
+    padding: var(--vds-space-6);
+  }
 
   // ---- header ----
   &__header {
@@ -153,6 +167,24 @@
     font-variant-numeric: tabular-nums;
     color: var(--vds-ink);
     margin: 0;
+  }
+
+  // ---- narrow-card adaptation (container query on the card's own width) ----
+  // Squeezed cards (dense grids, phone columns): the hero value steps down so
+  // "$2.45M"-scale figures never clip, the icon chip shrinks a notch, and the
+  // padding + block gap tighten. The query resolves against the ROOT (the
+  // container); everything styled here is a descendant — see `__in` above.
+  @container (max-width: 259.98px) {
+    &__in {
+      gap: var(--vds-space-4);
+      padding: var(--vds-space-4);
+    }
+    // hero figure: one visual step down from the 2.5rem resting size
+    .vds-metric__value { font-size: 2rem; }
+    .vds-metric__icon {
+      width: 2.25rem;
+      height: 2.25rem;
+    }
   }
 
   // ---- icon chip tones ----

@@ -3,6 +3,7 @@
 // indeterminate use the brand; the box is neutral graphite when off.
 // ============================================================================
 @use '../../styles/typography' as type;
+@use '../../styles/breakpoints' as bp;
 
 .vds-checkbox {
   display: inline-flex;
@@ -90,6 +91,18 @@
     border: 0;
     border-top: 2px solid var(--vds-on-primary);
     transform: none;
+  }
+
+  // Touch: the invisible input (the real hit area) grows to the minimum tap
+  // target, centered on the 18px box — the visual design doesn't change.
+  @include bp.coarse {
+    &__input {
+      width: var(--vds-tap-target);
+      height: var(--vds-tap-target);
+      top: 50%;
+      left: calc((1.125rem - var(--vds-tap-target)) / 2);
+      transform: translateY(-50%);
+    }
   }
 }
 

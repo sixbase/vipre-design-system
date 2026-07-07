@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, Code, IC } from '../primitives.jsx'
 import { Text } from '../../components/index.js'
 import {
   TimeframeSelect,
@@ -112,6 +112,43 @@ export function TimeframeSelectPage() {
           code={`<TimeframeSelect size="sm" defaultValue="7d" />
 <TimeframeSelect size="md" defaultValue="7d" />`}
         />
+      </Section>
+
+      <Section
+        title="Markup"
+        note="The rendered HTML with the vds- classes, for teams not using React. The segmented row is pure CSS — you just toggle the --active class and aria-pressed. The dropdown needs JS: open/close, placement, arrow keys, Escape, and resolving the preset into real dates."
+      >
+        <Code>{`<!-- segmented: a group of toggle buttons. sizes: vds-timeframe--sm | --md -->
+<div class="vds-timeframe vds-timeframe--segmented vds-timeframe--md" role="group" aria-label="Timeframe">
+  <button type="button" class="vds-timeframe__seg vds-timeframe__seg--active" aria-pressed="true">7d</button>
+  <button type="button" class="vds-timeframe__seg" aria-pressed="false">30d</button>
+  <button type="button" class="vds-timeframe__seg" aria-pressed="false">90d</button>
+</div>
+
+<!-- dropdown: a Popover trigger + menu (panel exists only while open) -->
+<div class="vds-popover">
+  <button type="button" class="vds-timeframe__trigger vds-timeframe--md"
+          aria-haspopup="menu" aria-expanded="false">
+    <svg class="vds-icon vds-timeframe__lead" width="16" height="16" aria-hidden="true">…calendar…</svg>
+    <span class="vds-timeframe__value">Last 30 days</span>
+    <svg class="vds-icon vds-timeframe__caret" width="16" height="16" aria-hidden="true">…chevron…</svg>
+  </button>
+
+  <div class="vds-surface vds-surface--radius-md vds-surface--bordered vds-surface--elev-overlay
+              vds-popover__panel vds-timeframe__pop" role="menu" tabindex="-1">
+    <div class="vds-timeframe__menu">
+      <button type="button" role="menuitemradio" aria-checked="true"
+              class="vds-timeframe__option vds-timeframe__option--active">
+        <span class="vds-timeframe__option-label">Last 30 days</span>
+        <svg class="vds-icon vds-timeframe__option-check" width="16" height="16" aria-hidden="true">…check…</svg>
+      </button>
+      <button type="button" role="menuitemradio" aria-checked="false" class="vds-timeframe__option">
+        <span class="vds-timeframe__option-label">Last 90 days</span>
+      </button>
+      <!-- custom range (optional): vds-timeframe__sep, __custom date fields, __apply button -->
+    </div>
+  </div>
+</div>`}</Code>
       </Section>
     </ComponentPage>
   )

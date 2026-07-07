@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Mail, Download } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, Code, IC } from '../primitives.jsx'
 import { PageHeader, TimeframeSelect, Button, Badge } from '../../components/index.js'
 
 /* A tiny presentational tab strip for the `tabs` slot demo. */
@@ -126,6 +126,33 @@ export function PageHeaderPage() {
   filters={<Filters … />}
 />`}
         />
+      </Section>
+
+      <Section
+        title="Markup"
+        note="The rendered HTML with the vds- classes, for teams not using React. Every part is optional — drop the elements you don't need. No JS needed (the controls you put in the slots bring their own)."
+      >
+        <Code>{`<div class="vds-page-header">
+  <div class="vds-page-header__bar">
+    <div class="vds-page-header__lead">
+      <!-- icon circle. tones: --primary | --success | --warning | --danger | --info -->
+      <span class="vds-page-header__icon vds-page-header__icon--primary" aria-hidden="true">
+        <svg class="vds-icon" width="20" height="20" aria-hidden="true">…</svg>
+      </span>
+      <div class="vds-page-header__heading">
+        <div class="vds-page-header__eyebrow">Integrated Email Security</div>
+        <div class="vds-page-header__titlerow">
+          <h1 class="vds-page-header__title">Overview</h1>
+          <div class="vds-page-header__meta"><!-- badges --></div>
+        </div>
+        <p class="vds-page-header__subtitle">Threat activity for the selected window.</p>
+      </div>
+    </div>
+    <div class="vds-page-header__actions"><!-- buttons, timeframe picker --></div>
+  </div>
+  <div class="vds-page-header__tabs"><!-- your tab strip --></div>
+  <div class="vds-page-header__filters"><!-- your filter row --></div>
+</div>`}</Code>
       </Section>
     </ComponentPage>
   )

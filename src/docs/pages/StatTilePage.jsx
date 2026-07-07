@@ -1,7 +1,7 @@
 import { Shield, Monitor, TriangleAlert, Activity, Users, Mail, Paperclip } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, Code, IC } from '../primitives.jsx'
 import { StatTile, Grid } from '../../components/index.js'
 
 // Responsive auto-fit grid (matches the Grid primitive) — wraps to fewer
@@ -170,6 +170,32 @@ export function StatTilePage() {
           }
           code={`<StatTile icon={Monitor} value={42} label="Distributors" onClick={openPanel} />`}
         />
+      </Section>
+
+      <Section
+        title="Markup"
+        note="The rendered HTML with the vds- classes, for teams not using React. It's a Surface with the stat classes on top. Interactive tiles render as a <button> instead of a <div>. Number formatting (commas) and the sparkline points are computed by the React component — in plain HTML you write them out yourself. The hover lift and focus ring are pure CSS."
+      >
+        <Code>{`<!-- layout: vds-stat--row | --stacked · size: --size-sm | --size-md | --size-lg
+     icon chip: --icon-soft | --icon-outline · tone: --default | --primary | --success | --warning | --danger -->
+<button type="button"
+        class="vds-surface vds-surface--pad-4 vds-surface--radius-lg vds-surface--bordered
+               vds-surface--elev-resting vds-stat vds-stat--row vds-stat--size-md
+               vds-stat--icon-soft vds-stat--success vds-stat--interactive">
+  <span class="vds-stat__icon" aria-hidden="true">
+    <svg class="vds-icon" width="24" height="24" aria-hidden="true">…</svg>
+  </span>
+  <span class="vds-stat__body">
+    <span class="vds-stat__label">Protected</span>
+    <span class="vds-stat__value">1,192</span>
+    <span class="vds-stat__caption">of 1,400 total</span>
+  </span>
+  <svg class="vds-sparkline vds-sparkline--success vds-stat__spark" width="72" height="28" aria-hidden="true">…</svg>
+  <span class="vds-stat__delta vds-stat__delta--chip vds-stat__delta--good">+3%</span>
+</button>
+
+<!-- static tile: use a <div> and drop vds-stat--interactive.
+     loading: aria-busy="true" + vds-stat__skeleton--value / --label placeholder spans. -->`}</Code>
       </Section>
     </ComponentPage>
   )
