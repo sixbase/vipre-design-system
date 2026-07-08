@@ -13,267 +13,107 @@
 </head>
 <body>
 <style>
-  :root {
-    /* Palette grounded in the Vipre system: midnight navy + cobalt accent +
-       cool graphite neutrals. Light theme by default. */
-    --ground: #f5f7fa;
-    --surface: #ffffff;
-    --surface-2: #eef1f6;
-    --ink: #14212f;
-    --muted: #5b6676;
-    --line: #dfe4ec;
-    --accent: #0068cb;
-    --accent-ink: #ffffff;
-    --good: #1f9256;
-    --good-soft: #e7f6ee;
-    --okay: #9a6a12;
-    --okay-soft: #f8efdd;
-    --code-bg: #0f1c2e;
-    --code-ink: #d7e3f4;
-    --code-key: #7cc4ff;
-    --code-str: #8fd39a;
-    --code-com: #6b7f97;
-    --shadow: 0 1px 2px rgba(11,25,45,.06), 0 8px 24px -12px rgba(11,25,45,.18);
-    --radius: 14px;
+  :root{
+    --ground:#f5f7fa; --surface:#ffffff; --ink:#14212f; --muted:#5b6676; --line:#dfe4ec;
+    --accent:#0068cb; --accent-ink:#fff; --good:#1f9256; --good-soft:#e7f6ee;
+    --okay:#9a6a12; --okay-soft:#f8efdd;
+    --shadow:0 1px 2px rgba(11,25,45,.06), 0 8px 24px -12px rgba(11,25,45,.18); --radius:14px;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --ground: #0b192d; --surface: #0f223d; --surface-2: #13294a;
-      --ink: #eaf1fb; --muted: #9fb2cc; --line: #1e3357;
-      --accent: #4ea3ff; --accent-ink: #04121f;
-      --good: #4ec684; --good-soft: #10331f; --okay: #e0b46a; --okay-soft: #35270f;
-      --code-bg: #061020; --code-ink: #d7e3f4; --code-key: #7cc4ff;
-      --code-str: #8fd39a; --code-com: #64788f;
-      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.6);
-    }
-  }
-  :root[data-theme="light"] {
-    --ground: #f5f7fa; --surface: #ffffff; --surface-2: #eef1f6;
-    --ink: #14212f; --muted: #5b6676; --line: #dfe4ec;
-    --accent: #0068cb; --accent-ink: #ffffff;
-    --good: #1f9256; --good-soft: #e7f6ee; --okay: #9a6a12; --okay-soft: #f8efdd;
-    --code-bg: #0f1c2e; --code-ink: #d7e3f4; --code-key: #7cc4ff;
-    --code-str: #8fd39a; --code-com: #6b7f97;
-    --shadow: 0 1px 2px rgba(11,25,45,.06), 0 8px 24px -12px rgba(11,25,45,.18);
-  }
-  :root[data-theme="dark"] {
-    --ground: #0b192d; --surface: #0f223d; --surface-2: #13294a;
-    --ink: #eaf1fb; --muted: #9fb2cc; --line: #1e3357;
-    --accent: #4ea3ff; --accent-ink: #04121f;
-    --good: #4ec684; --good-soft: #10331f; --okay: #e0b46a; --okay-soft: #35270f;
-    --code-bg: #061020; --code-ink: #d7e3f4; --code-key: #7cc4ff;
-    --code-str: #8fd39a; --code-com: #64788f;
-    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.6);
-  }
+  @media (prefers-color-scheme:dark){ :root{
+    --ground:#0b192d; --surface:#0f223d; --ink:#eaf1fb; --muted:#9fb2cc; --line:#1e3357;
+    --accent:#4ea3ff; --accent-ink:#04121f; --good:#4ec684; --good-soft:#10331f;
+    --okay:#e0b46a; --okay-soft:#35270f;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.6);
+  }}
+  :root[data-theme="light"]{ --ground:#f5f7fa; --surface:#fff; --ink:#14212f; --muted:#5b6676;
+    --line:#dfe4ec; --accent:#0068cb; --accent-ink:#fff; --good:#1f9256; --good-soft:#e7f6ee;
+    --okay:#9a6a12; --okay-soft:#f8efdd; --shadow:0 1px 2px rgba(11,25,45,.06),0 8px 24px -12px rgba(11,25,45,.18); }
+  :root[data-theme="dark"]{ --ground:#0b192d; --surface:#0f223d; --ink:#eaf1fb; --muted:#9fb2cc;
+    --line:#1e3357; --accent:#4ea3ff; --accent-ink:#04121f; --good:#4ec684; --good-soft:#10331f;
+    --okay:#e0b46a; --okay-soft:#35270f; --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px -16px rgba(0,0,0,.6); }
 
-  * { box-sizing: border-box; }
-  .page {
-    background: var(--ground); color: var(--ink);
-    font-family: "Rubik", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    line-height: 1.62; -webkit-font-smoothing: antialiased;
-    padding: clamp(1.25rem, 4vw, 3.5rem) 1.25rem 4rem;
-  }
-  .wrap { max-width: 48rem; margin: 0 auto; }
+  *{box-sizing:border-box;}
+  .page{ background:var(--ground); color:var(--ink);
+    font-family:"Rubik", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased; padding:clamp(1.25rem,4vw,3.5rem) 1.25rem 4rem; }
+  .wrap{ max-width:40rem; margin:0 auto; }
+  .eyebrow{ font-size:.72rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin:0 0 .8rem; }
+  h1{ font-size:clamp(1.7rem,5vw,2.4rem); line-height:1.1; font-weight:700; letter-spacing:-.02em; margin:0 0 .6rem; text-wrap:balance; }
+  .lede{ font-size:1.05rem; color:var(--muted); margin:0; }
+  h2{ font-size:1.15rem; font-weight:700; margin:2.2rem 0 .3rem; }
+  p{ margin:.4rem 0; }
 
-  .eyebrow { font-size: .72rem; font-weight: 600; letter-spacing: .14em;
-    text-transform: uppercase; color: var(--accent); margin: 0 0 .9rem; }
-  h1 { font-size: clamp(1.7rem, 5vw, 2.5rem); line-height: 1.1; font-weight: 700;
-    letter-spacing: -.02em; text-wrap: balance; margin: 0 0 .7rem; }
-  .lede { font-size: 1.08rem; color: var(--muted); margin: 0; text-wrap: pretty; }
+  .cards{ display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem; }
+  @media (max-width:34rem){ .cards{ grid-template-columns:1fr; } }
+  .card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:1rem 1.1rem 1.15rem; box-shadow:var(--shadow); }
+  .card .ico{ font-size:1.5rem; }
+  .chip{ display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+    padding:.18rem .5rem; border-radius:999px; margin:.5rem 0 .3rem; }
+  .chip--good{ color:var(--good); background:var(--good-soft); }
+  .chip--okay{ color:var(--okay); background:var(--okay-soft); }
+  .card h3{ font-size:1rem; margin:.1rem 0 .3rem; }
+  .card p{ font-size:.92rem; color:var(--muted); margin:0; }
 
-  .kicker { display:flex; align-items:center; gap:.6rem; margin: 2.8rem 0 .5rem; }
-  .kicker .num { flex:none; width:1.7rem; height:1.7rem; border-radius:7px;
-    background: var(--accent); color: var(--accent-ink); font-size:.85rem; font-weight:700;
-    display:grid; place-items:center; }
-  h2 { font-size: 1.3rem; font-weight: 700; letter-spacing: -.01em; margin: 0; text-wrap: balance; }
-  h3 { font-size: 1rem; font-weight: 700; margin: 0 0 .3rem; }
-  p { margin: .5rem 0; text-wrap: pretty; }
-  .muted { color: var(--muted); }
-  .section-note { color: var(--muted); margin-top: .1rem; }
+  .callout{ margin-top:1rem; background:var(--surface); border:1px solid var(--line);
+    border-left:4px solid var(--accent); border-radius:10px; padding:.9rem 1.1rem; }
+  .callout p{ margin:.15rem 0; }
+  .check{ list-style:none; margin:.6rem 0 0; padding:0; display:grid; gap:.5rem; }
+  .check li{ display:flex; gap:.6rem; align-items:flex-start; }
+  .check .m{ flex:none; width:1.4rem; height:1.4rem; border-radius:6px; background:var(--good-soft); color:var(--good);
+    display:grid; place-items:center; font-weight:700; font-size:.85rem; margin-top:.1rem; }
+  .check b{ color:var(--ink); }
 
-  /* Pipeline / flow */
-  .flow { display:grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items:stretch;
-    gap:.5rem; margin:1.2rem 0 .4rem; }
-  @media (max-width: 40rem){ .flow{ grid-template-columns:1fr; }
-    .flow .arrow{ transform:rotate(90deg); justify-self:center; } }
-  .node { background: var(--surface); border:1px solid var(--line); border-radius:12px;
-    padding:.8rem .85rem; box-shadow: var(--shadow); }
-  .node .t { font-weight:700; font-size:.92rem; }
-  .node .d { color:var(--muted); font-size:.8rem; margin-top:.15rem; }
-  .arrow { align-self:center; color:var(--muted); font-size:1.1rem; }
-
-  .card { background: var(--surface); border:1px solid var(--line);
-    border-radius: var(--radius); padding: 1.1rem 1.2rem 1.25rem; box-shadow: var(--shadow); }
-  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem; }
-  @media (max-width:40rem){ .grid2{ grid-template-columns:1fr; } }
-
-  .tag { display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.06em;
-    text-transform:uppercase; padding:.2rem .5rem; border-radius:999px; margin-bottom:.5rem; }
-  .tag--react { color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
-  .tag--ng { color: var(--okay); background: var(--okay-soft); }
-  .tag--good { color: var(--good); background: var(--good-soft); }
-
-  ul.tight { margin:.4rem 0 0; padding-left:1.1rem; }
-  ul.tight li { margin:.25rem 0; }
-  ul.tight li::marker { color: var(--accent); }
-
-  pre { margin:.7rem 0 0; background: var(--code-bg); color: var(--code-ink);
-    border-radius:10px; padding:.85rem .95rem; overflow-x:auto;
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size:.82rem; line-height:1.55; }
-  pre .c { color: var(--code-com); }
-  pre .k { color: var(--code-key); }
-  pre .s { color: var(--code-str); }
-
-  table { width:100%; border-collapse:collapse; margin-top:1rem; font-size:.9rem; }
-  th, td { text-align:left; padding:.6rem .7rem; border-bottom:1px solid var(--line); vertical-align:top; }
-  th { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:600; }
-  td code, p code, li code { font-family: ui-monospace, Menlo, Consolas, monospace;
-    font-size:.85em; background: var(--surface-2); padding:.08em .38em; border-radius:5px; color:var(--ink); }
-  .yes { color: var(--good); font-weight:600; }
-  .no { color: var(--okay); font-weight:600; }
-
-  .callout { margin-top:1.1rem; background: var(--surface); border:1px solid var(--line);
-    border-left:4px solid var(--accent); border-radius:10px; padding:.95rem 1.1rem; }
-  .callout p { margin:0; }
-
-  /* "In plain words" annotations — ELI2 asides for non-engineers */
-  .eli { margin-top:.85rem; background: color-mix(in srgb, var(--accent) 7%, var(--surface));
-    border:1px solid color-mix(in srgb, var(--accent) 22%, var(--line));
-    border-radius:10px; padding:.7rem .9rem .75rem; }
-  .eli .lbl { display:inline-flex; align-items:center; gap:.35rem; font-size:.63rem; font-weight:700;
-    letter-spacing:.09em; text-transform:uppercase; color:var(--accent); margin-bottom:.2rem; }
-  .eli p { margin:0; font-size:.92rem; color:var(--ink); }
-  .eli--warn { background: var(--okay-soft); border-color: color-mix(in srgb, var(--okay) 30%, var(--line)); }
-  .eli--warn .lbl { color: var(--okay); }
-
-  .decision { margin-top:1.2rem; background: var(--surface); border:2px solid var(--accent);
-    border-radius: var(--radius); padding:1.3rem 1.35rem; box-shadow: var(--shadow); }
-  .decision h2 { margin:0 0 .4rem; }
-  .decision .q { margin-top:.75rem; font-weight:700; color:var(--ink); font-size:1rem;
-    display:flex; gap:.55rem; align-items:baseline; }
-  .decision .q::before { content:"→"; color:var(--accent); font-weight:700; }
-
-  .rule { height:1px; background:var(--line); border:0; margin:2.4rem 0 0; }
-  .foot { margin-top:2.4rem; color:var(--muted); font-size:.9rem; }
-  strong.k2 { color: var(--ink); }
+  .decision{ margin-top:1.2rem; background:var(--surface); border:2px solid var(--accent); border-radius:var(--radius);
+    padding:1.2rem 1.3rem; box-shadow:var(--shadow); }
+  .decision h2{ margin:0 0 .5rem; }
+  .decision .q{ margin-top:.6rem; font-weight:700; font-size:1rem; display:flex; gap:.5rem; align-items:baseline; }
+  .decision .q::before{ content:"→"; color:var(--accent); }
+  .foot{ margin-top:2.2rem; color:var(--muted); font-size:.9rem; }
+  strong.k{ color:var(--ink); }
 </style>
 
 <div class="page">
   <div class="wrap">
 
-    <p class="eyebrow">For design + engineering · Vipre Design System</p>
-    <h1>One source of truth, two ways to consume it</h1>
-    <p class="lede">How the design team maintains the system, and how the React and Angular teams pull it into real apps. The menu (SideNav) is our pilot component — the model below applies to every component after it.</p>
+    <p class="eyebrow">For the team · Design system</p>
+    <h1>How we all use our shared parts</h1>
+    <p class="lede">The short version. We built a box of ready-made UI pieces (buttons, menus, tables). Everyone builds from the same box — so every screen looks like Vipre, and one fix reaches everyone.</p>
 
-    <!-- BIG PICTURE -->
-    <div class="flow" role="img" aria-label="Design authors tokens and components, the build produces CSS and component packages, engineering consumes them.">
-      <div class="node"><div class="t">Design authors</div><div class="d">Tokens + components (SCSS/JSX)</div></div>
-      <div class="arrow" aria-hidden="true">→</div>
-      <div class="node"><div class="t">Build outputs</div><div class="d">vipre.css · tokens.css · component pkg</div></div>
-      <div class="arrow" aria-hidden="true">→</div>
-      <div class="node"><div class="t">Eng consumes</div><div class="d">React import · Angular / Web Component</div></div>
+    <h2>Two ways to use a piece</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="ico" aria-hidden="true">🧰</div>
+        <span class="chip chip--good">Better</span>
+        <h3>Grab it from the box</h3>
+        <p>Add the box once. Then ask for a piece with one line. We improve it → everyone gets the better one, free.</p>
+      </div>
+      <div class="card">
+        <div class="ico" aria-hidden="true">✏️</div>
+        <span class="chip chip--okay">Okay</span>
+        <h3>Copy it by hand</h3>
+        <p>Copy the code from our site. Works — but your copy goes stale when we fix the real one.</p>
+      </div>
     </div>
-    <p class="muted" style="font-size:.9rem">The two halves meet at a <strong class="k2">stable contract</strong> — token names, CSS class names, and a small behavior spec. Change values freely; renaming the contract is a versioned, announced change.</p>
-    <div class="eli"><span class="lbl">💬 In plain words</span><p>Designers make the parts. A machine packs them in a box. Builders take parts from the box — nobody rebuilds a part that already exists.</p></div>
 
-    <!-- 1. MAINTAIN -->
-    <div class="kicker"><span class="num">1</span><h2>How the design team maintains it</h2></div>
-    <p class="section-note">The repo is the single source of truth. Nothing is styled by hand in an app.</p>
-    <ul class="tight">
-      <li><strong>Tokens are the foundation.</strong> Every value lives in <code>_tokens.scss</code> and ships as a <code>--vds-*</code> CSS variable, in three tiers — primitive ramps → semantic intent (<code>--vds-primary</code>) → scale (spacing, radius, motion). Light/dark is a token swap under <code>.dark</code>.</li>
-      <li><strong>Components own their styles.</strong> Each is a folder — <code>SideNav.jsx</code> + co-located <code>SideNav.scss</code> (BEM, <code>vds-</code> prefixed) + <code>index.js</code>. Rule: no raw hex/px in a component — if a value is missing, add a token.</li>
-      <li><strong>The docs site is the showroom + spec.</strong> Every component has a page: live example, props table, the raw <code>vds-</code> markup, and a11y notes. Fix a component once → every page and every consumer inherits it.</li>
-      <li><strong>Two build outputs</strong> are what ship (kept stable):</li>
+    <h2>Our twist: two kinds of blocks</h2>
+    <p style="color:var(--muted)">Some projects use <strong class="k">React</strong>, some use <strong class="k">Angular</strong>. We don’t want to build every piece twice. Good news — a piece has two parts:</p>
+    <ul class="check">
+      <li><span class="m" aria-hidden="true">✓</span><span><b>The look</b> (colors, shapes) is just CSS. Already works everywhere.</span></li>
+      <li><span class="m" aria-hidden="true">✓</span><span><b>The clicks</b> we build <b>once</b> so React <em>and</em> Angular use the same one.</span></li>
     </ul>
-    <pre><span class="c"># the two consumable stylesheets</span>
-npm run build:tokens   <span class="c">→ dist/vipre-tokens.css  (just the --vds-* variables)</span>
-npm run build:styles   <span class="c">→ dist/vipre.css         (tokens + every component's CSS)</span>
-
-<span class="c"># package.json exports stay fixed:</span>
-<span class="s">"."</span>            <span class="c">→ React components (source JSX)</span>
-<span class="s">"./tokens.css"</span> <span class="s">"./styles.css"</span>   <span class="c">→ the CSS bundles above</span></pre>
-    <p class="muted" style="font-size:.9rem">Maintenance loop: edit a token or a component's SCSS/JSX → verify on the docs site (light + dark, mobile → desktop) → cut a versioned release. Consumers pick it up on their next update. Decisions + gotchas are logged in the playbook.</p>
-    <div class="eli"><span class="lbl">💬 In plain words</span><p>A “token” is a saved setting with a name — like a paint color called “brand blue.” The team changes it in one place, and everything using it changes too. No copy-paste, no chasing.</p></div>
-
-    <!-- 2. CONSUME -->
-    <div class="kicker"><span class="num">2</span><h2>How the engineering teams consume it</h2></div>
-    <p class="section-note">Two tracks, because we run two frameworks. Both pull from the same build outputs above.</p>
-
-    <div class="grid2">
-      <!-- React -->
-      <div class="card">
-        <span class="tag tag--react">React projects</span>
-        <h3>Install &amp; import</h3>
-        <p class="muted" style="margin-top:.1rem">Add the package once, import the CSS once, then use components by name. Fixes arrive on version bump.</p>
-        <pre><span class="c">// once, at the app root</span>
-<span class="k">import</span> <span class="s">'@vipre/design-system/styles.css'</span>
-
-<span class="c">// anywhere you need the menu</span>
-<span class="k">import</span> { SideNav } <span class="k">from</span> <span class="s">'@vipre/design-system'</span>
-
-&lt;SideNav
-  account={acct}
-  sections={data}       <span class="c">// your entitlements</span>
-  activeId={page}
-  onSelect={setPage} /&gt;</pre>
-        <p class="muted" style="font-size:.85rem; margin-top:.5rem">The app owns the <em>data</em> (routing, entitlements). The look + behavior come from the package.</p>
-      </div>
-
-      <!-- Angular / non-React -->
-      <div class="card">
-        <span class="tag tag--ng">Angular &amp; anything else</span>
-        <h3>CSS + markup + behavior</h3>
-        <p class="muted" style="margin-top:.1rem">Angular can't import a React component. It uses the shared CSS, renders the <code>vds-</code> markup, and wires the tiny behavior file.</p>
-        <pre><span class="c">/* once, in global styles */</span>
-@import <span class="s">'@vipre/design-system/styles.css'</span>;
-
-<span class="c">// render the vds-sidenav markup in the template,</span>
-<span class="c">// then attach behavior + listen for clicks</span>
-<span class="k">import</span> { initSideNav } <span class="k">from</span> <span class="s">'@vipre/.../vanilla'</span>
-initSideNav(navEl)
-navEl.addEventListener(<span class="s">'sidenav:select'</span>,
-  e =&gt; router.navigate(e.detail.id))</pre>
-        <p class="muted" style="font-size:.85rem; margin-top:.5rem">This is exactly the <code>handoff/msp-menu</code> folder we already built.</p>
-      </div>
-    </div>
-
-    <div class="eli"><span class="lbl">💬 In plain words</span><p>React builders just ask for the menu and it appears. Angular builders can’t do that yet, so they use a copy of the menu plus a tiny helper that makes it click.</p></div>
-    <div class="eli eli--warn"><span class="lbl">⚠️ Heads up</span><p>Names like <code>@vipre/design-system</code> are pretend for now — the real package doesn’t exist yet. Making it real is decision #3 below.</p></div>
-
     <div class="callout">
-      <p><span class="tag tag--good" style="margin:0 .5rem 0 0">Recommended end-state</span> Build each component <strong>once as a Web Component</strong> (<code>&lt;vds-side-nav&gt;</code>). It's browser-native, so React, Angular, and plain HTML all drop in the <em>same</em> element — data in via properties, events out via <code>CustomEvent</code>. We're already halfway: the CSS is shared and the behavior is extracted.</p>
+      <p><strong class="k">So the plan is:</strong> build each piece once, everyone shares it, nobody rebuilds it. Come to the site to <em>learn</em>; grab the real piece from the box to <em>use</em>.</p>
     </div>
-    <div class="eli"><span class="lbl">💬 In plain words</span><p>A Web Component is a menu the browser itself understands. Build it once, and every kind of builder — React, Angular, plain HTML — uses the very same one.</p></div>
 
-    <!-- 3. CONTRACT -->
-    <div class="kicker"><span class="num">3</span><h2>The contract between the two teams</h2></div>
-    <p class="section-note">This is the seam. Anything on the left flows to consumers automatically; anything on the right needs a version bump + a heads-up.</p>
-    <div style="overflow-x:auto">
-      <table>
-        <thead><tr><th>Change</th><th>Flows automatically</th><th>Breaking (version + comms)</th></tr></thead>
-        <tbody>
-          <tr><td>Token <strong>values</strong> — a color, spacing, radius</td><td class="yes">Yes</td><td>—</td></tr>
-          <tr><td>Internal component styling</td><td class="yes">Yes</td><td>—</td></tr>
-          <tr><td>New <em>optional</em> prop / attribute</td><td class="yes">Yes</td><td>—</td></tr>
-          <tr><td>Renaming a token or <code>vds-</code> class</td><td>—</td><td class="no">Breaking</td></tr>
-          <tr><td>Changing the behavior spec / event names</td><td>—</td><td class="no">Breaking</td></tr>
-          <tr><td>Removing or renaming a prop</td><td>—</td><td class="no">Breaking</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="muted" style="font-size:.9rem; margin-top:.7rem">The stable contract is small: the <code>--vds-*</code> token names, the <code>vds-sidenav__*</code> class names, and four behaviors — toggle <code>--collapsed</code>, toggle the product <code>--reveal--open</code>, set <code>aria-current</code> on the active row, float the collapsed tooltip — plus the <code>sidenav:select</code> event.</p>
-    <div class="eli"><span class="lbl">💬 In plain words</span><p>Left side = tiny changes nobody notices, safe to do anytime. Right side = changes that could break someone’s app, so we tell everyone first.</p></div>
-
-    <!-- DECISION -->
     <div class="decision">
-      <h2>What we need to lock in</h2>
-      <p class="muted" style="margin:.2rem 0 0">Three decisions and the pipeline is set:</p>
-      <p class="q">Confirm the frameworks each team ships in — React, Angular, anything else.</p>
-      <p class="q">Agree to build each component <strong>once</strong> (Web Components) rather than twice.</p>
-      <p class="q">Stand up the publish pipeline — a versioned package + the CSS bundles — so consumers update in one line.</p>
+      <h2>What we need to decide together</h2>
+      <p class="q">Which blocks does each team use — React, Angular, or both?</p>
+      <p class="q">Do we agree to build each piece once and share it?</p>
+      <p class="q">Who sets up the box so you install it once and update in one line?</p>
     </div>
 
-    <p class="foot">The menu is live and clickable, and the <strong class="k2">handoff/msp-menu</strong> folder already shows the Angular-style path (CSS + markup + behavior). Ask <strong class="k2">Alvin</strong> for the demo. This is a direction to align on, not a final spec.</p>
+    <p class="foot">There’s a live, clickable menu demo to look at — ask <strong class="k">Alvin</strong>. This is a direction to agree on, not a final spec.</p>
 
   </div>
 </div>
