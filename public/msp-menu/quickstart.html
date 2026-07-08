@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vipre — MSP Menu Quickstart</title>
+<style>
+  html, body { margin: 0; }
+  body { background: #f5f7fa; }
+  @media (prefers-color-scheme: dark) { body { background: #0b192d; } }
+  .page { min-height: 100dvh; }
+</style>
+</head>
+<body>
+<style>
+  :root {
+    --ground:#f5f7fa; --surface:#ffffff; --surface-2:#eef1f6;
+    --ink:#14212f; --muted:#5b6676; --line:#dfe4ec;
+    --accent:#0068cb; --accent-ink:#ffffff;
+    --good:#1f9256; --good-soft:#e7f6ee;
+    --code-bg:#0f1c2e; --code-ink:#d7e3f4; --code-key:#7cc4ff; --code-str:#8fd39a; --code-com:#6b7f97;
+    --shadow:0 1px 2px rgba(11,25,45,.06), 0 8px 24px -12px rgba(11,25,45,.18);
+    --radius:14px;
+  }
+  @media (prefers-color-scheme:dark){ :root{
+    --ground:#0b192d; --surface:#0f223d; --surface-2:#13294a;
+    --ink:#eaf1fb; --muted:#9fb2cc; --line:#1e3357; --accent:#4ea3ff; --accent-ink:#04121f;
+    --good:#4ec684; --good-soft:#10331f;
+    --code-bg:#061020; --code-ink:#d7e3f4; --code-key:#7cc4ff; --code-str:#8fd39a; --code-com:#64788f;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.6);
+  }}
+  :root[data-theme="light"]{ --ground:#f5f7fa; --surface:#ffffff; --surface-2:#eef1f6; --ink:#14212f;
+    --muted:#5b6676; --line:#dfe4ec; --accent:#0068cb; --accent-ink:#fff; --good:#1f9256; --good-soft:#e7f6ee;
+    --code-bg:#0f1c2e; --code-ink:#d7e3f4; --code-key:#7cc4ff; --code-str:#8fd39a; --code-com:#6b7f97;
+    --shadow:0 1px 2px rgba(11,25,45,.06), 0 8px 24px -12px rgba(11,25,45,.18); }
+  :root[data-theme="dark"]{ --ground:#0b192d; --surface:#0f223d; --surface-2:#13294a; --ink:#eaf1fb;
+    --muted:#9fb2cc; --line:#1e3357; --accent:#4ea3ff; --accent-ink:#04121f; --good:#4ec684; --good-soft:#10331f;
+    --code-bg:#061020; --code-ink:#d7e3f4; --code-key:#7cc4ff; --code-str:#8fd39a; --code-com:#64788f;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.6); }
+
+  *{box-sizing:border-box;}
+  .page{ background:var(--ground); color:var(--ink);
+    font-family:"Rubik", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased; padding:clamp(1.25rem,4vw,3.5rem) 1.25rem 4rem; }
+  .wrap{ max-width:48rem; margin:0 auto; }
+
+  .eyebrow{ font-size:.72rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 .9rem; }
+  h1{ font-size:clamp(1.7rem,5vw,2.4rem); line-height:1.1; font-weight:700; letter-spacing:-.02em;
+    text-wrap:balance; margin:0 0 .6rem; }
+  .lede{ font-size:1.05rem; color:var(--muted); margin:0; text-wrap:pretty; }
+
+  .kicker{ display:flex; align-items:center; gap:.6rem; margin:2.4rem 0 .5rem; }
+  .kicker .num{ flex:none; width:1.7rem; height:1.7rem; border-radius:7px; background:var(--accent);
+    color:var(--accent-ink); font-size:.85rem; font-weight:700; display:grid; place-items:center; }
+  h2{ font-size:1.24rem; font-weight:700; letter-spacing:-.01em; margin:0; }
+  p{ margin:.5rem 0; text-wrap:pretty; } .muted{ color:var(--muted); }
+
+  pre{ margin:.6rem 0 0; background:var(--code-bg); color:var(--code-ink); border-radius:10px;
+    padding:.85rem .95rem; overflow-x:auto; font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.82rem; line-height:1.55; }
+  pre .c{color:var(--code-com);} pre .k{color:var(--code-key);} pre .s{color:var(--code-str);}
+  code{ font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-2);
+    padding:.08em .38em; border-radius:5px; }
+
+  /* Tabs */
+  .tabs{ display:flex; gap:.3rem; margin-top:1rem; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  .tab{ appearance:none; border:0; background:transparent; font:inherit; font-size:.9rem; font-weight:600;
+    color:var(--muted); padding:.5rem .8rem; border-radius:8px 8px 0 0; cursor:pointer; border-bottom:2px solid transparent;
+    margin-bottom:-1px; }
+  .tab[aria-selected="true"]{ color:var(--accent); border-bottom-color:var(--accent); }
+  .tab:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .panel[hidden]{ display:none; }
+
+  .callout{ margin-top:1rem; background:var(--surface); border:1px solid var(--line);
+    border-left:4px solid var(--accent); border-radius:10px; padding:.9rem 1.1rem; }
+  .callout p{ margin:0; }
+  .own{ display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem; }
+  @media (max-width:38rem){ .own{ grid-template-columns:1fr; } }
+  .own .box{ background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:.9rem 1rem;
+    box-shadow:var(--shadow); }
+  .own h3{ margin:0 0 .35rem; font-size:.95rem; }
+  .own ul{ margin:.2rem 0 0; padding-left:1.1rem; color:var(--muted); font-size:.9rem; }
+  .own li{ margin:.2rem 0; }
+  .own .tag{ font-size:.62rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+    padding:.16rem .5rem; border-radius:999px; }
+  .own .c-comp{ color:var(--accent); background:color-mix(in srgb,var(--accent) 14%,transparent); }
+  .own .c-you{ color:var(--good); background:var(--good-soft); }
+
+  .links{ display:flex; gap:.6rem; flex-wrap:wrap; margin-top:1.2rem; }
+  .links a{ font-size:.88rem; font-weight:600; text-decoration:none; color:var(--accent);
+    border:1px solid var(--line); border-radius:8px; padding:.45rem .7rem; background:var(--surface); }
+  .foot{ margin-top:2.2rem; color:var(--muted); font-size:.9rem; }
+  strong.k{ color:var(--ink); }
+</style>
+
+<div class="page">
+  <div class="wrap">
+
+    <p class="eyebrow">Quickstart · MSP Menu (SideNav)</p>
+    <h1>Add the menu to your app in ~5 minutes</h1>
+    <p class="lede">Works in any framework. The menu is three things — one <strong class="k">stylesheet</strong>, a block of <strong class="k">markup</strong>, and one tiny <strong class="k">behavior file</strong>. Add those three, wire one event, done.</p>
+
+    <!-- STEP 1 -->
+    <div class="kicker"><span class="num">1</span><h2>Add the stylesheet (once)</h2></div>
+    <p class="muted">This carries the whole look — colors, spacing, the navy rail. Import it one time for your whole app.</p>
+    <pre><span class="c">/* CSS, or your app's global styles */</span>
+@import <span class="s">'vipre.css'</span>;</pre>
+
+    <!-- STEP 2 -->
+    <div class="kicker"><span class="num">2</span><h2>Drop in the markup</h2></div>
+    <p class="muted">Paste the menu's HTML where you want the rail. The classes (<code>vds-sidenav…</code>) are the same in every framework. Grab the full block from the demo files (linked below) — here's the shape:</p>
+    <pre><span class="k">&lt;nav</span> class=<span class="s">"vds-sidenav"</span> aria-label=<span class="s">"Product"</span><span class="k">&gt;</span>
+  <span class="c">&lt;!-- account header, product cards, footer rows --&gt;</span>
+  <span class="c">&lt;!-- copy the block from index.html (link below) --&gt;</span>
+<span class="k">&lt;/nav&gt;</span></pre>
+
+    <!-- STEP 3 -->
+    <div class="kicker"><span class="num">3</span><h2>Add the behavior + listen for clicks</h2></div>
+    <p class="muted">One dependency-free file wires collapse, the product accordions, the active row, and the collapsed-rail tooltips. Then you listen for one event — <code>sidenav:select</code> — and send it to your router. Pick your framework:</p>
+
+    <div class="tabs" role="tablist" aria-label="Framework">
+      <button class="tab" role="tab" id="t-react" aria-controls="p-react" aria-selected="true">React</button>
+      <button class="tab" role="tab" id="t-ng" aria-controls="p-ng" aria-selected="false">Angular</button>
+      <button class="tab" role="tab" id="t-html" aria-controls="p-html" aria-selected="false">Plain HTML / other</button>
+    </div>
+
+    <div class="panel" id="p-react" role="tabpanel" aria-labelledby="t-react">
+<pre><span class="k">import</span> { useEffect, useRef } <span class="k">from</span> <span class="s">'react'</span>
+<span class="k">import</span> { initSideNav } <span class="k">from</span> <span class="s">'./msp-menu.js'</span>
+<span class="k">import</span> <span class="s">'./vipre.css'</span>
+
+<span class="k">function</span> AppNav() {
+  <span class="k">const</span> ref = useRef(null)
+  useEffect(() => {
+    <span class="k">const</span> menu = initSideNav(ref.current)                 <span class="c">// wires behavior</span>
+    <span class="k">const</span> onSelect = e => router.push(e.detail.id)        <span class="c">// your router</span>
+    ref.current.addEventListener(<span class="s">'sidenav:select'</span>, onSelect)
+    <span class="k">return</span> () => { menu.destroy() }                       <span class="c">// cleanup</span>
+  }, [])
+  <span class="c">// paste the &lt;nav class="vds-sidenav"&gt;…&lt;/nav&gt; markup here</span>
+  <span class="k">return</span> &lt;nav <span class="k">ref</span>={ref} className=<span class="s">"vds-sidenav"</span> dangerouslySetInnerHTML={{ __html: MENU }} /&gt;
+}</pre>
+      <p class="muted" style="font-size:.85rem; margin-top:.4rem">Once we publish the React package, this becomes one line — <code>&lt;SideNav sections={data} onSelect={…} /&gt;</code> — no markup or effect needed.</p>
+    </div>
+
+    <div class="panel" id="p-ng" role="tabpanel" aria-labelledby="t-ng" hidden>
+<pre><span class="c">// 1. add vipre.css to "styles" in angular.json (or @import it)</span>
+<span class="c">// 2. paste the vds-sidenav markup into the component template, with #nav</span>
+<span class="k">import</span> { AfterViewInit, ElementRef, ViewChild } <span class="k">from</span> <span class="s">'@angular/core'</span>
+<span class="k">import</span> { initSideNav } <span class="k">from</span> <span class="s">'./msp-menu.js'</span>
+
+<span class="k">export class</span> AppNav <span class="k">implements</span> AfterViewInit {
+  <span class="err">@ViewChild</span>(<span class="s">'nav'</span>) nav!: ElementRef&lt;HTMLElement&gt;
+  <span class="k">constructor</span>(<span class="k">private</span> router: Router) {}
+  ngAfterViewInit() {
+    initSideNav(<span class="k">this</span>.nav.nativeElement)
+    <span class="k">this</span>.nav.nativeElement.addEventListener(<span class="s">'sidenav:select'</span>,
+      (e: any) => <span class="k">this</span>.router.navigate([e.detail.id]))
+  }
+}</pre>
+      <p class="muted" style="font-size:.85rem; margin-top:.4rem">Same three files, wired in <code>ngAfterViewInit</code>. When we ship Web Components, this becomes <code>&lt;vds-side-nav&gt;</code> with no wiring.</p>
+    </div>
+
+    <div class="panel" id="p-html" role="tabpanel" aria-labelledby="t-html" hidden>
+<pre><span class="k">&lt;link</span> rel=<span class="s">"stylesheet"</span> href=<span class="s">"vipre.css"</span><span class="k">&gt;</span>
+
+<span class="k">&lt;nav</span> class=<span class="s">"vds-sidenav"</span> aria-label=<span class="s">"Product"</span><span class="k">&gt;</span> … <span class="k">&lt;/nav&gt;</span>
+
+<span class="k">&lt;script</span> type=<span class="s">"module"</span> src=<span class="s">"msp-menu.js"</span><span class="k">&gt;&lt;/script&gt;</span>  <span class="c">&lt;!-- auto-wires --&gt;</span>
+<span class="k">&lt;script</span> type=<span class="s">"module"</span><span class="k">&gt;</span>
+  document.querySelector(<span class="s">'.vds-sidenav'</span>)
+    .addEventListener(<span class="s">'sidenav:select'</span>, e => location.hash = e.detail.id)
+<span class="k">&lt;/script&gt;</span></pre>
+      <p class="muted" style="font-size:.85rem; margin-top:.4rem">The script auto-wires every <code>.vds-sidenav</code> on the page. Works for Vue, Svelte, or no framework at all.</p>
+    </div>
+
+    <!-- WHO OWNS WHAT -->
+    <div class="kicker"><span class="num">✓</span><h2>What you get vs. what you wire</h2></div>
+    <div class="own">
+      <div class="box">
+        <span class="tag c-comp">The menu handles</span>
+        <ul>
+          <li>The whole look (light + dark)</li>
+          <li>Collapse / expand + animation</li>
+          <li>Product accordions open/close</li>
+          <li>Active-row highlight</li>
+          <li>Collapsed tooltips + keyboard + a11y</li>
+        </ul>
+      </div>
+      <div class="box">
+        <span class="tag c-you">You wire</span>
+        <ul>
+          <li>The data (what rows/products show)</li>
+          <li>Where clicks go (<code>sidenav:select</code> → your router)</li>
+          <li>Which products are locked (your plan/entitlements)</li>
+          <li>The account name up top (your logged-in user)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout">
+      <p><strong class="k">Where does the data come from?</strong> Today the rows live in the markup you paste. When the React package ships, you'll pass a single data object instead — <code>sections</code>, <code>account</code>, <code>activeId</code> — and the menu builds itself.</p>
+    </div>
+
+    <div class="links">
+      <a href="./index.html" target="_blank" rel="noopener">▶ Live demo</a>
+      <a href="./index.html" target="_blank" rel="noopener">⧉ index.html (copy the markup)</a>
+      <a href="./msp-menu.js" target="_blank" rel="noopener">⧉ msp-menu.js (behavior)</a>
+      <a href="./vipre.css" target="_blank" rel="noopener">⧉ vipre.css (styles)</a>
+    </div>
+
+    <p class="foot">All three files live together in <strong class="k">handoff/msp-menu/</strong>. This path works <em>today</em> in every framework. The one-line React import and the <code>&lt;vds-side-nav&gt;</code> Web Component are the next step once we publish the package.</p>
+
+  </div>
+</div>
+
+<script>
+  (function () {
+    var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+    function select(tab) {
+      tabs.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+      });
+    }
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { select(t); });
+      t.addEventListener('keydown', function (e) {
+        var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (!d) return;
+        e.preventDefault();
+        var next = tabs[(i + d + tabs.length) % tabs.length];
+        next.focus(); select(next);
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>

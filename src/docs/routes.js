@@ -65,6 +65,7 @@ import { TextareaPage } from './pages/TextareaPage.jsx'
 import { MspMenuPilotPage } from './pages/MspMenuPilotPage.jsx'
 import { TeamBriefPage } from './pages/TeamBriefPage.jsx'
 import { MeetingGuidePage } from './pages/MeetingGuidePage.jsx'
+import { MenuQuickstartPage } from './pages/MenuQuickstartPage.jsx'
 
 /* Single source of truth for both the sidebar nav and the hash router. */
 export const NAV = [
@@ -81,6 +82,7 @@ export const NAV = [
     items: [
       { path: '/adoption/team-brief', name: 'Team Brief', Page: TeamBriefPage },
       { path: '/adoption/meeting-guide', name: 'Meeting Guide', Page: MeetingGuidePage },
+      { path: '/adoption/menu-quickstart', name: 'Menu Quickstart', Page: MenuQuickstartPage },
     ],
   },
   {
