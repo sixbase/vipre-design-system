@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vipre — Design + Eng Meeting Guide</title>
+<style>
+  html, body { margin: 0; }
+  body { background: #f5f7fa; }
+  @media (prefers-color-scheme: dark) { body { background: #0b192d; } }
+  .page { min-height: 100dvh; }
+</style>
+</head>
+<body>
+<style>
+  :root {
+    --ground:#f5f7fa; --surface:#ffffff; --surface-2:#eef1f6;
+    --ink:#14212f; --muted:#5b6676; --line:#dfe4ec;
+    --accent:#0068cb; --accent-ink:#ffffff;
+    --design:#0068cb; --design-soft:#e5f0fb;
+    --eng:#9a6a12; --eng-soft:#f8efdd;
+    --both:#1f9256; --both-soft:#e7f6ee;
+    --shadow:0 1px 2px rgba(11,25,45,.06), 0 8px 24px -12px rgba(11,25,45,.18);
+    --radius:14px;
+  }
+  @media (prefers-color-scheme:dark){ :root{
+    --ground:#0b192d; --surface:#0f223d; --surface-2:#13294a;
+    --ink:#eaf1fb; --muted:#9fb2cc; --line:#1e3357;
+    --accent:#4ea3ff; --accent-ink:#04121f;
+    --design:#4ea3ff; --design-soft:#12304f;
+    --eng:#e0b46a; --eng-soft:#35270f;
+    --both:#4ec684; --both-soft:#10331f;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.6);
+  }}
+  :root[data-theme="light"]{ --ground:#f5f7fa; --surface:#ffffff; --surface-2:#eef1f6;
+    --ink:#14212f; --muted:#5b6676; --line:#dfe4ec; --accent:#0068cb; --accent-ink:#fff;
+    --design:#0068cb; --design-soft:#e5f0fb; --eng:#9a6a12; --eng-soft:#f8efdd;
+    --both:#1f9256; --both-soft:#e7f6ee;
+    --shadow:0 1px 2px rgba(11,25,45,.06), 0 8px 24px -12px rgba(11,25,45,.18); }
+  :root[data-theme="dark"]{ --ground:#0b192d; --surface:#0f223d; --surface-2:#13294a;
+    --ink:#eaf1fb; --muted:#9fb2cc; --line:#1e3357; --accent:#4ea3ff; --accent-ink:#04121f;
+    --design:#4ea3ff; --design-soft:#12304f; --eng:#e0b46a; --eng-soft:#35270f;
+    --both:#4ec684; --both-soft:#10331f;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.6); }
+
+  *{box-sizing:border-box;}
+  .page{ background:var(--ground); color:var(--ink);
+    font-family:"Rubik", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased;
+    padding:clamp(1.25rem,4vw,3.5rem) 1.25rem 4rem; }
+  .wrap{ max-width:48rem; margin:0 auto; }
+
+  .eyebrow{ font-size:.72rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 .9rem; }
+  h1{ font-size:clamp(1.7rem,5vw,2.5rem); line-height:1.1; font-weight:700; letter-spacing:-.02em;
+    text-wrap:balance; margin:0 0 .6rem; }
+  .lede{ font-size:1.06rem; color:var(--muted); margin:0; text-wrap:pretty; }
+
+  .kicker{ display:flex; align-items:center; gap:.6rem; margin:2.6rem 0 .5rem; }
+  .kicker .num{ flex:none; width:1.7rem; height:1.7rem; border-radius:7px; background:var(--accent);
+    color:var(--accent-ink); font-size:.85rem; font-weight:700; display:grid; place-items:center; }
+  h2{ font-size:1.28rem; font-weight:700; letter-spacing:-.01em; margin:0; text-wrap:balance; }
+  p{ margin:.5rem 0; text-wrap:pretty; }
+  .muted{ color:var(--muted); }
+
+  /* North-star callout */
+  .north{ margin-top:1.1rem; background:var(--surface); border:2px solid var(--accent);
+    border-radius:var(--radius); padding:1.2rem 1.3rem; box-shadow:var(--shadow); }
+  .north .q{ font-size:1.15rem; font-weight:700; margin:0 0 .5rem; text-wrap:balance; }
+  .north p{ margin:.35rem 0 0; color:var(--muted); font-size:.95rem; }
+  .north .win{ margin-top:.7rem; color:var(--ink); font-weight:600; font-size:.95rem; }
+
+  /* Agenda */
+  .agenda{ list-style:none; margin:1rem 0 0; padding:0; display:grid; gap:.5rem; }
+  .agenda li{ display:flex; gap:.75rem; align-items:baseline; background:var(--surface);
+    border:1px solid var(--line); border-radius:10px; padding:.6rem .8rem; }
+  .agenda .time{ flex:none; font-variant-numeric:tabular-nums; font-weight:700; font-size:.8rem;
+    color:var(--accent); min-width:3.2rem; }
+  .agenda .what b{ font-weight:600; }
+  .agenda .what span{ color:var(--muted); }
+
+  /* Role tags */
+  .tag{ display:inline-block; font-size:.63rem; font-weight:700; letter-spacing:.06em;
+    text-transform:uppercase; padding:.16rem .5rem; border-radius:999px; vertical-align:middle; }
+  .tag--design{ color:var(--design); background:var(--design-soft); }
+  .tag--eng{ color:var(--eng); background:var(--eng-soft); }
+  .tag--both{ color:var(--both); background:var(--both-soft); }
+
+  .qlist{ list-style:none; margin:.8rem 0 0; padding:0; display:grid; gap:.7rem; }
+  .qlist li{ background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--accent);
+    border-radius:10px; padding:.7rem .85rem; }
+  .qlist li.d{ border-left-color:var(--design); }
+  .qlist li.e{ border-left-color:var(--eng); }
+  .qlist li.b{ border-left-color:var(--both); }
+  .qlist .qh{ font-weight:600; margin:0 0 .15rem; }
+  .qlist p{ margin:.1rem 0 0; color:var(--muted); font-size:.9rem; }
+
+  table{ width:100%; border-collapse:collapse; margin-top:1rem; font-size:.9rem; }
+  th,td{ text-align:left; padding:.55rem .7rem; border-bottom:1px solid var(--line); vertical-align:top; }
+  th{ font-size:.7rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:600; }
+  td:first-child{ color:var(--muted); }
+  td:last-child{ font-weight:600; color:var(--ink); }
+  code{ font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-2);
+    padding:.08em .38em; border-radius:5px; }
+
+  /* Must-decide */
+  .must{ counter-reset:m; list-style:none; margin:1rem 0 0; padding:0; display:grid; gap:.6rem; }
+  .must li{ counter-increment:m; position:relative; background:var(--surface); border:1px solid var(--line);
+    border-radius:10px; padding:.75rem .85rem .75rem 3rem; box-shadow:var(--shadow); }
+  .must li::before{ content:counter(m); position:absolute; left:.7rem; top:.7rem; width:1.6rem; height:1.6rem;
+    background:var(--accent); color:var(--accent-ink); border-radius:8px; font-weight:700; font-size:.85rem;
+    display:grid; place-items:center; }
+  .must b{ color:var(--ink); }
+
+  .risk{ margin-top:.8rem; background:var(--eng-soft); border:1px solid color-mix(in srgb,var(--eng) 30%,var(--line));
+    border-radius:10px; padding:.55rem .8rem; font-size:.92rem; }
+  .risk b{ color:var(--ink); }
+
+  .foot{ margin-top:2.4rem; color:var(--muted); font-size:.9rem; }
+  hr.rule{ height:1px; background:var(--line); border:0; margin:2.2rem 0 0; }
+</style>
+
+<div class="page">
+  <div class="wrap">
+
+    <p class="eyebrow">Meeting guide · Design + Engineering</p>
+    <h1>Handoff &amp; source-of-truth alignment</h1>
+    <p class="lede">How we deliver from design → engineering using the design system and the prototypes we build with Claude — and how we move off Figma as the source of truth. Use this to run the room and leave with real decisions.</p>
+
+    <!-- NORTH STAR -->
+    <div class="north">
+      <p class="q">The one decision everything hangs on: what is the source of truth, and what job does each tool do?</p>
+      <p>Today Figma is the source of truth and eng pulls specs from it. We want the <strong style="color:var(--ink)">design system (code + docs)</strong> to be the source of truth instead.</p>
+      <p class="win">If the room agrees to this, the meeting succeeded:</p>
+      <p>• <b style="color:var(--ink)">Design system (code)</b> = source of truth for anything real — tokens, components, states, behavior.<br>
+         • <b style="color:var(--ink)">Figma</b> = ideation, flows, stakeholder review — reflects the system, doesn’t define it.<br>
+         • <b style="color:var(--ink)">Claude prototypes</b> = exploration that gets <em>promoted</em> into the system once validated.</p>
+    </div>
+
+    <!-- AGENDA -->
+    <div class="kicker"><span class="num">◷</span><h2>Rough agenda · ~60 min</h2></div>
+    <ul class="agenda">
+      <li><span class="time">5 min</span><span class="what"><b>Framing</b> — <span>state the north star; get a thumbs-up on direction.</span></span></li>
+      <li><span class="time">10 min</span><span class="what"><b>What Figma gives us today</b> — <span>list what eng relies on, so nothing drops silently.</span></span></li>
+      <li><span class="time">15 min</span><span class="what"><b>Design decisions</b> — <span>where design happens + how it enters the system.</span></span></li>
+      <li><span class="time">15 min</span><span class="what"><b>Eng decisions</b> — <span>how they consume + what “production-ready” means.</span></span></li>
+      <li><span class="time">10 min</span><span class="what"><b>Contract + prototype→production path</b>.</span></li>
+      <li><span class="time">5 min</span><span class="what"><b>Assign owners + next steps</b>.</span></li>
+    </ul>
+
+    <!-- FIGMA MOVE -->
+    <div class="kicker"><span class="num">1</span><h2>What Figma provides today → where it moves</h2></div>
+    <p class="muted">Do this live — it’s the most concrete part. Name a replacement for everything eng gets from Figma now.</p>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Figma gives today</th><th>New home (source of truth)</th></tr></thead>
+        <tbody>
+          <tr><td>Colors, spacing, type specs</td><td>Design tokens (<code>--vds-*</code>) in the docs</td></tr>
+          <tr><td>Component measurements / redlines</td><td>The component itself — you use it, not measure it</td></tr>
+          <tr><td>States (hover/focus/disabled/dark)</td><td>Built into the component + shown in docs</td></tr>
+          <tr><td>Assets (icons, SVGs)</td><td>Shipped with the system (icon set + bundle)</td></tr>
+          <tr><td>Screen layouts / flows</td><td>Claude prototypes + template pages</td></tr>
+          <tr><td>“What should this look like”</td><td>Docs site component pages</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted" style="font-size:.9rem">The gaps in the right column are your real work items.</p>
+
+    <!-- DECISIONS -->
+    <div class="kicker"><span class="num">2</span><h2>Decisions to make in the room</h2></div>
+    <p class="muted">Tagged by who owns the call: <span class="tag tag--design">Design</span> <span class="tag tag--eng">Eng</span> <span class="tag tag--both">Both</span></p>
+    <ul class="qlist">
+      <li class="d"><p class="qh"><span class="tag tag--design">Design</span>&nbsp; Where do designers work, and what’s the spec of record?</p><p>Figma for exploration — but the coded component becomes the truth, not the Figma frame. Agree on that.</p></li>
+      <li class="d"><p class="qh"><span class="tag tag--design">Design</span>&nbsp; How does a design change get into the system?</p><p>A designer can’t merge SCSS. Who translates a proposal into tokens/components? Who reviews and approves?</p></li>
+      <li class="d"><p class="qh"><span class="tag tag--design">Design</span>&nbsp; What happens to Figma?</p><p>Retire it, keep it for ideation only, or keep it in sync with tokens? If synced, which direction — ideally code → Figma.</p></li>
+      <li class="e"><p class="qh"><span class="tag tag--eng">Eng</span>&nbsp; Where do specs come from without Figma?</p><p>Is the docs site (props, tokens, markup, a11y) enough to build from? What’s missing vs. Figma redlines? This is make-or-break.</p></li>
+      <li class="e"><p class="qh"><span class="tag tag--eng">Eng</span>&nbsp; What does “production-ready” actually mean?</p><p>Pin the bar: versioned package, semver, changelog, tests, TypeScript types, accessibility, visual regression.</p></li>
+      <li class="e"><p class="qh"><span class="tag tag--eng">Eng</span>&nbsp; Consumption model + frameworks?</p><p>Confirm React vs Angular per team. Build once as Web Components, or ship a React package + CSS/behavior contract for Angular?</p></li>
+      <li class="e"><p class="qh"><span class="tag tag--eng">Eng</span>&nbsp; The publishing pipeline — the current blocker.</p><p>Where does the package live (private npm / GitHub Packages)? Who stands it up? Version + release cadence? No pipeline = no clean handoff.</p></li>
+      <li class="b"><p class="qh"><span class="tag tag--both">Both</span>&nbsp; How does a Claude prototype become production?</p><p>A prototype isn’t production code. Who hardens it — componentizes, tokenizes, tests? What’s the promotion checklist?</p></li>
+      <li class="b"><p class="qh"><span class="tag tag--both">Both</span>&nbsp; The contract + governance.</p><p>Token names, class names, component API, events — who owns it, how are breaking changes versioned + announced? Who owns the repo and release cadence?</p></li>
+      <li class="b"><p class="qh"><span class="tag tag--both">Both</span>&nbsp; Definition of “handoff done.”</p><p>One shared checklist both sides sign, so “done” isn’t subjective.</p></li>
+    </ul>
+
+    <!-- MUST LEAVE WITH -->
+    <div class="kicker"><span class="num">3</span><h2>Don’t leave the room without…</h2></div>
+    <ol class="must">
+      <li><b>Agreement</b> that the design system is the source of truth (Figma demoted to ideation/flows).</li>
+      <li><b>Which frameworks</b> eng ships in — React / Angular / both.</li>
+      <li><b>An owner for the design system</b> and <b>an owner + date for the package pipeline</b>.</li>
+      <li><b>The Figma-replacement checklist</b> (the table above) with an owner per row.</li>
+      <li><b>A rough prototype → production promotion process</b> — who does what at each step.</li>
+    </ol>
+
+    <!-- RISKS -->
+    <div class="kicker"><span class="num">!</span><h2>Name these risks out loud</h2></div>
+    <div class="risk"><b>No published package yet</b> — “production-ready consumption” is blocked until it exists. Highest-priority action item.</div>
+    <div class="risk"><b>React + Angular</b> means “build once” needs a real answer (Web Components) or you maintain everything twice.</div>
+    <div class="risk"><b>Don’t yank Figma too fast</b> — designers lose their working surface. Phase it: tokens + components move to code first; flows stay in Figma for now.</div>
+    <div class="risk"><b>Stakeholders who only speak Figma</b> — the docs site + prototype links become the new review surface. Make sure they can use it.</div>
+
+    <hr class="rule">
+    <p class="foot">Worth saying in the room: the hard parts are already started — a live docs site as the spec surface, tokens as the shared language, and working prototypes. What’s missing is mostly <strong style="color:var(--ink)">process + a publish pipeline</strong>, not more design.</p>
+
+  </div>
+</div>
+
+</body>
+</html>
