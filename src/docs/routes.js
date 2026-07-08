@@ -63,6 +63,7 @@ import { PolicyListTemplatePage } from './pages/PolicyListTemplatePage.jsx'
 import { EntityDetailTemplatePage } from './pages/EntityDetailTemplatePage.jsx'
 import { TextareaPage } from './pages/TextareaPage.jsx'
 import { MspMenuPilotPage } from './pages/MspMenuPilotPage.jsx'
+import { TeamBriefPage } from './pages/TeamBriefPage.jsx'
 
 /* Single source of truth for both the sidebar nav and the hash router. */
 export const NAV = [
@@ -71,6 +72,13 @@ export const NAV = [
     items: [
       { path: '/', name: 'Introduction', Page: HomePage },
       { path: '/getting-started/installation', name: 'Installation', Page: InstallationPage },
+    ],
+  },
+  {
+    // Adoption — how teams consume + maintain the system. Shareable team brief.
+    group: 'Adoption',
+    items: [
+      { path: '/adoption/team-brief', name: 'Team Brief', Page: TeamBriefPage },
     ],
   },
   {
