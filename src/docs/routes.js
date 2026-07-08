@@ -64,6 +64,7 @@ import { EntityDetailTemplatePage } from './pages/EntityDetailTemplatePage.jsx'
 import { TextareaPage } from './pages/TextareaPage.jsx'
 import { MspMenuPilotPage } from './pages/MspMenuPilotPage.jsx'
 import { TeamBriefPage } from './pages/TeamBriefPage.jsx'
+import { MeetingGuidePage } from './pages/MeetingGuidePage.jsx'
 
 /* Single source of truth for both the sidebar nav and the hash router. */
 export const NAV = [
@@ -79,6 +80,7 @@ export const NAV = [
     group: 'Adoption',
     items: [
       { path: '/adoption/team-brief', name: 'Team Brief', Page: TeamBriefPage },
+      { path: '/adoption/meeting-guide', name: 'Meeting Guide', Page: MeetingGuidePage },
     ],
   },
   {
