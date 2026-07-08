@@ -210,6 +210,11 @@ export function SideNavPage() {
         <><IC>prefers-reduced-motion</IC> turns off all the animation — collapse and cards snap, shimmer freezes.</>,
       ]}
     >
+      <Section title="Get started" note="New here? The Menu Quickstart shows how to drop this into React, Angular, or plain HTML in about five minutes.">
+        <p className="vds-text vds-text--body" style={{ margin: 0 }}>
+          <a href="#/adoption/menu-quickstart"><strong>Open the Menu Quickstart →</strong></a>
+        </p>
+      </Section>
       <Section
         title="Anatomy"
         note="Everything at once: a back row and account header (click Back to step out of Acme Corp), two sections with eyebrows, product cards you can open and close, a locked product (SAT), a count badge on Incidents, a pinned Other section, and the built-in Collapse row. Click things — the page state lives in this docs page."

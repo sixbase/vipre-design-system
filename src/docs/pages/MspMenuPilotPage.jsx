@@ -10,40 +10,27 @@ import { GLYPHS } from '../templateData.js'
 
 /* ============================================================================
    MSP MENU — ISOLATED (pilot handoff artifact)
-   ----------------------------------------------------------------------------
-   This is ONLY the product rail (the `SideNav` component). No AppShell, no
-   TopBar, no page body. Everything the menu needs — account identity, the two
-   section states (MSP list vs. scoped-into-a-customer), the pinned footer, the
-   active-page state, scope in/out, and collapse — lives in THIS file.
-
-   The delivery vehicle for this to engineering is still being decided; this
-   page exists so we have one concrete thing to point at while we align.
+   Just the SideNav, on its own — no shell, no top bar, no page body. All the
+   data it needs lives in this file. Docs copy is deliberately ELI10.
    ========================================================================== */
 
 const MeridianTile = (
-  <ProductTile>
-    <text x="16" y="21" textAnchor="middle" fontSize="14" fontWeight="600" fill="#fff">M</text>
-  </ProductTile>
+  <ProductTile><text x="16" y="21" textAnchor="middle" fontSize="14" fontWeight="600" fill="#fff">M</text></ProductTile>
 )
 const AcmeTile = (
-  <ProductTile>
-    <text x="16" y="21" textAnchor="middle" fontSize="14" fontWeight="600" fill="#fff">A</text>
-  </ProductTile>
+  <ProductTile><text x="16" y="21" textAnchor="middle" fontSize="14" fontWeight="600" fill="#fff">A</text></ProductTile>
 )
 
-/* Unscoped MSP view: partner pages first, then the product cards. */
 const MSP_SECTIONS = [
   {
-    id: 'partners',
-    label: 'Partners',
+    id: 'partners', label: 'Partners',
     items: [
       { id: 'dashboard', label: 'Dashboard', icon: LayoutGrid },
       { id: 'customers', label: 'Customers', icon: Building2 },
     ],
   },
   {
-    id: 'products',
-    label: 'Products',
+    id: 'products', label: 'Products',
     items: [
       {
         id: 'ies', label: 'IES', glyph: GLYPHS.ies,
@@ -65,11 +52,9 @@ const MSP_SECTIONS = [
   },
 ]
 
-/* Scoped into one customer: only that customer's products. */
 const CUSTOMER_SECTIONS = [
   {
-    id: 'products',
-    label: 'Products',
+    id: 'products', label: 'Products',
     items: [
       {
         id: 'ies', label: 'IES', glyph: GLYPHS.ies, defaultOpen: true,
@@ -79,10 +64,7 @@ const CUSTOMER_SECTIONS = [
         ],
         escape: { id: 'ies-portal', label: 'Full portal' },
       },
-      {
-        id: 'edr', label: 'EDR', glyph: GLYPHS.edr,
-        items: [{ id: 'edr-devices', label: 'Devices', icon: Monitor }],
-      },
+      { id: 'edr', label: 'EDR', glyph: GLYPHS.edr, items: [{ id: 'edr-devices', label: 'Devices', icon: Monitor }] },
       { id: 'sat', label: 'SAT', glyph: GLYPHS.sat, locked: true, lockHint: 'Not subscribed' },
     ],
   },
@@ -90,8 +72,7 @@ const CUSTOMER_SECTIONS = [
 
 const FOOTER_SECTIONS = [
   {
-    id: 'other',
-    label: 'Other',
+    id: 'other', label: 'Other',
     items: [
       { id: 'admins', label: 'Admins', icon: UserCog },
       { id: 'saml', label: 'SAML', icon: KeyRound },
@@ -100,16 +81,12 @@ const FOOTER_SECTIONS = [
   },
 ]
 
-/* ---- The isolated menu ----------------------------------------------------- */
-
 function MenuOnly() {
   const [scoped, setScoped] = useState(false)
   const [page, setPage] = useState('dashboard')
-
   const account = scoped
     ? { name: 'Acme Corp', typeLabel: 'Customer', tile: AcmeTile }
     : { name: 'Meridian Distribution', typeLabel: 'Distributor', tile: MeridianTile }
-
   return (
     <div style={{ height: 620, display: 'flex' }}>
       <SideNav
@@ -121,7 +98,6 @@ function MenuOnly() {
         footerSections={FOOTER_SECTIONS}
         activeId={page}
         onSelect={(id) => {
-          // "Customers" is the drill-in affordance in this isolated demo.
           if (id === 'customers') { setScoped(true); setPage('ies-overview'); return }
           setPage(id)
         }}
@@ -130,32 +106,34 @@ function MenuOnly() {
   )
 }
 
-/* ---- Page ------------------------------------------------------------------ */
-
 export function MspMenuPilotPage() {
   return (
     <ComponentPage
-      title="MSP Menu (isolated)"
-      description="Only the product rail — no shell, no top bar, no page body. This is the exact SideNav from the MSP Shell template, pulled out on its own so we can pilot handing just the menu to engineering. Everything the menu needs is self-contained: account identity, the MSP vs. scoped-customer section states, the pinned footer, active-page state, scope in/out, and collapse."
+      title="MSP Menu"
+      description="Just the side menu, on its own — no page around it. Click it; it really works. When you want it in your app, follow the Menu Quickstart."
       installCode={`import { SideNav, ProductTile } from 'vipre-design-system'`}
     >
-      <Section
-        title="The menu, alone"
-        note="Click rows to move the active state. Open and close the product cards. Collapse the rail with the bottom row. Click 'Customers' to scope into Acme Corp — the account header and sections swap and a Back row appears. Click Back to climb out."
-      >
+      <Section title="Try it" note="Click a row. Open a product card. Press Collapse to shrink the rail. Click Customers to jump into a customer, then Back to pop out.">
         <Preview
           canvas={<MenuOnly />}
           code={`<SideNav
-  aria-label="Product"
-  account={scoped ? acmeAccount : mspAccount}   // { name, typeLabel, tile }
-  onBack={scoped ? () => setScoped(false) : undefined}
-  parentName="Meridian Distribution"
-  sections={scoped ? customerSections : mspSections}
-  footerSections={otherSections}
-  activeId={page}
-  onSelect={setPage}
+  account={account}      // who you're signed in as
+  sections={sections}    // the rows + product cards
+  activeId={page}        // which row is blue
+  onSelect={setPage}     // runs when a row is clicked
 />`}
         />
+      </Section>
+
+      <Section title="Use it in your app" note="The menu is three pieces: a stylesheet, some markup, and one tiny script. Add them and it works — in React, Angular, or plain HTML.">
+        <p className="vds-text vds-text--body" style={{ margin: 0 }}>
+          Full steps (about 5 minutes):{' '}
+          <a href="#/adoption/menu-quickstart"><strong>Menu Quickstart →</strong></a>
+        </p>
+        <p className="vds-text vds-text--body vds-text--tone-muted" style={{ marginTop: '0.5rem' }}>
+          Want every prop, state, and the raw markup? See the full{' '}
+          <a href="#/components/side-nav">Side Nav</a> page.
+        </p>
       </Section>
     </ComponentPage>
   )
