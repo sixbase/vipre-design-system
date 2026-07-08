@@ -39,41 +39,69 @@
 
 .vds-sidenav {
   // ---- chrome palette: the fixed midnight ramp (theme-stable) ----
-  --_nav-bg: var(--vds-midnight-950);        // the rail itself
-  --_nav-well: var(--vds-midnight-1000);     // recessed card wells + dividers
-  --_nav-ink: var(--vds-midnight-200);       // row labels
-  --_nav-ink-dim: var(--vds-midnight-300);   // eyebrows, back row, account type
-  --_nav-icon: var(--vds-midnight-400);      // resting row icons
-  --_nav-icon-faint: var(--vds-midnight-600); // escape-row icon at rest
-  --_nav-chev: var(--vds-midnight-500);      // product chevron at rest
-  --_nav-hover: var(--vds-midnight-800);     // hover fill
-  --_nav-press: var(--vds-midnight-700);     // pressed = one step brighter
-  --_nav-accent: var(--vds-nav-accent);      // selected fill (brandable)
+  --vds-sidenav-bg: var(--vds-midnight-950);        // the rail itself
+  --vds-sidenav-well: var(--vds-midnight-1000);     // recessed card wells + dividers
+  --vds-sidenav-ink: var(--vds-midnight-200);       // row labels
+  --vds-sidenav-ink-dim: var(--vds-midnight-300);   // eyebrows, back row, account type
+  --vds-sidenav-icon: var(--vds-midnight-400);      // resting row icons
+  --vds-sidenav-icon-faint: var(--vds-midnight-600); // escape-row icon at rest
+  --vds-sidenav-chev: var(--vds-midnight-500);      // product chevron at rest
+  --vds-sidenav-hover: var(--vds-midnight-800);     // hover fill
+  --vds-sidenav-press: var(--vds-midnight-700);     // pressed = one step brighter
+  --vds-sidenav-accent: var(--vds-nav-accent);      // selected fill (brandable)
   // Selected rows darken toward the deepest navy on hover/press so the tint
   // stays in the chrome's family (no raw black).
-  --_nav-accent-hover: color-mix(in srgb, var(--vds-nav-accent) 88%, var(--vds-midnight-1000));
-  --_nav-accent-press: color-mix(in srgb, var(--vds-nav-accent) 78%, var(--vds-midnight-1000));
+  --vds-sidenav-accent-hover: color-mix(in srgb, var(--vds-nav-accent) 88%, var(--vds-midnight-1000));
+  --vds-sidenav-accent-press: color-mix(in srgb, var(--vds-nav-accent) 78%, var(--vds-midnight-1000));
   // A whisper of top-light on selected fills, + an inset hairline for depth.
-  --_nav-toplight: linear-gradient(
+  --vds-sidenav-toplight: linear-gradient(
     180deg,
     color-mix(in srgb, var(--vds-white) 10%, transparent),
     transparent 60%
   );
-  --_nav-hairline: inset 0 1px 0 color-mix(in srgb, var(--vds-white) 8%, transparent);
+  --vds-sidenav-hairline: inset 0 1px 0 color-mix(in srgb, var(--vds-white) 8%, transparent);
+
+  // ---- sizes ----
+  --vds-sidenav-icon-size: 16px;         // row icon + lock badge box
+  --vds-sidenav-tile-size: 32px;         // product / account tile
+  --vds-sidenav-account-h: 36px;         // fixed account-header height
+  --vds-sidenav-back-h: 24px;            // fixed back-row height
+  --vds-sidenav-chev-size: 24px;         // chevron hit box
+  --vds-sidenav-label-max: 200px;        // row label clamp before ellipsis
+  --vds-sidenav-label-max-pill: 160px;   // product / account label clamp
+
+  // ---- spacing ----
+  --vds-sidenav-nest: 2px;               // concentric padding step (tile→pill→card)
+  --vds-sidenav-pad-x: 16px;             // rail's base horizontal padding
+  --vds-sidenav-section-pad-y: 10px;     // section top / bottom padding
+  --vds-sidenav-section-gap: 4px;        // gap between rows in a section
+  --vds-sidenav-row-pad-x: 10px;         // row inner x padding
+  --vds-sidenav-row-pad-y: 6px;          // row inner y padding
+  --vds-sidenav-label-gap: 8px;          // icon→label lead margin (acts as the gap)
 
   // ---- concentric radii (see the header comment) ----
-  --_nest: 2px;
-  --_r-tile: var(--vds-radius-md);                    // 8 — the 32px tiles
-  --_r-pill: calc(var(--_r-tile) + var(--_nest));     // 10 — pill = tile + 2px pad
-  --_r-card: calc(var(--_r-pill) + var(--_nest));     // 12 — card = pill + 2px pad
+  --vds-sidenav-r-tile: var(--vds-radius-md);                                       // 8 — the 32px tiles
+  --vds-sidenav-r-pill: calc(var(--vds-sidenav-r-tile) + var(--vds-sidenav-nest));  // 10 — pill = tile + 2px pad
+  --vds-sidenav-r-card: calc(var(--vds-sidenav-r-pill) + var(--vds-sidenav-nest));  // 12 — card = pill + 2px pad
 
-  // ---- motion beats ----
-  // 220ms sits between --vds-dur-base and --vds-dur-slow: the collapse beat.
-  --_dur-collapse: 220ms;
-  // Asymmetric hovers: land near-instantly, release slowly — the pointer
-  // feels tracked, not chased.
-  --_dur-hover-in: 50ms;
-  --_dur-hover-out: 280ms;
+  // ---- typography (sizes come from the typescale mixin; weights named here) ----
+  --vds-sidenav-weight-label: 500;       // row labels
+  --vds-sidenav-weight-pill: 600;        // product / account name
+  --vds-sidenav-weight-quiet: 400;       // "Full portal" + account type
+
+  // ---- motion ----
+  --vds-sidenav-ease: var(--vds-ease-emphatic);        // one curve for all nav motion
+  --vds-sidenav-dur-collapse: 220ms;                   // rail width + label slide (between dur-base and dur-slow)
+  --vds-sidenav-dur-hover-in: 50ms;                    // fill lands near-instantly…
+  --vds-sidenav-dur-hover-out: 280ms;                  // …and releases slowly
+  --vds-sidenav-dur-press: 80ms;                       // tile settle under the finger
+  --vds-sidenav-dur-label-out: 90ms;                   // label / eyebrow / badge fade on collapse (fast-out)
+  --vds-sidenav-delay-label-in: 70ms;                  // …and fade in late (the width leads first)
+  --vds-sidenav-dur-accordion: var(--vds-dur-slow);    // 240 — product card 0fr → 1fr
+  --vds-sidenav-delay-item-in: 60ms;                   // card items fade in a beat after the card opens
+  --vds-sidenav-dur-item-out: 110ms;                   // …and drop out quickly on close
+  --vds-sidenav-dur-tip: 140ms;                        // collapsed-rail tooltip fade + slide
+  --vds-sidenav-dur-shimmer: 1.15s;                    // loading skeleton shimmer loop
 
   position: relative;
   display: flex;
@@ -82,10 +110,10 @@
   width: var(--vds-sidenav-w);
   height: 100%;
   min-height: 0;
-  background-color: var(--_nav-bg);
+  background-color: var(--vds-sidenav-bg);
   font-family: var(--vds-font-sans);
-  color: var(--_nav-ink);
-  transition: width var(--_dur-collapse) var(--vds-ease-emphatic);
+  color: var(--vds-sidenav-ink);
+  transition: width var(--vds-sidenav-dur-collapse) var(--vds-sidenav-ease);
 
   &--collapsed {
     width: var(--vds-sidenav-w-collapsed);
@@ -128,8 +156,8 @@
   &__section {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    padding: 10px 16px; // 16 = the rail's base x-pad (see GEOMETRY above)
+    gap: var(--vds-sidenav-section-gap);
+    padding: var(--vds-sidenav-section-pad-y) var(--vds-sidenav-pad-x); // 16 = the rail's base x-pad (see GEOMETRY above)
   }
   &__section--account {
     gap: 2px;
@@ -140,14 +168,14 @@
     flex-shrink: 0;
     height: 1px;
     margin: 0 12px;
-    background-color: var(--_nav-well);
+    background-color: var(--vds-sidenav-well);
   }
 
   // 2px x-inset mirrors the cards' inner padding, so bare pills/rows sit on
   // the same x (and width) as carded ones — kept in BOTH rail states so the
   // icon column never shifts on collapse/expand.
   &__inset {
-    padding: 0 var(--_nest);
+    padding: 0 var(--vds-sidenav-nest);
   }
 
   // A cluster of consecutive bare rows (tighter 1px rhythm than the section's 4px).
@@ -155,7 +183,7 @@
     display: flex;
     flex-direction: column;
     gap: 1px;
-    padding: 0 var(--_nest);
+    padding: 0 var(--vds-sidenav-nest);
   }
 
   // Pinned utility cluster (consumer rows + the built-in collapse toggle).
@@ -164,7 +192,7 @@
     display: flex;
     flex-direction: column;
     gap: 1px;
-    padding: 6px 18px;
+    padding: var(--vds-sidenav-row-pad-y) calc(var(--vds-sidenav-pad-x) + var(--vds-sidenav-nest));
   }
 
   // ---- eyebrow: fades on collapse but NEVER unmounts, so section heights
@@ -174,15 +202,15 @@
     margin: 0;
     padding-left: 4px; // aligns with the tile column (16 + inset 2 + pill pad 2)
     text-transform: uppercase;
-    color: var(--_nav-ink-dim);
+    color: var(--vds-sidenav-ink-dim);
     white-space: nowrap;
     overflow: hidden;
     opacity: 1;
-    transition: opacity var(--vds-dur-base) ease 70ms;
+    transition: opacity var(--vds-dur-base) ease var(--vds-sidenav-delay-label-in);
   }
   &--collapsed &__eyebrow {
     opacity: 0;
-    transition: opacity 90ms ease;
+    transition: opacity var(--vds-sidenav-dur-label-out) ease;
   }
 
   // --------------------------------------------------------------------------
@@ -192,44 +220,44 @@
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 6px 10px; // IDENTICAL in both rail states — rows never shift x
+    padding: var(--vds-sidenav-row-pad-y) var(--vds-sidenav-row-pad-x); // IDENTICAL in both rail states — rows never shift x
     border: 0;
-    border-radius: var(--_r-pill);
+    border-radius: var(--vds-sidenav-r-pill);
     background-color: transparent;
-    color: var(--_nav-ink);
+    color: var(--vds-sidenav-ink);
     font: inherit;
     text-align: left;
     cursor: pointer;
     // Slow fade at rest…
-    transition: background-color var(--_dur-hover-out) ease;
+    transition: background-color var(--vds-sidenav-dur-hover-out) ease;
 
     // …instant fill the moment you hover or press.
     &:hover {
-      background-color: var(--_nav-hover);
-      transition-duration: var(--_dur-hover-in);
+      background-color: var(--vds-sidenav-hover);
+      transition-duration: var(--vds-sidenav-dur-hover-in);
     }
     &:active {
       transition-duration: 0ms;
     }
     // Pressed: one step brighter than the hover fill — tactile, not murky.
     &:not(#{&}--active):active {
-      background-color: var(--_nav-press);
+      background-color: var(--vds-sidenav-press);
     }
 
     // ---- selection: accent fill + white ink + top-light + inset hairline ----
     &--active {
-      background-color: var(--_nav-accent);
-      background-image: var(--_nav-toplight);
-      box-shadow: var(--_nav-hairline);
+      background-color: var(--vds-sidenav-accent);
+      background-image: var(--vds-sidenav-toplight);
+      box-shadow: var(--vds-sidenav-hairline);
       color: var(--vds-white);
 
       // Longhand background-color only, so the darkened hover KEEPS the
       // top-light gradient (a `background:` shorthand would wipe it).
       &:hover {
-        background-color: var(--_nav-accent-hover);
+        background-color: var(--vds-sidenav-accent-hover);
       }
       &:active {
-        background-color: var(--_nav-accent-press);
+        background-color: var(--vds-sidenav-accent-press);
       }
     }
   }
@@ -238,10 +266,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 16px;
-    height: 16px;
+    width: var(--vds-sidenav-icon-size);
+    height: var(--vds-sidenav-icon-size);
     flex-shrink: 0;
-    color: var(--_nav-icon);
+    color: var(--vds-sidenav-icon);
     transition: color var(--vds-dur-base) ease;
   }
   &__row--active &__row-icon {
@@ -257,9 +285,9 @@
   // Escape row ("Full portal") — the quiet door out: faint icon that brightens
   // to white on row hover, smallest label.
   &__row--escape {
-    color: var(--_nav-ink-dim);
+    color: var(--vds-sidenav-ink-dim);
     .vds-sidenav__row-icon {
-      color: var(--_nav-icon-faint);
+      color: var(--vds-sidenav-icon-faint);
       transition: color var(--vds-dur-fast) ease;
     }
     &:hover .vds-sidenav__row-icon {
@@ -267,21 +295,21 @@
     }
     .vds-sidenav__label {
       @include type.step(micro);
-      font-weight: 400;
+      font-weight: var(--vds-sidenav-weight-quiet);
     }
   }
 
   // Back row — fixed 24px, chevron holds the icon column's x.
   &__back {
-    height: 24px;
+    height: var(--vds-sidenav-back-h);
     padding-block: 4px;
-    color: var(--_nav-ink-dim);
+    color: var(--vds-sidenav-ink-dim);
     .vds-sidenav__row-icon {
-      color: var(--_nav-ink-dim);
+      color: var(--vds-sidenav-ink-dim);
     }
     .vds-sidenav__label {
       margin-left: 6px;
-      max-width: 160px;
+      max-width: var(--vds-sidenav-label-max-pill);
     }
   }
 
@@ -290,33 +318,33 @@
   // the margin IS the gap, so collapsed rows carry no phantom space. ----
   &__label {
     @include type.step(detail);
-    font-weight: 500;
+    font-weight: var(--vds-sidenav-weight-label);
     min-width: 0;
-    max-width: 200px;
-    margin-left: 8px;
+    max-width: var(--vds-sidenav-label-max);
+    margin-left: var(--vds-sidenav-label-gap);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     opacity: 1;
     transition:
-      max-width var(--_dur-collapse) var(--vds-ease-emphatic),
-      margin-left var(--_dur-collapse) var(--vds-ease-emphatic),
-      opacity var(--vds-dur-base) ease 70ms; // late-in: the width leads, words arrive
+      max-width var(--vds-sidenav-dur-collapse) var(--vds-sidenav-ease),
+      margin-left var(--vds-sidenav-dur-collapse) var(--vds-sidenav-ease),
+      opacity var(--vds-dur-base) ease var(--vds-sidenav-delay-label-in); // late-in: the width leads, words arrive
   }
   &--collapsed &__label {
     max-width: 0;
     margin-left: 0;
     opacity: 0;
     transition:
-      max-width var(--_dur-collapse) var(--vds-ease-emphatic),
-      margin-left var(--_dur-collapse) var(--vds-ease-emphatic),
-      opacity 90ms ease; // fast-out: get out of the way
+      max-width var(--vds-sidenav-dur-collapse) var(--vds-sidenav-ease),
+      margin-left var(--vds-sidenav-dur-collapse) var(--vds-sidenav-ease),
+      opacity var(--vds-sidenav-dur-label-out) ease; // fast-out: get out of the way
   }
   // Pill labels (product / tile rows) are a step larger and heavier.
   &__label--pill {
     @include type.step(body);
-    font-weight: 600;
-    max-width: 160px;
+    font-weight: var(--vds-sidenav-weight-pill);
+    max-width: var(--vds-sidenav-label-max-pill);
     color: var(--vds-white);
   }
   &__row--sub .vds-sidenav__label {
@@ -332,12 +360,12 @@
     padding: 0 6px;
     border-radius: 9999px;
     background-color: color-mix(in srgb, var(--vds-white) 12%, transparent);
-    color: var(--_nav-ink);
+    color: var(--vds-sidenav-ink);
     overflow: hidden;
     transition:
-      max-width var(--_dur-collapse) var(--vds-ease-emphatic),
-      padding var(--_dur-collapse) var(--vds-ease-emphatic),
-      opacity var(--vds-dur-base) ease 70ms;
+      max-width var(--vds-sidenav-dur-collapse) var(--vds-sidenav-ease),
+      padding var(--vds-sidenav-dur-collapse) var(--vds-sidenav-ease),
+      opacity var(--vds-dur-base) ease var(--vds-sidenav-delay-label-in);
   }
   &__row--active &__badge {
     background-color: color-mix(in srgb, var(--vds-white) 20%, transparent);
@@ -348,9 +376,9 @@
     padding: 0;
     opacity: 0;
     transition:
-      max-width var(--_dur-collapse) var(--vds-ease-emphatic),
-      padding var(--_dur-collapse) var(--vds-ease-emphatic),
-      opacity 90ms ease;
+      max-width var(--vds-sidenav-dur-collapse) var(--vds-sidenav-ease),
+      padding var(--vds-sidenav-dur-collapse) var(--vds-sidenav-ease),
+      opacity var(--vds-sidenav-dur-label-out) ease;
   }
 
   // --------------------------------------------------------------------------
@@ -361,40 +389,40 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: var(--_nest); // same in both rail states — pills never shift x
+    padding: var(--vds-sidenav-nest); // same in both rail states — pills never shift x
     border: 0;
-    border-radius: var(--_r-pill);
+    border-radius: var(--vds-sidenav-r-pill);
     background-color: transparent;
-    color: var(--_nav-ink);
+    color: var(--vds-sidenav-ink);
     font: inherit;
     text-align: left;
-    transition: background-color var(--_dur-hover-out) ease;
+    transition: background-color var(--vds-sidenav-dur-hover-out) ease;
   }
   // Only real buttons get the hover/press treatment (locked heads are divs).
   button#{&}__pill {
     cursor: pointer;
     &:hover {
-      background-color: var(--_nav-hover);
-      transition-duration: var(--_dur-hover-in);
+      background-color: var(--vds-sidenav-hover);
+      transition-duration: var(--vds-sidenav-dur-hover-in);
     }
     &:active {
       transition-duration: 0ms;
     }
     &:not(.vds-sidenav__pill--active):active {
-      background-color: var(--_nav-press);
+      background-color: var(--vds-sidenav-press);
     }
   }
   &__pill--active {
-    background-color: var(--_nav-accent);
-    background-image: var(--_nav-toplight);
-    box-shadow: var(--_nav-hairline);
+    background-color: var(--vds-sidenav-accent);
+    background-image: var(--vds-sidenav-toplight);
+    box-shadow: var(--vds-sidenav-hairline);
   }
   button#{&}__pill--active {
     &:hover {
-      background-color: var(--_nav-accent-hover);
+      background-color: var(--vds-sidenav-accent-hover);
     }
     &:active {
-      background-color: var(--_nav-accent-press);
+      background-color: var(--vds-sidenav-accent-press);
     }
   }
 
@@ -407,17 +435,17 @@
   // The 32px tile slot. Hover: a calm lift; press: settles under the finger.
   &__tile {
     position: relative;
-    width: 32px;
-    height: 32px;
+    width: var(--vds-sidenav-tile-size);
+    height: var(--vds-sidenav-tile-size);
     flex-shrink: 0;
-    transition: transform var(--_dur-collapse) var(--vds-ease-emphatic);
+    transition: transform var(--vds-sidenav-dur-collapse) var(--vds-sidenav-ease);
   }
   button#{&}__pill:hover &__tile {
     transform: scale(1.05);
   }
   button#{&}__pill:active &__tile {
     transform: scale(0.97);
-    transition-duration: 80ms;
+    transition-duration: var(--vds-sidenav-dur-press);
   }
 
   // Corner lock badge on a locked product tile.
@@ -425,14 +453,14 @@
     position: absolute;
     left: 20px;
     top: 20px;
-    width: 16px;
-    height: 16px;
+    width: var(--vds-sidenav-icon-size);
+    height: var(--vds-sidenav-icon-size);
   }
 
   &__pill--locked {
     cursor: default;
     .vds-sidenav__label--pill {
-      color: var(--_nav-ink); // muted vs the white of a live product
+      color: var(--vds-sidenav-ink); // muted vs the white of a live product
     }
   }
 
@@ -441,21 +469,21 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 24px;
-    max-width: 24px;
+    height: var(--vds-sidenav-chev-size);
+    max-width: var(--vds-sidenav-chev-size);
     flex-shrink: 0;
     overflow: hidden;
     border-radius: 12px;
-    color: var(--_nav-chev);
+    color: var(--vds-sidenav-chev);
     opacity: 1;
     transition:
-      max-width var(--_dur-collapse) var(--vds-ease-emphatic),
-      opacity var(--vds-dur-base) ease 70ms,
+      max-width var(--vds-sidenav-dur-collapse) var(--vds-sidenav-ease),
+      opacity var(--vds-dur-base) ease var(--vds-sidenav-delay-label-in),
       color var(--vds-dur-base) ease;
 
     svg {
       display: block;
-      transition: transform var(--vds-dur-base) var(--vds-ease-emphatic);
+      transition: transform var(--vds-dur-base) var(--vds-sidenav-ease);
     }
     &--closed svg {
       transform: rotate(180deg);
@@ -468,8 +496,8 @@
     max-width: 0;
     opacity: 0;
     transition:
-      max-width var(--_dur-collapse) var(--vds-ease-emphatic),
-      opacity 90ms ease;
+      max-width var(--vds-sidenav-dur-collapse) var(--vds-sidenav-ease),
+      opacity var(--vds-sidenav-dur-label-out) ease;
   }
 
   // --------------------------------------------------------------------------
@@ -478,10 +506,10 @@
   &__card {
     display: flex;
     flex-direction: column;
-    padding: var(--_nest);
+    padding: var(--vds-sidenav-nest);
     margin-block: 1px; // 4px section gap + 2 → cards sit 6px apart
-    border-radius: var(--_r-card);
-    background-color: var(--_nav-well);
+    border-radius: var(--vds-sidenav-r-card);
+    background-color: var(--vds-sidenav-well);
   }
 
   // ---- accordion reveal: the card opens 0fr → 1fr on the emphasized curve;
@@ -490,7 +518,7 @@
   &__reveal {
     display: grid;
     grid-template-rows: 0fr;
-    transition: grid-template-rows var(--vds-dur-slow) var(--vds-ease-emphatic);
+    transition: grid-template-rows var(--vds-sidenav-dur-accordion) var(--vds-sidenav-ease);
 
     &--open {
       grid-template-rows: 1fr;
@@ -510,13 +538,13 @@
     // items out of the tab order.
     visibility: hidden;
     transition:
-      opacity 110ms ease,
-      visibility 0s linear var(--vds-dur-slow);
+      opacity var(--vds-sidenav-dur-item-out) ease,
+      visibility 0s linear var(--vds-sidenav-dur-accordion);
   }
   &__reveal--open &__reveal-body {
     opacity: 1;
     visibility: visible;
-    transition: opacity var(--vds-dur-base) ease 60ms;
+    transition: opacity var(--vds-dur-base) ease var(--vds-sidenav-delay-item-in);
   }
 
   // --------------------------------------------------------------------------
@@ -525,22 +553,22 @@
   &__account {
     display: flex;
     align-items: center;
-    height: 36px;
-    padding: var(--_nest);
-    border-radius: var(--_r-pill);
+    height: var(--vds-sidenav-account-h);
+    padding: var(--vds-sidenav-nest);
+    border-radius: var(--vds-sidenav-r-pill);
   }
   &__account-tile {
     display: block;
-    width: 32px;
-    height: 32px;
+    width: var(--vds-sidenav-tile-size);
+    height: var(--vds-sidenav-tile-size);
     flex-shrink: 0;
     img,
     svg {
       display: block;
-      width: 32px;
-      height: 32px;
+      width: var(--vds-sidenav-tile-size);
+      height: var(--vds-sidenav-tile-size);
       max-width: none; // a reset's max-width:100% would clamp it mid-animation
-      border-radius: var(--_r-tile);
+      border-radius: var(--vds-sidenav-r-tile);
     }
   }
   &__account-text {
@@ -548,27 +576,27 @@
     flex-direction: column;
     justify-content: center;
     min-width: 0;
-    max-width: 160px;
-    margin-left: 8px;
+    max-width: var(--vds-sidenav-label-max-pill);
+    margin-left: var(--vds-sidenav-label-gap);
     overflow: hidden;
     opacity: 1;
     transition:
-      max-width var(--_dur-collapse) var(--vds-ease-emphatic),
-      margin-left var(--_dur-collapse) var(--vds-ease-emphatic),
-      opacity var(--vds-dur-base) ease 70ms;
+      max-width var(--vds-sidenav-dur-collapse) var(--vds-sidenav-ease),
+      margin-left var(--vds-sidenav-dur-collapse) var(--vds-sidenav-ease),
+      opacity var(--vds-dur-base) ease var(--vds-sidenav-delay-label-in);
   }
   &--collapsed &__account-text {
     max-width: 0;
     margin-left: 0;
     opacity: 0;
     transition:
-      max-width var(--_dur-collapse) var(--vds-ease-emphatic),
-      margin-left var(--_dur-collapse) var(--vds-ease-emphatic),
-      opacity 90ms ease;
+      max-width var(--vds-sidenav-dur-collapse) var(--vds-sidenav-ease),
+      margin-left var(--vds-sidenav-dur-collapse) var(--vds-sidenav-ease),
+      opacity var(--vds-sidenav-dur-label-out) ease;
   }
   &__account-name {
     @include type.step(caption);
-    font-weight: 600;
+    font-weight: var(--vds-sidenav-weight-pill);
     line-height: var(--vds-leading-snug);
     color: var(--vds-white);
     white-space: nowrap;
@@ -577,9 +605,9 @@
   }
   &__account-type {
     @include type.step(nano);
-    font-weight: 400;
+    font-weight: var(--vds-sidenav-weight-quiet);
     line-height: var(--vds-leading-snug);
-    color: var(--_nav-ink-dim);
+    color: var(--vds-sidenav-ink-dim);
     white-space: nowrap;
   }
 
@@ -590,7 +618,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: var(--_nest);
+    padding: var(--vds-sidenav-nest);
   }
   &__skel {
     background: linear-gradient(
@@ -600,13 +628,13 @@
       var(--vds-midnight-800) 75%
     );
     background-size: 480px 100%;
-    animation: vds-sidenav-shimmer 1.15s ease-in-out infinite;
+    animation: vds-sidenav-shimmer var(--vds-sidenav-dur-shimmer) ease-in-out infinite;
   }
   &__skel--tile {
-    width: 32px;
-    height: 32px;
+    width: var(--vds-sidenav-tile-size);
+    height: var(--vds-sidenav-tile-size);
     flex-shrink: 0;
-    border-radius: var(--_r-tile);
+    border-radius: var(--vds-sidenav-r-tile);
   }
   &__skel--label {
     height: 12px;
@@ -628,7 +656,7 @@
     transform: translateY(-50%);
     pointer-events: none;
     padding: 7px 9px;
-    border-radius: calc(var(--vds-radius-sm) + var(--_nest)); // 6 — between chip + pill
+    border-radius: calc(var(--vds-radius-sm) + var(--vds-sidenav-nest)); // 6 — between chip + pill
     border: 1px solid var(--vds-midnight-800);
     background-color: var(--vds-midnight-1000);
     box-shadow: var(--vds-shadow-lg);
@@ -637,7 +665,7 @@
     font-weight: 500;
     line-height: var(--vds-leading-none);
     white-space: nowrap;
-    animation: vds-sidenav-tip-in 140ms var(--vds-ease-emphatic);
+    animation: vds-sidenav-tip-in var(--vds-sidenav-dur-tip) var(--vds-sidenav-ease);
 
     // The little arrow back at the rail.
     &::before {
