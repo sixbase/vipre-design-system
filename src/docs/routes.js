@@ -63,8 +63,7 @@ import { PolicyListTemplatePage } from './pages/PolicyListTemplatePage.jsx'
 import { EntityDetailTemplatePage } from './pages/EntityDetailTemplatePage.jsx'
 import { TextareaPage } from './pages/TextareaPage.jsx'
 import { MspMenuPilotPage } from './pages/MspMenuPilotPage.jsx'
-import { TeamBriefPage } from './pages/TeamBriefPage.jsx'
-import { MeetingGuidePage } from './pages/MeetingGuidePage.jsx'
+import { KickoffPage } from './pages/KickoffPage.jsx'
 import { MenuQuickstartPage } from './pages/MenuQuickstartPage.jsx'
 
 /* Single source of truth for both the sidebar nav and the hash router. */
@@ -80,8 +79,7 @@ export const NAV = [
     // Adoption — how teams consume + maintain the system. Shareable team brief.
     group: 'Adoption',
     items: [
-      { path: '/adoption/team-brief', name: 'Team Brief', Page: TeamBriefPage },
-      { path: '/adoption/meeting-guide', name: 'Meeting Guide', Page: MeetingGuidePage },
+      { path: '/adoption/kickoff', name: 'Kickoff & Notes', Page: KickoffPage },
       { path: '/adoption/menu-quickstart', name: 'Menu Quickstart', Page: MenuQuickstartPage },
     ],
   },

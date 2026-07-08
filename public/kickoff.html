@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vipre Design System — Kickoff + Notes</title>
+<style>
+  html, body { margin: 0; }
+  body { background: #f5f7fa; }
+  @media (prefers-color-scheme: dark) { body { background: #0b192d; } }
+  .page { min-height: 100dvh; }
+</style>
+</head>
+<body>
+<style>
+  :root{
+    --ground:#f5f7fa; --surface:#ffffff; --surface-2:#eef1f6; --ink:#14212f; --muted:#5b6676; --line:#dfe4ec;
+    --accent:#0068cb; --accent-ink:#fff; --good:#1f9256; --good-soft:#e7f6ee; --okay:#9a6a12; --okay-soft:#f8efdd;
+    --shadow:0 1px 2px rgba(11,25,45,.06), 0 8px 24px -12px rgba(11,25,45,.18); --radius:14px;
+  }
+  @media (prefers-color-scheme:dark){ :root{
+    --ground:#0b192d; --surface:#0f223d; --surface-2:#13294a; --ink:#eaf1fb; --muted:#9fb2cc; --line:#1e3357;
+    --accent:#4ea3ff; --accent-ink:#04121f; --good:#4ec684; --good-soft:#10331f; --okay:#e0b46a; --okay-soft:#35270f;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.6);
+  }}
+  :root[data-theme="light"]{ --ground:#f5f7fa; --surface:#fff; --surface-2:#eef1f6; --ink:#14212f; --muted:#5b6676;
+    --line:#dfe4ec; --accent:#0068cb; --accent-ink:#fff; --good:#1f9256; --good-soft:#e7f6ee; --okay:#9a6a12; --okay-soft:#f8efdd;
+    --shadow:0 1px 2px rgba(11,25,45,.06),0 8px 24px -12px rgba(11,25,45,.18); }
+  :root[data-theme="dark"]{ --ground:#0b192d; --surface:#0f223d; --surface-2:#13294a; --ink:#eaf1fb; --muted:#9fb2cc;
+    --line:#1e3357; --accent:#4ea3ff; --accent-ink:#04121f; --good:#4ec684; --good-soft:#10331f; --okay:#e0b46a; --okay-soft:#35270f;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px -16px rgba(0,0,0,.6); }
+
+  *{box-sizing:border-box;}
+  .page{ background:var(--ground); color:var(--ink);
+    font-family:"Rubik", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased; padding:clamp(1.25rem,4vw,3rem) 1.25rem 5rem; }
+  .wrap{ max-width:42rem; margin:0 auto; }
+  .eyebrow{ font-size:.72rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin:0 0 .8rem; }
+  h1{ font-size:clamp(1.6rem,5vw,2.3rem); line-height:1.1; font-weight:700; letter-spacing:-.02em; margin:0 0 .5rem; text-wrap:balance; }
+  .lede{ font-size:1.03rem; color:var(--muted); margin:0; }
+  h2{ font-size:1.02rem; font-weight:700; margin:0; }
+  .step{ display:flex; align-items:center; gap:.55rem; margin:2.1rem 0 .4rem; }
+  .step .n{ flex:none; width:1.6rem; height:1.6rem; border-radius:7px; background:var(--accent); color:var(--accent-ink);
+    font-size:.8rem; font-weight:700; display:grid; place-items:center; }
+  p{ margin:.4rem 0; } .muted{ color:var(--muted); }
+
+  .cards{ display:grid; grid-template-columns:1fr 1fr; gap:.8rem; margin-top:.8rem; }
+  @media (max-width:32rem){ .cards{ grid-template-columns:1fr; } }
+  .card{ background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:.85rem .95rem 1rem; box-shadow:var(--shadow); }
+  .card .ico{ font-size:1.4rem; } .card h3{ font-size:.98rem; margin:.35rem 0 .25rem; }
+  .card p{ font-size:.9rem; color:var(--muted); margin:0; }
+  .chip{ display:inline-block; font-size:.63rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:.15rem .45rem; border-radius:999px; }
+  .chip--good{ color:var(--good); background:var(--good-soft); } .chip--okay{ color:var(--okay); background:var(--okay-soft); }
+
+  .check{ list-style:none; margin:.6rem 0 0; padding:0; display:grid; gap:.45rem; }
+  .check li{ display:flex; gap:.55rem; align-items:flex-start; }
+  .check .m{ flex:none; width:1.3rem; height:1.3rem; border-radius:6px; background:var(--good-soft); color:var(--good);
+    display:grid; place-items:center; font-weight:700; font-size:.8rem; margin-top:.1rem; }
+  .check b{ color:var(--ink); }
+
+  /* Note-taking */
+  .meta{ display:flex; gap:.7rem; flex-wrap:wrap; margin-top:1rem; }
+  .meta label{ flex:1; min-width:11rem; font-size:.8rem; font-weight:600; color:var(--muted); }
+  input, textarea{ width:100%; font:inherit; font-size:.92rem; color:var(--ink); background:var(--surface);
+    border:1px solid var(--line); border-radius:9px; padding:.5rem .6rem; margin-top:.25rem; }
+  textarea{ resize:vertical; min-height:3.2rem; line-height:1.5; }
+  input:focus-visible, textarea:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent); }
+
+  .decide{ background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:.9rem 1rem 1rem;
+    box-shadow:var(--shadow); margin-top:.8rem; }
+  .decide .q{ font-weight:700; display:flex; gap:.5rem; align-items:baseline; }
+  .decide .q .dn{ color:var(--accent); }
+  .decide .why{ color:var(--muted); font-size:.88rem; margin:.2rem 0 .5rem; }
+  .decide .row{ display:flex; gap:.6rem; flex-wrap:wrap; }
+  .decide .row > label{ flex:1; min-width:9rem; font-size:.75rem; font-weight:600; color:var(--muted); }
+
+  .tools{ position:sticky; bottom:0; margin-top:1.4rem; padding:.7rem; background:var(--surface);
+    border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
+  button.btn{ font:inherit; font-size:.85rem; font-weight:600; cursor:pointer; border-radius:8px; padding:.5rem .8rem; border:1px solid var(--line); background:var(--surface); color:var(--ink); }
+  button.btn--primary{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  button.btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .saved{ font-size:.8rem; color:var(--good); margin-left:auto; opacity:0; transition:opacity .2s; }
+  .saved.show{ opacity:1; }
+  .hint{ font-size:.78rem; color:var(--muted); }
+  .foot{ margin-top:1.6rem; color:var(--muted); font-size:.85rem; }
+  strong.k{ color:var(--ink); }
+</style>
+
+<div class="page">
+  <div class="wrap">
+
+    <p class="eyebrow">Design system · Kickoff + notes</p>
+    <h1>Our shared toy box — and what to decide</h1>
+    <p class="lede">Read the top in two minutes. Then type notes as we talk — they save right here in your browser. Hit <strong class="k">Copy notes</strong> at the end.</p>
+
+    <div class="meta">
+      <label>Date<input id="meta-date" type="text" placeholder="e.g. Jul 8" autocomplete="off"></label>
+      <label>Who's here<input id="meta-who" type="text" placeholder="names" autocomplete="off"></label>
+    </div>
+
+    <!-- 1. THE IDEA -->
+    <div class="step"><span class="n">1</span><h2>The idea (30 seconds)</h2></div>
+    <p class="muted">Think of a shared <strong class="k">toy box</strong>. We build each toy once — a button, a menu — and put it in the box. Everyone builds screens from the same box. So everything matches, and when we fix a toy, everyone’s toy gets fixed.</p>
+
+    <!-- 2. TWO WAYS -->
+    <div class="step"><span class="n">2</span><h2>Two ways to use a toy</h2></div>
+    <div class="cards">
+      <div class="card">
+        <div class="ico" aria-hidden="true">🧰</div><span class="chip chip--good">Better</span>
+        <h3>Take it from the box</h3>
+        <p>Add the box once. Then just ask for a toy. We make it better → yours gets better on its own.</p>
+      </div>
+      <div class="card">
+        <div class="ico" aria-hidden="true">✏️</div><span class="chip chip--okay">Okay</span>
+        <h3>Trace it by hand</h3>
+        <p>Copy the toy into your project. Works — but your copy stays old when we fix the real one.</p>
+      </div>
+    </div>
+
+    <!-- 3. THE TWIST -->
+    <div class="step"><span class="n">3</span><h2>Our twist: two kinds of blocks</h2></div>
+    <p class="muted">Some of us build with <strong class="k">React</strong> blocks, some with <strong class="k">Angular</strong> blocks. We don’t want to build every toy twice. Lucky us — a toy has two parts:</p>
+    <ul class="check">
+      <li><span class="m" aria-hidden="true">✓</span><span><b>The paint</b> (how it looks) already works on both. Done.</span></li>
+      <li><span class="m" aria-hidden="true">✓</span><span><b>The moving part</b> (how it clicks) we build <b>once</b>, so both blocks share it.</span></li>
+    </ul>
+    <p class="muted">Come to the website to <em>look and learn</em>. Take the real toy from the box to <em>use</em>.</p>
+
+    <!-- 4. DECIDE + NOTES -->
+    <div class="step"><span class="n">4</span><h2>What to decide — jot notes as we go</h2></div>
+
+    <div class="decide">
+      <p class="q"><span class="dn">A.</span> Where does the “real” version live?</p>
+      <p class="why">We want the toy box (design system) to be the source of truth — not Figma. Figma becomes for sketching, not the final word.</p>
+      <label class="hint">Notes / what we decided
+        <textarea id="d-truth" placeholder="e.g. agreed: design system is source of truth; Figma for exploration only"></textarea>
+      </label>
+    </div>
+
+    <div class="decide">
+      <p class="q"><span class="dn">B.</span> Which blocks does each team use?</p>
+      <p class="why">React, Angular, or both — per project. This decides how each team takes toys from the box.</p>
+      <label class="hint">Notes
+        <textarea id="d-frameworks" placeholder="e.g. web app = React; admin = Angular"></textarea>
+      </label>
+    </div>
+
+    <div class="decide">
+      <p class="q"><span class="dn">C.</span> Do we build each toy once and share it?</p>
+      <p class="why">Build once so React and Angular use the same one — instead of building everything twice.</p>
+      <label class="hint">Notes
+        <textarea id="d-once" placeholder="e.g. yes — build once (Web Components) so both share"></textarea>
+      </label>
+    </div>
+
+    <div class="decide">
+      <p class="q"><span class="dn">D.</span> Who sets up the box, and by when?</p>
+      <p class="why">Someone needs to package it so teams install it in one line and get updates.</p>
+      <div class="row">
+        <label class="hint">Owner<input id="d-owner" type="text" placeholder="name" autocomplete="off"></label>
+        <label class="hint">By when<input id="d-when" type="text" placeholder="date" autocomplete="off"></label>
+      </div>
+      <label class="hint" style="display:block; margin-top:.5rem">Notes
+        <textarea id="d-box" placeholder="e.g. private npm package + shared CSS"></textarea>
+      </label>
+    </div>
+
+    <div class="decide">
+      <p class="q"><span class="dn">＋</span> Anything else (parking lot)</p>
+      <label class="hint">Notes
+        <textarea id="d-parking" placeholder="questions, risks, follow-ups…"></textarea>
+      </label>
+    </div>
+
+    <!-- TOOLS -->
+    <div class="tools">
+      <button class="btn btn--primary" id="copy" type="button">Copy notes</button>
+      <button class="btn" id="download" type="button">Download .txt</button>
+      <button class="btn" id="clear" type="button">Clear</button>
+      <span class="saved" id="saved">Saved ✓</span>
+    </div>
+    <p class="foot">Notes save automatically in <em>this</em> browser (nothing is sent anywhere). Copy or download them at the end so they don’t get lost. There’s a live, clickable menu demo too — ask <strong class="k">Alvin</strong>.</p>
+
+  </div>
+</div>
+
+<script>
+  (function () {
+    var KEY = 'vds-kickoff-notes-v1';
+    var fields = ['meta-date','meta-who','d-truth','d-frameworks','d-once','d-owner','d-when','d-box','d-parking'];
+    var labels = {
+      'meta-date':'Date','meta-who':'Who’s here',
+      'd-truth':'A. Source of truth','d-frameworks':'B. Frameworks per team',
+      'd-once':'C. Build once & share','d-owner':'D. Box owner','d-when':'D. By when',
+      'd-box':'D. Box notes','d-parking':'Parking lot'
+    };
+    var $ = function (id) { return document.getElementById(id); };
+    var savedEl = $('saved'), t;
+
+    // restore
+    try {
+      var data = JSON.parse(localStorage.getItem(KEY) || '{}');
+      fields.forEach(function (id) { if (data[id] != null && $(id)) $(id).value = data[id]; });
+    } catch (e) {}
+
+    function save() {
+      var data = {};
+      fields.forEach(function (id) { if ($(id)) data[id] = $(id).value; });
+      try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {}
+      savedEl.classList.add('show');
+      clearTimeout(t); t = setTimeout(function () { savedEl.classList.remove('show'); }, 1200);
+    }
+    fields.forEach(function (id) { if ($(id)) $(id).addEventListener('input', save); });
+
+    function asText() {
+      var lines = ['Vipre Design System — Kickoff notes', ''];
+      fields.forEach(function (id) {
+        var v = ($(id) && $(id).value || '').trim();
+        if (v) lines.push(labels[id] + ': ' + v);
+      });
+      return lines.join('\n');
+    }
+
+    $('copy').addEventListener('click', function () {
+      var txt = asText();
+      navigator.clipboard && navigator.clipboard.writeText(txt);
+      var b = $('copy'), old = b.textContent; b.textContent = 'Copied ✓';
+      setTimeout(function () { b.textContent = old; }, 1400);
+    });
+    $('download').addEventListener('click', function () {
+      var blob = new Blob([asText()], { type: 'text/plain' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = 'vipre-kickoff-notes.txt';
+      a.click(); URL.revokeObjectURL(a.href);
+    });
+    $('clear').addEventListener('click', function () {
+      if (!confirm('Clear all notes on this page?')) return;
+      fields.forEach(function (id) { if ($(id)) $(id).value = ''; });
+      try { localStorage.removeItem(KEY); } catch (e) {}
+    });
+  })();
+</script>
+
+</body>
+</html>
