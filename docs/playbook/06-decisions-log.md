@@ -585,3 +585,24 @@ The decisions that matter going forward:
   component documents a written motion spec alongside its tokens. See the MSP Menu pilot.
 - **Icons: Font Awesome first**; custom SVG (from Figma) only when FA falls short (e.g. brand product tiles).
 - **Figma keeps full-page layouts + one-offs**; reusable patterns + tokens live in the DS docs.
+
+## 2026-07-09 · Control foundation + Button/Field proof (tokens-only, phase 2)
+
+- **New foundation tokens**: spacing half-steps `--vds-space-1-5` (6px) / `--vds-space-2-5` (10px);
+  weights `--vds-weight-regular/medium/semibold/bold`; `--vds-border-w: 1px` (stays px — rem hairlines
+  break at fractional DPRs); control-ring family `--vds-control-ring-w/-offset/-tint/-tint-invalid`;
+  `--vds-control-hover-mix`; `--vds-control-font-touch-min`.
+- **TWO focus-ring recipes, kept deliberately**: action controls (Button/Checkbox) = hard outline;
+  field controls (Input/Select/Textarea) = soft shadow ring. The 35%/30% tint split is intentional
+  (danger reads stronger at equal alpha). See docs/playbook/11-control-anatomy.md.
+- **Component token sets bound ONLY to foundation**: `--vds-button-*` (14) and `--vds-input-*`/
+  `--vds-field-*`. Button pad rhythm (space-3/4/6) ≠ field pad rhythm (space-2-5/3/4), by design.
+- **SideNav bind-down**: 14 of its token definitions now reference foundation tokens (account-h =
+  control-h-md); bespoke motion beats stay literal with comments.
+- **Verified**: 96-probe computed-style diff (light+dark, all variants) = ZERO changes; siblings
+  proof = flipping --vds-control-h-md/--vds-radius-sm moves Button AND Input together.
+- **New pattern doc**: docs/playbook/11-control-anatomy.md + /foundation/control-anatomy — the
+  grammar for building new controls; explicitly written to feed AI component exploration
+  (inputs: tokens + grammar + reference components).
+- **Fast-follows**: bind Select/Textarea/Checkbox to the same contract; add --vds-control-box-size
+  with the Checkbox work.

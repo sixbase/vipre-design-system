@@ -10,37 +10,56 @@
 @use '../../styles/breakpoints' as bp;
 
 .vds-button {
+  // ---- public tokens (size · shape · type · focus ring · motion) ----
+  // Bound to foundation tokens only — see docs/playbook control contract.
+  // The --_btn-* tone vars further down are the per-tone color mechanism
+  // and are untouched by this block.
+  --vds-button-h-sm: var(--vds-control-h-sm);
+  --vds-button-h-md: var(--vds-control-h-md);
+  --vds-button-h-lg: var(--vds-control-h-lg);
+  --vds-button-pad-x-sm: var(--vds-space-3);  // 12px
+  --vds-button-pad-x-md: var(--vds-space-4);  // 16px
+  --vds-button-pad-x-lg: var(--vds-space-6);  // 24px
+  --vds-button-gap: var(--vds-space-2);       // icon ↔ label
+  --vds-button-radius: var(--vds-radius-sm);
+  --vds-button-border-w: var(--vds-border-w);
+  --vds-button-weight: var(--vds-weight-medium);
+  --vds-button-ring-w: var(--vds-control-ring-w);
+  --vds-button-ring-offset: var(--vds-control-ring-offset);
+  --vds-button-dur: var(--vds-dur-fast);
+  --vds-button-ease: var(--vds-ease-out);
+
   position: relative; // anchors the coarse-pointer ::after hit-area overlay
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--vds-button-gap);
   font-family: var(--vds-font-sans);
-  font-weight: 500;
+  font-weight: var(--vds-button-weight);
   white-space: nowrap;
   user-select: none;
-  border: 1px solid transparent;
-  border-radius: var(--vds-radius-sm);
+  border: var(--vds-button-border-w) solid transparent;
+  border-radius: var(--vds-button-radius);
   cursor: pointer;
   transition:
-    background-color var(--vds-dur-fast) var(--vds-ease-out),
-    color var(--vds-dur-fast) var(--vds-ease-out),
-    border-color var(--vds-dur-fast) var(--vds-ease-out);
+    background-color var(--vds-button-dur) var(--vds-button-ease),
+    color var(--vds-button-dur) var(--vds-button-ease),
+    border-color var(--vds-button-dur) var(--vds-button-ease);
 
   &:focus-visible {
-    outline: 2px solid var(--vds-focus-ring);
-    outline-offset: 2px;
+    outline: var(--vds-button-ring-w) solid var(--vds-focus-ring);
+    outline-offset: var(--vds-button-ring-offset);
   }
 
   &:disabled {
-    opacity: 0.5;
+    opacity: 0.5; // CLAUDE.md mandate: literal, never a new gray
     pointer-events: none;
   }
 
   // ---- sizes (heights = the shared control-metric tokens) ----
-  &--sm { height: var(--vds-control-h-sm); padding: 0 0.75rem; @include type.step(detail); }
-  &--md { height: var(--vds-control-h-md); padding: 0 1rem;    @include type.step(body); }
-  &--lg { height: var(--vds-control-h-lg); padding: 0 1.5rem;  @include type.step(body-lg); }
+  &--sm { height: var(--vds-button-h-sm); padding: 0 var(--vds-button-pad-x-sm); @include type.step(detail); }
+  &--md { height: var(--vds-button-h-md); padding: 0 var(--vds-button-pad-x-md); @include type.step(body); }
+  &--lg { height: var(--vds-button-h-lg); padding: 0 var(--vds-button-pad-x-lg); @include type.step(body-lg); }
 
   // Touch: sm/md buttons keep their visual height but grow an invisible hit
   // area to the minimum tap target (lg is already 44px tall).

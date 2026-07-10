@@ -133,10 +133,21 @@ $magenta: ( // accent — hot pink (hue 348)
   --vds-leading-normal:  1.5;   // body copy — the readable default for prose
   --vds-leading-relaxed: 1.7;   // long-form / generous reading passages
 
+  // Font weights — Rubik loads 400/500/600/700; these let a component say
+  // "medium" / "semibold" independent of the typescale step it's rendered at.
+  --vds-weight-regular:  400;
+  --vds-weight-medium:   500;
+  --vds-weight-semibold: 600;
+  --vds-weight-bold:     700;
+
   --vds-radius-sm: 0.25rem;  // 4px — default for controls (buttons, inputs, badges)
   --vds-radius-md: 0.5rem;   // 8px — cards, panels, larger surfaces
   --vds-radius-lg: 0.75rem;  // 12px
   --vds-radius-xl: 1rem;     // 16px
+
+  // Border width — value stays px ON PURPOSE. Hairlines must not scale with
+  // root font-size: rem hairlines round away or double at fractional DPRs.
+  --vds-border-w: 1px;
 
   // Shadows tinted with the Midnight navy (#0b192d → 11 25 45) for a cool cast.
   --vds-shadow-xs: 0 1px 2px 0 rgb(11 25 45 / 0.08);
@@ -164,7 +175,9 @@ $magenta: ( // accent — hot pink (hue 348)
   // Spacing — 4px grid. Component internals (padding, gaps).
   --vds-space-0: 0;
   --vds-space-1: 0.25rem;  // 4px
+  --vds-space-1-5: 0.375rem; // 6px — half-step, added for control chrome (Field gap, Textarea sm pad-y, SideNav row-pad-y)
   --vds-space-2: 0.5rem;   // 8px
+  --vds-space-2-5: 0.625rem; // 10px — half-step, added for control chrome (Input/Select/Textarea sm pad-x, SideNav row-pad-x/section-pad-y)
   --vds-space-3: 0.75rem;  // 12px
   --vds-space-4: 1rem;     // 16px
   --vds-space-5: 1.25rem;  // 20px
@@ -199,6 +212,25 @@ $magenta: ( // accent — hot pink (hue 348)
   --vds-control-h-md: 2.25rem; // 36px
   --vds-control-h-lg: 2.75rem; // 44px
   --vds-tap-target: 44px;      // minimum hit area on coarse (touch) pointers
+
+  // Control focus-ring family — TWO recipes, both deliberate (not drift):
+  //   outline recipe (Button, Checkbox — action controls): outline: var(--vds-control-ring-w)
+  //     solid var(--vds-focus-ring); outline-offset: var(--vds-control-ring-offset). Reads
+  //     clearly on any tone fill.
+  //   shadow recipe (Input, Select, Textarea — field controls): box-shadow: 0 0 0
+  //     var(--vds-control-ring-w) color-mix(in oklab, var(--vds-focus-ring)
+  //     var(--vds-control-ring-tint), transparent). Reads as "active editing surface" and
+  //     pairs with the border-color change. Unifying the two is a rendering change — rejected.
+  --vds-control-ring-w: 2px;            // ring thickness, both recipes
+  --vds-control-ring-offset: 2px;       // outline recipe only (buttons/checks)
+  // The 35%/30% tint split is intentional: danger hues read stronger than midnight at
+  // equal alpha, so the invalid ring drops to 30% to balance. Do not unify these two.
+  --vds-control-ring-tint: 35%;         // shadow recipe tint, valid state
+  --vds-control-ring-tint-invalid: 30%; // shadow recipe tint, invalid state
+
+  // Control interaction recipes
+  --vds-control-hover-mix: 30%;       // border darken ratio on hover (fields)
+  --vds-control-font-touch-min: 1rem; // iOS zoom guard on md text controls (coarse pointer)
 
   // Breakpoints — INFORMATIONAL only, for JS consumers (e.g. matchMedia).
   // CSS can't use custom properties inside media queries; the real styling

@@ -233,7 +233,9 @@ export const LEADING = [
 /* Spacing scale — mirrors --vds-space-* in _tokens.scss, with usage. */
 export const SPACING = [
   { token: '--vds-space-1', px: '4px', usage: 'Icon-to-label gap, stacked metadata lines' },
+  { token: '--vds-space-1-5', px: '6px', usage: 'Half-step for control chrome — Field gap, Textarea sm padding-y, SideNav row-pad-y' },
   { token: '--vds-space-2', px: '8px', usage: 'Default inline gap in buttons, checkbox-to-label' },
+  { token: '--vds-space-2-5', px: '10px', usage: 'Half-step for control chrome — Input/Select/Textarea sm pad-x, SideNav row-pad-x/section-pad-y' },
   { token: '--vds-space-3', px: '12px', usage: 'Input padding, dense table cell padding' },
   { token: '--vds-space-4', px: '16px', usage: 'Default card padding, gap between form fields' },
   { token: '--vds-space-5', px: '20px', usage: 'Medium gap between card sections' },
@@ -278,6 +280,13 @@ export const CONTROLS = [
   { token: '--vds-control-h-md', value: '36px', usage: 'Default control height — most buttons, inputs, selects' },
   { token: '--vds-control-h-lg', value: '44px', usage: 'Large controls — hero forms; already a full touch target' },
   { token: '--vds-tap-target', value: '44px', usage: 'Minimum hit area on coarse (touch) pointers' },
+  { token: '--vds-border-w', value: '1px', usage: 'Control hairline border width — stays px on purpose, never rem' },
+  { token: '--vds-control-ring-w', value: '2px', usage: 'Focus-ring thickness — shared by both ring recipes (outline + shadow)' },
+  { token: '--vds-control-ring-offset', value: '2px', usage: 'Focus-ring outline-offset — outline recipe only (Button, Checkbox)' },
+  { token: '--vds-control-ring-tint', value: '35%', usage: 'Focus-ring shadow tint, valid state — shadow recipe (Input, Select, Textarea)' },
+  { token: '--vds-control-ring-tint-invalid', value: '30%', usage: 'Focus-ring shadow tint, invalid state — reads stronger than 35% at equal alpha' },
+  { token: '--vds-control-hover-mix', value: '30%', usage: 'Border darken ratio on hover — field controls' },
+  { token: '--vds-control-font-touch-min', value: '16px', usage: 'iOS zoom guard — minimum font-size on md text controls for coarse pointers' },
 ]
 
 /* Motion — mirrors the Tier 3 motion tokens in _tokens.scss. */
@@ -290,8 +299,8 @@ export const MOTION = [
 ]
 
 export const WEIGHTS = [
-  { name: 'normal', value: 400 },
-  { name: 'medium', value: 500 },
-  { name: 'semibold', value: 600 },
-  { name: 'bold', value: 700 },
+  { name: 'normal', value: 400, token: '--vds-weight-regular' },
+  { name: 'medium', value: 500, token: '--vds-weight-medium' },
+  { name: 'semibold', value: 600, token: '--vds-weight-semibold' },
+  { name: 'bold', value: 700, token: '--vds-weight-bold' },
 ]

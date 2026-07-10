@@ -62,22 +62,22 @@
   --vds-sidenav-hairline: inset 0 1px 0 color-mix(in srgb, var(--vds-white) 8%, transparent);
 
   // ---- sizes ----
-  --vds-sidenav-icon-size: 16px;         // row icon + lock badge box
-  --vds-sidenav-tile-size: 32px;         // product / account tile
-  --vds-sidenav-account-h: 36px;         // fixed account-header height
-  --vds-sidenav-back-h: 24px;            // fixed back-row height
-  --vds-sidenav-chev-size: 24px;         // chevron hit box
-  --vds-sidenav-label-max: 200px;        // row label clamp before ellipsis
-  --vds-sidenav-label-max-pill: 160px;   // product / account label clamp
+  --vds-sidenav-icon-size: var(--vds-space-4);        // 16px — row icon + lock badge box
+  --vds-sidenav-tile-size: var(--vds-space-8);        // 32px — product / account tile
+  --vds-sidenav-account-h: var(--vds-control-h-md);   // 36px — fixed account-header height; ties the nav's account row into the shared control-height family
+  --vds-sidenav-back-h: var(--vds-space-6);           // 24px — fixed back-row height
+  --vds-sidenav-chev-size: var(--vds-space-6);        // 24px — chevron hit box
+  --vds-sidenav-label-max: 200px;        // row label clamp before ellipsis — text-truncation, not a scale value
+  --vds-sidenav-label-max-pill: 160px;   // product / account label clamp — same as above
 
   // ---- spacing ----
-  --vds-sidenav-nest: 2px;               // concentric padding step (tile→pill→card)
-  --vds-sidenav-pad-x: 16px;             // rail's base horizontal padding
-  --vds-sidenav-section-pad-y: 10px;     // section top / bottom padding
-  --vds-sidenav-section-gap: 4px;        // gap between rows in a section
-  --vds-sidenav-row-pad-x: 10px;         // row inner x padding
-  --vds-sidenav-row-pad-y: 6px;          // row inner y padding
-  --vds-sidenav-label-gap: 8px;          // icon→label lead margin (acts as the gap)
+  --vds-sidenav-nest: 2px;               // concentric padding step (tile→pill→card) — the design mechanism, not a spacing choice; stays literal
+  --vds-sidenav-pad-x: var(--vds-space-4);     // 16px — rail's base horizontal padding
+  --vds-sidenav-section-pad-y: var(--vds-space-2-5); // 10px — section top / bottom padding
+  --vds-sidenav-section-gap: var(--vds-space-1);     // 4px — gap between rows in a section
+  --vds-sidenav-row-pad-x: var(--vds-space-2-5);     // 10px — row inner x padding
+  --vds-sidenav-row-pad-y: var(--vds-space-1-5);     // 6px — row inner y padding
+  --vds-sidenav-label-gap: var(--vds-space-2);       // 8px — icon→label lead margin (acts as the gap)
 
   // ---- concentric radii (see the header comment) ----
   --vds-sidenav-r-tile: var(--vds-radius-md);                                       // 8 — the 32px tiles
@@ -85,9 +85,9 @@
   --vds-sidenav-r-card: calc(var(--vds-sidenav-r-pill) + var(--vds-sidenav-nest));  // 12 — card = pill + 2px pad
 
   // ---- typography (sizes come from the typescale mixin; weights named here) ----
-  --vds-sidenav-weight-label: 500;       // row labels
-  --vds-sidenav-weight-pill: 600;        // product / account name
-  --vds-sidenav-weight-quiet: 400;       // "Full portal" + account type
+  --vds-sidenav-weight-label: var(--vds-weight-medium);   // 500 — row labels
+  --vds-sidenav-weight-pill: var(--vds-weight-semibold);  // 600 — product / account name
+  --vds-sidenav-weight-quiet: var(--vds-weight-regular);  // 400 — "Full portal" + account type
 
   // ---- motion ----
   --vds-sidenav-ease: var(--vds-ease-emphatic);        // one curve for all nav motion

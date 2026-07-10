@@ -1,8 +1,18 @@
 import { Eye, Pencil, Trash2 } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, Code, Kbd, IC } from '../primitives.jsx'
+import { Section, Preview, Code, Kbd, IC, PropsTable } from '../primitives.jsx'
 import { Button, Icon, Inline } from '../../components/index.js'
+
+/* A labelled token table for the Tokens section. */
+function TokenGroup({ label, headers, rows }) {
+  return (
+    <div style={{ marginTop: '1.25rem' }}>
+      <p className="vds-text vds-text--eyebrow" style={{ margin: '0 0 0.4rem' }}>{label}</p>
+      <PropsTable headers={headers} rows={rows} />
+    </div>
+  )
+}
 
 export function ButtonPage() {
   return (
@@ -10,7 +20,8 @@ export function ButtonPage() {
       colors={COMPONENT_COLORS.Button}
       title="Button"
       description="A button people click. Two choices: variant is how loud it looks (solid, soft, outline, ghost) and tone is its job and color (primary, neutral, success, warning, danger, info). Any look works with any color. Three sizes, a spinner for loading, a faded look when off, and a ring you can see when you tab to it. Passes through all normal button props."
-      installCode={`import { Button } from 'vipre-design-system'`}
+      installCode={`<!-- Tokens-only: link the CSS variables, build your own button against them. -->
+<link rel="stylesheet" href="vipre-tokens.css">`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
@@ -45,10 +56,6 @@ export function ButtonPage() {
               <Button variant="ghost">Ghost</Button>
             </>
           }
-          code={`<Button variant="solid">Solid</Button>
-<Button variant="soft">Soft</Button>
-<Button variant="outline">Outline</Button>
-<Button variant="ghost">Ghost</Button>`}
         />
       </Section>
 
@@ -64,9 +71,6 @@ export function ButtonPage() {
               <Button variant="soft" tone="info">Info</Button>
             </>
           }
-          code={`<Button variant="soft" tone="success">Approve</Button>
-<Button variant="solid" tone="danger">Delete</Button>
-<Button variant="outline" tone="warning">Review</Button>`}
         />
       </Section>
 
@@ -79,9 +83,6 @@ export function ButtonPage() {
               <Button size="lg">Large</Button>
             </>
           }
-          code={`<Button size="sm">Small</Button>
-<Button size="md">Medium</Button>   {/* default */}
-<Button size="lg">Large</Button>`}
         />
       </Section>
 
@@ -94,8 +95,6 @@ export function ButtonPage() {
               <Button variant="outline" loading>Loading</Button>
             </>
           }
-          code={`<Button loading>Saving…</Button>
-<Button variant="soft" tone="success" loading>Approving…</Button>`}
         />
       </Section>
 
@@ -109,9 +108,6 @@ export function ButtonPage() {
               <Button variant="outline" tone="neutral" iconOnly aria-label="Edit"><Icon as={Pencil} size="sm" /></Button>
             </Inline>
           }
-          code={`<Button variant="ghost" size="sm" iconOnly aria-label="Edit">
-  <Icon as={Pencil} size="sm" />
-</Button>`}
         />
       </Section>
 
@@ -122,7 +118,6 @@ export function ButtonPage() {
               <Button fullWidth>Continue</Button>
             </div>
           }
-          code={`<Button fullWidth>Continue</Button>`}
         />
       </Section>
 
@@ -134,14 +129,12 @@ export function ButtonPage() {
               <Button disabled>Disabled</Button>
             </>
           }
-          code={`<Button>Default</Button>
-<Button disabled>Disabled</Button>`}
         />
       </Section>
 
       <Section
         title="Markup"
-        note="The rendered HTML with the vds- classes, for teams not using React. Always three modifiers: a variant, a tone, and a size. No JS needed — the loading spinner is a nested Spinner span you add yourself."
+        note="The rendered HTML with the vds- classes — this is the reference implementation of the token contract below, not a shipped package. Build your own button component in whatever framework you use and bind it to these classes and --vds-button-* tokens. Always three modifiers: a variant, a tone, and a size. No JS needed — the loading spinner is a nested Spinner span you add yourself."
       >
         <Code>{`<!-- variant: --solid | --soft | --outline | --ghost
      tone:    --primary | --neutral | --success | --warning | --danger | --info
@@ -163,6 +156,52 @@ export function ButtonPage() {
 </button>
 
 <!-- full width: add vds-button--full -->`}</Code>
+      </Section>
+
+      <Section
+        title="Tokens"
+        note="Every visual value is a --vds-button-* custom property set on the .vds-button root, bound to foundation tokens only. Re-declare any of them on your own selector to re-space or re-shape the button; nothing else in the system changes."
+      >
+        <TokenGroup label="Sizing" headers={['Token', 'Value', 'Controls']} rows={[
+          [{ code: '--vds-button-h-sm' }, { code: '2rem (32px)' }, 'Small height'],
+          [{ code: '--vds-button-h-md' }, { code: '2.25rem (36px)' }, 'Medium height (default)'],
+          [{ code: '--vds-button-h-lg' }, { code: '2.75rem (44px)' }, 'Large height'],
+          [{ code: '--vds-button-pad-x-sm' }, { code: '0.75rem (12px)' }, 'Small horizontal padding'],
+          [{ code: '--vds-button-pad-x-md' }, { code: '1rem (16px)' }, 'Medium horizontal padding'],
+          [{ code: '--vds-button-pad-x-lg' }, { code: '1.5rem (24px)' }, 'Large horizontal padding'],
+          [{ code: '--vds-button-gap' }, { code: '0.5rem (8px)' }, 'Icon ↔ label gap'],
+        ]} />
+
+        <TokenGroup label="Shape" headers={['Token', 'Value', 'Controls']} rows={[
+          [{ code: '--vds-button-radius' }, { code: '0.25rem (4px)' }, 'Corner radius'],
+          [{ code: '--vds-button-border-w' }, { code: '1px' }, 'Border hairline width'],
+        ]} />
+
+        <TokenGroup label="Type" headers={['Token', 'Value', 'Controls']} rows={[
+          [{ code: '--vds-button-weight' }, { code: '500' }, 'Label font weight'],
+        ]} />
+        <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.5rem' }}>
+          Size is a typescale step, not a raw value: sm = <IC>detail</IC>, md = <IC>body</IC>, lg = <IC>body-lg</IC>.
+        </p>
+
+        <TokenGroup label="Focus ring" headers={['Token', 'Value', 'Controls']} rows={[
+          [{ code: '--vds-button-ring-w' }, { code: '2px' }, 'Ring thickness'],
+          [{ code: '--vds-button-ring-offset' }, { code: '2px' }, 'Ring offset from the button edge'],
+        ]} />
+        <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.5rem' }}>
+          Action controls (buttons, checkboxes) use a hard outline ring — it reads clearly on any tone fill. Field controls (inputs, selects) use a softer shadow ring instead; the two are deliberately different recipes.
+        </p>
+
+        <TokenGroup label="Motion" headers={['Token', 'Value', 'Controls']} rows={[
+          [{ code: '--vds-button-dur' }, { code: '120ms' }, 'Hover / focus transition speed'],
+          [{ code: '--vds-button-ease' }, { code: 'cubic-bezier(0.16, 1, 0.3, 1)' }, 'Easing curve'],
+        ]} />
+
+        <p className="vds-text vds-text--body vds-text--tone-muted" style={{ marginTop: '1.25rem' }}>
+          <strong>Tone &amp; variant colors</strong> aren’t their own token set — every fill, hover, and ink comes
+          from the semantic <IC>--vds-primary</IC> / <IC>--vds-danger</IC> / <IC>--vds-success</IC> / … families,
+          one per tone. See <a href="#/foundation/color-usage">Color usage →</a>.
+        </p>
       </Section>
     </ComponentPage>
   )

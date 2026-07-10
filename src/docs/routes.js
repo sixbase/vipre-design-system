@@ -64,6 +64,7 @@ import { EntityDetailTemplatePage } from './pages/EntityDetailTemplatePage.jsx'
 import { TextareaPage } from './pages/TextareaPage.jsx'
 import { MspMenuPilotPage } from './pages/MspMenuPilotPage.jsx'
 import { KickoffPage } from './pages/KickoffPage.jsx'
+import { ControlAnatomyPage } from './pages/ControlAnatomyPage.jsx'
 import { MeetingGuidePage } from './pages/MeetingGuidePage.jsx'
 import { MenuQuickstartPage } from './pages/MenuQuickstartPage.jsx'
 
@@ -95,6 +96,7 @@ export const NAV = [
       { path: '/foundation/layout', name: 'Layout', Page: LayoutPage },
       { path: '/foundation/responsiveness', name: 'Responsiveness', Page: ResponsivenessPage },
       { path: '/foundation/depth', name: 'Depth', Page: DepthPage },
+      { path: '/foundation/control-anatomy', name: 'Control Anatomy', Page: ControlAnatomyPage },
     ],
   },
   {

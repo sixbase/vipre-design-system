@@ -1,9 +1,19 @@
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, Code, IC } from '../primitives.jsx'
+import { Section, Preview, IC, PropsTable } from '../primitives.jsx'
 import { Field, Input, Select } from '../../components/index.js'
 
 const COL = { display: 'flex', flexDirection: 'column', gap: '1.25rem', width: '100%', maxWidth: 360 }
+
+/* A labelled token table for the Tokens section. */
+function TokenGroup({ label, headers, rows }) {
+  return (
+    <div style={{ marginTop: '1.25rem' }}>
+      <p className="vds-text vds-text--eyebrow" style={{ margin: '0 0 0.4rem' }}>{label}</p>
+      <PropsTable headers={headers} rows={rows} />
+    </div>
+  )
+}
 
 export function FieldPage() {
   return (
@@ -11,7 +21,8 @@ export function FieldPage() {
       colors={COMPONENT_COLORS.Field}
       title="Field"
       description="The standard wrapper that puts a label on a form control. It shows the label on top and optional help or error text below, and hooks up the accessibility for you — adding id, aria-describedby, and (when there’s an error) invalid onto the control inside. Wrap it around every Input, Select, and Textarea so labels look the same everywhere."
-      installCode={`import { Field, Input } from 'vipre-design-system'`}
+      installCode={`<!-- Tokens-only: link the CSS variables, build your own field wrapper against them. -->
+<link rel="stylesheet" href="vipre-tokens.css">`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
@@ -55,36 +66,33 @@ export function FieldPage() {
               </Field>
             </div>
           }
-          code={`<Field label="Workspace name"><Input placeholder="acme-prod" /></Field>
-<Field label="Email" help="We'll only use this for security alerts.">
-  <Input type="email" />
-</Field>
-<Field label="Email" error="Enter a valid email address">
-  <Input type="email" />   {/* error → invalid + aria-describedby, automatically */}
-</Field>
-<Field label="Primary contact" eyebrow><Input /></Field>
-<Field label="Status"><Select>…</Select></Field>`}
         />
       </Section>
 
       <Section
-        title="Markup"
-        note="The rendered HTML with the vds- classes, for teams not using React. No JS needed — but you have to wire the ids yourself: label htmlFor → control id, and aria-describedby → the help or error id. Show either the help line or the error line, not both."
+        title="Tokens"
+        note="Field owns the vertical rhythm between the label, the control, and the help/error line below it — one custom property, set on the .vds-field root."
       >
-        <Code>{`<div class="vds-field">
-  <label for="email" class="vds-field__label">Email</label>
-  <!-- the control goes here (Input / Select / Textarea markup) -->
-  <div class="vds-input vds-input--md">
-    <input id="email" type="email" class="vds-input__field" aria-describedby="email-help" />
-  </div>
-  <span id="email-help" class="vds-field__help">We'll only use this for security alerts.</span>
-</div>
+        <TokenGroup label="Spacing" headers={['Token', 'Value', 'Controls']} rows={[
+          [{ code: '--vds-field-gap' }, { code: '0.375rem (6px)' }, 'Vertical gap: label → control → help/error'],
+        ]} />
+        <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.5rem' }}>
+          Label and help text color bind to <IC>--vds-ink-muted</IC>; the error line binds to{' '}
+          <IC>--vds-danger</IC>. No field-specific color tokens are needed — both already flip light/dark
+          on their own.
+        </p>
+      </Section>
 
-<!-- error state: swap the help line for an alert, and mark the control invalid -->
-<span id="email-error" role="alert" class="vds-field__error">Enter a valid email address</span>
-
-<!-- eyebrow label: small all-caps -->
-<label class="vds-field__label vds-field__label--eyebrow">Primary contact</label>`}</Code>
+      <Section
+        title="Reference implementation"
+        note="How the demos on this page are built — reference only. The design system does not ship this markup or CSS as an installable package; it ships the tokens above. Your team writes its own field wrapper (its own classes, its own framework) and binds to the --vds-field-* variable."
+      >
+        <p className="vds-text vds-text--body vds-text--tone-muted" style={{ margin: 0 }}>
+          The reference build lives in the repo under <IC>src/components/Field</IC>. Treat it as a worked
+          example of the tokens — not something to install today. It's also the seed of a future
+          <em> versioned, installable</em> package: when Vipre is ready, the same token contract makes that a
+          drop-in, not a rewrite.
+        </p>
       </Section>
     </ComponentPage>
   )
