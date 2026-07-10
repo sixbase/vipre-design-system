@@ -562,3 +562,26 @@ The decisions that matter going forward:
   so the CSS bundle is usable without React; docs site itself is responsive (off-canvas sidebar below lg).
 - **New tokens**: `--vds-ease-emphatic`, `--vds-dur-slow`, `--vds-page-pad` (16→24→32), `--vds-sidenav-w(-collapsed)`,
   `--vds-topbar-h`, `--vds-nav-accent`, `--vds-control-h-sm/md/lg`, `--vds-tap-target`, `--vds-accent-cobalt(-soft)`.
+
+## 2026-07-09 · Pivot to tokens-only (MSP menu pilot)
+
+- **The design system is TOKENS, not components.** Alignment with the dev teams: the DS ships the
+  framework-agnostic token contract (color, spacing, radius, type, transitions/micro-animations) as `--vds-*`
+  CSS variables; each product team OWNS its components and binds to those variables. Works across React,
+  Angular, and Bootstrap because everything is a CSS custom property.
+- **The React component library is now a REFERENCE implementation, not a product.** It renders the docs' live
+  previews and proves the tokens produce the intended look — it is not published or installed. Do NOT delete
+  it: it is the seed of a future versioned, installable package (see below).
+- **Door left open for a versioned package.** Vipre is moving toward an agentic workflow and intends to make
+  the DS installable + consumable with deliberate, versioned updates later. Because the token contract stays
+  identical, the reference components can graduate to a package without a rewrite. Keep component code and the
+  token names stable.
+- **Code snippets come OUT of the docs.** No `import { … }` install lines, no copyable component code. Docs =
+  look-and-feel reference + token tables (+ a written motion spec). "Installation" = link `vipre-tokens.css`.
+- **Two-step review for new components**: (1) align on look-and-feel, then (2) define + document the tokens.
+  This maps onto each doc page: a look-and-feel reference section + a Tokens section.
+- **Motion needs a spec, not just tokens.** A token names a beat (duration/easing); it can't capture the
+  choreography (which property animates, the asymmetric out-fast/in-late sequencing). Every motion-bearing
+  component documents a written motion spec alongside its tokens. See the MSP Menu pilot.
+- **Icons: Font Awesome first**; custom SVG (from Figma) only when FA falls short (e.g. brand product tiles).
+- **Figma keeps full-page layouts + one-offs**; reusable patterns + tokens live in the DS docs.

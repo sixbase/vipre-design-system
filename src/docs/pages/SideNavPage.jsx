@@ -5,7 +5,7 @@ import {
 } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from '../colorUsage.js'
-import { Section, Preview, Code, Kbd, IC, PropsTable } from '../primitives.jsx'
+import { Section, Preview, Kbd, IC, PropsTable } from '../primitives.jsx'
 import { SideNav, ProductTile } from '../../components/SideNav/index.js'
 import { Button } from '../../components/Button/index.js'
 
@@ -161,7 +161,8 @@ export function SideNavPage() {
     <ComponentPage
       title="Side Nav"
       description="The navy menu rail on the left of every product screen. You give it data — an account, sections, products — and it draws the whole thing: open-and-close product cards, locked products, loading shimmer, a collapse button, and tooltips when the rail is thin. The navy never changes with the theme; it is chrome, not a surface. The blue highlight follows one token, --vds-nav-accent, so a reseller can re-brand it."
-      installCode={`import { SideNav, ProductTile } from 'vipre-design-system'`}
+      installCode={`<!-- Tokens-only: link the CSS variables, build your own rail against them. -->
+<link rel="stylesheet" href="vipre-tokens.css">`}
       colors={COMPONENT_COLORS.SideNav}
       props={[
         {
@@ -220,74 +221,31 @@ export function SideNavPage() {
         <><IC>prefers-reduced-motion</IC> turns off all the animation — collapse and cards snap, shimmer freezes.</>,
       ]}
     >
-      <Section title="Get started" note="New here? The Menu Quickstart shows how to drop this into React, Angular, or plain HTML in about five minutes.">
+      <Section title="Tokens only" note="The design system ships this rail's LOOK-AND-FEEL and its tokens — not the component. Each team builds the menu in its own framework (React / Angular / Bootstrap) and binds to the --vds-sidenav-* variables below. The React build on this page is a reference that renders these demos; it is not published (a versioned, installable package may come later — the token contract won't change).">
         <p className="vds-text vds-text--body" style={{ margin: 0 }}>
-          <a href="#/adoption/menu-quickstart"><strong>Open the Menu Quickstart →</strong></a>
+          Start with the pilot spec — look-and-feel, tokens, and the motion spec in one place:{' '}
+          <a href="#/pilot/msp-menu"><strong>MSP Menu pilot →</strong></a>
         </p>
       </Section>
       <Section
         title="Anatomy"
         note="Everything at once: a back row and account header (click Back to step out of Acme Corp), two sections with eyebrows, product cards you can open and close, a locked product (SAT), a count badge on Incidents, a pinned Other section, and the built-in Collapse row. Click things — the page state lives in this docs page."
       >
-        <Preview
-          canvas={<FullRail />}
-          code={`<SideNav
-  aria-label="Product"
-  account={{ name: 'Acme Corp', typeLabel: 'Customer', tile: <ProductTile>…</ProductTile> }}
-  onBack={goUp}
-  parentName="Melvin Industries"
-  activeId={page}
-  onSelect={setPage}
-  sections={[
-    { id: 'partners', label: 'Partners', items: [
-      { id: 'dashboard', label: 'Dashboard', icon: LayoutGrid },
-      { id: 'customers', label: 'Customers', icon: Building2 },
-    ]},
-    { id: 'products', label: 'Products', items: [
-      { id: 'ies', label: 'IES', glyph: IES_GLYPH,
-        items: [
-          { id: 'ies-logs', label: 'Message Logs', icon: ScrollText },
-          { id: 'ies-threat', label: 'Threat Explorer', icon: Radar },
-        ],
-        escape: { id: 'ies-portal', label: 'Full portal' },
-      },
-      { id: 'edr', label: 'EDR', glyph: EDR_GLYPH,
-        items: [{ id: 'edr-incidents', label: 'Incidents', icon: Bell, badge: 3 }],
-      },
-      { id: 'sat', label: 'SAT', glyph: SAT_GLYPH, locked: true, lockHint: 'Not subscribed' },
-    ]},
-  ]}
-  footerSections={[
-    { id: 'other', label: 'Other', items: [
-      { id: 'admins', label: 'Admins', icon: UserCog },
-    ]},
-  ]}
-/>`}
-        />
+        <Preview canvas={<FullRail />} />
       </Section>
 
       <Section
         title="Collapsed rail"
         note="Collapse squeezes the rail to an icon column. The icons never slide sideways — only the labels fold away. Hover or focus any icon to get its tooltip at the rail's edge. Here it starts collapsed with defaultCollapsed; pass collapsed + onCollapsedChange to own the state yourself."
       >
-        <Preview
-          canvas={<CollapsedRail />}
-          code={`// Uncontrolled: the built-in Collapse row manages it
-<SideNav defaultCollapsed sections={sections} … />
-
-// Controlled: you own it
-<SideNav collapsed={collapsed} onCollapsedChange={setCollapsed} … />`}
-        />
+        <Preview canvas={<CollapsedRail />} />
       </Section>
 
       <Section
         title="Loading"
         note="While you fetch which products an account has, set loading — the sections show shimmering placeholder cards, so the menu change reads as a fetch, not a flicker."
       >
-        <Preview
-          canvas={<LoadingRail />}
-          code={`<SideNav sections={sections} loading={isFetching} … />`}
-        />
+        <Preview canvas={<LoadingRail />} />
       </Section>
 
       <Section
@@ -303,92 +261,19 @@ export function SideNavPage() {
               <ProductTile glyph={GLYPHS.sat} muted label="SAT (locked)" />
             </div>
           }
-          code={`<ProductTile glyph={IES_GLYPH} />
-<ProductTile glyph={SAT_GLYPH} muted />   // locked / not subscribed`}
         />
       </Section>
 
       <Section
-        title="Markup"
-        note="The rendered HTML with the vds- classes, for teams not using React. JS you must supply yourself: toggle vds-sidenav--collapsed on the nav, toggle vds-sidenav__reveal--open + aria-expanded on product cards, and position the single vds-sidenav__tip tooltip next to the hovered row while collapsed."
+        title="Reference implementation"
+        note="How the demos on this page are built — reference only. The design system does not ship this markup or CSS; it ships the tokens above. Your team writes its own component (its own classes, its own framework) and binds to the --vds-sidenav-* variables."
       >
-        <Code>{`<nav class="vds-sidenav" aria-label="Product">   <!-- add vds-sidenav--collapsed to close -->
-  <div class="vds-sidenav__scroll">
-
-    <div class="vds-sidenav__section vds-sidenav__section--account">
-      <div class="vds-sidenav__inset">
-        <button class="vds-sidenav__row vds-sidenav__back">
-          <span class="vds-sidenav__row-icon"><svg>…</svg></span>
-          <span class="vds-sidenav__label">Back to Melvin Industries</span>
-        </button>
-      </div>
-      <div class="vds-sidenav__inset">
-        <div class="vds-sidenav__account">
-          <span class="vds-sidenav__account-tile"><img src="…" alt=""></span>
-          <span class="vds-sidenav__account-text">
-            <span class="vds-sidenav__account-name">Acme Corp</span>
-            <span class="vds-sidenav__account-type">Customer</span>
-          </span>
-        </div>
-      </div>
-    </div>
-    <div class="vds-sidenav__divider"></div>
-
-    <div class="vds-sidenav__section">
-      <p class="vds-sidenav__eyebrow">Products</p>
-
-      <!-- a product card (open) -->
-      <div class="vds-sidenav__card">
-        <button class="vds-sidenav__pill" aria-expanded="true">
-          <span class="vds-sidenav__pill-main">
-            <span class="vds-sidenav__tile"><svg class="vds-product-tile">…</svg></span>
-            <span class="vds-sidenav__label vds-sidenav__label--pill">IES</span>
-          </span>
-          <span class="vds-sidenav__chev"><svg>…</svg></span>  <!-- --closed rotates it -->
-        </button>
-        <div class="vds-sidenav__reveal vds-sidenav__reveal--open">  <!-- JS toggles --open -->
-          <div class="vds-sidenav__reveal-clip">
-            <div class="vds-sidenav__reveal-body">
-              <button class="vds-sidenav__row vds-sidenav__row--sub vds-sidenav__row--active"
-                      aria-current="page">
-                <span class="vds-sidenav__row-icon"><svg>…</svg></span>
-                <span class="vds-sidenav__label">Message Logs</span>
-                <span class="vds-sidenav__badge">3</span>
-              </button>
-              <button class="vds-sidenav__row vds-sidenav__row--escape">…Full portal…</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- a locked product: div head, muted tile, lock badge, no reveal -->
-      <div class="vds-sidenav__card vds-sidenav__card--locked">
-        <div class="vds-sidenav__pill vds-sidenav__pill--locked">
-          <span class="vds-sidenav__pill-main">
-            <span class="vds-sidenav__tile">
-              <svg class="vds-product-tile vds-product-tile--muted">…</svg>
-              <svg class="vds-sidenav__lock">…</svg>
-            </span>
-            <span class="vds-sidenav__label vds-sidenav__label--pill">SAT</span>
-          </span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="vds-sidenav__footer">
-    <div class="vds-sidenav__divider"></div>
-    <div class="vds-sidenav__utilities">
-      <button class="vds-sidenav__row">
-        <span class="vds-sidenav__row-icon"><svg>…</svg></span>
-        <span class="vds-sidenav__label">Collapse</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- while collapsed, JS floats ONE tooltip beside the hovered row -->
-  <div class="vds-sidenav__tip" role="tooltip" style="left:82px; top:120px">Message Logs</div>
-</nav>`}</Code>
+        <p className="vds-text vds-text--body vds-text--tone-muted" style={{ margin: 0 }}>
+          The reference build lives in the repo under <IC>src/components/SideNav</IC>. Treat it as a worked
+          example of the tokens — not something to install today. It's also the seed of a future
+          <em> versioned, installable</em> package: when Vipre is ready, the same token contract makes that a
+          drop-in, not a rewrite.
+        </p>
       </Section>
 
       <Section

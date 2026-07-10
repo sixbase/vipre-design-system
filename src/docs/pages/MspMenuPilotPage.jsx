@@ -4,14 +4,17 @@ import {
   Radar, ScrollText, User, UserCog,
 } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
-import { Section, Preview } from '../primitives.jsx'
+import { Section, Preview, PropsTable, IC } from '../primitives.jsx'
 import { SideNav, ProductTile } from '../../components/index.js'
 import { GLYPHS } from '../templateData.js'
 
 /* ============================================================================
-   MSP MENU — ISOLATED (pilot handoff artifact)
-   Just the SideNav, on its own — no shell, no top bar, no page body. All the
-   data it needs lives in this file. Docs copy is deliberately ELI10.
+   MSP MENU — the tokens-only pilot.
+   The design system ships the LOOK-AND-FEEL + the TOKENS that define this menu,
+   not the component code. Each product team builds the menu in its own stack
+   (React / Angular / Bootstrap) and binds to the same --vds-sidenav-* CSS
+   variables. The React build below is a REFERENCE that renders these demos —
+   it is not published (see "How this ships").
    ========================================================================== */
 
 const MeridianTile = (
@@ -106,34 +109,77 @@ function MenuOnly() {
   )
 }
 
+/* The written choreography — the part a token list can't capture on its own. */
+const MOTION = [
+  ['Collapse / expand rail', 'Rail width animates; the icon column never shifts x (label lead-margin animates away, not a flex gap).', 'width · --vds-sidenav-dur-collapse (220ms) · --vds-sidenav-ease'],
+  ['Labels', 'Slide (max-width + left-margin) on the shared curve; opacity is ASYMMETRIC — out fast, in late — so the width leads and words arrive after.', 'out --vds-sidenav-dur-label-out (90ms) · in --vds-dur-base after --vds-sidenav-delay-label-in (70ms)'],
+  ['Eyebrows & badges', 'Fade only — they never unmount, so section heights stay identical and nothing jumps vertically.', 'same label-out / label-in beats'],
+  ['Product card open / close', 'Card height animates 0fr→1fr; the items reveal as a SECOND stage — fade in a beat after the card starts opening, drop out fast on close. Closed items leave the tab order.', 'card --vds-sidenav-dur-accordion (240ms) · items in after --vds-sidenav-delay-item-in (60ms), out --vds-sidenav-dur-item-out (110ms)'],
+  ['Chevron', 'Shrinks + fades in step with the labels; the arrow flips 180° on open.', 'flip --vds-dur-base · --vds-sidenav-ease'],
+  ['Row hover', 'Fill fades IN fast and OUT slow — the pointer feels tracked, not chased.', 'in --vds-sidenav-dur-hover-in (50ms) / out --vds-sidenav-dur-hover-out (280ms)'],
+  ['Row press', 'Instant, one step brighter than hover — tactile, not murky.', '0ms → --vds-sidenav-press'],
+  ['Product tile', 'Lifts on hover (scale 1.05), settles under the finger on press (scale 0.97).', 'press settle --vds-sidenav-dur-press (80ms) · --vds-sidenav-ease'],
+  ['Collapsed-rail tooltip', 'One floating chip fades + slides 4px out from the rail edge; re-keyed per row so it replays as you move.', '--vds-sidenav-dur-tip (140ms) · --vds-sidenav-ease'],
+  ['Loading skeleton', 'Shimmer sweep loops across the placeholder cards.', '--vds-sidenav-dur-shimmer (1.15s) linear infinite'],
+  ['Reduced motion', 'Everything snaps — collapse, cards, tooltips — and the shimmer freezes.', 'honors prefers-reduced-motion'],
+]
+
 export function MspMenuPilotPage() {
   return (
     <ComponentPage
       title="MSP Menu"
-      description="Just the side menu, on its own — no page around it. Click it; it really works. When you want it in your app, follow the Menu Quickstart."
-      installCode={`import { SideNav, ProductTile } from 'vipre-design-system'`}
+      description="The pilot for our tokens-only design system. We don't ship this menu as code — we ship its look-and-feel plus the tokens that define it, and each team builds the menu in React, Angular, or Bootstrap bound to those tokens. This page is the whole spec: match the look, use the tokens, follow the motion spec."
+      installCode={`<!-- One file, every framework. Link the design tokens once; -->
+<!-- then bind your own components to the --vds-* CSS variables. -->
+<link rel="stylesheet" href="vipre-tokens.css">`}
     >
-      <Section title="Try it" note="Click a row. Open a product card. Press Collapse to shrink the rail. Click Customers to jump into a customer, then Back to pop out.">
-        <Preview
-          canvas={<MenuOnly />}
-          code={`<SideNav
-  account={account}      // who you're signed in as
-  sections={sections}    // the rows + product cards
-  activeId={page}        // which row is blue
-  onSelect={setPage}     // runs when a row is clicked
-/>`}
-        />
+      <Section title="1 · Look and feel" note="The reference to match. Click a row, open a product card, press Collapse, click Customers to scope into a customer, then Back to pop out. Build your menu to look and behave like this.">
+        <Preview canvas={<MenuOnly />} />
       </Section>
 
-      <Section title="Use it in your app" note="The menu is three pieces: a stylesheet, some markup, and one tiny script. Add them and it works — in React, Angular, or plain HTML.">
+      <Section title="2 · Tokens — the spec" note="Everything visual is a --vds-sidenav-* CSS variable: color, sizes, spacing, radius, type weight, and motion. They map to plain CSS custom properties, so React, Angular, and Bootstrap all bind to the exact same values. This is the contract — the numbers your build must hit.">
         <p className="vds-text vds-text--body" style={{ margin: 0 }}>
-          Full steps (about 5 minutes):{' '}
-          <a href="#/adoption/menu-quickstart"><strong>Menu Quickstart →</strong></a>
+          Full token reference (48 tokens, grouped by Color / Sizes / Spacing / Radius / Typography / Motion):{' '}
+          <a href="#/components/side-nav"><strong>Side Nav → Tokens →</strong></a>
         </p>
-        <p className="vds-text vds-text--body vds-text--tone-muted" style={{ marginTop: '0.5rem' }}>
-          Want every prop, state, and the raw markup? See the full{' '}
-          <a href="#/components/side-nav">Side Nav</a> page.
+      </Section>
+
+      <Section title="3 · Motion spec" note="A token names the BEAT (a duration, an easing). This spec names the CHOREOGRAPHY — which property moves, in what order, and why. You need both to reproduce the feel: the tokens alone won't tell you that labels fade out fast but in late. One curve drives all of it — --vds-sidenav-ease (emphasized decelerate: starts brisk, lands soft).">
+        <PropsTable
+          headers={['Interaction', 'What moves', 'Tokens & timing']}
+          rows={MOTION.map(([a, b, c]) => [a, b, { code: c }])}
+        />
+        <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.6rem' }}>
+          The guiding principle: motion is <strong>asymmetric on purpose</strong> — things leave fast and
+          arrive late, so the layout leads and the content follows. Keep that and the menu feels engineered;
+          make it symmetric and it feels cheap.
         </p>
+      </Section>
+
+      <Section title="4 · Icons" note="Use Font Awesome for row and utility icons — it covers the common cases and every team already has it. Reach for a custom SVG (drawn in Figma) only when Font Awesome falls short.">
+        <p className="vds-text vds-text--body vds-text--tone-muted" style={{ margin: 0 }}>
+          The product <IC>tiles</IC> here are the exception that proves the rule: they're brand glyphs no
+          icon library carries, so they're custom SVG on a 32×32 grid. Everything else — Dashboard, Devices,
+          Admins — is a Font Awesome icon.
+        </p>
+      </Section>
+
+      <Section title="How this ships" note="Tokens today; a component package later — the door stays open.">
+        <div className="vds-text vds-text--body" style={{ display: 'grid', gap: '0.6rem', maxWidth: 720 }}>
+          <p style={{ margin: 0 }}>
+            <strong>Today:</strong> link <IC>vipre-tokens.css</IC> and build the menu in your framework,
+            binding to the tokens above. Your team owns the component.
+          </p>
+          <p style={{ margin: 0 }}>
+            <strong>The React build in this repo is a reference</strong>, not a package — it renders the demos
+            and proves the tokens produce the intended look. It is not something you install.
+          </p>
+          <p style={{ margin: 0 }}>
+            <strong>Later:</strong> as Vipre's agentic workflow matures, that reference becomes a
+            <em> versioned, installable</em> package you can pull in and update deliberately. The token
+            contract stays identical either way — so nothing you build against the tokens now is throwaway.
+          </p>
+        </div>
       </Section>
     </ComponentPage>
   )
