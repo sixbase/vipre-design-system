@@ -1,11 +1,91 @@
+import { useMemo, useState } from 'react'
+import * as Icons from '@icons'
 import { Shield, Monitor, Building2, Search, ChevronRight, Bell, TriangleAlert, CircleCheck } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, Code, IC } from '../primitives.jsx'
-import { Icon } from '../../components/index.js'
+import { Icon, SearchInput, Text } from '../../components/index.js'
 
 const SIZES = ['xs', 'sm', 'md', 'lg']
 const TONES = ['current', 'muted', 'subtle', 'primary', 'success', 'warning', 'danger', 'info']
+
+// Every icon currently wired up in @icons (src/icons.jsx), sorted A→Z.
+const ICON_NAMES = Object.keys(Icons).sort((a, b) => a.localeCompare(b))
+
+/* A searchable wall of every icon we've pulled from Material Symbols. Click a
+   tile to copy its <Icon> usage. Nothing here is special — it just reads the
+   @icons barrel, so it stays in sync as icons are added. */
+function IconLibrary() {
+  const [query, setQuery] = useState('')
+  const [copied, setCopied] = useState('')
+  const matches = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    return q ? ICON_NAMES.filter((n) => n.toLowerCase().includes(q)) : ICON_NAMES
+  }, [query])
+
+  const copy = (name) => {
+    navigator.clipboard?.writeText(`<Icon as={${name}} />`)
+    setCopied(name)
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <div style={{ flex: '1 1 16rem', minWidth: '12rem' }}>
+          <SearchInput
+            value={query}
+            onChange={setQuery}
+            placeholder="Search icons…"
+            aria-label="Search icons"
+          />
+        </div>
+        <Text variant="detail" tone="muted">
+          {matches.length} of {ICON_NAMES.length}{copied ? ` · copied ${copied}` : ''}
+        </Text>
+      </div>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(6.5rem, 1fr))',
+          gap: '0.5rem',
+        }}
+      >
+        {matches.map((name) => {
+          const Glyph = Icons[name]
+          return (
+            <button
+              key={name}
+              type="button"
+              onClick={() => copy(name)}
+              title={`Copy <Icon as={${name}} />`}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.85rem 0.5rem',
+                border: '1px solid var(--vds-line)',
+                borderRadius: 'var(--vds-radius-md)',
+                background: copied === name ? 'var(--vds-primary-soft)' : 'var(--vds-surface)',
+                color: 'var(--vds-ink)',
+                cursor: 'pointer',
+                overflow: 'hidden',
+              }}
+            >
+              <Icon as={Glyph} size="md" tone="subtle" />
+              <span
+                className="vds-text vds-text--micro vds-text--tone-muted"
+                style={{ maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+              >
+                {name}
+              </span>
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
 
 export function IconPage() {
   return (
@@ -31,6 +111,30 @@ export function IconPage() {
         <>Tone colors stay easy to read (AA contrast) on canvas and surface in both light and dark.</>,
       ]}
     >
+      <Section
+        title="Using Material Symbols"
+        note="We don't draw our own icons. We borrow Google's Material Symbols set (~3,000 icons) — but only the ones we actually use get shipped, so the app stays light."
+      >
+        <Code>{`// 1. Find an icon at fonts.google.com/icons — note its name (e.g. "star").
+
+// 2. Add one line to src/icons.jsx. Always pick the -outline-rounded style
+//    so every icon matches (soft, hollow). If there's no outline, fall back
+//    to -rounded.
+import _Star from '~icons/material-symbols/star-outline-rounded'
+export const Star = a(_Star)
+
+// 3. Use it anywhere.
+import { Star } from '@icons'
+<Icon as={Star} size="sm" tone="warning" />`}</Code>
+      </Section>
+
+      <Section
+        title="Library"
+        note="Every icon currently wired up. Type to filter; click a tile to copy its usage. This grid reads straight from @icons, so new icons show up here automatically."
+      >
+        <IconLibrary />
+      </Section>
+
       <Section title="Sizes">
         <Preview
           canvas={SIZES.map((s) => <Icon key={s} as={Shield} size={s} />)}

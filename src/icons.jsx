@@ -10,7 +10,6 @@ import _ArrowUpRight from '~icons/material-symbols/arrow-outward-rounded'
 import _Bell from '~icons/material-symbols/notifications-outline-rounded'
 import _Boxes from '~icons/material-symbols/widgets-outline-rounded'
 import _Briefcase from '~icons/material-symbols/business-center-outline-rounded'
-import _Building2 from '~icons/material-symbols/apartment-rounded'
 import _Calendar from '~icons/material-symbols/calendar-month-outline-rounded'
 import _Check from '~icons/material-symbols/check-rounded'
 import _ChevronDown from '~icons/material-symbols/expand-more-rounded'
@@ -18,7 +17,7 @@ import _ChevronRight from '~icons/material-symbols/chevron-right-rounded'
 import _ChevronUp from '~icons/material-symbols/expand-less-rounded'
 import _CircleCheck from '~icons/material-symbols/check-circle-outline-rounded'
 import _Copy from '~icons/material-symbols/content-copy-outline-rounded'
-import _Database from '~icons/material-symbols/storage-rounded'
+import _Database from '~icons/material-symbols/database-outline'
 import _DollarSign from '~icons/material-symbols/paid-outline-rounded'
 import _Download from '~icons/material-symbols/download-rounded'
 import _Eye from '~icons/material-symbols/visibility-outline-rounded'
@@ -62,6 +61,20 @@ const a = (C) => forwardRef(function Icon({ size = 24, color, strokeWidth, absol
   return createElement(C, { ref, width: size, height: size, style: color ? { color, ...style } : style, ...p })
 })
 
+// MANUAL EXCEPTION — Material Symbols "domain" (outlined). The iconify data set
+// (@iconify-json/material-symbols) only ships the FILLED domain, so we embed
+// Google's official outlined SVG (svg-400/outlined/domain) directly. Uses the
+// native 0 -960 960 960 viewBox; fill inherits currentColor like every other icon.
+const _Domain = forwardRef(function Domain(props, ref) {
+  return createElement(
+    'svg',
+    { ref, xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 -960 960 960', fill: 'currentColor', ...props },
+    createElement('path', {
+      d: 'M80-120v-720h390v165h410v555H80Zm60-60h105v-105H140v105Zm0-165h105v-105H140v105Zm0-165h105v-105H140v105Zm0-165h105v-105H140v105Zm165 495h105v-105H305v105Zm0-165h105v-105H305v105Zm0-165h105v-105H305v105Zm0-165h105v-105H305v105Zm165 495h350v-435H470v105h80v60h-80v105h80v60h-80v105Zm185-270v-60h60v60h-60Zm0 165v-60h60v60h-60Z',
+    }),
+  )
+})
+
 export const Activity = a(_Activity)
 export const AlertTriangle = a(_AlertTriangle)
 export const ArrowRight = a(_ArrowRight)
@@ -70,7 +83,7 @@ export const ArrowUpRight = a(_ArrowUpRight)
 export const Bell = a(_Bell)
 export const Boxes = a(_Boxes)
 export const Briefcase = a(_Briefcase)
-export const Building2 = a(_Building2)
+export const Building2 = a(_Domain)
 export const Calendar = a(_Calendar)
 export const Check = a(_Check)
 export const ChevronDown = a(_ChevronDown)

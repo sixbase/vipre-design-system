@@ -137,12 +137,12 @@ export const SEMANTIC_GROUPS = [
   {
     title: 'Brand & interactive',
     rows: [
-      { token: '--vds-primary', ref: 'midnight-600 → 300', usage: 'Primary button fill, active state, primary links' },
-      { token: '--vds-primary-hover', ref: 'midnight-700 → 200', usage: 'Hover state for primary actions' },
-      { token: '--vds-primary-active', ref: 'midnight-800 → 100', usage: 'Pressed/active state for primary actions' },
-      { token: '--vds-on-primary', ref: 'white → midnight-950', usage: 'Text/icons on a primary-colored background' },
-      { token: '--vds-primary-soft', ref: 'midnight-50 → midnight@16%', usage: 'Tinted brand backgrounds — ghost hover, soft badges' },
-      { token: '--vds-primary-soft-hover', ref: 'midnight-100 → midnight@24%', usage: 'Hover on a soft-brand fill' },
+      { token: '--vds-primary', ref: 'cobalt-600 (#0068cb) → 400', usage: 'The Vipre brand blue — primary button fill, active state, primary links' },
+      { token: '--vds-primary-hover', ref: 'cobalt-700 → 300', usage: 'Hover state for primary actions' },
+      { token: '--vds-primary-active', ref: 'cobalt-800 → 200', usage: 'Pressed/active state for primary actions' },
+      { token: '--vds-on-primary', ref: 'white → cobalt-950', usage: 'Text/icons on a primary-colored background' },
+      { token: '--vds-primary-soft', ref: 'cobalt-50 → cobalt@16%', usage: 'Tinted brand backgrounds — ghost hover, soft badges' },
+      { token: '--vds-primary-soft-hover', ref: 'cobalt-100 → cobalt@24%', usage: 'Hover on a soft-brand fill' },
       { token: '--vds-focus-ring', ref: 'midnight-500 → 400', usage: 'Keyboard focus outline via :focus-visible — never decorative' },
     ],
   },

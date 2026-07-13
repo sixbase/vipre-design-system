@@ -281,13 +281,13 @@ $magenta: ( // accent — hot pink (hue 348)
   --vds-ink-disabled:   var(--vds-graphite-400); // greyed-out labels on disabled controls
   --vds-ink-inverse:    var(--vds-graphite-50);  // text on a dark / inverted chip (e.g. tooltip)
 
-  // ---- Brand (primary) ----
-  --vds-primary:            var(--vds-midnight-600); // brand uses midnight tones
-  --vds-primary-hover:      var(--vds-midnight-700);
-  --vds-primary-active:     var(--vds-midnight-800); // pressed / active
-  --vds-on-primary:         var(--vds-white); // AA: white on midnight-600 = 7.88
-  --vds-primary-soft:       var(--vds-midnight-50);
-  --vds-primary-soft-hover: var(--vds-midnight-100); // hover on a soft-brand fill
+  // ---- Brand (primary) — the Vipre blue, cobalt #0068cb (same as --vds-nav-accent) ----
+  --vds-primary:            var(--vds-cobalt-600); // Vipre brand blue #0068cb
+  --vds-primary-hover:      var(--vds-cobalt-700);
+  --vds-primary-active:     var(--vds-cobalt-800); // pressed / active
+  --vds-on-primary:         var(--vds-white); // AA: white on cobalt-600 (#0068cb) = 5.2
+  --vds-primary-soft:       var(--vds-cobalt-50);
+  --vds-primary-soft-hover: var(--vds-cobalt-100); // hover on a soft-brand fill
 
   // ---- Status — each a full family: solid · hover · active · on(text) · soft · soft-hover.
   // Light uses the darker 600 step (AA-readable on white); dark uses the vibrant 400.
@@ -375,13 +375,13 @@ $magenta: ( // accent — hot pink (hue 348)
   --vds-ink-disabled:   var(--vds-midnight-600);
   --vds-ink-inverse:    var(--vds-midnight-950); // dark text on a light / inverted chip
 
-  // ---- Brand (primary) ----
-  --vds-primary:            var(--vds-midnight-300); // light navy fill + dark text on the dark canvas
-  --vds-primary-hover:      var(--vds-midnight-200);
-  --vds-primary-active:     var(--vds-midnight-100); // pressed / active
-  --vds-on-primary:         var(--vds-midnight-950); // AA: navy text on midnight-300
-  --vds-primary-soft:       color-mix(in oklab, var(--vds-midnight-300) 16%, transparent);
-  --vds-primary-soft-hover: color-mix(in oklab, var(--vds-midnight-300) 24%, transparent);
+  // ---- Brand (primary) — the Vipre blue, brightened for the dark canvas (cobalt-400 + dark ink) ----
+  --vds-primary:            var(--vds-cobalt-400); // Vipre blue, lightened so it reads on #0b192d
+  --vds-primary-hover:      var(--vds-cobalt-300);
+  --vds-primary-active:     var(--vds-cobalt-200); // pressed / active
+  --vds-on-primary:         var(--vds-cobalt-950); // AA: dark cobalt ink on the bright fill
+  --vds-primary-soft:       color-mix(in oklab, var(--vds-cobalt-400) 16%, transparent);
+  --vds-primary-soft-hover: color-mix(in oklab, var(--vds-cobalt-400) 24%, transparent);
 
   // ---- Status — vibrant 400 solids; dark text rides on top via on-{status}. ----
   --vds-success:            var(--vds-emerald-400);

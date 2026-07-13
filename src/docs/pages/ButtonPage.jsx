@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState } from 'react'
-import { ArrowUpRight, ChevronDown, ChevronRight, Download, Plus, Trash2 } from '@icons'
+import { ArrowUpRight, ChevronDown, ChevronRight, Download, Plus, Settings, Trash2 } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, Code, Kbd, IC, PropsTable, A11yList } from '../primitives.jsx'
@@ -23,7 +23,7 @@ const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1)
 const BUTTON_TOKENS = [
   '--vds-button-h-xs', '--vds-button-h-sm', '--vds-button-h-md', '--vds-button-h-lg', '--vds-button-h-xl',
   '--vds-button-pad-x-xs', '--vds-button-pad-x-sm', '--vds-button-pad-x-md', '--vds-button-pad-x-lg', '--vds-button-pad-x-xl',
-  '--vds-button-gap', '--vds-button-icon-nudge', '--vds-button-radius', '--vds-button-border-w', '--vds-button-weight', '--vds-button-weight-strong',
+  '--vds-button-gap-xs', '--vds-button-gap-sm', '--vds-button-gap-md', '--vds-button-gap-lg', '--vds-button-gap-xl', '--vds-button-icon-nudge', '--vds-button-radius', '--vds-button-border-w', '--vds-button-weight', '--vds-button-weight-strong',
   '--vds-button-ring-w', '--vds-button-ring-offset', '--vds-button-dur', '--vds-button-ease',
 ]
 
@@ -83,7 +83,7 @@ function TokenValue({ name, values }) {
    S1 · Playground
    -------------------------------------------------------------------------- */
 
-const LEADING_ICONS = { none: null, plus: Plus, download: Download }
+const LEADING_ICONS = { none: null, settings: Settings, plus: Plus, download: Download }
 const TRAILING_ICONS = { none: null, 'chevron-right': ChevronRight, 'chevron-down': ChevronDown, 'arrow-up-right': ArrowUpRight }
 
 function ControlField({ label, children }) {
@@ -99,7 +99,7 @@ function Playground() {
   const [variant, setVariant] = useState('solid')
   const [tone, setTone] = useState('primary')
   const [size, setSize] = useState('md')
-  const [leading, setLeading] = useState('plus')
+  const [leading, setLeading] = useState('settings')
   const [trailing, setTrailing] = useState('none')
   const [disabled, setDisabled] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -197,6 +197,7 @@ function Playground() {
               disabled={iconOnly}
               options={[
                 { value: 'none', label: 'None' },
+                { value: 'settings', label: 'Settings' },
                 { value: 'plus', label: 'Plus' },
                 { value: 'download', label: 'Download' },
               ]}
@@ -292,11 +293,11 @@ function StateMatrix() {
    -------------------------------------------------------------------------- */
 
 const SIZE_ROWS = [
-  { size: 'xs', h: '--vds-button-h-xs', px: '--vds-button-pad-x-xs', type: 'micro', icon: 'xs (14px)', touch: '44px overlay' },
-  { size: 'sm', h: '--vds-button-h-sm', px: '--vds-button-pad-x-sm', type: 'detail', icon: 'sm (16px)', touch: '44px overlay' },
-  { size: 'md', h: '--vds-button-h-md', px: '--vds-button-pad-x-md', type: 'body', icon: 'sm (16px)', touch: 'native — none needed' },
-  { size: 'lg', h: '--vds-button-h-lg', px: '--vds-button-pad-x-lg', type: 'body-lg', icon: 'md (20px)', touch: '—' },
-  { size: 'xl', h: '--vds-button-h-xl', px: '--vds-button-pad-x-xl', type: 'body-lg + semibold', icon: 'md (20px)', touch: '—' },
+  { size: 'xs', h: '--vds-button-h-xs', px: '--vds-button-pad-x-xs', gap: '--vds-button-gap-xs', type: 'micro', icon: 'xs (14px)', touch: '44px overlay' },
+  { size: 'sm', h: '--vds-button-h-sm', px: '--vds-button-pad-x-sm', gap: '--vds-button-gap-sm', type: 'detail', icon: 'sm (16px)', touch: '44px overlay' },
+  { size: 'md', h: '--vds-button-h-md', px: '--vds-button-pad-x-md', gap: '--vds-button-gap-md', type: 'body', icon: 'sm (16px)', touch: 'native — none needed' },
+  { size: 'lg', h: '--vds-button-h-lg', px: '--vds-button-pad-x-lg', gap: '--vds-button-gap-lg', type: 'body-lg', icon: 'md (20px)', touch: '—' },
+  { size: 'xl', h: '--vds-button-h-xl', px: '--vds-button-pad-x-xl', gap: '--vds-button-gap-xl', type: 'body-lg + semibold', icon: 'md (20px)', touch: '—' },
 ]
 
 function SizeSpecTable({ values }) {
@@ -307,7 +308,7 @@ function SizeSpecTable({ values }) {
         <IC key="s">{r.size}</IC>,
         <TokenValue key="h" name={r.h} values={values} />,
         <TokenValue key="p" name={r.px} values={values} />,
-        <TokenValue key="g" name="--vds-button-gap" values={values} />,
+        <TokenValue key="g" name={r.gap} values={values} />,
         <IC key="t">{r.type}</IC>,
         r.icon,
         r.touch,
@@ -331,7 +332,11 @@ const TOKEN_BOUND = {
   '--vds-button-pad-x-md': 'var(--vds-space-4)',
   '--vds-button-pad-x-lg': 'var(--vds-space-6)',
   '--vds-button-pad-x-xl': 'var(--vds-space-8)',
-  '--vds-button-gap': 'var(--vds-space-2)',
+  '--vds-button-gap-xs': 'var(--vds-space-2)',
+  '--vds-button-gap-sm': 'var(--vds-space-2)',
+  '--vds-button-gap-md': 'var(--vds-space-2-5)',
+  '--vds-button-gap-lg': 'var(--vds-space-3)',
+  '--vds-button-gap-xl': 'var(--vds-space-3)',
   '--vds-button-icon-nudge': 'var(--vds-space-1)',
   '--vds-button-radius': 'var(--vds-radius-sm)',
   '--vds-button-border-w': 'var(--vds-border-w)',
@@ -354,8 +359,12 @@ const TOKEN_CONTROLS = {
   '--vds-button-pad-x-md': 'Left/right padding — md',
   '--vds-button-pad-x-lg': 'Left/right padding — lg',
   '--vds-button-pad-x-xl': 'Left/right padding — xl',
-  '--vds-button-gap': 'Space between icon and label',
-  '--vds-button-icon-nudge': 'How far icon slots pull toward the edge (optical correction)',
+  '--vds-button-gap-xs': 'Icon ↔ label gap — xs',
+  '--vds-button-gap-sm': 'Icon ↔ label gap — sm',
+  '--vds-button-gap-md': 'Icon ↔ label gap — md',
+  '--vds-button-gap-lg': 'Icon ↔ label gap — lg (grows to keep pace with the padding)',
+  '--vds-button-gap-xl': 'Icon ↔ label gap — xl',
+  '--vds-button-icon-nudge': 'How far icon slots pull toward the edge (optical correction; scales 2→8px)',
   '--vds-button-radius': 'Corner radius',
   '--vds-button-border-w': 'Border hairline width',
   '--vds-button-weight': 'Label weight (xs–lg)',
@@ -367,7 +376,7 @@ const TOKEN_CONTROLS = {
 }
 
 const TOKEN_GROUPS = [
-  { label: 'Sizing', tokens: ['--vds-button-h-xs', '--vds-button-h-sm', '--vds-button-h-md', '--vds-button-h-lg', '--vds-button-h-xl', '--vds-button-pad-x-xs', '--vds-button-pad-x-sm', '--vds-button-pad-x-md', '--vds-button-pad-x-lg', '--vds-button-pad-x-xl', '--vds-button-gap', '--vds-button-icon-nudge'] },
+  { label: 'Sizing', tokens: ['--vds-button-h-xs', '--vds-button-h-sm', '--vds-button-h-md', '--vds-button-h-lg', '--vds-button-h-xl', '--vds-button-pad-x-xs', '--vds-button-pad-x-sm', '--vds-button-pad-x-md', '--vds-button-pad-x-lg', '--vds-button-pad-x-xl', '--vds-button-gap-xs', '--vds-button-gap-sm', '--vds-button-gap-md', '--vds-button-gap-lg', '--vds-button-gap-xl', '--vds-button-icon-nudge'] },
   { label: 'Shape', tokens: ['--vds-button-radius', '--vds-button-border-w'] },
   { label: 'Type', tokens: ['--vds-button-weight', '--vds-button-weight-strong'] },
   { label: 'Focus ring', tokens: ['--vds-button-ring-w', '--vds-button-ring-offset'] },
@@ -517,7 +526,7 @@ export function ButtonPage() {
             headers={['#', 'Part', 'What it does']}
             rows={[
               ['1', { code: '.vds-button__leading' }, 'Leading icon slot — what the action IS'],
-              ['2', 'Label', 'Verb-first, sentence case'],
+              ['2', { code: '.vds-button__label' }, 'Verb-first, sentence case — nudged down a touch at xs/md so the letters sit level with the icon (token --vds-button-label-optical)'],
               ['3', { code: '.vds-button__trailing' }, 'Trailing icon slot — where it GOES'],
               ['4', 'Focus ring', '2px outline, 2px offset, keyboard only'],
               ['5', 'Optical nudge', 'icon slots hang 4px into the padding (2px at xs/sm) so both edges feel even — token --vds-button-icon-nudge'],
@@ -590,7 +599,7 @@ export function ButtonPage() {
                   <Button
                     key={sz}
                     size={sz}
-                    leading={<Icon as={Plus} size={ICON_SIZE[sz]} />}
+                    leading={<Icon as={Settings} size={ICON_SIZE[sz]} />}
                     trailing={<Icon as={ChevronRight} size={ICON_SIZE[sz]} />}
                   >
                     {sz.toUpperCase()}
@@ -604,7 +613,7 @@ export function ButtonPage() {
             Icon-size rule: <IC>xs</IC> uses Icon <IC>xs</IC> (14px); <IC>sm</IC> and <IC>md</IC> use <IC>sm</IC> (16px); <IC>lg</IC> and <IC>xl</IC> use <IC>md</IC> (20px).
           </Text>
           <Text variant="detail" tone="muted">
-            Icons hang --vds-button-icon-nudge into the pad (4px, or 2px at xs/sm) — that's on purpose; glyphs carry whitespace inside their box.
+            The icon ↔ label gap grows with the button (8px at xs/sm → 10px md → 12px lg/xl) so it keeps pace with the wider side padding. Icons also hang --vds-button-icon-nudge into the pad (2px xs/sm → 4px md → 6px lg → 8px xl) — that's on purpose; glyphs carry whitespace inside their box.
           </Text>
         </Stack>
       </Section>
@@ -831,6 +840,11 @@ export function ButtonPage() {
             from the semantic <IC>--vds-primary</IC> / <IC>--vds-danger</IC> / <IC>--vds-success</IC> / … families,
             one per tone. See <a href="#/foundation/color-usage">Color usage →</a>.
           </p>
+          <p className="vds-text vds-text--body vds-text--tone-muted" style={{ marginTop: '0.75rem' }}>
+            <strong>Primary is the Vipre brand blue — <IC>#0068cb</IC></strong> (the cobalt ramp, same as the
+            nav accent). A solid primary button fills with it in light mode; dark mode brightens it a step so it
+            reads on the navy canvas. <IC>--vds-on-primary</IC> keeps the label AA-legible on top.
+          </p>
         </Section>
       </div>
 
@@ -842,7 +856,8 @@ export function ButtonPage() {
      tone:    --primary | --neutral | --success | --warning | --danger | --info
      size:    --xs | --sm | --md | --lg | --xl -->
 <button type="button" class="vds-button vds-button--solid vds-button--primary vds-button--md">
-  Add device
+  <!-- wrap the text so it can be optically re-centered against an icon -->
+  <span class="vds-button__label">Add device</span>
 </button>
 
 <!-- loading: add --loading, aria-busy, disabled, and a Spinner inside -->

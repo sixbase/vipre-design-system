@@ -24,10 +24,26 @@
   --vds-button-pad-x-md: var(--vds-space-4);  // 16px
   --vds-button-pad-x-lg: var(--vds-space-6);  // 24px
   --vds-button-pad-x-xl: var(--vds-space-8);  // 32px
-  --vds-button-gap: var(--vds-space-2);       // icon ↔ label
+  // icon ↔ label gap — scales with size. A frozen gap looks fine on xs/sm but
+  // reads glued-to-the-label once the side padding grows on lg/xl (pad-x climbs
+  // 8→32px while the gap stayed 8), so it steps up to keep the internal rhythm.
+  // Each size class re-points --vds-button-gap to its step below.
+  --vds-button-gap-xs: var(--vds-space-2);     // 8px
+  --vds-button-gap-sm: var(--vds-space-2);     // 8px
+  --vds-button-gap-md: var(--vds-space-2-5);   // 10px
+  --vds-button-gap-lg: var(--vds-space-3);     // 12px
+  --vds-button-gap-xl: var(--vds-space-3);     // 12px
+  --vds-button-gap: var(--vds-button-gap-md);  // default; size classes override
   // Optical: icon slots hang this far INTO the padding — glyphs carry
-  // whitespace inside their box, so a flush icon reads over-padded.
-  --vds-button-icon-nudge: var(--vds-space-1);            // 4px at md/lg/xl
+  // whitespace inside their box, so a flush icon reads over-padded. Scales with
+  // size (2px xs/sm → 4px md → 6px lg → 8px xl) so the big icons reclaim some of
+  // the generous side padding instead of floating in it.
+  --vds-button-icon-nudge: var(--vds-space-1);            // 4px — md default
+  // Optical: Rubik's glyphs sit ~0.5px high inside their line box. On the tiny
+  // sizes that reads as the label floating above the perfectly-centered icon,
+  // so xs/md push the label down to re-center its metric box. sm/lg/xl are
+  // within a rounding of center already, so they leave this at 0.
+  --vds-button-label-optical: 0;
   --vds-button-radius: var(--vds-radius-sm);
   --vds-button-border-w: var(--vds-border-w);
   --vds-button-weight: var(--vds-weight-medium);
@@ -70,13 +86,18 @@
   // weight would silently follow the text step (e.g. micro=500, body=400) and
   // vary by size. One consistent label weight across sizes is the intent (and
   // matches Material/Fluid/Apple). xl overrides to the heavier CTA weight below.
-  &--xs { --vds-button-icon-nudge: calc(var(--vds-space-1) / 2);  // 2px — small buttons, small nudge
+  &--xs { --vds-button-gap: var(--vds-button-gap-xs); --vds-button-icon-nudge: calc(var(--vds-space-1) / 2);  // 2px — small buttons, small nudge
+    --vds-button-label-optical: 0.5px; // re-center the label against the icon
     height: var(--vds-button-h-xs); padding: 0 var(--vds-button-pad-x-xs); @include type.step(micro); font-weight: var(--vds-button-weight); }
-  &--sm { --vds-button-icon-nudge: calc(var(--vds-space-1) / 2);  // 2px — small buttons, small nudge
+  &--sm { --vds-button-gap: var(--vds-button-gap-sm); --vds-button-icon-nudge: calc(var(--vds-space-1) / 2);  // 2px — small buttons, small nudge
     height: var(--vds-button-h-sm); padding: 0 var(--vds-button-pad-x-sm); @include type.step(detail); font-weight: var(--vds-button-weight); }
-  &--md { height: var(--vds-button-h-md); padding: 0 var(--vds-button-pad-x-md); @include type.step(body); font-weight: var(--vds-button-weight); }
-  &--lg { height: var(--vds-button-h-lg); padding: 0 var(--vds-button-pad-x-lg); @include type.step(body-lg); font-weight: var(--vds-button-weight); }
+  &--md { --vds-button-gap: var(--vds-button-gap-md); --vds-button-label-optical: 0.5px; // re-center the label against the icon
+    height: var(--vds-button-h-md); padding: 0 var(--vds-button-pad-x-md); @include type.step(body); font-weight: var(--vds-button-weight); }
+  &--lg { --vds-button-gap: var(--vds-button-gap-lg); --vds-button-icon-nudge: var(--vds-space-1-5);  // 6px — gap and nudge both grow with the button
+    height: var(--vds-button-h-lg); padding: 0 var(--vds-button-pad-x-lg); @include type.step(body-lg); font-weight: var(--vds-button-weight); }
   &--xl {
+    --vds-button-gap: var(--vds-button-gap-xl);
+    --vds-button-icon-nudge: var(--vds-space-2); // 8px — big icons reclaim the hero padding
     height: var(--vds-button-h-xl);
     padding: 0 var(--vds-button-pad-x-xl);
     @include type.step(body-lg);
@@ -120,6 +141,15 @@
   }
   &__leading  { margin-inline-start: calc(var(--vds-button-icon-nudge) * -1); }
   &__trailing { margin-inline-end:   calc(var(--vds-button-icon-nudge) * -1); }
+
+  // ---- label — inline-flex so the optical translate applies (transforms are
+  // ignored on raw inline text). Nudged down by --vds-button-label-optical to
+  // sit level with the icon. ----
+  &__label {
+    display: inline-flex;
+    align-items: center;
+    transform: translateY(var(--vds-button-label-optical));
+  }
 
   // --------------------------------------------------------------------------
   // TONES — set the local palette consumed by the variants below.

@@ -105,8 +105,12 @@ export const Button = forwardRef(function Button(
       {leading && !loading && (
         <span className="vds-button__leading" aria-hidden="true">{leading}</span>
       )}
-      {/* When an icon-only button is loading, the spinner replaces the icon. */}
-      {!(loading && iconOnly) && children}
+      {/* When an icon-only button is loading, the spinner replaces the icon.
+          Text labels get a wrapper so the SCSS can optically re-center them
+          against the icon (Rubik's glyphs sit a hair high in their line box);
+          icon-only children stay unwrapped. */}
+      {!(loading && iconOnly) &&
+        (iconOnly ? children : <span className="vds-button__label">{children}</span>)}
       {trailing && (
         <span className="vds-button__trailing" aria-hidden="true">{trailing}</span>
       )}
