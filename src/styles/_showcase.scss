@@ -944,6 +944,72 @@ section:first-of-type > .vds-section-h {
   }
 }
 
+// ============================================================================
+// DOCS-ONLY — Button state forcing
+// ----------------------------------------------------------------------------
+// The docs need to SHOW :hover / :active / :focus-visible without a live
+// pointer or keyboard (e.g. the S6 state matrix). These classes reproduce the
+// Button component's own state declarations by reading the SAME private tone
+// vars (--_btn-*) the component sets, so a "forced" cell is pixel-identical to
+// the real thing. Values are COPIED from src/components/Button/Button.scss —
+// never invented. If Button.scss changes a state rule, mirror it here.
+//
+// Compound selectors (`.vds-button--solid.vds-demo-state--hover`) keep these at
+// the same 0,2,0 specificity as the component's own `&:hover` / `&:active`
+// rules, so they win over the rest-state variant rules (0,1,0) they must beat.
+//
+// These live ONLY in the docs bundle — _showcase.scss is deliberately absent
+// from styles.entry.scss, so the state classes never ship to consumers.
+// ============================================================================
+
+// --- hover (mirrors each variant's &:hover) ---
+.vds-button--solid.vds-demo-state--hover { background-color: var(--_btn-fill-hover); }
+.vds-button--soft.vds-demo-state--hover { background-color: var(--_btn-soft-hover); }
+.vds-button--outline.vds-demo-state--hover { background-color: var(--_btn-soft); }
+.vds-button--ghost.vds-demo-state--hover {
+  background-color: var(--_btn-soft);
+  color: var(--_btn-text);
+}
+
+// --- active / pressed (mirrors each variant's &:active) ---
+// `soft` has no &:active in the component, so it has no forced rule here — a
+// pressed soft cell correctly renders at rest, matching the real component.
+.vds-button--solid.vds-demo-state--active { background-color: var(--_btn-fill-active); }
+.vds-button--outline.vds-demo-state--active { background-color: var(--_btn-soft-hover); }
+.vds-button--ghost.vds-demo-state--active { background-color: var(--_btn-soft-hover); }
+
+// --- focus (mirrors &:focus-visible exactly) ---
+.vds-button.vds-demo-state--focus {
+  outline: var(--vds-button-ring-w) solid var(--vds-focus-ring);
+  outline-offset: var(--vds-button-ring-offset);
+}
+
+// ============================================================================
+// DOCS-ONLY — Input state forcing
+// ----------------------------------------------------------------------------
+// Same rationale as the Button block above: the Input states matrix must SHOW
+// :hover / :focus-within without a live pointer or keyboard focus. These
+// classes reproduce the Input shell's own state declarations by reading the
+// SAME public chrome vars (--vds-input-*) the component sets, so a "forced"
+// cell is pixel-identical to the real thing. Values are COPIED from
+// src/components/Input/Input.scss — never invented. If Input.scss changes a
+// state rule, mirror it here.
+//
+// Compound selectors (`.vds-input.vds-demo-input--focus`) sit at 0,2,0
+// specificity — enough to beat the base `.vds-input` (0,1,0), matching how the
+// component's own `:focus-within` rule wins. Docs bundle only (_showcase.scss
+// is absent from styles.entry.scss), so these never ship to consumers.
+// ============================================================================
+
+// --- hover (mirrors the shell's resting &:hover border-color) ---
+.vds-input.vds-demo-input--hover { border-color: var(--vds-input-border-hover); }
+
+// --- focus (mirrors the shell's :focus-within border + soft shadow ring) ---
+.vds-input.vds-demo-input--focus {
+  border-color: var(--vds-input-border-focus);
+  box-shadow: 0 0 0 var(--vds-control-ring-w) var(--vds-input-ring);
+}
+
 // ---- depth: scrim ----------------------------------------------------------
 .vds-scrim-demo {
   position: relative;

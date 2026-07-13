@@ -282,3 +282,68 @@ An agent exploring a new component needs exactly three inputs:
 token file and this doc don't cover a case, that is itself the finding to report — propose the
 token, don't work around the gap with a literal. An agent that produces pixel-perfect output by
 hand-writing hex or px values has failed the actual brief, even if the screenshot matches.
+
+---
+
+## 9 · Button usage rules
+
+Button is the worked action control (§8). Beyond the anatomy it carries **content and
+hierarchy** rules that tokens can't express — stated here so a page composing Buttons doesn't
+reinvent them, and so a new action control can copy the same discipline.
+
+### Icon-slot semantics
+
+Two slots, two jobs — icons are never decoration:
+
+| Slot | Class | Answers | Example |
+| --- | --- | --- | --- |
+| **Leading** | `.vds-button__leading` | what the action **IS** | `Plus` + "Add customer" |
+| **Trailing** | `.vds-button__trailing` | where it **GOES** | "Continue" + `ChevronRight` |
+
+A leading icon repeats the verb; a trailing icon points at the result (a step forward, a menu
+that opens, an external destination). Don't fill both slots for symmetry — icons on both sides
+reads as chrome, not meaning.
+
+### Content rules
+
+- Start with a **verb** — "Save changes", not "Changes".
+- **Sentence case** — never Title Case or ALL CAPS.
+- Aim for **≤ 3 words**; a button is a label, not a sentence.
+- Add a trailing **"…"** ONLY when the action opens a dialog that needs more input before
+  anything happens ("Rename…", "Export…"). A button that acts immediately never gets an ellipsis.
+
+### Hierarchy rules
+
+- **One solid button per view.** Solid is the single main action; everything else steps down to
+  soft / outline / ghost. Two solids side by side is the failure mode — the eye can't find the
+  primary.
+- **Destructive pairing:** a destructive confirm is `solid danger` ("Delete") next to a **ghost
+  or outline neutral** "Cancel" — never solid danger beside solid primary. Two competing weights
+  make a deliberate decision feel accidental.
+
+### Official icon-size mapping
+
+Icon size follows button size on a fixed table — don't eyeball it:
+
+| Button size | Icon size |
+| --- | --- |
+| **xs** | 14px (Icon `xs`) |
+| **sm · md** | 16px (Icon `sm`) |
+| **lg · xl** | 20px (Icon `md`) |
+
+### Optical alignment
+
+Two nudges that pixels-from-tokens can't reason about on their own — glyphs and inline chips
+carry whitespace inside their own box, so a mathematically-flush edge reads wrong:
+
+- **Icon slots pull toward their edge** by `--vds-button-icon-nudge` (`--vds-space-1`; halved to
+  2px at xs/sm) — a Material Symbols glyph sits inset in its box, so a flush icon reads
+  over-padded against the text edge. Applies to **leading AND trailing** (chevrons benefit most).
+  It's a negative `margin-inline-start`/`-end`, never a change to the pad-x.
+- **Input affixes pull toward their edge** the same way, via `--vds-input-affix-nudge` (half
+  `--vds-space-1` = 2px at xs/sm/md; full `--vds-space-1` = 4px at lg/xl) — an affix icon carries
+  whitespace inside its own box exactly like a button glyph, so a flush affix reads over-padded.
+  Same principle as the button nudge: a negative `margin-inline-start` on `--lead` /
+  `margin-inline-end` on `--trail`, never a change to the field pad-x.
+- **Chips/badges inside table cells** carry `vertical-align: middle` — an inline-flex chip
+  otherwise rides the text baseline and sits visibly low in the row's line box.

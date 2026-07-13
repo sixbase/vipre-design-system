@@ -37,6 +37,7 @@ import _MoreHorizontal from '~icons/material-symbols/more-horiz'
 import _Network from '~icons/material-symbols/account-tree-outline-rounded'
 import _Paperclip from '~icons/material-symbols/attach-file-rounded'
 import _Pencil from '~icons/material-symbols/edit-outline-rounded'
+import _Plus from '~icons/material-symbols/add-rounded'
 import _Radar from '~icons/material-symbols/radar'
 import _ScrollText from '~icons/material-symbols/description-outline-rounded'
 import _Search from '~icons/material-symbols/search-rounded'
@@ -96,6 +97,7 @@ export const MoreHorizontal = a(_MoreHorizontal)
 export const Network = a(_Network)
 export const Paperclip = a(_Paperclip)
 export const Pencil = a(_Pencil)
+export const Plus = a(_Plus)
 export const Radar = a(_Radar)
 export const ScrollText = a(_ScrollText)
 export const Search = a(_Search)

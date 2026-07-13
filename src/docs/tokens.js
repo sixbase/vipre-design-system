@@ -273,12 +273,14 @@ export const BREAKPOINTS = [
   { name: '2xl', token: '--vds-bp-2xl', value: '1536px', usage: 'Wide desktops and large monitors' },
 ]
 
-/* Control metrics — shared sm/md/lg control heights + minimum touch target.
+/* Control metrics — shared xs/sm/md/lg/xl control heights + minimum touch target.
    Mirror the Tier 3 control tokens in _tokens.scss. */
 export const CONTROLS = [
+  { token: '--vds-control-h-xs', value: '28px', usage: 'Extra-small controls — dense table rows, toolbars' },
   { token: '--vds-control-h-sm', value: '32px', usage: 'Small controls — dense toolbars, table row actions' },
   { token: '--vds-control-h-md', value: '36px', usage: 'Default control height — most buttons, inputs, selects' },
   { token: '--vds-control-h-lg', value: '44px', usage: 'Large controls — hero forms; already a full touch target' },
+  { token: '--vds-control-h-xl', value: '52px', usage: 'Extra-large controls — hero / marketing call-to-action' },
   { token: '--vds-tap-target', value: '44px', usage: 'Minimum hit area on coarse (touch) pointers' },
   { token: '--vds-border-w', value: '1px', usage: 'Control hairline border width — stays px on purpose, never rem' },
   { token: '--vds-control-ring-w', value: '2px', usage: 'Focus-ring thickness — shared by both ring recipes (outline + shadow)' },

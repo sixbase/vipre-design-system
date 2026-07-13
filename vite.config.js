@@ -7,6 +7,8 @@ import Icons from 'unplugin-icons/vite'
 // preview link is clean (http://localhost:5173/).
 export default defineConfig(({ command }) => ({
   base: command === 'build' ? '/vipre-design-system/' : '/',
+  // Dev-only: let Cloudflare quick tunnels reach the dev server for previews.
+  server: { allowedHosts: ['.trycloudflare.com'] },
   plugins: [
     react(),
     // Material Symbols via Iconify — only referenced icons get inlined + tree-shaken.

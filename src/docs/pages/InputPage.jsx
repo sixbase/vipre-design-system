@@ -1,242 +1,694 @@
-import { useState } from 'react'
-import { Search, X, Mail } from '@icons'
+import { Fragment, useEffect, useRef, useState } from 'react'
+import { Search, X } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, IC, PropsTable } from '../primitives.jsx'
-import { Input, Textarea, Icon, Text, Field } from '../../components/index.js'
+import { Section, Preview, Code, IC, PropsTable } from '../primitives.jsx'
+import { Input, Icon, Inline, Badge, Surface, Stack, Text, SegmentedControl, Select, Switch, Divider, Field } from '../../components/index.js'
 
-const FIELD_COL = { display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', maxWidth: 360 }
-const SIZES = ['sm', 'md', 'lg']
-const SIZE_LABEL = { sm: 'Small', md: 'Medium', lg: 'Large' }
+/* ---------------------------------------------------------------------------
+   Small shared bits used by several sections below.
+   -------------------------------------------------------------------------- */
 
-/* A labelled token table for the Tokens section. */
-function TokenGroup({ label, headers, rows }) {
+const SIZES = ['xs', 'sm', 'md', 'lg', 'xl']
+
+/* OFFICIAL icon-size mapping for fields: xs→"xs", sm/md→"sm", lg/xl→"md". */
+const ICON_SIZE = { xs: 'xs', sm: 'sm', md: 'sm', lg: 'md', xl: 'md' }
+
+/* Every public --vds-input-* token, resolved once against a live probe so the
+   spec tables (Sizes, Tokens) show the value the browser actually computes. */
+const INPUT_TOKENS = [
+  '--vds-input-h-xs', '--vds-input-h-sm', '--vds-input-h-md', '--vds-input-h-lg', '--vds-input-h-xl',
+  '--vds-input-pad-x-xs', '--vds-input-pad-x-sm', '--vds-input-pad-x-md', '--vds-input-pad-x-lg', '--vds-input-pad-x-xl',
+  '--vds-input-gap', '--vds-input-affix-nudge',
+  '--vds-input-radius', '--vds-input-border-w',
+  '--vds-input-fill', '--vds-input-border', '--vds-input-muted',
+  '--vds-control-ring-w', '--vds-input-ring',
+  '--vds-input-touch-min',
+  '--vds-input-dur', '--vds-input-ease',
+]
+
+/**
+ * useResolvedTokens — render a hidden .vds-input shell probe and read each
+ * token's live computed value off it. Input-scoped tokens resolve on the probe;
+ * any root/shared token (e.g. --vds-control-ring-w) resolves on <html>. `names`
+ * MUST be a stable reference (a module constant) so the effect runs once.
+ */
+function useResolvedTokens(names) {
+  const ref = useRef(null)
+  const [values, setValues] = useState({})
+  useEffect(() => {
+    if (!ref.current) return
+    const cs = getComputedStyle(ref.current)
+    const root = getComputedStyle(document.documentElement)
+    const next = {}
+    for (const n of names) {
+      const src = n.startsWith('--vds-input-') ? cs : root
+      next[n] = src.getPropertyValue(n).trim() || '—'
+    }
+    setValues(next)
+  }, [names])
+  return [values, ref]
+}
+
+/* A raw table that accepts React nodes in any cell (PropsTable only takes
+   strings / {code}). Used where a cell holds a token name + its live value. */
+function RawTable({ headers, rows }) {
   return (
-    <div style={{ marginTop: '1.25rem' }}>
-      <p className="vds-text vds-text--eyebrow" style={{ margin: '0 0 0.4rem' }}>{label}</p>
-      <PropsTable headers={headers} rows={rows} />
+    <div className="vds-ref-table-wrap">
+      <table className="vds-ref-table">
+        <thead>
+          <tr>{headers.map((h) => <th key={h}>{h}</th>)}</tr>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => (
+            <tr key={i}>{row.map((cell, j) => <td key={j}>{cell}</td>)}</tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }
 
-/* A single state, captioned. */
-function StateRow({ caption, children }) {
+/* Token name stacked over its live-resolved value, for the spec tables. */
+function TokenValue({ name, values }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-      <Text variant="detail" tone="muted">
-        {caption}
-      </Text>
+    <span style={{ display: 'inline-flex', flexDirection: 'column', gap: '0.15rem', alignItems: 'flex-start' }}>
+      <code className="vds-inline-code">{name}</code>
+      <span className="vds-text vds-text--micro vds-text--tone-muted">{values[name] || '…'}</span>
+    </span>
+  )
+}
+
+/* A bare clear button — the canonical trailing ACTION affix. It's a real
+   <button> with an aria-label (screen readers must know what it does). */
+function ClearButton({ size = 'sm', onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Clear"
+      style={{ border: 0, background: 'none', padding: 0, cursor: 'pointer', display: 'inline-flex', color: 'inherit' }}
+    >
+      <Icon as={X} size={size} />
+    </button>
+  )
+}
+
+/* ---------------------------------------------------------------------------
+   S1 · Playground
+   -------------------------------------------------------------------------- */
+
+function ControlField({ label, children }) {
+  return (
+    <Stack gap={1} style={{ flex: '0 0 auto' }}>
+      <Text as="span" variant="eyebrow" tone="muted">{label}</Text>
       {children}
-    </div>
+    </Stack>
   )
 }
 
-/* Every state at one size — the per-size bucket. */
-function SizeBucket({ size }) {
-  const ic = size === 'sm' ? 'xs' : 'sm'
-  return (
-    <div style={FIELD_COL}>
-      <StateRow caption="Default">
-        <Input size={size} placeholder="you@company.com" />
-      </StateRow>
-      <StateRow caption="With icon">
-        <Input size={size} placeholder="you@company.com" leading={<Icon as={Mail} size={ic} />} />
-      </StateRow>
-      <StateRow caption="Invalid">
-        <Input size={size} invalid defaultValue="ada@" aria-label="Email" />
-      </StateRow>
-      <StateRow caption="Disabled">
-        <Input size={size} disabled defaultValue="ACC-2041" aria-label="Account ID" />
-      </StateRow>
-    </div>
-  )
-}
-
-function SearchDemo({ size = 'md' }) {
+function Playground() {
+  const [size, setSize] = useState('md')
+  const [leading, setLeading] = useState('search')
+  const [trailing, setTrailing] = useState('clear')
+  const [invalid, setInvalid] = useState(false)
+  const [disabled, setDisabled] = useState(false)
   const [value, setValue] = useState('')
-  const ic = size === 'sm' ? 'xs' : 'sm'
+
+  const isz = ICON_SIZE[size]
+  const leadingNode = leading === 'search' ? <Icon as={Search} size={isz} /> : undefined
+  const trailingNode = trailing === 'clear' ? <ClearButton size={isz} onClick={() => setValue('')} /> : undefined
+
+  // The exact class string the component assembles — the framework-agnostic
+  // takeaway (markup consumers copy classes, not JSX). Affixes are child spans,
+  // not modifiers, so only size / invalid / disabled show up here.
+  const classString = [
+    'vds-input',
+    `vds-input--${size}`,
+    invalid && 'vds-input--invalid',
+    disabled && 'vds-input--disabled',
+  ].filter(Boolean).join(' ')
+
   return (
-    <Input
-      size={size}
-      placeholder="Search devices…"
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-      leading={<Icon as={Search} size={ic} />}
-      trailing={
-        value ? (
-          <button
-            type="button"
-            onClick={() => setValue('')}
-            aria-label="Clear search"
-            style={{ border: 0, background: 'none', padding: 0, cursor: 'pointer', display: 'inline-flex', color: 'inherit' }}
-          >
-            <Icon as={X} size={ic} />
-          </button>
-        ) : null
-      }
+    <Inline gap={6} wrap align="start">
+      {/* Column 1 — the stage + the class string it produces. */}
+      <Stack gap={3} style={{ flex: '1 1 22rem', minWidth: 0 }}>
+        <Surface bordered elevation="flat" padding={8}>
+          <Stack gap={0} align="center" justify="center" style={{ minHeight: '9rem', justifyContent: 'center' }}>
+            <div style={{ width: '100%', maxWidth: '22rem' }}>
+              <Input
+                size={size}
+                invalid={invalid}
+                disabled={disabled}
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                placeholder="you@company.com"
+                leading={leadingNode}
+                trailing={trailingNode}
+                aria-label="Work email"
+              />
+            </div>
+          </Stack>
+        </Surface>
+        <Text as="span" variant="eyebrow" tone="muted">Markup classes — copy these</Text>
+        <Code>{classString}</Code>
+      </Stack>
+
+      {/* Column 2 — the knobs. */}
+      <Surface bordered padding={5} style={{ flex: '0 0 17rem' }}>
+        <Stack gap={4}>
+          <Text as="span" variant="eyebrow" tone="muted">Options</Text>
+
+          <ControlField label="Size">
+            <SegmentedControl
+              size="sm"
+              fullWidth
+              aria-label="Size"
+              value={size}
+              onChange={setSize}
+              options={SIZES.map((s) => ({ value: s, label: s.toUpperCase() }))}
+            />
+          </ControlField>
+          <ControlField label="Leading icon">
+            <Select
+              aria-label="Leading icon"
+              value={leading}
+              onChange={setLeading}
+              options={[
+                { value: 'none', label: 'None' },
+                { value: 'search', label: 'Search' },
+              ]}
+            />
+          </ControlField>
+          <ControlField label="Trailing icon">
+            <Select
+              aria-label="Trailing icon"
+              value={trailing}
+              onChange={setTrailing}
+              options={[
+                { value: 'none', label: 'None' },
+                { value: 'clear', label: 'X (clear)' },
+              ]}
+            />
+          </ControlField>
+
+          <Divider />
+
+          <Text as="span" variant="eyebrow" tone="muted">States</Text>
+          <Switch checked={invalid} onChange={(e) => setInvalid(e.target.checked)}>Invalid</Switch>
+          <Switch checked={disabled} onChange={(e) => setDisabled(e.target.checked)}>Disabled</Switch>
+        </Stack>
+      </Surface>
+    </Inline>
+  )
+}
+
+/* ---------------------------------------------------------------------------
+   S3 · Sizes spec table
+   -------------------------------------------------------------------------- */
+
+const SIZE_ROWS = [
+  { size: 'xs', h: '--vds-input-h-xs', px: '--vds-input-pad-x-xs', type: 'micro', icon: 'xs (14px)', touch: '—' },
+  { size: 'sm', h: '--vds-input-h-sm', px: '--vds-input-pad-x-sm', type: 'detail', icon: 'sm (16px)', touch: '—' },
+  { size: 'md', h: '--vds-input-h-md', px: '--vds-input-pad-x-md', type: 'body', icon: 'sm (16px)', touch: 'md grows text to 1rem on coarse pointers (iOS zoom guard)' },
+  { size: 'lg', h: '--vds-input-h-lg', px: '--vds-input-pad-x-lg', type: 'body-lg', icon: 'md (20px)', touch: '—' },
+  { size: 'xl', h: '--vds-input-h-xl', px: '--vds-input-pad-x-xl', type: 'body-lg', icon: 'md (20px)', touch: '—' },
+]
+
+function SizeSpecTable({ values }) {
+  return (
+    <RawTable
+      headers={['Size', 'Height', 'Pad-x', 'Type step', 'Icon size', 'Touch note']}
+      rows={SIZE_ROWS.map((r) => [
+        <IC key="s">{r.size}</IC>,
+        <TokenValue key="h" name={r.h} values={values} />,
+        <TokenValue key="p" name={r.px} values={values} />,
+        <IC key="t">{r.type}</IC>,
+        r.icon,
+        r.touch,
+      ])}
     />
   )
 }
 
+/* ---------------------------------------------------------------------------
+   S4 · States matrix
+   -------------------------------------------------------------------------- */
+
+function StateMatrix() {
+  const cols = ['Rest', 'Hover', 'Focus', 'Invalid', 'Invalid + focus', 'Disabled']
+
+  const cell = (col) => {
+    const common = { size: 'md', defaultValue: 'Acme Corp', 'aria-label': 'Company' }
+    switch (col) {
+      case 'Rest': return <Input {...common} />
+      case 'Hover': return <Input {...common} className="vds-demo-input--hover" />
+      case 'Focus': return <Input {...common} className="vds-demo-input--focus" />
+      case 'Invalid': return <Input {...common} invalid />
+      case 'Invalid + focus': return <Input {...common} invalid className="vds-demo-input--focus" />
+      case 'Disabled': return <Input {...common} disabled />
+      default: return null
+    }
+  }
+
+  return (
+    <Stack gap={4}>
+      <div style={{ overflowX: 'auto', padding: 'var(--vds-space-2)', margin: 'calc(var(--vds-space-2) * -1)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, minmax(8rem, 1fr))', gap: '0.75rem', alignItems: 'center', minWidth: 'max-content' }}>
+          {cols.map((c) => (
+            <div key={c} style={{ textAlign: 'left' }}>
+              <Text as="span" variant="detail" tone="muted">{c}</Text>
+            </div>
+          ))}
+          {cols.map((c) => (
+            <div key={c}>{cell(c)}</div>
+          ))}
+        </div>
+      </div>
+      <Text variant="detail" tone="muted">
+        Hover and focus here are forced with docs-only classes so you can compare them — real fields do this on their own.
+      </Text>
+    </Stack>
+  )
+}
+
+/* ---------------------------------------------------------------------------
+   S8 · Tokens table
+   -------------------------------------------------------------------------- */
+
+const TOKEN_BOUND = {
+  '--vds-input-h-xs': 'var(--vds-control-h-xs)',
+  '--vds-input-h-sm': 'var(--vds-control-h-sm)',
+  '--vds-input-h-md': 'var(--vds-control-h-md)',
+  '--vds-input-h-lg': 'var(--vds-control-h-lg)',
+  '--vds-input-h-xl': 'var(--vds-control-h-xl)',
+  '--vds-input-pad-x-xs': 'var(--vds-space-2)',
+  '--vds-input-pad-x-sm': 'var(--vds-space-2-5)',
+  '--vds-input-pad-x-md': 'var(--vds-space-3)',
+  '--vds-input-pad-x-lg': 'var(--vds-space-4)',
+  '--vds-input-pad-x-xl': 'var(--vds-space-5)',
+  '--vds-input-gap': 'var(--vds-space-2)',
+  '--vds-input-affix-nudge': 'calc(var(--vds-space-1) / 2)',
+  '--vds-input-radius': 'var(--vds-radius-sm)',
+  '--vds-input-border-w': 'var(--vds-border-w)',
+  '--vds-input-fill': 'var(--vds-surface-sunken)',
+  '--vds-input-border': 'var(--vds-line-strong)',
+  '--vds-input-muted': 'var(--vds-ink-subtle)',
+  '--vds-control-ring-w': '— (shared control token)',
+  '--vds-input-ring': 'focus-ring @ --vds-control-ring-tint',
+  '--vds-input-touch-min': 'var(--vds-control-font-touch-min)',
+  '--vds-input-dur': 'var(--vds-dur-fast)',
+  '--vds-input-ease': 'var(--vds-ease-out)',
+}
+
+const TOKEN_CONTROLS = {
+  '--vds-input-h-xs': 'Height — xs (dense rows, toolbars)',
+  '--vds-input-h-sm': 'Height — sm',
+  '--vds-input-h-md': 'Height — md (default)',
+  '--vds-input-h-lg': 'Height — lg',
+  '--vds-input-h-xl': 'Height — xl (hero / marketing forms)',
+  '--vds-input-pad-x-xs': 'Left/right padding — xs',
+  '--vds-input-pad-x-sm': 'Left/right padding — sm',
+  '--vds-input-pad-x-md': 'Left/right padding — md',
+  '--vds-input-pad-x-lg': 'Left/right padding — lg',
+  '--vds-input-pad-x-xl': 'Left/right padding — xl',
+  '--vds-input-gap': 'Space between an affix (icon/button) and the text',
+  '--vds-input-affix-nudge': 'How far affixes hang into the pad (optical correction; full space-1 at lg/xl)',
+  '--vds-input-radius': 'Corner radius',
+  '--vds-input-border-w': 'Border hairline width',
+  '--vds-input-fill': 'Field background',
+  '--vds-input-border': 'Resting border',
+  '--vds-input-muted': 'Placeholder text + affix icon color',
+  '--vds-control-ring-w': 'Focus ring thickness — shared by every control',
+  '--vds-input-ring': 'Valid focus ring color (soft shadow)',
+  '--vds-input-touch-min': 'Bumps md font-size on coarse pointers so iOS doesn’t zoom on focus',
+  '--vds-input-dur': 'Border / ring transition speed',
+  '--vds-input-ease': 'Easing curve',
+}
+
+const TOKEN_GROUPS = [
+  { label: 'Sizing', tokens: ['--vds-input-h-xs', '--vds-input-h-sm', '--vds-input-h-md', '--vds-input-h-lg', '--vds-input-h-xl', '--vds-input-pad-x-xs', '--vds-input-pad-x-sm', '--vds-input-pad-x-md', '--vds-input-pad-x-lg', '--vds-input-pad-x-xl', '--vds-input-gap', '--vds-input-affix-nudge'] },
+  { label: 'Shape', tokens: ['--vds-input-radius', '--vds-input-border-w'] },
+  { label: 'Color', tokens: ['--vds-input-fill', '--vds-input-border', '--vds-input-muted'] },
+  { label: 'Focus ring', tokens: ['--vds-control-ring-w', '--vds-input-ring'] },
+  { label: 'Touch', tokens: ['--vds-input-touch-min'] },
+  { label: 'Motion', tokens: ['--vds-input-dur', '--vds-input-ease'] },
+]
+
+function TokenTable({ values }) {
+  return (
+    <div className="vds-ref-table-wrap">
+      <table className="vds-ref-table">
+        <thead>
+          <tr>
+            <th>Token</th>
+            <th>Bound to</th>
+            <th>Live value</th>
+            <th>What it controls</th>
+          </tr>
+        </thead>
+        <tbody>
+          {TOKEN_GROUPS.map((g) => (
+            <Fragment key={g.label}>
+              <tr>
+                <td colSpan={4}>
+                  <span className="vds-text vds-text--eyebrow vds-text--tone-muted">{g.label}</span>
+                </td>
+              </tr>
+              {g.tokens.map((t) => (
+                <tr key={t}>
+                  <td><code>{t}</code></td>
+                  <td><code>{TOKEN_BOUND[t]}</code></td>
+                  <td><code>{values[t] || '…'}</code></td>
+                  <td>{TOKEN_CONTROLS[t]}</td>
+                </tr>
+              ))}
+            </Fragment>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+/* ---------------------------------------------------------------------------
+   S7 · Do / Don't pair
+   -------------------------------------------------------------------------- */
+
+function DoDont({ doCaption, doExample, dontCaption, dontExample }) {
+  const box = (label, tone, example, caption) => (
+    <Surface padding={5} radius="md">
+      <Stack gap={3}>
+        <Badge tone={tone}>{label}</Badge>
+        <div style={{ width: '100%', maxWidth: '20rem' }}>
+          {example}
+        </div>
+        <Text variant="detail" tone="muted">{caption}</Text>
+      </Stack>
+    </Surface>
+  )
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(15rem, 1fr))', gap: '1rem' }}>
+      {box('Do', 'success', doExample, doCaption)}
+      {box('Don’t', 'danger', dontExample, dontCaption)}
+    </div>
+  )
+}
+
+/* ---------------------------------------------------------------------------
+   Page
+   -------------------------------------------------------------------------- */
+
 export function InputPage() {
+  const [tokenValues, probeRef] = useResolvedTokens(INPUT_TOKENS)
+
+  const scrollToTokens = (e) => {
+    e.preventDefault()
+    document.getElementById('input-tokens')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   return (
     <ComponentPage
       colors={COMPONENT_COLORS.Input}
       title="Input"
-      description="A box for one line of text. Three sizes (sm/md/lg) that match Button; each has the same looks — normal, with an icon in front, wrong, and turned off. You can add things before or after the text to build a search box. The ref points at the real input inside."
+      description="A box for one line of text. Five sizes — from a tiny xs for dense tables to a big xl for marketing forms — each with the same looks: normal, hovered, focused (a soft ring), wrong (red), and turned off. You can hang things before or after the text — an icon that says what the box is for, or a button that does something like clear it — to build a search box. The ref points at the real input inside, and it passes through all normal input props."
       installCode={`<!-- Tokens-only: link the CSS variables, build your own input against them. -->
 <link rel="stylesheet" href="vipre-tokens.css">`}
       props={[
         {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
-            [{ code: 'size' }, { code: "'sm' | 'md' | 'lg'" }, { code: "'md'" }, 'How tall it is and its text size (matches Button)'],
+            [{ code: 'size' }, { code: "'xs' | 'sm' | 'md' | 'lg' | 'xl'" }, { code: "'md'" }, 'How tall it is and its text size (matches Button)'],
             [{ code: 'invalid' }, { code: 'boolean' }, { code: 'false' }, 'Red border + aria-invalid to show something’s wrong'],
-            [{ code: 'leading' }, { code: 'ReactNode' }, '—', 'Something before the text (like an Icon)'],
-            [{ code: 'trailing' }, { code: 'ReactNode' }, '—', 'Something after the text (like a clear button)'],
-            [{ code: '…props' }, { code: 'InputHTMLAttributes' }, '—', 'value, onChange, placeholder, disabled, type…'],
+            [{ code: 'leading' }, { code: 'ReactNode' }, '—', 'Something before the text (like an Icon) — says what the box is FOR'],
+            [{ code: 'trailing' }, { code: 'ReactNode' }, '—', 'Something after the text (like a clear button) — an ACTION'],
+            [{ code: 'disabled' }, { code: 'boolean' }, { code: 'false' }, 'Turn it off and fade it (opacity 0.5)'],
+            [{ code: '…props' }, { code: 'InputHTMLAttributes' }, '—', 'value, onChange, placeholder, type, aria-*…'],
           ],
         },
       ]}
       accessibility={[
-        <>Always give it a <IC>{'<label>'}</IC> or <IC>aria-label</IC> so people know what it’s for.</>,
-        <><IC>invalid</IC> sets <IC>aria-invalid</IC>; connect the error text with <IC>aria-describedby</IC>.</>,
-        <>The whole box lights up when you click into it (<IC>:focus-within</IC>) using the input’s graphite ring.</>,
+        <>Always give it a <IC>{'<label>'}</IC> or <IC>aria-label</IC> so people know what it’s for — a placeholder is an example, not a label.</>,
+        <><IC>invalid</IC> sets <IC>aria-invalid</IC>; connect the error text with <IC>aria-describedby</IC> (or just wrap it in <IC>Field</IC>, which does this for you).</>,
+        <>The whole box lights up when you click or tab into it (<IC>:focus-within</IC>) using the input’s soft graphite ring — keyboard AND pointer.</>,
+        <>Affix <strong>actions</strong> (clear, show password) must be real <IC>{'<button>'}</IC>s with an <IC>aria-label</IC> — a bare icon isn’t reachable or announced.</>,
+        <>On a coarse pointer, an interactive affix grows an invisible 44px tap target (the field’s height doesn’t change), so even a dense <IC>xs</IC> field’s buttons stay tappable.</>,
       ]}
     >
-      {/* ---- Buckets by size; each shows every state ---- */}
-      <Section title="Small" note={'size="sm" · 32px tall — packed tables, toolbars, inline filters.'}>
-        <Preview canvas={<SizeBucket size="sm" />} />
-      </Section>
+      {/* Hidden probe: a .vds-input shell that carries the input custom-property
+          context so the spec tables can read each token's live computed value. */}
+      <div
+        ref={probeRef}
+        aria-hidden="true"
+        className="vds-input vds-input--md"
+        style={{ position: 'absolute', width: 0, height: 0, padding: 0, border: 0, overflow: 'hidden', opacity: 0, pointerEvents: 'none' }}
+      />
 
-      <Section title="Medium" note={'size="md" · 36px tall — the go-to for most forms.'}>
-        <Preview canvas={<SizeBucket size="md" />} />
-      </Section>
-
-      <Section title="Large" note={'size="lg" · 44px tall — big fields or ones easy to tap.'}>
-        <Preview canvas={<SizeBucket size="lg" />} />
-      </Section>
-
-      {/* ---- Composition patterns (size-independent) ---- */}
-      <Section title="Search field" note="Put an icon in front and a clear button after — the clear button shows up once you type. Shown at all three sizes.">
-        <Preview
-          canvas={
-            <div style={FIELD_COL}>
-              {SIZES.map((s) => (
-                <StateRow key={s} caption={SIZE_LABEL[s]}>
-                  <SearchDemo size={s} />
-                </StateRow>
-              ))}
-            </div>
-          }
-        />
-      </Section>
-
-      <Section title="With help text" note="A quiet hint below the field, connected with aria-describedby. Shown at all three sizes.">
-        <Preview
-          canvas={
-            <div style={FIELD_COL}>
-              {SIZES.map((s) => (
-                <Field
-                  key={s}
-                  label={`Workspace name (${SIZE_LABEL[s]})`}
-                  htmlFor={`ex-ws-${s}`}
-                  help="Lowercase letters, numbers and dashes only."
-                >
-                  <Input size={s} placeholder="acme-prod" />
-                </Field>
-              ))}
-            </div>
-          }
-        />
-      </Section>
-
-      <Section title="With eyebrow label" note="A small all-caps label sitting above the field. Shown at all three sizes.">
-        <Preview
-          canvas={
-            <div style={FIELD_COL}>
-              {SIZES.map((s) => (
-                <Field key={s} label={`Primary contact (${SIZE_LABEL[s]})`} eyebrow htmlFor={`ex-eb-${s}`}>
-                  <Input size={s} placeholder="Full name" />
-                </Field>
-              ))}
-            </div>
-          }
-        />
-      </Section>
-
-      <Section title="Multi-line (Textarea)" note="For longer text that runs over many lines. A close cousin of Input that looks the same, at all three sizes.">
-        <Preview
-          canvas={
-            <div style={FIELD_COL}>
-              {SIZES.map((s) => (
-                <Field key={s} label={`Notes (${SIZE_LABEL[s]})`} htmlFor={`ex-notes-${s}`}>
-                  <Textarea size={s} rows={s === 'sm' ? 2 : 3} placeholder="Add a note…" />
-                </Field>
-              ))}
-            </div>
-          }
-        />
-      </Section>
-
+      {/* S1 · Playground */}
       <Section
-        title="Tokens"
-        note="Every visual value is a --vds-input-* custom property set on the .vds-input root. Re-declare any of them on your own selector to retheme or re-space the field; nothing else in the system changes. Colors point at semantic tokens (so light/dark comes free); sizing binds to the shared control-height and spacing scale that Button also uses."
+        title="Playground"
+        note="Turn the knobs — the field updates live, and you can type into it. The class list under the stage is exactly what a non-React app copies into its markup."
       >
-        <TokenGroup label="Sizing" headers={['Token', 'Value', 'Controls']} rows={[
-          [{ code: '--vds-input-h-sm' }, { code: '2rem (32px)' }, 'Small height (= --vds-control-h-sm)'],
-          [{ code: '--vds-input-h-md' }, { code: '2.25rem (36px)' }, 'Medium height'],
-          [{ code: '--vds-input-h-lg' }, { code: '2.75rem (44px)' }, 'Large height'],
-          [{ code: '--vds-input-pad-x-sm' }, { code: '0.625rem (10px)' }, 'Small horizontal padding'],
-          [{ code: '--vds-input-pad-x-md' }, { code: '0.75rem (12px)' }, 'Medium horizontal padding'],
-          [{ code: '--vds-input-pad-x-lg' }, { code: '1rem (16px)' }, 'Large horizontal padding'],
-          [{ code: '--vds-input-gap' }, { code: '0.5rem (8px)' }, 'Gap between an affix (icon/button) and the text'],
-        ]} />
-
-        <TokenGroup label="Shape" headers={['Token', 'Value', 'Controls']} rows={[
-          [{ code: '--vds-input-radius' }, { code: '0.25rem (4px)' }, 'Corner radius (= --vds-radius-sm)'],
-          [{ code: '--vds-input-border-w' }, { code: '1px' }, 'Border thickness'],
-        ]} />
-
-        <TokenGroup label="Color" headers={['Token', 'Value', 'Controls']} rows={[
-          [{ code: '--vds-input-fill' }, { code: '--vds-surface-sunken' }, 'Field background'],
-          [{ code: '--vds-input-border' }, { code: '--vds-line-strong' }, 'Resting border'],
-          [{ code: '--vds-input-border-hover' }, { code: 'border darkened toward ink 30%' }, 'Border on hover (color-mix recipe, resting only)'],
-          [{ code: '--vds-input-muted' }, { code: '--vds-ink-subtle' }, 'Placeholder text + affix icon color'],
-        ]} />
-
-        <TokenGroup label="Focus ring" headers={['Token', 'Value', 'Controls']} rows={[
-          [{ code: '--vds-control-ring-w' }, { code: '2px' }, 'Ring thickness — shared by every control'],
-          [{ code: '--vds-input-ring' }, { code: 'focus-ring @ 35% (--vds-control-ring-tint)' }, 'Valid focus ring color'],
-          [{ code: '(invalid ring)' }, { code: 'danger @ 30% (--vds-control-ring-tint-invalid)' }, 'Invalid focus ring color'],
-        ]} />
-        <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.5rem' }}>
-          Fields (Input, Select, Textarea) use a soft <IC>box-shadow</IC> ring; action controls (Button,
-          Checkbox) use a hard <IC>outline</IC> ring instead — both are intentional, not a mismatch. The
-          35%/30% split is intentional too: danger reads stronger than the brand ring at equal alpha, so the
-          invalid ring is dialed down to balance.
-        </p>
-
-        <TokenGroup label="Touch" headers={['Token', 'Value', 'Controls']} rows={[
-          [{ code: '--vds-input-touch-min' }, { code: '1rem (16px)' }, 'Bumps the md field’s font-size on coarse pointers so iOS doesn’t zoom the page on focus'],
-        ]} />
-
-        <TokenGroup label="Motion" headers={['Token', 'Value', 'Controls']} rows={[
-          [{ code: '--vds-input-dur' }, { code: '120ms (--vds-dur-fast)' }, 'Border/ring transition speed'],
-          [{ code: '--vds-input-ease' }, { code: 'cubic-bezier(0.16,1,0.3,1) (--vds-ease-out)' }, 'Border/ring transition curve'],
-        ]} />
+        <Playground />
       </Section>
 
+      {/* S2 · Anatomy */}
+      <Section
+        title="Anatomy"
+        note="One field, up to four parts inside one box. The affixes are optional; the input is not."
+      >
+        <Stack gap={4}>
+          <Surface padding={8} elevation="flat">
+            <Stack gap={0} align="center" style={{ justifyContent: 'center', minHeight: '4rem' }}>
+              <div style={{ width: '100%', maxWidth: '22rem' }}>
+                <Input
+                  className="vds-demo-input--focus"
+                  defaultValue="Acme Corp"
+                  aria-label="Company"
+                  leading={<Icon as={Search} size="sm" />}
+                  trailing={<ClearButton size="sm" />}
+                />
+              </div>
+            </Stack>
+          </Surface>
+          <PropsTable
+            headers={['#', 'Part', 'What it does']}
+            rows={[
+              ['1', { code: '.vds-input' }, 'Shell — the border, fill, and radius that make one box'],
+              ['2', { code: '.vds-input__affix--lead' }, 'Leading affix — context: what the box is for (search, currency)'],
+              ['3', { code: '<input>' }, 'The field itself — the native text input'],
+              ['4', { code: '.vds-input__affix--trail' }, 'Trailing affix — an action (clear, show password)'],
+              ['5', 'Focus ring', 'Soft box-shadow ring on :focus-within — shows for keyboard AND pointer'],
+              ['6', 'Optical nudge', 'Affixes hang into the pad so both edges feel even — token --vds-input-affix-nudge'],
+            ]}
+          />
+          <Text variant="detail" tone="muted">
+            Height, padding, and gap all come from tokens — see <a href="#/component/input" onClick={scrollToTokens}>Tokens ↓</a>.
+          </Text>
+        </Stack>
+      </Section>
+
+      {/* S3 · Sizes */}
+      <Section
+        title="Sizes"
+        note="Five sizes: xs for the tightest surfaces like table filters, xl for a single hero form. sm/md/lg cover everything in between. Icons scale with the size."
+      >
+        <Stack gap={4}>
+          <Preview
+            canvas={
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', maxWidth: 360 }}>
+                {SIZES.map((sz) => (
+                  <Input
+                    key={sz}
+                    size={sz}
+                    placeholder="you@company.com"
+                    aria-label={`Email (${sz})`}
+                    leading={<Icon as={Search} size={ICON_SIZE[sz]} />}
+                    trailing={<ClearButton size={ICON_SIZE[sz]} />}
+                  />
+                ))}
+              </div>
+            }
+          />
+          <SizeSpecTable values={tokenValues} />
+          <Text variant="detail" tone="muted">
+            Icon-size rule: <IC>xs</IC> uses Icon <IC>xs</IC> (14px); <IC>sm</IC> and <IC>md</IC> use <IC>sm</IC> (16px); <IC>lg</IC> and <IC>xl</IC> use <IC>md</IC> (20px).
+          </Text>
+          <Text variant="detail" tone="muted">
+            Affixes hang --vds-input-affix-nudge into the pad (2px, or 4px at lg/xl) — that's on purpose; glyphs carry whitespace inside their box, so a flush icon would read over-padded.
+          </Text>
+        </Stack>
+      </Section>
+
+      {/* S4 · States */}
+      <Section
+        title="States"
+        note="Every state a field can be in, side by side, all at md. Rest and invalid are real props; hover and focus are forced here so you can compare them."
+      >
+        <StateMatrix />
+      </Section>
+
+      {/* S5 · With affixes */}
+      <Section
+        title="With affixes"
+        note="Two slots. leading = context — what the box is FOR (a search icon, a currency symbol, a URL prefix); it helps people know what to type. trailing = an ACTION — clear the field, show the password, a loading spinner. Pick the one that matches the job; use both only when both jobs are truly real."
+      >
+        <Stack gap={4}>
+          <Preview
+            canvas={
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', maxWidth: 360 }}>
+                <Input placeholder="Search devices…" aria-label="Search" leading={<Icon as={Search} size="sm" />} />
+                <Input defaultValue="Acme Corp" aria-label="Company" trailing={<ClearButton size="sm" />} />
+                <Input placeholder="Search devices…" aria-label="Search both" leading={<Icon as={Search} size="sm" />} trailing={<ClearButton size="sm" />} />
+              </div>
+            }
+          />
+          <PropsTable
+            headers={['Slot', 'Job', 'Examples']}
+            rows={[
+              [{ code: 'leading' }, 'Context — what the box is for', 'Search 🔍, a currency symbol, a URL prefix — never clickable, just a hint'],
+              [{ code: 'trailing' }, 'Action — do something to the field', 'Clear ×, show password, loading spinner — a real button with an aria-label'],
+              [{ code: 'leading + trailing' }, 'Both jobs are real', 'Rare — e.g. Search 🔍 … clear ×. Never decorate both sides.'],
+            ]}
+          />
+          <Text variant="detail" tone="muted">
+            Affix <strong>actions</strong> must be real <IC>{'<button>'}</IC>s with an <IC>aria-label</IC> — a bare clickable icon isn’t keyboard-reachable or announced.
+          </Text>
+        </Stack>
+      </Section>
+
+      {/* S6 · In a form */}
+      <Section
+        title="In a form"
+        note="Wrap the input in a Field and it wires the label, the help text, and the error to the control for you — the right ids, aria-describedby, and aria-invalid, automatically. Use it every time."
+      >
+        <Preview
+          canvas={
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', width: '100%', maxWidth: 360 }}>
+              <Field label="Work email" help="We only use this for alerts.">
+                <Input type="email" placeholder="you@company.com" />
+              </Field>
+              <Field label="Work email" error="Needs an @ — try name@company.com">
+                <Input type="email" defaultValue="ada.company.com" />
+              </Field>
+            </div>
+          }
+        />
+      </Section>
+
+      {/* S7 · Content & usage rules */}
+      <Section
+        title="Content & usage rules"
+        note="The label and the error are the words that decide whether someone can fill the form. Keep the label visible and the error specific."
+      >
+        <Stack gap={5}>
+          <ul className="vds-a11y">
+            <li>Every input gets a <strong>visible label</strong> — a placeholder is an example of what to type, not a label (it vanishes the moment they start).</li>
+            <li>Error text says <strong>what’s wrong AND how to fix it</strong> — not just that something failed.</li>
+            <li>Help text comes <strong>before</strong> the user fails; error text comes <strong>after</strong>.</li>
+            <li>Size the wrapper to the expected content — a ZIP field short, an email field wide — so the length hints at the answer.</li>
+          </ul>
+
+          <DoDont
+            doCaption="A visible label, with the placeholder as an example."
+            doExample={
+              <Field label="Work email">
+                <Input placeholder="you@company.com" />
+              </Field>
+            }
+            dontCaption="Placeholder standing in for the label — it disappears as you type."
+            dontExample={<Input placeholder="Work email" aria-label="Work email" />}
+          />
+
+          <DoDont
+            doCaption="Say what’s wrong and how to fix it."
+            doExample={
+              <Field label="Work email" error="Needs an @ — try name@company.com">
+                <Input defaultValue="ada.company.com" />
+              </Field>
+            }
+            dontCaption="“Invalid input” — true, but useless."
+            dontExample={
+              <Field label="Work email" error="Invalid input">
+                <Input defaultValue="ada.company.com" />
+              </Field>
+            }
+          />
+
+          <DoDont
+            doCaption="One trailing action, one job."
+            doExample={<Input defaultValue="Acme Corp" aria-label="Company" trailing={<ClearButton size="sm" />} />}
+            dontCaption="Decorative icons on both sides — noise, not meaning."
+            dontExample={<Input defaultValue="Acme Corp" aria-label="Company decorated" leading={<Icon as={Search} size="sm" />} trailing={<Icon as={X} size="sm" />} />}
+          />
+
+          <DoDont
+            doCaption="xs in a dense table filter; xl in a marketing form."
+            doExample={
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <Input size="xs" placeholder="Filter rows…" aria-label="Filter" leading={<Icon as={Search} size="xs" />} />
+                <Input size="xl" placeholder="you@company.com" aria-label="Email" />
+              </div>
+            }
+            dontCaption="Two different sizes stacked in one form — the rhythm breaks."
+            dontExample={
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <Input size="sm" placeholder="First name" aria-label="First name" />
+                <Input size="lg" placeholder="Last name" aria-label="Last name" />
+              </div>
+            }
+          />
+        </Stack>
+      </Section>
+
+      {/* S8 · Tokens */}
+      <div id="input-tokens">
+        <Section
+          title="Tokens"
+          note="Every visual value is a --vds-input-* custom property set on the .vds-input root, bound to foundation tokens only. Live value is what the browser computes right now. Re-declare any of them on your own selector to re-space or re-shape the field; nothing else in the system changes. Colors point at semantic tokens, so light/dark comes free."
+        >
+          <TokenTable values={tokenValues} />
+
+          <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.75rem' }}>
+            Size is a typescale step, not a raw value: xs = <IC>micro</IC>, sm = <IC>detail</IC>, md = <IC>body</IC>, lg and xl = <IC>body-lg</IC>.
+          </p>
+          <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.5rem' }}>
+            <strong>D1 — soft ring.</strong> Fields (Input, Select, Textarea) render focus as a soft <IC>box-shadow</IC> ring; action controls (Button, Checkbox) use a hard <IC>outline</IC> ring instead. Both are intentional recipes, not a mismatch.
+          </p>
+          <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.5rem' }}>
+            <strong>D2 — two tints.</strong> The valid ring is the brand focus-ring at <IC>--vds-control-ring-tint</IC> (35%); the invalid ring is danger at <IC>--vds-control-ring-tint-invalid</IC> (30%). The split is intentional: danger reads stronger than the brand ring at equal alpha, so the invalid ring is dialed down to balance.
+          </p>
+        </Section>
+      </div>
+
+      {/* S9 · Reference implementation */}
       <Section
         title="Reference implementation"
         note="How the demos on this page are built — reference only. The design system does not ship this markup or CSS as an installable package; it ships the tokens above. Your team writes its own input component (its own classes, its own framework) and binds to the --vds-input-* variables."
       >
-        <p className="vds-text vds-text--body vds-text--tone-muted" style={{ margin: 0 }}>
-          The reference build lives in the repo under <IC>src/components/Input</IC>. Treat it as a worked
-          example of the tokens — not something to install today. It's also the seed of a future
-          <em> versioned, installable</em> package: when Vipre is ready, the same token contract makes that a
-          drop-in, not a rewrite.
-        </p>
+        <Stack gap={4}>
+          <p className="vds-text vds-text--body vds-text--tone-muted" style={{ margin: 0 }}>
+            The reference build lives in the repo under <IC>src/components/Input</IC>. Treat it as a worked
+            example of the tokens — not something to install today. It's also the seed of a future
+            <em> versioned, installable</em> package: when Vipre is ready, the same token contract makes that a
+            drop-in, not a rewrite.
+          </p>
+          <Code>{`<!-- size: --xs | --sm | --md | --lg | --xl -->
+<div class="vds-input vds-input--md">
+  <span class="vds-input__affix vds-input__affix--lead">
+    <svg class="vds-icon" width="16" height="16" aria-hidden="true">…</svg>
+  </span>
+  <input class="vds-input__field" placeholder="you@company.com" />
+  <span class="vds-input__affix vds-input__affix--trail">
+    <button type="button" aria-label="Clear">
+      <svg class="vds-icon" width="16" height="16" aria-hidden="true">…</svg>
+    </button>
+  </span>
+</div>
+
+<!-- invalid: add vds-input--invalid (sets the red border; also set aria-invalid) -->
+<!-- disabled: add vds-input--disabled (and disabled on the <input>) -->`}</Code>
+        </Stack>
       </Section>
     </ComponentPage>
   )

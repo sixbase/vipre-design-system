@@ -8,13 +8,20 @@
 .vds-input {
   // ---- public tokens (bind to these to retheme/respace — not the rule bodies below) ----
   // Sizing
+  --vds-input-h-xs: var(--vds-control-h-xs);       // 28px — dense rows, toolbars
   --vds-input-h-sm: var(--vds-control-h-sm);       // 2rem / 32px
   --vds-input-h-md: var(--vds-control-h-md);       // 2.25rem / 36px
   --vds-input-h-lg: var(--vds-control-h-lg);       // 2.75rem / 44px
+  --vds-input-h-xl: var(--vds-control-h-xl);       // 52px — hero / marketing forms
+  --vds-input-pad-x-xs: var(--vds-space-2);        // 8px — field rhythm, one step below sm
   --vds-input-pad-x-sm: var(--vds-space-2-5);      // 0.625rem / 10px
   --vds-input-pad-x-md: var(--vds-space-3);        // 0.75rem / 12px
   --vds-input-pad-x-lg: var(--vds-space-4);        // 1rem / 16px
+  --vds-input-pad-x-xl: var(--vds-space-5);        // 20px — one step above lg
   --vds-input-gap: var(--vds-space-2);             // 0.5rem / 8px — affix ↔ field gap
+  // Optical: affix slots hang this far INTO the padding — glyphs carry
+  // whitespace inside their box, so a flush icon reads over-padded.
+  --vds-input-affix-nudge: calc(var(--vds-space-1) / 2);   // 2px at xs/sm/md
   // Shape
   --vds-input-radius: var(--vds-radius-sm);        // 0.25rem / 4px
   --vds-input-border-w: var(--vds-border-w);       // 1px
@@ -77,9 +84,11 @@
   }
 
   // ---- sizes (heights = the shared control-metric tokens, matching Button) ----
+  &--xs { height: var(--vds-input-h-xs); padding: 0 var(--vds-input-pad-x-xs); @include type.step(micro); }
   &--sm { height: var(--vds-input-h-sm); padding: 0 var(--vds-input-pad-x-sm); @include type.step(detail); }
   &--md { height: var(--vds-input-h-md); padding: 0 var(--vds-input-pad-x-md); @include type.step(body); }
-  &--lg { height: var(--vds-input-h-lg); padding: 0 var(--vds-input-pad-x-lg); @include type.step(body-lg); }
+  &--lg { height: var(--vds-input-h-lg); padding: 0 var(--vds-input-pad-x-lg); @include type.step(body-lg); --vds-input-affix-nudge: var(--vds-space-1); }  // 4px
+  &--xl { height: var(--vds-input-h-xl); padding: 0 var(--vds-input-pad-x-xl); @include type.step(body-lg); --vds-input-affix-nudge: var(--vds-space-1); }  // 4px
 
   &__field {
     flex: 1 1 auto;
@@ -103,8 +112,14 @@
     color: var(--vds-input-muted);
   }
 
+  // Optical nudge — affixes hang into the pad so glyph whitespace doesn't read as over-padding.
+  &__affix--lead { margin-inline-start: calc(var(--vds-input-affix-nudge) * -1); }
+
   // Trailing affix is often an interactive clear button — let it receive clicks.
-  &__affix--trail { cursor: pointer; }
+  &__affix--trail {
+    cursor: pointer;
+    margin-inline-end: calc(var(--vds-input-affix-nudge) * -1);
+  }
 
   @include bp.coarse {
     // ≥16px text on touch so iOS doesn't zoom the page when the field focuses.

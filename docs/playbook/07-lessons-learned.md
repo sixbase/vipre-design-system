@@ -88,6 +88,22 @@ In the headless preview, a screenshot taken after `window.scrollTo(...)` on a pa
 the layout wrong (content bottom-anchored, phantom whitespace) even though `getBoundingClientRect()` reports the truth.
 Verify scrolled/sticky layouts with rect measurements in `preview_eval`; trust screenshots only at scroll 0.
 
+## Docs can force interaction states with showcase-only classes
+
+To SHOW `:hover`/`:active`/`:focus-visible` without a live pointer, add docs-only classes
+(`.vds-demo-state--hover` / `--active` / `--focus`) in `_showcase.scss` that reuse the component's
+OWN private state vars (e.g. Button's `--_btn-hover`) — mirror its exact state declarations, don't
+invent values. These live in the docs bundle only; **never add showcase to `styles.entry.scss`**
+or the forcing classes would ship to consumers.
+
+## Optical corrections are real design tokens too
+
+An optical nudge — an icon slot pulled a few px toward its edge because the glyph carries internal
+whitespace — is a design decision, so it gets a **named token** (`--vds-button-icon-nudge`), not a
+hand-tuned margin repeated per use. Name it once, halve it at small sizes in the size rule, and
+every button inherits the same correction. And **measure** these — `getBoundingClientRect()` on the
+edges before/after tells you the real gap; eyeballing a 2px optical shift is how you ship a 6px one.
+
 ## Multi-agent edits: nobody touches the registries
 
 When several agents build components concurrently, the three shared files (`components/index.js`,

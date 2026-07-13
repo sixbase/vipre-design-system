@@ -208,9 +208,11 @@ $magenta: ( // accent — hot pink (hue 348)
 
   // Control metrics — the shared sm/md/lg control heights (Button, Input,
   // Select all render these). Bind sizes to the token, not a local height.
+  --vds-control-h-xs: 1.75rem;  // 28px — dense contexts (table rows, toolbars)
   --vds-control-h-sm: 2rem;    // 32px
   --vds-control-h-md: 2.25rem; // 36px
   --vds-control-h-lg: 2.75rem; // 44px
+  --vds-control-h-xl: 3.25rem;  // 52px — hero / marketing call-to-action
   --vds-tap-target: 44px;      // minimum hit area on coarse (touch) pointers
 
   // Control focus-ring family — TWO recipes, both deliberate (not drift):

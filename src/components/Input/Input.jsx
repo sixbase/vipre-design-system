@@ -10,7 +10,7 @@ import { cx } from '../../lib/cx.js'
  * points at the underlying <input>.
  *
  * Props:
- * - size:     'sm' | 'md' | 'lg'   (default 'md')
+ * - size:     'xs' | 'sm' | 'md' | 'lg' | 'xl'   (default 'md')
  * - invalid:  boolean — danger border + aria-invalid   (default false)
  * - leading:  node rendered before the field (e.g. an Icon)
  * - trailing: node rendered after the field (e.g. a clear button)
