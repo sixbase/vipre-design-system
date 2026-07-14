@@ -109,3 +109,13 @@ edges before/after tells you the real gap; eyeballing a 2px optical shift is how
 When several agents build components concurrently, the three shared files (`components/index.js`,
 `styles/_components.scss`, `docs/routes.js`) must be owned by ONE integrator; builders ship a manifest of exact
 export/@use/route lines instead. Same for the playbook — builders suggest entries, the integrator writes them.
+
+## Optically centering text: nudge the ink, not the box
+
+A label's line box can be dead-centered while the *letters* still sit high — fonts don't center their
+ink in their em. So `getBoundingClientRect()` on the text (the line box) will lie to you; measure the
+**ink** (canvas `actualBoundingBoxAscent/Descent` around the real baseline) and compare that to the
+icon's center. When you nudge the label down to fix it, the line box will look slightly *low* on
+purpose — that's the box compensating for high ink. Rubik runs ~0.5–0.9px high; worst at the smallest
+button sizes where 1px is a big fraction of the height. All-caps demo labels exaggerate it (no
+descenders), so test with a real sentence-case word too.

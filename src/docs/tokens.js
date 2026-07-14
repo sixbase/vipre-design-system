@@ -159,6 +159,7 @@ export const SEMANTIC_GROUPS = [
       { token: '--vds-warning-hover', ref: 'amber-500 → 300', usage: 'Hover for a solid warning fill' },
       { token: '--vds-warning-active', ref: 'amber-600 → 200', usage: 'Pressed/active state for a solid warning fill' },
       { token: '--vds-on-warning', ref: 'amber-950', usage: 'Dark ink on the bright gold warning fill' },
+      { token: '--vds-on-warning-soft', ref: 'amber-600 → amber-400', usage: 'Warning text on a soft/tinted bg (bright amber-400 fails AA on the pale bg)' },
       { token: '--vds-warning-soft', ref: 'amber-50 → amber@16%', usage: 'Tinted warning background' },
       { token: '--vds-warning-soft-hover', ref: 'amber-100 → amber@24%', usage: 'Hover on a soft warning fill' },
       { token: '--vds-danger', ref: 'rose-600 → 400', usage: 'Errors, threats, destructive actions' },

@@ -301,6 +301,7 @@ $magenta: ( // accent — hot pink (hue 348)
   --vds-warning-hover:      var(--vds-amber-500);
   --vds-warning-active:     var(--vds-amber-600); // pressed / active
   --vds-on-warning:         var(--vds-amber-950); // dark ink on bright gold
+  --vds-on-warning-soft:    var(--vds-amber-600); // warning TEXT on a soft/tinted bg — amber-400 fails AA on amber-50 (2.3:1); 600 is the lightest that passes (4.8:1)
   --vds-warning-soft:       var(--vds-amber-50);
   --vds-warning-soft-hover: var(--vds-amber-100);
   --vds-danger:             var(--vds-rose-600);
@@ -394,6 +395,7 @@ $magenta: ( // accent — hot pink (hue 348)
   --vds-warning-hover:      var(--vds-amber-300);
   --vds-warning-active:     var(--vds-amber-200); // pressed / active
   --vds-on-warning:         var(--vds-amber-950);
+  --vds-on-warning-soft:    var(--vds-amber-400); // on the dark tinted bg amber-400 already passes AA (5.6:1)
   --vds-warning-soft:       color-mix(in oklab, var(--vds-amber-400) 16%, transparent);
   --vds-warning-soft-hover: color-mix(in oklab, var(--vds-amber-400) 24%, transparent);
   --vds-danger:             var(--vds-rose-400);

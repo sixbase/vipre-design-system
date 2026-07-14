@@ -46,6 +46,7 @@ const SEM = {
   '--vds-warning': 'Warning',
   '--vds-warning-hover': 'Warning (hover)',
   '--vds-on-warning': 'Text on warning fill',
+  '--vds-on-warning-soft': 'Warning text on soft fill',
   '--vds-warning-soft': 'Warning soft fill',
   '--vds-warning-soft-hover': 'Warning soft fill (hover)',
   '--vds-danger': 'Danger / error',

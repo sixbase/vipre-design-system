@@ -606,3 +606,25 @@ The decisions that matter going forward:
   (inputs: tokens + grammar + reference components).
 - **Fast-follows**: bind Select/Textarea/Checkbox to the same contract; add --vds-control-box-size
   with the Checkbox work.
+
+## 2026-07-13 · Button label optical centering + Icon set docs
+
+- **Button `.vds-button__label` wrapper + `--vds-button-label-optical`**: the leading icon is
+  geometrically centered, but Rubik's glyphs sit ~0.5–0.9px high in their line box — most visible at
+  **xs (0.85px)** and **md (0.90px)**, where the label read as floating above the icon. Fix: wrap the
+  text in `.vds-button__label` (inline-flex, so a transform applies) and push it down via a new token,
+  set to `0.5px` at xs/md and `0` elsewhere. Measured after: all sizes land within ±0.25px of the icon
+  center. Icon-only buttons stay unwrapped. Markup + anatomy docs updated to show the label span.
+- **Icons stay outline-only**: Material Symbols via `@iconify-json/material-symbols` ships the FILLED
+  shape under the base name; a few outlined glyphs Google shows (e.g. `domain`, `apartment`) aren't in
+  the iconify data at all. For `Building2` we embed Google's official **outlined `domain`** SVG by hand
+  in `src/icons.jsx` (`_Domain`, native 0 -960 960 960 viewBox). `Database` uses `database-outline`.
+- **Icon page** gained "Using Material Symbols" (where icons come from + the add-a-new-icon recipe) and
+  a searchable **Library** grid that reads straight from the `@icons` barrel.
+
+## 2026-07-13 · Badge gains an icon slot
+
+- **`Badge` `icon` prop + `.vds-badge__icon`**: a leading icon alternative to the dot (icon wins if both
+  set). Decorative (`aria-hidden`), sized in em (1.1em) so it tracks the label. Optically centered by a
+  measured `translateY(-0.08em)` — the icon nudges UP to the text's high ink center, the OPPOSITE of the
+  dot (which nudges down toward the lowercase body). Verified: icon center within 0.06px of text ink.
