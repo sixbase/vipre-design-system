@@ -297,7 +297,7 @@ const SIZE_ROWS = [
   { size: 'sm', h: '--vds-button-h-sm', px: '--vds-button-pad-x-sm', gap: '--vds-button-gap-sm', type: 'detail', icon: 'sm (16px)', touch: '44px overlay' },
   { size: 'md', h: '--vds-button-h-md', px: '--vds-button-pad-x-md', gap: '--vds-button-gap-md', type: 'body', icon: 'sm (16px)', touch: 'native — none needed' },
   { size: 'lg', h: '--vds-button-h-lg', px: '--vds-button-pad-x-lg', gap: '--vds-button-gap-lg', type: 'body-lg', icon: 'md (20px)', touch: '—' },
-  { size: 'xl', h: '--vds-button-h-xl', px: '--vds-button-pad-x-xl', gap: '--vds-button-gap-xl', type: 'body-lg + semibold', icon: 'md (20px)', touch: '—' },
+  { size: 'xl', h: '--vds-button-h-xl', px: '--vds-button-pad-x-xl', gap: '--vds-button-gap-xl', type: 'subheading', icon: 'md (20px)', touch: '—' },
 ]
 
 function SizeSpecTable({ values }) {
@@ -830,7 +830,7 @@ export function ButtonPage() {
           <TokenTable values={tokenValues} />
 
           <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.75rem' }}>
-            Size is a typescale step, not a raw value: xs = <IC>micro</IC>, sm = <IC>detail</IC>, md = <IC>body</IC>, lg and xl = <IC>body-lg</IC>.
+            Size is a typescale step, not a raw value: xs = <IC>micro</IC>, sm = <IC>detail</IC>, md = <IC>body</IC>, lg = <IC>body-lg</IC>, xl = <IC>subheading</IC>.
           </p>
           <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.5rem' }}>
             Action controls (buttons, checkboxes) use a hard outline ring — it reads clearly on any tone fill. Field controls (inputs, selects) use a softer shadow ring instead; the two are deliberately different recipes.

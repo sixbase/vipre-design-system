@@ -100,8 +100,8 @@
     --vds-button-icon-nudge: var(--vds-space-2); // 8px — big icons reclaim the hero padding
     height: var(--vds-button-h-xl);
     padding: 0 var(--vds-button-pad-x-xl);
-    @include type.step(body-lg);
-    font-weight: var(--vds-button-weight-strong); // a CTA reads heavier than the default label weight
+    @include type.step(subheading); // xl steps UP one typescale (16px vs lg's 15px) — the hero reads a touch bigger
+    font-weight: var(--vds-button-weight); // same medium weight as every other size — xl stands out by SIZE, not weight
   }
 
   // Touch: xs/sm/md buttons keep their visual height but grow an invisible hit
