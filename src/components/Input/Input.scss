@@ -33,6 +33,11 @@
   //   table (src/docs/colorUsage.js) reads it by this name. Kept as-is on purpose.
   --vds-input-fill: var(--vds-surface-sunken);
   --vds-input-muted: var(--vds-ink-subtle);
+  // Add-ons — attached prefix/suffix chrome segments (e.g. "$" | amount, "https://" | url).
+  // A hairline-separated segment tinted a touch darker than the field fill, with muted ink,
+  // so it reads as chrome ATTACHED inside the border (distinct from the affix icon slots).
+  --vds-input-addon-bg: color-mix(in oklab, var(--vds-surface-sunken), var(--vds-ink) 4%); // 4% = documented tint recipe (a mix ratio, not a scale value — §1)
+  --vds-input-addon-ink: var(--vds-ink-muted);
   // Touch — coarse-pointer zoom guard (iOS auto-zooms text inputs under 16px)
   --vds-input-touch-min: var(--vds-control-font-touch-min);
   // Motion
@@ -119,6 +124,51 @@
   &__affix--trail {
     cursor: pointer;
     margin-inline-end: calc(var(--vds-input-affix-nudge) * -1);
+  }
+
+  // ---- add-ons: attached prefix/suffix segments (distinct from the affix icon slots) ----
+  // A full-height chrome segment flush to the field's border, separated from the editable
+  // area by a hairline. Prefix is the first child, suffix the last. Existing affix/size
+  // rules are untouched — these are additive selectors only.
+  &__addon {
+    align-self: stretch;            // fill the field height so it reads as attached chrome
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    white-space: nowrap;
+    background-color: var(--vds-input-addon-bg);
+    color: var(--vds-input-addon-ink);
+  }
+
+  // Hairline between the segment and the editable area — neutral even when invalid
+  // (internal chrome, not the field's outer border). Outer corners round to nest inside
+  // the shell's radius (inner radius = outer − border), so no square nub pokes past it.
+  &__addon--prefix {
+    border-inline-end: var(--vds-input-border-w) solid var(--vds-input-border);
+    border-start-start-radius: calc(var(--vds-input-radius) - var(--vds-input-border-w));
+    border-end-start-radius: calc(var(--vds-input-radius) - var(--vds-input-border-w));
+  }
+  &__addon--suffix {
+    border-inline-start: var(--vds-input-border-w) solid var(--vds-input-border);
+    border-start-end-radius: calc(var(--vds-input-radius) - var(--vds-input-border-w));
+    border-end-end-radius: calc(var(--vds-input-radius) - var(--vds-input-border-w));
+  }
+
+  // Per-size: the segment's inner padding == the field's pad-x, and a negative outer margin
+  // pulls it flush to the border (cancelling the shell's pad-x). Emitted as separate
+  // selectors so the existing size rules stay byte-identical.
+  @each $size, $pad in (
+    'xs': '--vds-input-pad-x-xs',
+    'sm': '--vds-input-pad-x-sm',
+    'md': '--vds-input-pad-x-md',
+    'lg': '--vds-input-pad-x-lg',
+    'xl': '--vds-input-pad-x-xl'
+  ) {
+    &--#{$size} {
+      .vds-input__addon { padding-inline: var(#{$pad}); }
+      .vds-input__addon--prefix { margin-inline-start: calc(var(#{$pad}) * -1); }
+      .vds-input__addon--suffix { margin-inline-end: calc(var(#{$pad}) * -1); }
+    }
   }
 
   @include bp.coarse {

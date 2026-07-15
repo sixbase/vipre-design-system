@@ -41,6 +41,13 @@
 // SearchInput/Combobox layer on Input + Popover classes — keep them after both.
 @use '../components/SearchInput/SearchInput';
 @use '../components/Combobox/Combobox';
+@use '../components/PasswordInput/PasswordInput';
+@use '../components/NumberInput/NumberInput';
+@use '../components/DatePicker/DatePicker';
+@use '../components/TimeInput/TimeInput';
+@use '../components/FileUpload/FileUpload';
+@use '../components/PinInput/PinInput';
+@use '../components/TagsInput/TagsInput';
 
 // Overlays
 @use '../components/Modal/Modal';

@@ -21,6 +21,11 @@ import _Database from '~icons/material-symbols/database-outline'
 import _DollarSign from '~icons/material-symbols/paid-outline-rounded'
 import _Download from '~icons/material-symbols/download-rounded'
 import _Eye from '~icons/material-symbols/visibility-outline-rounded'
+import _EyeOff from '~icons/material-symbols/visibility-off-outline-rounded'
+import _Minus from '~icons/material-symbols/remove-rounded'
+import _Clock from '~icons/material-symbols/schedule-outline-rounded'
+import _Upload from '~icons/material-symbols/upload-rounded'
+import _ChevronLeft from '~icons/material-symbols/chevron-left-rounded'
 import _FileText from '~icons/material-symbols/description-outline-rounded'
 import _Filter from '~icons/material-symbols/filter-list-rounded'
 import _Globe from '~icons/material-symbols/public'
@@ -95,6 +100,11 @@ export const Database = a(_Database)
 export const DollarSign = a(_DollarSign)
 export const Download = a(_Download)
 export const Eye = a(_Eye)
+export const EyeOff = a(_EyeOff)
+export const Minus = a(_Minus)
+export const Clock = a(_Clock)
+export const Upload = a(_Upload)
+export const ChevronLeft = a(_ChevronLeft)
 export const FileText = a(_FileText)
 export const Filter = a(_Filter)
 export const Globe = a(_Globe)

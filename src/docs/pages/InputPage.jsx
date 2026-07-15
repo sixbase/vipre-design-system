@@ -22,6 +22,7 @@ const INPUT_TOKENS = [
   '--vds-input-gap', '--vds-input-affix-nudge',
   '--vds-input-radius', '--vds-input-border-w',
   '--vds-input-fill', '--vds-input-border', '--vds-input-muted',
+  '--vds-input-addon-bg', '--vds-input-addon-ink',
   '--vds-control-ring-w', '--vds-input-ring',
   '--vds-input-touch-min',
   '--vds-input-dur', '--vds-input-ease',
@@ -294,6 +295,8 @@ const TOKEN_BOUND = {
   '--vds-input-fill': 'var(--vds-surface-sunken)',
   '--vds-input-border': 'var(--vds-line-strong)',
   '--vds-input-muted': 'var(--vds-ink-subtle)',
+  '--vds-input-addon-bg': 'mix(surface-sunken, ink 4%)',
+  '--vds-input-addon-ink': 'var(--vds-ink-muted)',
   '--vds-control-ring-w': '— (shared control token)',
   '--vds-input-ring': 'focus-ring @ --vds-control-ring-tint',
   '--vds-input-touch-min': 'var(--vds-control-font-touch-min)',
@@ -319,6 +322,8 @@ const TOKEN_CONTROLS = {
   '--vds-input-fill': 'Field background',
   '--vds-input-border': 'Resting border',
   '--vds-input-muted': 'Placeholder text + affix icon color',
+  '--vds-input-addon-bg': 'Attached prefix/suffix segment background (fill mixed a hair toward ink)',
+  '--vds-input-addon-ink': 'Attached prefix/suffix segment text color',
   '--vds-control-ring-w': 'Focus ring thickness — shared by every control',
   '--vds-input-ring': 'Valid focus ring color (soft shadow)',
   '--vds-input-touch-min': 'Bumps md font-size on coarse pointers so iOS doesn’t zoom on focus',
@@ -330,6 +335,7 @@ const TOKEN_GROUPS = [
   { label: 'Sizing', tokens: ['--vds-input-h-xs', '--vds-input-h-sm', '--vds-input-h-md', '--vds-input-h-lg', '--vds-input-h-xl', '--vds-input-pad-x-xs', '--vds-input-pad-x-sm', '--vds-input-pad-x-md', '--vds-input-pad-x-lg', '--vds-input-pad-x-xl', '--vds-input-gap', '--vds-input-affix-nudge'] },
   { label: 'Shape', tokens: ['--vds-input-radius', '--vds-input-border-w'] },
   { label: 'Color', tokens: ['--vds-input-fill', '--vds-input-border', '--vds-input-muted'] },
+  { label: 'Add-ons', tokens: ['--vds-input-addon-bg', '--vds-input-addon-ink'] },
   { label: 'Focus ring', tokens: ['--vds-control-ring-w', '--vds-input-ring'] },
   { label: 'Touch', tokens: ['--vds-input-touch-min'] },
   { label: 'Motion', tokens: ['--vds-input-dur', '--vds-input-ease'] },
@@ -420,8 +426,10 @@ export function InputPage() {
           rows: [
             [{ code: 'size' }, { code: "'xs' | 'sm' | 'md' | 'lg' | 'xl'" }, { code: "'md'" }, 'How tall it is and its text size (matches Button)'],
             [{ code: 'invalid' }, { code: 'boolean' }, { code: 'false' }, 'Red border + aria-invalid to show something’s wrong'],
+            [{ code: 'prefix' }, { code: 'ReactNode' }, '—', 'An attached chrome segment BEFORE everything — a “$” or “https://” glued inside the border'],
             [{ code: 'leading' }, { code: 'ReactNode' }, '—', 'Something before the text (like an Icon) — says what the box is FOR'],
             [{ code: 'trailing' }, { code: 'ReactNode' }, '—', 'Something after the text (like a clear button) — an ACTION'],
+            [{ code: 'suffix' }, { code: 'ReactNode' }, '—', 'An attached chrome segment AFTER everything — a “kg” or “.00” glued inside the border'],
             [{ code: 'disabled' }, { code: 'boolean' }, { code: 'false' }, 'Turn it off and fade it (opacity 0.5)'],
             [{ code: '…props' }, { code: 'InputHTMLAttributes' }, '—', 'value, onChange, placeholder, type, aria-*…'],
           ],
@@ -553,6 +561,36 @@ export function InputPage() {
           />
           <Text variant="detail" tone="muted">
             Affix <strong>actions</strong> must be real <IC>{'<button>'}</IC>s with an <IC>aria-label</IC> — a bare clickable icon isn’t keyboard-reachable or announced.
+          </Text>
+        </Stack>
+      </Section>
+
+      {/* S5b · Add-ons */}
+      <Section
+        title="Add-ons"
+        note="Add-ons are little attached segments GLUED inside the border — a currency mark, a URL scheme, a unit. They read as chrome (a slightly darker segment split off by a hairline), not as something you type. Use prefix for the front (a “$”, “https://”) and suffix for the back (“kg”, “.00”). They’re different from leading/trailing affixes: affixes are icons/buttons that sit in the padding; add-ons are labelled segments flush to the edge."
+      >
+        <Stack gap={4}>
+          <Preview
+            canvas={
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', maxWidth: 360 }}>
+                <Input prefix="$" placeholder="0.00" inputMode="decimal" aria-label="Amount" />
+                <Input prefix="https://" placeholder="example.com" aria-label="Website" />
+                <Input suffix="kg" defaultValue="68" inputMode="decimal" aria-label="Weight" />
+                <Input prefix="$" suffix="USD" placeholder="0.00" inputMode="decimal" aria-label="Price" />
+              </div>
+            }
+          />
+          <PropsTable
+            headers={['Prop', 'Where it sits', 'Examples']}
+            rows={[
+              [{ code: 'prefix' }, 'Attached segment before everything', 'A currency “$”, a scheme “https://” — context glued to the front'],
+              [{ code: 'suffix' }, 'Attached segment after everything', 'A unit “kg”, a currency code “USD”, a “.00” — context glued to the back'],
+              [{ code: 'prefix + suffix' }, 'Both ends wrapped', 'e.g. “$” … amount … “USD” — use both only when both are real'],
+            ]}
+          />
+          <Text variant="detail" tone="muted">
+            An add-on is <strong>chrome</strong>, not a control — it’s a plain segment with muted ink, not a button. Its background is <IC>--vds-input-addon-bg</IC> (the fill mixed a hair toward ink) and it stays put through hover, focus, and invalid, because it’s inside the field’s own border.
           </Text>
         </Stack>
       </Section>

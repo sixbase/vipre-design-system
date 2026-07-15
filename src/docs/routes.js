@@ -65,6 +65,13 @@ import { TextareaPage } from './pages/TextareaPage.jsx'
 import { MspMenuPilotPage } from './pages/MspMenuPilotPage.jsx'
 import { KickoffPage } from './pages/KickoffPage.jsx'
 import { ControlAnatomyPage } from './pages/ControlAnatomyPage.jsx'
+import { PasswordInputPage } from './pages/PasswordInputPage.jsx'
+import { NumberInputPage } from './pages/NumberInputPage.jsx'
+import { DatePickerPage } from './pages/DatePickerPage.jsx'
+import { TimeInputPage } from './pages/TimeInputPage.jsx'
+import { FileUploadPage } from './pages/FileUploadPage.jsx'
+import { PinInputPage } from './pages/PinInputPage.jsx'
+import { TagsInputPage } from './pages/TagsInputPage.jsx'
 import { MeetingGuidePage } from './pages/MeetingGuidePage.jsx'
 import { MenuQuickstartPage } from './pages/MenuQuickstartPage.jsx'
 
@@ -104,9 +111,14 @@ export const NAV = [
     items: [
       { path: '/primitives/checkbox', name: 'Checkbox', Page: CheckboxPage },
       { path: '/primitives/combobox', name: 'Combobox', Page: ComboboxPage },
+      { path: '/primitives/date-picker', name: 'Date Picker', Page: DatePickerPage },
       { path: '/primitives/field', name: 'Field', Page: FieldPage },
+      { path: '/primitives/file-upload', name: 'File Upload', Page: FileUploadPage },
       { path: '/primitives/icon', name: 'Icon', Page: IconPage },
       { path: '/primitives/input', name: 'Input', Page: InputPage },
+      { path: '/primitives/number-input', name: 'Number Input', Page: NumberInputPage },
+      { path: '/primitives/password-input', name: 'Password Input', Page: PasswordInputPage },
+      { path: '/primitives/pin-input', name: 'Pin Input', Page: PinInputPage },
       { path: '/primitives/popover', name: 'Popover', Page: PopoverPage },
       { path: '/primitives/radio', name: 'Radio', Page: RadioPage },
       { path: '/primitives/search-input', name: 'Search Input', Page: SearchInputPage },
@@ -115,7 +127,9 @@ export const NAV = [
       { path: '/primitives/slider', name: 'Slider', Page: SliderPage },
       { path: '/primitives/spinner', name: 'Spinner', Page: SpinnerPage },
       { path: '/primitives/switch', name: 'Switch', Page: SwitchPage },
+      { path: '/primitives/tags-input', name: 'Tags Input', Page: TagsInputPage },
       { path: '/primitives/textarea', name: 'Textarea', Page: TextareaPage },
+      { path: '/primitives/time-input', name: 'Time Input', Page: TimeInputPage },
       { path: '/primitives/visually-hidden', name: 'Visually Hidden', Page: VisuallyHiddenPage },
     ],
   },
