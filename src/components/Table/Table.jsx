@@ -1,4 +1,4 @@
-import { forwardRef, useId } from 'react'
+import { Fragment, forwardRef, useId, useState } from 'react'
 import { cx } from '../../lib/cx.js'
 import { Surface } from '../Surface/Surface.jsx'
 import { Checkbox } from '../Checkbox/Checkbox.jsx'
@@ -15,6 +15,18 @@ function rowKeyOf(row, index, getRowKey) {
 function cellOf(col, row, index) {
   if (typeof col.render === 'function') return col.render(row, index)
   return row?.[col.key]
+}
+
+/* Resolve a column's alignment. An explicit `align` always wins. Otherwise the
+   alignment follows the DATA TYPE: numeric columns read best flush-right (the
+   digits line up place-by-place, and the header sits over them), everything
+   else stays left. Custom-`render` columns can't be sniffed (the output could
+   be anything), so they fall back to left unless `align` is set. */
+function alignOf(col, data) {
+  if (col.align) return col.align
+  if (typeof col.render === 'function') return 'left'
+  const sample = data.find((row) => row?.[col.key] != null)
+  return sample && typeof sample[col.key] === 'number' ? 'right' : 'left'
 }
 
 /* Plain-text column label for the responsive mode's data-label attribute.
@@ -40,6 +52,24 @@ function SortGlyph({ direction }) {
   )
 }
 
+/* Expand caret — an inline chevron (Table ships no icon deps, like SortGlyph).
+   It points right when closed and rotates 90° to point down when its row is
+   open; the rotation is driven off the button's aria-expanded in CSS. */
+function ExpandGlyph() {
+  return (
+    <svg
+      className="vds-table__expand-glyph"
+      width="8"
+      height="12"
+      viewBox="0 0 8 12"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path d="M2 1L6 6L2 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 /**
  * Table
  *
@@ -51,7 +81,8 @@ function SortGlyph({ direction }) {
  * Column shape: { key, header, align?, width?, render?, sortable?, className?, headerClassName? }
  * - key:    row property to read (and the sort key)
  * - header: column label (defaults to the key)
- * - align:  'left' (default) | 'center' | 'right'  — right for numerics
+ * - align:  'left' | 'center' | 'right'  — omit to auto-align by data type
+ *           (numeric columns go right, everything else left)
  * - width:  any CSS width (e.g. '120px', '20%')
  * - render: (row, index) => node  — custom cell (badges, links, actions…)
  * - sortable: mark the header clickable (sorting itself is controlled — see below)
@@ -86,6 +117,13 @@ function SortGlyph({ direction }) {
  * - selectedKeys: array | Set of selected row keys
  * - onSelectionChange: (keys[]) => void
  * - onRowClick:  (row, index) => void  — makes rows interactive (hover + keyboard)
+ * - renderDetail: (row, index) => node — when set, every row gets a leading
+ *                expand caret that reveals this node in a full-width detail row
+ *                beneath it. This is how you keep dense rows compact: the row
+ *                stays a one-line summary, the verbose breakdown lives in the
+ *                drawer. Pairs with `expandedKeys`/`onExpandedChange` (controlled)
+ *                or `defaultExpandedKeys` (uncontrolled — the common case).
+ * - expandedKeys / defaultExpandedKeys / onExpandedChange: which rows are open.
  * - loading:     show skeleton rows                 (default false)
  * - skeletonRows: how many while loading            (default 5)
  * - empty:       node shown when data is empty      (default 'No data')
@@ -121,6 +159,10 @@ export const Table = forwardRef(function Table(
     selectedKeys,
     onSelectionChange,
     onRowClick,
+    renderDetail,
+    expandedKeys,
+    defaultExpandedKeys,
+    onExpandedChange,
     loading = false,
     skeletonRows = 5,
     empty = 'No data',
@@ -132,8 +174,28 @@ export const Table = forwardRef(function Table(
   ref,
 ) {
   const captionId = useId()
+  const detailBaseId = useId()
   const interactiveRows = typeof onRowClick === 'function'
-  const totalCols = columns.length + (selectable ? 1 : 0)
+  const expandable = typeof renderDetail === 'function'
+  const totalCols = columns.length + (selectable ? 1 : 0) + (expandable ? 1 : 0)
+
+  // Expanded set — controlled via `expandedKeys`, else internal state seeded by
+  // `defaultExpandedKeys`. Mirrors Popover's open/defaultOpen split: expansion
+  // is purely presentational, so uncontrolled is the common case.
+  const isExpandControlled = expandedKeys != null
+  const [expandedState, setExpandedState] = useState(() => new Set(defaultExpandedKeys ?? []))
+  const expandedSet = isExpandControlled
+    ? expandedKeys instanceof Set
+      ? expandedKeys
+      : new Set(expandedKeys)
+    : expandedState
+
+  const toggleExpand = (key) => {
+    const next = new Set(expandedSet)
+    next.has(key) ? next.delete(key) : next.add(key)
+    if (!isExpandControlled) setExpandedState(next)
+    onExpandedChange?.([...next])
+  }
 
   // Selection set (accepts an array or a Set). Plain code — no per-row state.
   const selected = selectedKeys instanceof Set ? selectedKeys : new Set(selectedKeys ?? [])
@@ -175,7 +237,7 @@ export const Table = forwardRef(function Table(
         aria-sort={col.sortable ? (active ? (dir === 'asc' ? 'ascending' : 'descending') : 'none') : undefined}
         className={cx(
           'vds-table__th',
-          `vds-table__cell--${col.align ?? 'left'}`,
+          `vds-table__cell--${alignOf(col, data)}`,
           col.sortable && 'vds-table__th--sortable',
           active && 'vds-table__th--active',
           col.headerClassName,
@@ -197,6 +259,7 @@ export const Table = forwardRef(function Table(
     if (loading) {
       return Array.from({ length: skeletonRows }).map((_, i) => (
         <tr key={`sk-${i}`} className="vds-table__row vds-table__row--skeleton">
+          {expandable && <td className="vds-table__td vds-table__cell--expand" />}
           {selectable && (
             <td className="vds-table__td vds-table__cell--select">
               <span className="vds-table__skeleton" style={{ width: '1rem' }} aria-hidden="true" />
@@ -206,7 +269,7 @@ export const Table = forwardRef(function Table(
             <td
               key={col.key}
               data-label={responsive ? labelOf(col) : undefined}
-              className={cx('vds-table__td', `vds-table__cell--${col.align ?? 'left'}`)}
+              className={cx('vds-table__td', `vds-table__cell--${alignOf(col, data)}`)}
             >
               <span className="vds-table__skeleton" aria-hidden="true" />
             </td>
@@ -228,52 +291,81 @@ export const Table = forwardRef(function Table(
     return data.map((row, i) => {
       const key = rowKeyOf(row, i, getRowKey)
       const isSelected = selected.has(key)
+      const isExpanded = expandable && expandedSet.has(key)
+      const detailId = `${detailBaseId}-${i}`
       return (
-        <tr
-          key={key}
-          className={cx(
-            'vds-table__row',
-            interactiveRows && 'vds-table__row--interactive',
-            isSelected && 'vds-table__row--selected',
-          )}
-          aria-selected={selectable ? isSelected : undefined}
-          onClick={interactiveRows ? () => onRowClick(row, i) : undefined}
-          onKeyDown={
-            interactiveRows
-              ? (e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    onRowClick(row, i)
+        <Fragment key={key}>
+          <tr
+            className={cx(
+              'vds-table__row',
+              interactiveRows && 'vds-table__row--interactive',
+              isSelected && 'vds-table__row--selected',
+              isExpanded && 'vds-table__row--expanded',
+            )}
+            aria-selected={selectable ? isSelected : undefined}
+            onClick={interactiveRows ? () => onRowClick(row, i) : undefined}
+            onKeyDown={
+              interactiveRows
+                ? (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      onRowClick(row, i)
+                    }
                   }
-                }
-              : undefined
-          }
-          tabIndex={interactiveRows ? 0 : undefined}
-          role={interactiveRows ? 'button' : undefined}
-        >
-          {selectable && (
-            // Stop propagation so toggling the box never fires the row's onClick.
-            <td
-              className="vds-table__td vds-table__cell--select"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Checkbox
-                checked={isSelected}
-                onChange={() => toggleRow(key)}
-                aria-label={`Select row ${i + 1}`}
-              />
-            </td>
+                : undefined
+            }
+            tabIndex={interactiveRows ? 0 : undefined}
+            role={interactiveRows ? 'button' : undefined}
+          >
+            {expandable && (
+              // Stop propagation so the caret never fires the row's onClick.
+              <td
+                className="vds-table__td vds-table__cell--expand"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  type="button"
+                  className="vds-table__expand-btn"
+                  aria-expanded={isExpanded}
+                  aria-controls={isExpanded ? detailId : undefined}
+                  aria-label={isExpanded ? 'Collapse row' : 'Expand row'}
+                  onClick={() => toggleExpand(key)}
+                >
+                  <ExpandGlyph />
+                </button>
+              </td>
+            )}
+            {selectable && (
+              // Stop propagation so toggling the box never fires the row's onClick.
+              <td
+                className="vds-table__td vds-table__cell--select"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Checkbox
+                  checked={isSelected}
+                  onChange={() => toggleRow(key)}
+                  aria-label={`Select row ${i + 1}`}
+                />
+              </td>
+            )}
+            {columns.map((col) => (
+              <td
+                key={col.key}
+                data-label={responsive ? labelOf(col) : undefined}
+                className={cx('vds-table__td', `vds-table__cell--${alignOf(col, data)}`, col.className)}
+              >
+                {cellOf(col, row, i)}
+              </td>
+            ))}
+          </tr>
+          {isExpanded && (
+            <tr className="vds-table__row vds-table__row--detail">
+              <td className="vds-table__td vds-table__detail" colSpan={totalCols} id={detailId}>
+                {renderDetail(row, i)}
+              </td>
+            </tr>
           )}
-          {columns.map((col) => (
-            <td
-              key={col.key}
-              data-label={responsive ? labelOf(col) : undefined}
-              className={cx('vds-table__td', `vds-table__cell--${col.align ?? 'left'}`, col.className)}
-            >
-              {cellOf(col, row, i)}
-            </td>
-          ))}
-        </tr>
+        </Fragment>
       )
     })
   }
@@ -312,6 +404,7 @@ export const Table = forwardRef(function Table(
           )}
           <thead className="vds-table__head">
             <tr>
+              {expandable && <th scope="col" className="vds-table__th vds-table__cell--expand" />}
               {selectable && (
                 <th scope="col" className="vds-table__th vds-table__cell--select">
                   <Checkbox

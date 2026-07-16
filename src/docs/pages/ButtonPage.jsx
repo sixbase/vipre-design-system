@@ -2,7 +2,7 @@ import { Fragment, useEffect, useRef, useState } from 'react'
 import { ArrowUpRight, ChevronDown, ChevronRight, Download, Plus, Settings, Trash2 } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, Code, Kbd, IC, PropsTable, A11yList } from '../primitives.jsx'
+import { Section, Preview, Code, Kbd, IC, PropsTable, A11yList, RefTable, TokenSpecTable } from '../primitives.jsx'
 import { Button, Icon, Inline, Table, Badge, Surface, Stack, Text, SegmentedControl, Select, Switch, Divider } from '../../components/index.js'
 
 /* ---------------------------------------------------------------------------
@@ -50,23 +50,10 @@ function useResolvedTokens(names) {
   return [values, ref]
 }
 
-/* A raw table that accepts React nodes in any cell (PropsTable only takes
-   strings / {code}). Used where a cell holds a token name + its live value. */
-function RawTable({ headers, rows }) {
-  return (
-    <div className="vds-ref-table-wrap">
-      <table className="vds-ref-table">
-        <thead>
-          <tr>{headers.map((h) => <th key={h}>{h}</th>)}</tr>
-        </thead>
-        <tbody>
-          {rows.map((row, i) => (
-            <tr key={i}>{row.map((cell, j) => <td key={j}>{cell}</td>)}</tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )
+/* Local alias kept for the Sizes spec table below; RefTable is the shared
+   node-in-cell table now living in primitives. */
+function RawTable(props) {
+  return <RefTable {...props} />
 }
 
 /* Token name stacked over its live-resolved value, for the spec tables. */
@@ -321,103 +308,60 @@ function SizeSpecTable({ values }) {
    S10 · Tokens table
    -------------------------------------------------------------------------- */
 
-const TOKEN_BOUND = {
-  '--vds-button-h-xs': 'var(--vds-control-h-xs)',
-  '--vds-button-h-sm': 'var(--vds-control-h-sm)',
-  '--vds-button-h-md': 'var(--vds-control-h-md)',
-  '--vds-button-h-lg': 'var(--vds-control-h-lg)',
-  '--vds-button-h-xl': 'var(--vds-control-h-xl)',
-  '--vds-button-pad-x-xs': 'var(--vds-space-2)',
-  '--vds-button-pad-x-sm': 'var(--vds-space-3)',
-  '--vds-button-pad-x-md': 'var(--vds-space-4)',
-  '--vds-button-pad-x-lg': 'var(--vds-space-6)',
-  '--vds-button-pad-x-xl': 'var(--vds-space-8)',
-  '--vds-button-gap-xs': 'var(--vds-space-2)',
-  '--vds-button-gap-sm': 'var(--vds-space-2)',
-  '--vds-button-gap-md': 'var(--vds-space-2-5)',
-  '--vds-button-gap-lg': 'var(--vds-space-3)',
-  '--vds-button-gap-xl': 'var(--vds-space-3)',
-  '--vds-button-icon-nudge': 'var(--vds-space-1)',
-  '--vds-button-radius': 'var(--vds-radius-sm)',
-  '--vds-button-border-w': 'var(--vds-border-w)',
-  '--vds-button-weight': 'var(--vds-weight-medium)',
-  '--vds-button-weight-strong': 'var(--vds-weight-semibold)',
-  '--vds-button-ring-w': 'var(--vds-control-ring-w)',
-  '--vds-button-ring-offset': 'var(--vds-control-ring-offset)',
-  '--vds-button-dur': 'var(--vds-dur-fast)',
-  '--vds-button-ease': 'var(--vds-ease-out)',
-}
-
-const TOKEN_CONTROLS = {
-  '--vds-button-h-xs': 'Height — xs (dense rows, toolbars)',
-  '--vds-button-h-sm': 'Height — sm',
-  '--vds-button-h-md': 'Height — md (default)',
-  '--vds-button-h-lg': 'Height — lg',
-  '--vds-button-h-xl': 'Height — xl (hero CTA)',
-  '--vds-button-pad-x-xs': 'Left/right padding — xs',
-  '--vds-button-pad-x-sm': 'Left/right padding — sm',
-  '--vds-button-pad-x-md': 'Left/right padding — md',
-  '--vds-button-pad-x-lg': 'Left/right padding — lg',
-  '--vds-button-pad-x-xl': 'Left/right padding — xl',
-  '--vds-button-gap-xs': 'Icon ↔ label gap — xs',
-  '--vds-button-gap-sm': 'Icon ↔ label gap — sm',
-  '--vds-button-gap-md': 'Icon ↔ label gap — md',
-  '--vds-button-gap-lg': 'Icon ↔ label gap — lg (grows to keep pace with the padding)',
-  '--vds-button-gap-xl': 'Icon ↔ label gap — xl',
-  '--vds-button-icon-nudge': 'How far icon slots pull toward the edge (optical correction; scales 2→8px)',
-  '--vds-button-radius': 'Corner radius',
-  '--vds-button-border-w': 'Border hairline width',
-  '--vds-button-weight': 'Label weight (xs–lg)',
-  '--vds-button-weight-strong': 'Label weight — xl only, reads heavier',
-  '--vds-button-ring-w': 'Focus ring thickness',
-  '--vds-button-ring-offset': 'Focus ring gap from the edge',
-  '--vds-button-dur': 'Hover / focus transition speed',
-  '--vds-button-ease': 'Easing curve',
-}
-
-const TOKEN_GROUPS = [
-  { label: 'Sizing', tokens: ['--vds-button-h-xs', '--vds-button-h-sm', '--vds-button-h-md', '--vds-button-h-lg', '--vds-button-h-xl', '--vds-button-pad-x-xs', '--vds-button-pad-x-sm', '--vds-button-pad-x-md', '--vds-button-pad-x-lg', '--vds-button-pad-x-xl', '--vds-button-gap-xs', '--vds-button-gap-sm', '--vds-button-gap-md', '--vds-button-gap-lg', '--vds-button-gap-xl', '--vds-button-icon-nudge'] },
-  { label: 'Shape', tokens: ['--vds-button-radius', '--vds-button-border-w'] },
-  { label: 'Type', tokens: ['--vds-button-weight', '--vds-button-weight-strong'] },
-  { label: 'Focus ring', tokens: ['--vds-button-ring-w', '--vds-button-ring-offset'] },
-  { label: 'Motion', tokens: ['--vds-button-dur', '--vds-button-ease'] },
+/* The one token spec — Token / Bound to / What it controls, grouped. Live
+   values are read at render by the shared TokenSpecTable off a .vds-button
+   probe. */
+const BUTTON_TOKEN_GROUPS = [
+  {
+    label: 'Sizing',
+    tokens: [
+      { token: '--vds-button-h-xs', bound: 'var(--vds-control-h-xs)', controls: 'Height — xs (dense rows, toolbars)' },
+      { token: '--vds-button-h-sm', bound: 'var(--vds-control-h-sm)', controls: 'Height — sm' },
+      { token: '--vds-button-h-md', bound: 'var(--vds-control-h-md)', controls: 'Height — md (default)' },
+      { token: '--vds-button-h-lg', bound: 'var(--vds-control-h-lg)', controls: 'Height — lg' },
+      { token: '--vds-button-h-xl', bound: 'var(--vds-control-h-xl)', controls: 'Height — xl (hero CTA)' },
+      { token: '--vds-button-pad-x-xs', bound: 'var(--vds-space-2)', controls: 'Left/right padding — xs' },
+      { token: '--vds-button-pad-x-sm', bound: 'var(--vds-space-3)', controls: 'Left/right padding — sm' },
+      { token: '--vds-button-pad-x-md', bound: 'var(--vds-space-4)', controls: 'Left/right padding — md' },
+      { token: '--vds-button-pad-x-lg', bound: 'var(--vds-space-6)', controls: 'Left/right padding — lg' },
+      { token: '--vds-button-pad-x-xl', bound: 'var(--vds-space-8)', controls: 'Left/right padding — xl' },
+      { token: '--vds-button-gap-xs', bound: 'var(--vds-space-2)', controls: 'Icon ↔ label gap — xs' },
+      { token: '--vds-button-gap-sm', bound: 'var(--vds-space-2)', controls: 'Icon ↔ label gap — sm' },
+      { token: '--vds-button-gap-md', bound: 'var(--vds-space-2-5)', controls: 'Icon ↔ label gap — md' },
+      { token: '--vds-button-gap-lg', bound: 'var(--vds-space-3)', controls: 'Icon ↔ label gap — lg (grows to keep pace with the padding)' },
+      { token: '--vds-button-gap-xl', bound: 'var(--vds-space-3)', controls: 'Icon ↔ label gap — xl' },
+      { token: '--vds-button-icon-nudge', bound: 'var(--vds-space-1)', controls: 'How far icon slots pull toward the edge (optical correction; scales 2→8px)' },
+    ],
+  },
+  {
+    label: 'Shape',
+    tokens: [
+      { token: '--vds-button-radius', bound: 'var(--vds-radius-sm)', controls: 'Corner radius' },
+      { token: '--vds-button-border-w', bound: 'var(--vds-border-w)', controls: 'Border hairline width' },
+    ],
+  },
+  {
+    label: 'Type',
+    tokens: [
+      { token: '--vds-button-weight', bound: 'var(--vds-weight-medium)', controls: 'Label weight (xs–lg)' },
+      { token: '--vds-button-weight-strong', bound: 'var(--vds-weight-semibold)', controls: 'Label weight — xl only, reads heavier' },
+    ],
+  },
+  {
+    label: 'Focus ring',
+    tokens: [
+      { token: '--vds-button-ring-w', bound: 'var(--vds-control-ring-w)', controls: 'Focus ring thickness' },
+      { token: '--vds-button-ring-offset', bound: 'var(--vds-control-ring-offset)', controls: 'Focus ring gap from the edge' },
+    ],
+  },
+  {
+    label: 'Motion',
+    tokens: [
+      { token: '--vds-button-dur', bound: 'var(--vds-dur-fast)', controls: 'Hover / focus transition speed' },
+      { token: '--vds-button-ease', bound: 'var(--vds-ease-out)', controls: 'Easing curve' },
+    ],
+  },
 ]
-
-function TokenTable({ values }) {
-  return (
-    <div className="vds-ref-table-wrap">
-      <table className="vds-ref-table">
-        <thead>
-          <tr>
-            <th>Token</th>
-            <th>Bound to</th>
-            <th>Live value</th>
-            <th>What it controls</th>
-          </tr>
-        </thead>
-        <tbody>
-          {TOKEN_GROUPS.map((g) => (
-            <Fragment key={g.label}>
-              <tr>
-                <td colSpan={4}>
-                  <span className="vds-text vds-text--eyebrow vds-text--tone-muted">{g.label}</span>
-                </td>
-              </tr>
-              {g.tokens.map((t) => (
-                <tr key={t}>
-                  <td><code>{t}</code></td>
-                  <td><code>{TOKEN_BOUND[t]}</code></td>
-                  <td><code>{values[t] || '…'}</code></td>
-                  <td>{TOKEN_CONTROLS[t]}</td>
-                </tr>
-              ))}
-            </Fragment>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )
-}
 
 /* ---------------------------------------------------------------------------
    S9 · Do / Don't pair
@@ -459,7 +403,7 @@ export function ButtonPage() {
     <ComponentPage
       colors={COMPONENT_COLORS.Button}
       title="Button"
-      description="A button people click. Two choices: variant is how loud it looks (solid, soft, outline, ghost) and tone is its job and color (primary, neutral, success, warning, danger, info). Any look works with any color. Five sizes — from a tiny xs for dense rows to a big xl for a hero call-to-action — a spinner for loading, a faded look when off, and a ring you can see when you tab to it. Passes through all normal button props."
+      description="A thing people click to do something. Two dials: variant is how loud it looks (solid, soft, outline, ghost), and tone is its color and job (primary, neutral, success, warning, danger, info). Any look works with any color. Five sizes — tiny xs for packed rows up to big xl for one hero moment. It has a loading spinner, a faded off state, and a focus ring you can see when you tab to it. Takes all the normal button props too."
       installCode={`<!-- Tokens-only: link the CSS variables, build your own button against them. -->
 <link rel="stylesheet" href="vipre-tokens.css">`}
       props={[
@@ -501,7 +445,7 @@ export function ButtonPage() {
 
       <Section
         title="Playground"
-        note="Turn the knobs — the button updates live. The class list under the stage is exactly what a non-React app copies into its markup."
+        note="Turn the dials and watch the button change. The class list below the stage is exactly what a plain-HTML app copies into its markup."
       >
         <Playground />
       </Section>
@@ -620,14 +564,14 @@ export function ButtonPage() {
 
       <Section
         title="States"
-        note="Every variant across every state, for one tone at a time. Switch the tone to see the whole matrix re-color."
+        note="Every look in every state, one color at a time. Switch the color to repaint the whole grid."
       >
         <StateMatrix />
       </Section>
 
       <Section
         title="With icons"
-        note="Two slots. leading = what the action IS (add, download) — it helps people scan. trailing = where the action GOES (next step, opens a menu, leaves the app). Pick one; use both only when the button truly does both jobs. If there's no room for words, use icon-only instead."
+        note="Two icon slots. leading says what the action is (add, download) — it helps people scan. trailing says where it goes (next step, opens a menu, leaves the app). Usually pick one. No room for words? Use icon-only instead."
       >
         <Stack gap={4}>
           <Preview
@@ -661,7 +605,7 @@ export function ButtonPage() {
 
       <Section
         title="In a table"
-        note="xs exists for dense surfaces like table rows and toolbars — it's the smallest size that still reads as a button. On a touch screen the hit area still grows to the 44px minimum, invisibly, without changing the row's height. Badges in cells ride vertical-align: middle so they sit dead-center in the row."
+        note="xs is the smallest size that still looks like a button — good for table rows and toolbars. On a touch screen the tap area quietly grows to 44px, without making the row any taller."
       >
         <Preview
           canvas={
@@ -825,9 +769,9 @@ export function ButtonPage() {
       <div id="button-tokens">
         <Section
           title="Tokens"
-          note="Every visual value is a --vds-button-* custom property set on the .vds-button root, bound to foundation tokens only. Live value is what the browser computes right now. Re-declare any of them on your own selector to re-space or re-shape the button; nothing else in the system changes."
+          note="Every look comes from a --vds-button-* variable on the .vds-button root, built from the foundation tokens. 'Live value' is what the browser shows right now. Set any of these on your own button to re-space or re-shape it — nothing else in the system moves."
         >
-          <TokenTable values={tokenValues} />
+          <TokenSpecTable scope="vds-button" prefix="--vds-button-" groups={BUTTON_TOKEN_GROUPS} />
 
           <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.75rem' }}>
             Size is a typescale step, not a raw value: xs = <IC>micro</IC>, sm = <IC>detail</IC>, md = <IC>body</IC>, lg = <IC>body-lg</IC>, xl = <IC>subheading</IC>.
@@ -848,32 +792,6 @@ export function ButtonPage() {
         </Section>
       </div>
 
-      <Section
-        title="Markup"
-        note="The rendered HTML with the vds- classes — this is the reference implementation of the token contract above, not a shipped package. Build your own button component in whatever framework you use and bind it to these classes and --vds-button-* tokens. Always three modifiers: a variant, a tone, and a size. No JS needed — the loading spinner is a nested Spinner span you add yourself."
-      >
-        <Code>{`<!-- variant: --solid | --soft | --outline | --ghost
-     tone:    --primary | --neutral | --success | --warning | --danger | --info
-     size:    --xs | --sm | --md | --lg | --xl -->
-<button type="button" class="vds-button vds-button--solid vds-button--primary vds-button--md">
-  <!-- wrap the text so it can be optically re-centered against an icon -->
-  <span class="vds-button__label">Add device</span>
-</button>
-
-<!-- loading: add --loading, aria-busy, disabled, and a Spinner inside -->
-<button type="button" disabled aria-busy="true"
-        class="vds-button vds-button--solid vds-button--primary vds-button--md vds-button--loading">
-  <span class="vds-spinner vds-spinner--sm" role="status" aria-label="Loading"></span> Saving…
-</button>
-
-<!-- icon-only: add --icon and an aria-label -->
-<button type="button" aria-label="Edit"
-        class="vds-button vds-button--ghost vds-button--primary vds-button--sm vds-button--icon">
-  <svg class="vds-icon" width="16" height="16" aria-hidden="true">…</svg>
-</button>
-
-<!-- full width: add vds-button--full -->`}</Code>
-      </Section>
     </ComponentPage>
   )
 }

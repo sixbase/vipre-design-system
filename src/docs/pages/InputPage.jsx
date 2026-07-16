@@ -1,8 +1,8 @@
-import { Fragment, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Search, X } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, Code, IC, PropsTable } from '../primitives.jsx'
+import { Section, Preview, Code, IC, PropsTable, RefTable, TokenSpecTable } from '../primitives.jsx'
 import { Input, Icon, Inline, Badge, Surface, Stack, Text, SegmentedControl, Select, Switch, Divider, Field } from '../../components/index.js'
 
 /* ---------------------------------------------------------------------------
@@ -51,23 +51,10 @@ function useResolvedTokens(names) {
   return [values, ref]
 }
 
-/* A raw table that accepts React nodes in any cell (PropsTable only takes
-   strings / {code}). Used where a cell holds a token name + its live value. */
-function RawTable({ headers, rows }) {
-  return (
-    <div className="vds-ref-table-wrap">
-      <table className="vds-ref-table">
-        <thead>
-          <tr>{headers.map((h) => <th key={h}>{h}</th>)}</tr>
-        </thead>
-        <tbody>
-          {rows.map((row, i) => (
-            <tr key={i}>{row.map((cell, j) => <td key={j}>{cell}</td>)}</tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )
+/* Local alias kept for the Sizes spec table below; RefTable is the shared
+   node-in-cell table now living in primitives. */
+function RawTable(props) {
+  return <RefTable {...props} />
 }
 
 /* Token name stacked over its live-resolved value, for the spec tables. */
@@ -277,105 +264,70 @@ function StateMatrix() {
    S8 · Tokens table
    -------------------------------------------------------------------------- */
 
-const TOKEN_BOUND = {
-  '--vds-input-h-xs': 'var(--vds-control-h-xs)',
-  '--vds-input-h-sm': 'var(--vds-control-h-sm)',
-  '--vds-input-h-md': 'var(--vds-control-h-md)',
-  '--vds-input-h-lg': 'var(--vds-control-h-lg)',
-  '--vds-input-h-xl': 'var(--vds-control-h-xl)',
-  '--vds-input-pad-x-xs': 'var(--vds-space-2)',
-  '--vds-input-pad-x-sm': 'var(--vds-space-2-5)',
-  '--vds-input-pad-x-md': 'var(--vds-space-3)',
-  '--vds-input-pad-x-lg': 'var(--vds-space-4)',
-  '--vds-input-pad-x-xl': 'var(--vds-space-5)',
-  '--vds-input-gap': 'var(--vds-space-2)',
-  '--vds-input-affix-nudge': 'calc(var(--vds-space-1) / 2)',
-  '--vds-input-radius': 'var(--vds-radius-sm)',
-  '--vds-input-border-w': 'var(--vds-border-w)',
-  '--vds-input-fill': 'var(--vds-surface-sunken)',
-  '--vds-input-border': 'var(--vds-line-strong)',
-  '--vds-input-muted': 'var(--vds-ink-subtle)',
-  '--vds-input-addon-bg': 'mix(surface-sunken, ink 4%)',
-  '--vds-input-addon-ink': 'var(--vds-ink-muted)',
-  '--vds-control-ring-w': '— (shared control token)',
-  '--vds-input-ring': 'focus-ring @ --vds-control-ring-tint',
-  '--vds-input-touch-min': 'var(--vds-control-font-touch-min)',
-  '--vds-input-dur': 'var(--vds-dur-fast)',
-  '--vds-input-ease': 'var(--vds-ease-out)',
-}
-
-const TOKEN_CONTROLS = {
-  '--vds-input-h-xs': 'Height — xs (dense rows, toolbars)',
-  '--vds-input-h-sm': 'Height — sm',
-  '--vds-input-h-md': 'Height — md (default)',
-  '--vds-input-h-lg': 'Height — lg',
-  '--vds-input-h-xl': 'Height — xl (hero / marketing forms)',
-  '--vds-input-pad-x-xs': 'Left/right padding — xs',
-  '--vds-input-pad-x-sm': 'Left/right padding — sm',
-  '--vds-input-pad-x-md': 'Left/right padding — md',
-  '--vds-input-pad-x-lg': 'Left/right padding — lg',
-  '--vds-input-pad-x-xl': 'Left/right padding — xl',
-  '--vds-input-gap': 'Space between an affix (icon/button) and the text',
-  '--vds-input-affix-nudge': 'How far affixes hang into the pad (optical correction; full space-1 at lg/xl)',
-  '--vds-input-radius': 'Corner radius',
-  '--vds-input-border-w': 'Border hairline width',
-  '--vds-input-fill': 'Field background',
-  '--vds-input-border': 'Resting border',
-  '--vds-input-muted': 'Placeholder text + affix icon color',
-  '--vds-input-addon-bg': 'Attached prefix/suffix segment background (fill mixed a hair toward ink)',
-  '--vds-input-addon-ink': 'Attached prefix/suffix segment text color',
-  '--vds-control-ring-w': 'Focus ring thickness — shared by every control',
-  '--vds-input-ring': 'Valid focus ring color (soft shadow)',
-  '--vds-input-touch-min': 'Bumps md font-size on coarse pointers so iOS doesn’t zoom on focus',
-  '--vds-input-dur': 'Border / ring transition speed',
-  '--vds-input-ease': 'Easing curve',
-}
-
-const TOKEN_GROUPS = [
-  { label: 'Sizing', tokens: ['--vds-input-h-xs', '--vds-input-h-sm', '--vds-input-h-md', '--vds-input-h-lg', '--vds-input-h-xl', '--vds-input-pad-x-xs', '--vds-input-pad-x-sm', '--vds-input-pad-x-md', '--vds-input-pad-x-lg', '--vds-input-pad-x-xl', '--vds-input-gap', '--vds-input-affix-nudge'] },
-  { label: 'Shape', tokens: ['--vds-input-radius', '--vds-input-border-w'] },
-  { label: 'Color', tokens: ['--vds-input-fill', '--vds-input-border', '--vds-input-muted'] },
-  { label: 'Add-ons', tokens: ['--vds-input-addon-bg', '--vds-input-addon-ink'] },
-  { label: 'Focus ring', tokens: ['--vds-control-ring-w', '--vds-input-ring'] },
-  { label: 'Touch', tokens: ['--vds-input-touch-min'] },
-  { label: 'Motion', tokens: ['--vds-input-dur', '--vds-input-ease'] },
+/* The one token spec — Token / Bound to / What it controls, grouped. Live
+   values are read at render by the shared TokenSpecTable off a .vds-input
+   probe. */
+const INPUT_TOKEN_GROUPS = [
+  {
+    label: 'Sizing',
+    tokens: [
+      { token: '--vds-input-h-xs', bound: 'var(--vds-control-h-xs)', controls: 'Height — xs (dense rows, toolbars)' },
+      { token: '--vds-input-h-sm', bound: 'var(--vds-control-h-sm)', controls: 'Height — sm' },
+      { token: '--vds-input-h-md', bound: 'var(--vds-control-h-md)', controls: 'Height — md (default)' },
+      { token: '--vds-input-h-lg', bound: 'var(--vds-control-h-lg)', controls: 'Height — lg' },
+      { token: '--vds-input-h-xl', bound: 'var(--vds-control-h-xl)', controls: 'Height — xl (hero / marketing forms)' },
+      { token: '--vds-input-pad-x-xs', bound: 'var(--vds-space-2)', controls: 'Left/right padding — xs' },
+      { token: '--vds-input-pad-x-sm', bound: 'var(--vds-space-2-5)', controls: 'Left/right padding — sm' },
+      { token: '--vds-input-pad-x-md', bound: 'var(--vds-space-3)', controls: 'Left/right padding — md' },
+      { token: '--vds-input-pad-x-lg', bound: 'var(--vds-space-4)', controls: 'Left/right padding — lg' },
+      { token: '--vds-input-pad-x-xl', bound: 'var(--vds-space-5)', controls: 'Left/right padding — xl' },
+      { token: '--vds-input-gap', bound: 'var(--vds-space-2)', controls: 'Space between an affix (icon/button) and the text' },
+      { token: '--vds-input-affix-nudge', bound: 'calc(var(--vds-space-1) / 2)', controls: 'How far affixes hang into the pad (optical correction; full space-1 at lg/xl)' },
+    ],
+  },
+  {
+    label: 'Shape',
+    tokens: [
+      { token: '--vds-input-radius', bound: 'var(--vds-radius-sm)', controls: 'Corner radius' },
+      { token: '--vds-input-border-w', bound: 'var(--vds-border-w)', controls: 'Border hairline width' },
+    ],
+  },
+  {
+    label: 'Color',
+    tokens: [
+      { token: '--vds-input-fill', bound: 'var(--vds-surface-sunken)', controls: 'Field background' },
+      { token: '--vds-input-border', bound: 'var(--vds-line-strong)', controls: 'Resting border' },
+      { token: '--vds-input-muted', bound: 'var(--vds-ink-subtle)', controls: 'Placeholder text + affix icon color' },
+    ],
+  },
+  {
+    label: 'Add-ons',
+    tokens: [
+      { token: '--vds-input-addon-bg', bound: 'mix(surface-sunken, ink 4%)', controls: 'Attached prefix/suffix segment background (fill mixed a hair toward ink)' },
+      { token: '--vds-input-addon-ink', bound: 'var(--vds-ink-muted)', controls: 'Attached prefix/suffix segment text color' },
+    ],
+  },
+  {
+    label: 'Focus ring',
+    tokens: [
+      { token: '--vds-control-ring-w', bound: '— (shared control token)', controls: 'Focus ring thickness — shared by every control' },
+      { token: '--vds-input-ring', bound: 'focus-ring @ --vds-control-ring-tint', controls: 'Valid focus ring color (soft shadow)' },
+    ],
+  },
+  {
+    label: 'Touch',
+    tokens: [
+      { token: '--vds-input-touch-min', bound: 'var(--vds-control-font-touch-min)', controls: 'Bumps md font-size on coarse pointers so iOS doesn’t zoom on focus' },
+    ],
+  },
+  {
+    label: 'Motion',
+    tokens: [
+      { token: '--vds-input-dur', bound: 'var(--vds-dur-fast)', controls: 'Border / ring transition speed' },
+      { token: '--vds-input-ease', bound: 'var(--vds-ease-out)', controls: 'Easing curve' },
+    ],
+  },
 ]
-
-function TokenTable({ values }) {
-  return (
-    <div className="vds-ref-table-wrap">
-      <table className="vds-ref-table">
-        <thead>
-          <tr>
-            <th>Token</th>
-            <th>Bound to</th>
-            <th>Live value</th>
-            <th>What it controls</th>
-          </tr>
-        </thead>
-        <tbody>
-          {TOKEN_GROUPS.map((g) => (
-            <Fragment key={g.label}>
-              <tr>
-                <td colSpan={4}>
-                  <span className="vds-text vds-text--eyebrow vds-text--tone-muted">{g.label}</span>
-                </td>
-              </tr>
-              {g.tokens.map((t) => (
-                <tr key={t}>
-                  <td><code>{t}</code></td>
-                  <td><code>{TOKEN_BOUND[t]}</code></td>
-                  <td><code>{values[t] || '…'}</code></td>
-                  <td>{TOKEN_CONTROLS[t]}</td>
-                </tr>
-              ))}
-            </Fragment>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )
-}
 
 /* ---------------------------------------------------------------------------
    S7 · Do / Don't pair
@@ -440,7 +392,7 @@ export function InputPage() {
         <><IC>invalid</IC> sets <IC>aria-invalid</IC>; connect the error text with <IC>aria-describedby</IC> (or just wrap it in <IC>Field</IC>, which does this for you).</>,
         <>The whole box lights up when you click or tab into it (<IC>:focus-within</IC>) using the input’s soft graphite ring — keyboard AND pointer.</>,
         <>Affix <strong>actions</strong> (clear, show password) must be real <IC>{'<button>'}</IC>s with an <IC>aria-label</IC> — a bare icon isn’t reachable or announced.</>,
-        <>On a coarse pointer, an interactive affix grows an invisible 44px tap target (the field’s height doesn’t change), so even a dense <IC>xs</IC> field’s buttons stay tappable.</>,
+        <>On touch screens, an interactive affix grows an invisible 44px tap target (the field’s height doesn’t change), so even a dense <IC>xs</IC> field’s buttons stay tappable.</>,
       ]}
     >
       {/* Hidden probe: a .vds-input shell that carries the input custom-property
@@ -568,7 +520,7 @@ export function InputPage() {
       {/* S5b · Add-ons */}
       <Section
         title="Add-ons"
-        note="Add-ons are little attached segments GLUED inside the border — a currency mark, a URL scheme, a unit. They read as chrome (a slightly darker segment split off by a hairline), not as something you type. Use prefix for the front (a “$”, “https://”) and suffix for the back (“kg”, “.00”). They’re different from leading/trailing affixes: affixes are icons/buttons that sit in the padding; add-ons are labelled segments flush to the edge."
+        note="Add-ons are little segments glued inside the border — a currency mark, a URL scheme, a unit. They look like part of the box (a slightly darker segment split off by a thin line), not something you type. Use prefix for the front (a “$”, “https://”) and suffix for the back (“kg”, “.00”). They’re different from leading/trailing affixes: affixes are icons or buttons that sit in the padding; add-ons are labelled segments flush to the edge."
       >
         <Stack gap={4}>
           <Preview
@@ -590,7 +542,7 @@ export function InputPage() {
             ]}
           />
           <Text variant="detail" tone="muted">
-            An add-on is <strong>chrome</strong>, not a control — it’s a plain segment with muted ink, not a button. Its background is <IC>--vds-input-addon-bg</IC> (the fill mixed a hair toward ink) and it stays put through hover, focus, and invalid, because it’s inside the field’s own border.
+            An add-on is <strong>decoration</strong>, not a control — it’s a plain segment with muted ink, not a button. Its background is <IC>--vds-input-addon-bg</IC> (the fill mixed a hair toward ink) and it stays put through hover, focus, and invalid, because it’s inside the field’s own border.
           </Text>
         </Stack>
       </Section>
@@ -683,12 +635,12 @@ export function InputPage() {
       <div id="input-tokens">
         <Section
           title="Tokens"
-          note="Every visual value is a --vds-input-* custom property set on the .vds-input root, bound to foundation tokens only. Live value is what the browser computes right now. Re-declare any of them on your own selector to re-space or re-shape the field; nothing else in the system changes. Colors point at semantic tokens, so light/dark comes free."
+          note="Every visual value is a --vds-input-* variable on the .vds-input root, built only from foundation tokens. Live value is what the browser shows right now. Set any of them on your own selector to re-space or reshape the field; nothing else changes. Colors point at semantic tokens, so light and dark come free."
         >
-          <TokenTable values={tokenValues} />
+          <TokenSpecTable scope="vds-input" prefix="--vds-input-" groups={INPUT_TOKEN_GROUPS} />
 
           <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.75rem' }}>
-            Size is a typescale step, not a raw value: xs = <IC>micro</IC>, sm = <IC>detail</IC>, md = <IC>body</IC>, lg and xl = <IC>body-lg</IC>.
+            Size is a text-size step, not a raw value: xs = <IC>micro</IC>, sm = <IC>detail</IC>, md = <IC>body</IC>, lg and xl = <IC>body-lg</IC>.
           </p>
           <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.5rem' }}>
             <strong>D1 — soft ring.</strong> Fields (Input, Select, Textarea) render focus as a soft <IC>box-shadow</IC> ring; action controls (Button, Checkbox) use a hard <IC>outline</IC> ring instead. Both are intentional recipes, not a mismatch.
@@ -699,35 +651,6 @@ export function InputPage() {
         </Section>
       </div>
 
-      {/* S9 · Reference implementation */}
-      <Section
-        title="Reference implementation"
-        note="How the demos on this page are built — reference only. The design system does not ship this markup or CSS as an installable package; it ships the tokens above. Your team writes its own input component (its own classes, its own framework) and binds to the --vds-input-* variables."
-      >
-        <Stack gap={4}>
-          <p className="vds-text vds-text--body vds-text--tone-muted" style={{ margin: 0 }}>
-            The reference build lives in the repo under <IC>src/components/Input</IC>. Treat it as a worked
-            example of the tokens — not something to install today. It's also the seed of a future
-            <em> versioned, installable</em> package: when Vipre is ready, the same token contract makes that a
-            drop-in, not a rewrite.
-          </p>
-          <Code>{`<!-- size: --xs | --sm | --md | --lg | --xl -->
-<div class="vds-input vds-input--md">
-  <span class="vds-input__affix vds-input__affix--lead">
-    <svg class="vds-icon" width="16" height="16" aria-hidden="true">…</svg>
-  </span>
-  <input class="vds-input__field" placeholder="you@company.com" />
-  <span class="vds-input__affix vds-input__affix--trail">
-    <button type="button" aria-label="Clear">
-      <svg class="vds-icon" width="16" height="16" aria-hidden="true">…</svg>
-    </button>
-  </span>
-</div>
-
-<!-- invalid: add vds-input--invalid (sets the red border; also set aria-invalid) -->
-<!-- disabled: add vds-input--disabled (and disabled on the <input>) -->`}</Code>
-        </Stack>
-      </Section>
     </ComponentPage>
   )
 }

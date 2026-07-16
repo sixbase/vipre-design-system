@@ -8,7 +8,7 @@ export function PopoverPage() {
     <ComponentPage
       colors={COMPONENT_COLORS.Popover}
       title="Popover"
-      description="The floating-panel building block. A trigger opens a little floating Surface right next to it, and the panel always stays on screen: it flips above the trigger when there's no room below, slides left or right to stay in view, and caps its height so it scrolls instead of running off the edge. Clicking outside or pressing Escape closes it; Escape also puts focus back on the trigger. Every dropdown, menu, and combobox should be built on this instead of solving placement and focus all over again."
+      description="The floating-panel building block. A trigger opens a little panel right next to it, and the panel always stays on screen: it flips above the trigger when there's no room below, slides left or right to stay in view, and caps its height so it scrolls instead of running off the edge. Clicking outside or pressing Escape closes it; Escape also puts focus back on the trigger. Build every dropdown, menu, and search box on top of this instead of redoing placement and focus each time."
       installCode={`import { Popover } from 'vipre-design-system'`}
       props={[
         {

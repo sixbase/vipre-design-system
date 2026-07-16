@@ -8,7 +8,7 @@ export function MenuPage() {
   return (
     <ComponentPage
       title="Menu"
-      description="A dropdown list of actions. Click the trigger, pick an action, the menu closes. It's built on Popover, so placement (flip + clamp), outside-click and Escape dismissal, and focus return all come from one shared implementation. Arrow keys move, letters jump to matching items, Enter picks."
+      description="A dropdown list of actions. Click the trigger, pick an action, the menu closes. It's built on Popover, so it gets its placement, click-outside and Escape closing, and focus return from there. Arrow keys move, letters jump to matching items, Enter picks."
       installCode={`import { Menu, MenuItem, MenuSeparator, MenuLabel } from 'vipre-design-system'`}
       props={[
         {

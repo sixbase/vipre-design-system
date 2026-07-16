@@ -9,8 +9,8 @@ export function TeamBriefPage() {
     <div className="vds-doc">
       <h1 className="vds-heading vds-heading--display">Team Brief</h1>
       <p className="vds-text vds-text--body-lg vds-text--tone-muted" style={{ marginTop: '0.25rem' }}>
-        A plain-language brief for design + engineering: how the system is maintained, and how the
-        React and Angular teams consume it. Share this to align on adoption.{' '}
+        A plain brief for design and engineering: how the system is looked after, and how the
+        React and Angular teams use it. Share this to get everyone on the same page.{' '}
         <a href={src} target="_blank" rel="noopener noreferrer">Open in a new tab ↗</a>
       </p>
       <iframe

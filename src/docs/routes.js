@@ -75,6 +75,7 @@ import { TagsInputPage } from './pages/TagsInputPage.jsx'
 import { MeetingGuidePage } from './pages/MeetingGuidePage.jsx'
 import { MenuQuickstartPage } from './pages/MenuQuickstartPage.jsx'
 import { TokensPage } from './pages/TokensPage.jsx'
+import { GradientExplorerPage } from './pages/GradientExplorerPage.jsx'
 
 /* Single source of truth for both the sidebar nav and the hash router.
    Group ORDER and item order are intentional (a learn-then-reference flow),
@@ -99,6 +100,7 @@ export const NAV = [
       { path: '/foundation/tokens', name: 'Token Reference', Page: TokensPage },
       { path: '/foundation/colors', name: 'Colors', Page: ColorsPage },
       { path: '/foundation/color-usage', name: 'Color usage', Page: ColorUsagePage },
+      { path: '/foundation/gradient-explorer', name: 'Gradient Explorer', Page: GradientExplorerPage },
       { path: '/foundation/typography', name: 'Typography', Page: TypographyPage },
       { path: '/foundation/spacing', name: 'Spacing', Page: SpacingPage },
       { path: '/foundation/layout', name: 'Layout', Page: LayoutPage },

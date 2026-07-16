@@ -1,19 +1,29 @@
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
-import { Section, Preview, IC, PropsTable } from '../primitives.jsx'
+import { Section, Preview, IC, TokenSpecTable } from '../primitives.jsx'
 import { Field, Input, Select } from '../../components/index.js'
 
 const COL = { display: 'flex', flexDirection: 'column', gap: '1.25rem', width: '100%', maxWidth: 360 }
 
-/* A labelled token table for the Tokens section. */
-function TokenGroup({ label, headers, rows }) {
-  return (
-    <div style={{ marginTop: '1.25rem' }}>
-      <p className="vds-text vds-text--eyebrow" style={{ margin: '0 0 0.4rem' }}>{label}</p>
-      <PropsTable headers={headers} rows={rows} />
-    </div>
-  )
-}
+/* The one token spec — Token / Bound to / What it controls, grouped. Live
+   values are read at render by the shared TokenSpecTable off a .vds-field
+   probe. */
+const FIELD_TOKEN_GROUPS = [
+  {
+    label: 'Spacing',
+    tokens: [
+      { token: '--vds-field-gap', bound: 'var(--vds-space-1-5)', controls: 'Vertical gap: label → control → help/error' },
+    ],
+  },
+  {
+    label: 'Text color',
+    tokens: [
+      { token: '--vds-field-label-color', bound: 'var(--vds-ink-muted)', controls: 'Label text above the control' },
+      { token: '--vds-field-help-color', bound: 'var(--vds-ink-muted)', controls: 'Helper text below the control' },
+      { token: '--vds-field-error-color', bound: 'var(--vds-danger)', controls: 'Error message below the control' },
+    ],
+  },
+]
 
 export function FieldPage() {
   return (
@@ -71,32 +81,13 @@ export function FieldPage() {
 
       <Section
         title="Tokens"
-        note="Field owns the vertical rhythm and the label / help / error text color. Every value is a public custom property set on the .vds-field root — re-point any of them to re-shape the field without touching markup."
+        note="Field sets the spacing between rows and the color of the label, help, and error text. Every value is a variable on the .vds-field root — change any one to reshape the field without touching the markup."
       >
-        <TokenGroup label="Spacing" headers={['Token', 'Value', 'Controls']} rows={[
-          [{ code: '--vds-field-gap' }, { code: '0.375rem (6px)' }, 'Vertical gap: label → control → help/error'],
-        ]} />
-        <TokenGroup label="Text color" headers={['Token', 'Bound to', 'Controls']} rows={[
-          [{ code: '--vds-field-label-color' }, { code: '--vds-ink-muted' }, 'Label text above the control'],
-          [{ code: '--vds-field-help-color' }, { code: '--vds-ink-muted' }, 'Helper text below the control'],
-          [{ code: '--vds-field-error-color' }, { code: '--vds-danger' }, 'Error message below the control'],
-        ]} />
-        <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.5rem' }}>
+        <TokenSpecTable scope="vds-field" prefix="--vds-field-" groups={FIELD_TOKEN_GROUPS} />
+        <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.75rem' }}>
           The color tokens bind to semantic tokens (<IC>--vds-ink-muted</IC>, <IC>--vds-danger</IC>) that
           already flip light/dark on their own — so the defaults need no theming. Label, help, and error type
-          come from the <IC>detail</IC> / <IC>eyebrow</IC> typescale steps.
-        </p>
-      </Section>
-
-      <Section
-        title="Reference implementation"
-        note="How the demos on this page are built — reference only. The design system does not ship this markup or CSS as an installable package; it ships the tokens above. Your team writes its own field wrapper (its own classes, its own framework) and binds to the --vds-field-* variable."
-      >
-        <p className="vds-text vds-text--body vds-text--tone-muted" style={{ margin: 0 }}>
-          The reference build lives in the repo under <IC>src/components/Field</IC>. Treat it as a worked
-          example of the tokens — not something to install today. It's also the seed of a future
-          <em> versioned, installable</em> package: when Vipre is ready, the same token contract makes that a
-          drop-in, not a rewrite.
+          come from the <IC>detail</IC> / <IC>eyebrow</IC> text-size steps.
         </p>
       </Section>
     </ComponentPage>

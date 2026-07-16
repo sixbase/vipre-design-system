@@ -9,8 +9,8 @@ export function KickoffPage() {
     <div className="vds-doc">
       <h1 className="vds-heading vds-heading--display">Kickoff &amp; Notes</h1>
       <p className="vds-text vds-text--body-lg vds-text--tone-muted" style={{ marginTop: '0.25rem' }}>
-        A two-minute, plain-language read on how we use the design system, flowing into the
-        decisions to make — with note fields you can fill in live during the meeting.{' '}
+        A short, plain read on how we use the design system, leading into the
+        choices to make — with note fields you can fill in live during the meeting.{' '}
         <a href={src} target="_blank" rel="noopener noreferrer">Open in a new tab ↗</a>{' '}
         (best for note-taking — notes save in that tab).
       </p>

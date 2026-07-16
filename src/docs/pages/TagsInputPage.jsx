@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { ComponentPage } from '../ComponentPage.jsx'
-import { Section, Preview, PropsTable, IC, Kbd } from '../primitives.jsx'
+import { Section, Preview, PropsTable, IC, Kbd, TokenSpecTable } from '../primitives.jsx'
 import {
   TagsInput,
-  Heading,
   Text,
   Stack,
   Inline,
@@ -15,16 +14,44 @@ import {
 
 const SIZES = ['sm', 'md', 'lg']
 
-function TokenGroup({ label, rows }) {
-  return (
-    <>
-      <Heading level="subheading" as="h3" style={{ margin: '1.25rem 0 0.5rem' }}>
-        {label}
-      </Heading>
-      <PropsTable headers={['Token', 'Bound to', 'What it controls']} rows={rows} />
-    </>
-  )
-}
+/* Every public --vds-tags-* token — Token / Bound to / Live value / What it
+   controls, grouped. Live values are read at render by the shared
+   TokenSpecTable off a hidden .vds-tags probe. */
+const TAGSINPUT_TOKEN_GROUPS = [
+  {
+    label: 'Shape & color',
+    tokens: [
+      { token: '--vds-tags-radius', bound: 'var(--vds-radius-sm)', controls: 'Corner radius' },
+      { token: '--vds-tags-border-w', bound: 'var(--vds-border-w)', controls: 'Border hairline width' },
+      { token: '--vds-tags-fill', bound: 'var(--vds-surface-sunken)', controls: 'Field background' },
+      { token: '--vds-tags-border', bound: 'var(--vds-line-strong)', controls: 'Resting border' },
+      { token: '--vds-tags-border-hover', bound: 'border + ink @ hover-mix', controls: 'Border on hover' },
+      { token: '--vds-tags-border-focus', bound: 'var(--vds-focus-ring)', controls: 'Border on focus' },
+      { token: '--vds-tags-ring', bound: 'focus-ring @ ring-tint', controls: 'Soft focus ring (field recipe)' },
+      { token: '--vds-tags-ink-muted', bound: 'var(--vds-ink-subtle)', controls: 'Placeholder text' },
+    ],
+  },
+  {
+    label: 'Spacing & sizing',
+    tokens: [
+      { token: '--vds-tags-gap', bound: 'var(--vds-space-1-5)', controls: 'Chip ↔ chip / chip ↔ input gap' },
+      { token: '--vds-tags-pad-y', bound: 'var(--vds-space-1)', controls: 'Top / bottom padding' },
+      { token: '--vds-tags-pad-x-sm', bound: 'var(--vds-space-2)', controls: 'Left / right padding — sm' },
+      { token: '--vds-tags-pad-x-md', bound: 'var(--vds-space-2-5)', controls: 'Left / right padding — md' },
+      { token: '--vds-tags-pad-x-lg', bound: 'var(--vds-space-3)', controls: 'Left / right padding — lg' },
+      { token: '--vds-tags-min-h-sm', bound: 'var(--vds-control-h-sm)', controls: 'Minimum height — sm' },
+      { token: '--vds-tags-min-h-md', bound: 'var(--vds-control-h-md)', controls: 'Minimum height — md' },
+      { token: '--vds-tags-min-h-lg', bound: 'var(--vds-control-h-lg)', controls: 'Minimum height — lg' },
+    ],
+  },
+  {
+    label: 'Motion',
+    tokens: [
+      { token: '--vds-tags-dur', bound: 'var(--vds-dur-fast)', controls: 'Border / ring transition speed' },
+      { token: '--vds-tags-ease', bound: 'var(--vds-ease-out)', controls: 'Easing curve (gated behind prefers-reduced-motion)' },
+    ],
+  },
+]
 
 function ControlField({ label, children }) {
   return (
@@ -152,53 +179,9 @@ export function TagsInputPage() {
 
       <Section
         title="Tokens"
-        note="Every visual value is a --vds-tags-* custom property on the .vds-tags root, bound to foundation tokens only. The shell chrome mirrors Input's field recipe (neutral border + hover darken + soft focus ring on :focus-within); colors point at semantic tokens, so light/dark comes free."
+        note="Every look comes from a --vds-tags-* variable on the .vds-tags root, bound to foundation tokens only. Live value is what the browser shows right now. The box copies Input's field recipe (neutral border, darker on hover, soft focus ring on :focus-within); colors point at semantic tokens, so light/dark comes free."
       >
-        <TokenGroup
-          label="Shape & color"
-          rows={[
-            [{ code: '--vds-tags-radius' }, { code: 'var(--vds-radius-sm)' }, 'Corner radius'],
-            [{ code: '--vds-tags-border-w' }, { code: 'var(--vds-border-w)' }, 'Border hairline width'],
-            [{ code: '--vds-tags-fill' }, { code: 'var(--vds-surface-sunken)' }, 'Field background'],
-            [{ code: '--vds-tags-border' }, { code: 'var(--vds-line-strong)' }, 'Resting border'],
-            [{ code: '--vds-tags-border-hover' }, 'border + ink @ hover-mix', 'Border on hover'],
-            [{ code: '--vds-tags-border-focus' }, { code: 'var(--vds-focus-ring)' }, 'Border on focus'],
-            [{ code: '--vds-tags-ring' }, 'focus-ring @ ring-tint', 'Soft focus ring (field recipe)'],
-            [{ code: '--vds-tags-ink-muted' }, { code: 'var(--vds-ink-subtle)' }, 'Placeholder text'],
-          ]}
-        />
-        <TokenGroup
-          label="Spacing & sizing"
-          rows={[
-            [{ code: '--vds-tags-gap' }, { code: 'var(--vds-space-1-5)' }, 'Chip ↔ chip / chip ↔ input gap'],
-            [{ code: '--vds-tags-pad-y' }, { code: 'var(--vds-space-1)' }, 'Top / bottom padding'],
-            [{ code: '--vds-tags-pad-x-sm' }, { code: 'var(--vds-space-2)' }, 'Left / right padding — sm'],
-            [{ code: '--vds-tags-pad-x-md' }, { code: 'var(--vds-space-2-5)' }, 'Left / right padding — md'],
-            [{ code: '--vds-tags-pad-x-lg' }, { code: 'var(--vds-space-3)' }, 'Left / right padding — lg'],
-            [{ code: '--vds-tags-min-h-sm' }, { code: 'var(--vds-control-h-sm)' }, 'Minimum height — sm'],
-            [{ code: '--vds-tags-min-h-md' }, { code: 'var(--vds-control-h-md)' }, 'Minimum height — md'],
-            [{ code: '--vds-tags-min-h-lg' }, { code: 'var(--vds-control-h-lg)' }, 'Minimum height — lg'],
-          ]}
-        />
-        <TokenGroup
-          label="Motion"
-          rows={[
-            [{ code: '--vds-tags-dur' }, { code: 'var(--vds-dur-fast)' }, 'Border / ring transition speed'],
-            [{ code: '--vds-tags-ease' }, { code: 'var(--vds-ease-out)' }, 'Easing curve (gated behind prefers-reduced-motion)'],
-          ]}
-        />
-      </Section>
-
-      <Section
-        title="Reference implementation"
-        note="How the demo on this page is built — reference only. The design system does not ship this markup or CSS; it ships the tokens above. Your team writes its own tags field (its own classes, its own framework) and binds to the --vds-tags-* variables."
-      >
-        <p className="vds-text vds-text--body vds-text--tone-muted" style={{ margin: 0 }}>
-          The reference build lives in the repo under <IC>src/components/TagsInput</IC>. It composes the shipped
-          <IC>Tag</IC> chip for each value. Treat it as a worked example of the tokens — not something to install
-          today. It's also the seed of a future <em>versioned, installable</em> package: when Vipre is ready, the
-          same token contract makes that a drop-in, not a rewrite.
-        </p>
+        <TokenSpecTable scope="vds-tags" prefix="--vds-tags-" groups={TAGSINPUT_TOKEN_GROUPS} />
       </Section>
     </ComponentPage>
   )

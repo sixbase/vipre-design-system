@@ -232,22 +232,25 @@
 }
 
 // ---- Page anatomy (per-component / foundation pages) -----------------------
-.vds-page__title { margin-bottom: 0.5rem; }
-.vds-page__desc { max-width: 64ch; margin-bottom: 0.5rem; }
+.vds-page__title { margin-bottom: var(--vds-space-2); }
+// The intro description reads like lead copy — a little extra line-height and a
+// clear gap under it before the first section starts.
+.vds-page__desc { max-width: 64ch; margin-bottom: var(--vds-space-2); line-height: 1.6; }
 
-// Section heading — border-top separator, like the Mason prose h2.
-// Generous vertical rhythm so sections breathe and scan as distinct blocks.
+// Section heading — border-top separator, like the Mason prose h2. Rhythm is
+// tight enough to feel purposeful (data-dense system) but still scans as
+// distinct blocks. Values ride spacing tokens so the docs eat their own food.
 .vds-section-h {
-  margin: 4rem 0 0.9rem;
-  padding-top: 2.75rem;
+  margin: var(--vds-space-12) 0 var(--vds-space-3);
+  padding-top: var(--vds-space-8);
   border-top: 1px solid var(--vds-line);
 }
 
 // The first section sits right under the page description — no need to push it
 // as far down as the between-section gaps.
 section:first-of-type > .vds-section-h {
-  margin-top: 2.5rem;
-  padding-top: 2rem;
+  margin-top: var(--vds-space-8);
+  padding-top: var(--vds-space-6);
 }
 
 .vds-section-note { max-width: 64ch; margin: 0 0 1.5rem; }

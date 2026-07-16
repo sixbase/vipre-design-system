@@ -74,7 +74,7 @@ export function StatTilePage() {
         />
       </Section>
 
-      <Section title="Icon variant" note="'soft' (default) fills the chip with a light tint — the standard the number family shares with Metric Card; 'outline' is a quieter ring. Same icon, two looks.">
+      <Section title="Icon variant" note="'soft' (default) fills the chip with a light tint — the look these tiles share with Metric Card; 'outline' is a quieter ring. Same icon, two looks.">
         <Preview
           canvas={
             <div style={GRID}>

@@ -142,6 +142,60 @@
     padding-right: var(--vds-space-2);
   }
 
+  // ---- expand column (the renderDetail caret) — tight, centered, non-growing.
+  // Sized so the caret never dictates row height, keeping compact rows compact.
+  &__cell--expand {
+    width: 1px;
+    white-space: nowrap;
+    text-align: center;
+    padding-right: var(--vds-space-1);
+  }
+
+  &__expand-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.375rem;
+    height: 1.375rem;
+    margin: -0.25rem 0; // absorb the button box so it doesn't tax the row height
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--vds-ink-subtle);
+    cursor: pointer;
+    border-radius: var(--vds-radius-sm);
+    transition:
+      color var(--vds-dur-fast) var(--vds-ease-out),
+      background-color var(--vds-dur-fast) var(--vds-ease-out);
+
+    &:hover {
+      color: var(--vds-ink);
+      background-color: var(--vds-line);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--vds-focus-ring);
+      outline-offset: -2px;
+    }
+  }
+
+  &__expand-glyph {
+    transition: transform var(--vds-dur-fast) var(--vds-ease-out);
+  }
+  &__expand-btn[aria-expanded='true'] &__expand-glyph {
+    transform: rotate(90deg);
+  }
+
+  // ---- detail drawer — the full-width row `renderDetail` fills. Sits on a
+  // faint recessed fill so it reads as a sub-panel of the row above it. ----
+  &__row--detail > &__detail {
+    padding: var(--vds-space-3) var(--vds-table-pad-x);
+    padding-left: calc(var(--vds-table-pad-x) + 1.375rem); // align under the caret
+    background-color: var(--vds-canvas);
+    color: var(--vds-ink-muted);
+  }
+  // A soft brand tint on the summary row while its drawer is open ties them.
+  &__row--expanded > &__td { background-color: var(--vds-canvas); }
+
   // ---- rows ----
   &__row--interactive {
     cursor: pointer;
@@ -161,8 +215,10 @@
   &--zebra &__row--selected { background-color: var(--vds-primary-soft); }
 
   // ---- zebra striping ----
+  // Light: a faint recess. Dark: a subtle LIFT (see --vds-table-zebra) so the
+  // translucent status badges don't wash out on the striped rows.
   &--zebra &__body tr:nth-child(even) .vds-table__td {
-    background-color: var(--vds-canvas);
+    background-color: var(--vds-table-zebra);
   }
 
   // ---- density ----

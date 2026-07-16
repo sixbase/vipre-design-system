@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { ComponentPage } from '../ComponentPage.jsx'
-import { Section, Preview, PropsTable, IC, Kbd } from '../primitives.jsx'
+import { Section, Preview, PropsTable, IC, Kbd, TokenSpecTable } from '../primitives.jsx'
 import {
   PinInput,
-  Heading,
   Text,
   Stack,
   Inline,
@@ -15,16 +14,38 @@ import {
 
 const SIZES = ['sm', 'md', 'lg']
 
-function TokenGroup({ label, rows }) {
-  return (
-    <>
-      <Heading level="subheading" as="h3" style={{ margin: '1.25rem 0 0.5rem' }}>
-        {label}
-      </Heading>
-      <PropsTable headers={['Token', 'Bound to', 'What it controls']} rows={rows} />
-    </>
-  )
-}
+/* Every public --vds-pin-* token, grouped. Live values are read at render by
+   the shared TokenSpecTable off a .vds-pin probe. Mirrors PinInput.scss. */
+const PININPUT_TOKEN_GROUPS = [
+  {
+    label: 'Sizing',
+    tokens: [
+      { token: '--vds-pin-gap', bound: 'var(--vds-space-2)', controls: 'Space between boxes' },
+      { token: '--vds-pin-cell-sm', bound: 'var(--vds-control-h-sm)', controls: 'Square cell — sm (32px)' },
+      { token: '--vds-pin-cell-md', bound: 'var(--vds-control-h-md)', controls: 'Square cell — md (36px)' },
+      { token: '--vds-pin-cell-lg', bound: 'var(--vds-control-h-lg)', controls: 'Square cell — lg (44px)' },
+    ],
+  },
+  {
+    label: 'Shape & color',
+    tokens: [
+      { token: '--vds-pin-radius', bound: 'var(--vds-radius-sm)', controls: 'Cell corner radius' },
+      { token: '--vds-pin-border-w', bound: 'var(--vds-border-w)', controls: 'Cell border hairline width' },
+      { token: '--vds-pin-fill', bound: 'var(--vds-surface-sunken)', controls: 'Cell background' },
+      { token: '--vds-pin-border', bound: 'var(--vds-line-strong)', controls: 'Resting border' },
+      { token: '--vds-pin-border-hover', bound: 'border + ink @ hover-mix', controls: 'Border on hover' },
+      { token: '--vds-pin-border-focus', bound: 'var(--vds-focus-ring)', controls: 'Border on focus' },
+      { token: '--vds-pin-ring', bound: 'focus-ring @ ring-tint', controls: 'Soft focus ring (field recipe)' },
+    ],
+  },
+  {
+    label: 'Motion',
+    tokens: [
+      { token: '--vds-pin-dur', bound: 'var(--vds-dur-fast)', controls: 'Border / ring transition speed' },
+      { token: '--vds-pin-ease', bound: 'var(--vds-ease-out)', controls: 'Easing curve (gated behind prefers-reduced-motion)' },
+    ],
+  },
+]
 
 function ControlField({ label, children }) {
   return (
@@ -155,48 +176,9 @@ export function PinInputPage() {
 
       <Section
         title="Tokens"
-        note="Every visual value is a --vds-pin-* custom property on the .vds-pin root, bound to foundation tokens only. The cell chrome mirrors Input's field recipe (neutral border + hover darken + soft focus ring); colors point at semantic tokens, so light/dark comes free."
+        note="Every look comes from a --vds-pin-* variable on the .vds-pin root, bound to foundation tokens only. The cells copy Input's field recipe (neutral border, darker on hover, soft focus ring); colors point at semantic tokens, so light/dark comes free."
       >
-        <TokenGroup
-          label="Sizing"
-          rows={[
-            [{ code: '--vds-pin-gap' }, { code: 'var(--vds-space-2)' }, 'Space between boxes'],
-            [{ code: '--vds-pin-cell-sm' }, { code: 'var(--vds-control-h-sm)' }, 'Square cell — sm (32px)'],
-            [{ code: '--vds-pin-cell-md' }, { code: 'var(--vds-control-h-md)' }, 'Square cell — md (36px)'],
-            [{ code: '--vds-pin-cell-lg' }, { code: 'var(--vds-control-h-lg)' }, 'Square cell — lg (44px)'],
-          ]}
-        />
-        <TokenGroup
-          label="Shape & color"
-          rows={[
-            [{ code: '--vds-pin-radius' }, { code: 'var(--vds-radius-sm)' }, 'Cell corner radius'],
-            [{ code: '--vds-pin-border-w' }, { code: 'var(--vds-border-w)' }, 'Cell border hairline width'],
-            [{ code: '--vds-pin-fill' }, { code: 'var(--vds-surface-sunken)' }, 'Cell background'],
-            [{ code: '--vds-pin-border' }, { code: 'var(--vds-line-strong)' }, 'Resting border'],
-            [{ code: '--vds-pin-border-hover' }, 'border + ink @ hover-mix', 'Border on hover'],
-            [{ code: '--vds-pin-border-focus' }, { code: 'var(--vds-focus-ring)' }, 'Border on focus'],
-            [{ code: '--vds-pin-ring' }, 'focus-ring @ ring-tint', 'Soft focus ring (field recipe)'],
-          ]}
-        />
-        <TokenGroup
-          label="Motion"
-          rows={[
-            [{ code: '--vds-pin-dur' }, { code: 'var(--vds-dur-fast)' }, 'Border / ring transition speed'],
-            [{ code: '--vds-pin-ease' }, { code: 'var(--vds-ease-out)' }, 'Easing curve (gated behind prefers-reduced-motion)'],
-          ]}
-        />
-      </Section>
-
-      <Section
-        title="Reference implementation"
-        note="How the demo on this page is built — reference only. The design system does not ship this markup or CSS; it ships the tokens above. Your team writes its own code field (its own classes, its own framework) and binds to the --vds-pin-* variables."
-      >
-        <p className="vds-text vds-text--body vds-text--tone-muted" style={{ margin: 0 }}>
-          The reference build lives in the repo under <IC>src/components/PinInput</IC>. Treat it as a worked
-          example of the tokens — not something to install today. It's also the seed of a future
-          <em> versioned, installable</em> package: when Vipre is ready, the same token contract makes that a
-          drop-in, not a rewrite.
-        </p>
+        <TokenSpecTable scope="vds-pin" prefix="--vds-pin-" groups={PININPUT_TOKEN_GROUPS} />
       </Section>
     </ComponentPage>
   )

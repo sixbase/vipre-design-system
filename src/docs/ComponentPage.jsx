@@ -50,7 +50,7 @@ export function ComponentPage({
       {colors && (
         <Section
           title="Colors"
-          note="The color tokens this component paints with, resolved to live hex for the current theme — toggle light/dark to compare. Adjust the value at its source on the Colors page; this updates everywhere the token is used."
+          note="The colors this part uses, shown as real hex for the theme you're in — flip light/dark to compare. Change a color once on the Colors page and it updates everywhere at once."
         >
           <ColorUsage scope={colors.scope} rows={colors.rows} />
         </Section>

@@ -9,7 +9,7 @@ export function MeetingGuidePage() {
     <div className="vds-doc">
       <h1 className="vds-heading vds-heading--display">Meeting Guide</h1>
       <p className="vds-text vds-text--body-lg vds-text--tone-muted" style={{ marginTop: '0.25rem' }}>
-        A facilitation guide for aligning design + engineering on delivery, handoff, and moving the
+        A guide to help design and engineering agree on delivery, handoff, and moving the
         source of truth from Figma to the design system.{' '}
         <a href={src} target="_blank" rel="noopener noreferrer">Open in a new tab ↗</a>
       </p>

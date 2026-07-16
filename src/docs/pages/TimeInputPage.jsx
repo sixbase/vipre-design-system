@@ -1,8 +1,21 @@
 import { useState } from 'react'
 import { ComponentPage } from '../ComponentPage.jsx'
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, IC, TokenSpecTable } from '../primitives.jsx'
 import { TimeInput } from '../../components/TimeInput/index.js'
 import { Text } from '../../components/index.js'
+
+/* TimeInput composes Input, so it inherits every --vds-input-* field token and
+   adds just one of its own — the leading clock tint. The real root carries both
+   classes (vds-input vds-timeinput), so the probe does too — otherwise the icon
+   token's var(--vds-input-muted) has nothing to resolve against. Mirrors TimeInput.scss. */
+const TIMEINPUT_TOKEN_GROUPS = [
+  {
+    label: 'Color',
+    tokens: [
+      { token: '--vds-timeinput-icon', bound: 'var(--vds-input-muted)', controls: 'Leading clock icon tint' },
+    ],
+  },
+]
 
 /* Live time field — the docs page holds the value; the platform UI edits it. */
 function BasicTime() {
@@ -19,7 +32,7 @@ export function TimeInputPage() {
   return (
     <ComponentPage
       title="Time Input"
-      description="A time field, kept deliberately simple: it's an Input with type=time and a little clock icon, so it gets all of Input's look (sizes, invalid, disabled, focus ring) for free and hands the actual time entry to the platform's own time UI — the browser's stepper on desktop, the native clock on a phone. No custom dropdown to reinvent, and the value follows the OS locale. This page is tokens-only: the design system ships the field tokens and this worked example, not an installable component."
+      description="A time field, kept deliberately simple: it's an Input with type=time and a little clock icon, so it gets all of Input's look (sizes, invalid, disabled, focus ring) for free and hands the actual time entry to the platform's own time UI — the browser's stepper on desktop, the native clock on a phone. No custom dropdown to reinvent, and the value follows the OS locale. This page is tokens-only: the design system ships the field tokens and this example, not a component you can install."
       installCode={`<!-- Tokens-only: link the CSS variables, build your own time field against them. -->
 <link rel="stylesheet" href="vipre-tokens.css">`}
       props={[
@@ -69,14 +82,13 @@ export function TimeInputPage() {
       </Section>
 
       <Section
-        title="Reference implementation"
-        note="Reference only — the design system ships the tokens, not this component. TimeInput is intentionally thin: it renders an Input (type=time) with a leading clock icon, so it reuses every Input token and adds nothing new except the clock's tint."
+        title="Tokens"
+        note="TimeInput is intentionally thin: it renders an Input (type=time) with a leading clock icon, so it inherits every Input field token and adds just one of its own — the clock tint. Re-point it on your own selector to recolor the icon."
       >
-        <p className="vds-text vds-text--body vds-text--tone-muted" style={{ margin: 0 }}>
-          The reference build lives under <IC>src/components/TimeInput</IC>. Because it composes
-          Input, there are no time-specific chrome tokens to learn — it reads Input's
-          <IC>--vds-input-*</IC> field tokens, and exposes just <IC>--vds-timeinput-icon</IC> for the
-          leading clock tint (bound to <IC>--vds-input-muted</IC>).
+        <TokenSpecTable scope="vds-input vds-timeinput" prefix="--vds-timeinput-" groups={TIMEINPUT_TOKEN_GROUPS} />
+        <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.5rem' }}>
+          Everything else — height, padding, border, focus ring — comes from <IC>--vds-input-*</IC>.
+          See the Input page for that full set.
         </p>
       </Section>
     </ComponentPage>

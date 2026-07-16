@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ComponentPage } from '../ComponentPage.jsx'
-import { Section, Preview, IC, PropsTable } from '../primitives.jsx'
+import { Section, Preview, IC, TokenSpecTable } from '../primitives.jsx'
 import { PasswordInput } from '../../components/PasswordInput/index.js'
 import { Surface, Stack, Inline, Text, SegmentedControl, Switch, Divider, Field } from '../../components/index.js'
 
@@ -70,39 +70,27 @@ function Playground() {
 }
 
 /* ---------------------------------------------------------------------------
-   Tokens — the --vds-password-* set, grouped.
+   Tokens — the --vds-password-* set, grouped. Live values resolve at render
+   against a hidden .vds-password probe inside the shared TokenSpecTable.
    -------------------------------------------------------------------------- */
 
-const TOKEN_GROUPS = [
+const PASSWORDINPUT_TOKEN_GROUPS = [
   {
     label: 'Toggle button',
-    rows: [
-      [{ code: '--vds-password-toggle-ink' }, { code: 'var(--vds-input-muted)' }, 'Resting eye-icon color (matches the field affix)'],
-      [{ code: '--vds-password-toggle-ink-hover' }, { code: 'var(--vds-ink)' }, 'Eye-icon color on hover / focus'],
-      [{ code: '--vds-password-toggle-radius' }, { code: 'var(--vds-radius-sm)' }, 'Corner of the toggle’s focus ring'],
+    tokens: [
+      { token: '--vds-password-toggle-ink', bound: 'var(--vds-input-muted)', controls: 'Resting eye-icon color (matches the field affix)' },
+      { token: '--vds-password-toggle-ink-hover', bound: 'var(--vds-ink)', controls: 'Eye-icon color on hover / focus' },
+      { token: '--vds-password-toggle-radius', bound: 'var(--vds-radius-sm)', controls: 'Corner of the toggle’s focus ring' },
     ],
   },
   {
     label: 'Motion',
-    rows: [
-      [{ code: '--vds-password-toggle-dur' }, { code: 'var(--vds-dur-fast)' }, 'Icon color transition speed'],
-      [{ code: '--vds-password-toggle-ease' }, { code: 'var(--vds-ease-out)' }, 'Easing curve'],
+    tokens: [
+      { token: '--vds-password-toggle-dur', bound: 'var(--vds-dur-fast)', controls: 'Icon color transition speed' },
+      { token: '--vds-password-toggle-ease', bound: 'var(--vds-ease-out)', controls: 'Easing curve' },
     ],
   },
 ]
-
-function TokenTables() {
-  return (
-    <Stack gap={5}>
-      {TOKEN_GROUPS.map((g) => (
-        <div key={g.label}>
-          <p className="vds-text vds-text--eyebrow vds-text--tone-muted" style={{ margin: '0 0 0.4rem' }}>{g.label}</p>
-          <PropsTable headers={['Token', 'Bound to', 'What it controls']} rows={g.rows} />
-        </div>
-      ))}
-    </Stack>
-  )
-}
 
 /* ---------------------------------------------------------------------------
    Page
@@ -181,18 +169,7 @@ export function PasswordInputPage() {
         title="Tokens"
         note="The shell IS an Input, so it reuses every --vds-input-* token for height, padding, border, fill, and the focus ring. The only Password-specific tokens dress the eye toggle — all bound to foundation tokens, so light/dark comes free."
       >
-        <TokenTables />
-      </Section>
-
-      <Section
-        title="Reference implementation"
-        note="How the demo on this page is built — reference only. The design system ships the tokens above, not this markup. Your team writes its own field (its own classes, its own framework) and binds to the --vds-input-* and --vds-password-* variables."
-      >
-        <p className="vds-text vds-text--body vds-text--tone-muted" style={{ margin: 0 }}>
-          The reference build lives in the repo under <IC>src/components/PasswordInput</IC>. Treat it as a
-          worked example of the tokens — an Input plus one action button — not something to install
-          today. The same token contract makes a future <em>versioned, installable</em> package a drop-in.
-        </p>
+        <TokenSpecTable scope="vds-password" prefix="--vds-password-" groups={PASSWORDINPUT_TOKEN_GROUPS} />
       </Section>
     </ComponentPage>
   )

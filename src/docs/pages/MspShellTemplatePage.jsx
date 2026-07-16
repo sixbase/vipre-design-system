@@ -203,12 +203,12 @@ export function MspShellTemplatePage() {
   return (
     <ComponentPage
       title="MSP Shell"
-      description="The full chrome around every MSP screen. AppShell is the frame; the navy SideNav rail sits on the left; the navy TopBar sits on top; your page fills the rest. The rail's account header shows who you are scoped to — step into a customer and the whole menu swaps to their world, with a Back row to climb out. Build this frame once. Every page after this only changes the content."
+      description="The frame around every MSP screen. AppShell is the frame. The navy SideNav rail sits on the left. The navy TopBar sits on top. Your page fills the rest. The rail's account header shows who you are looking at. Step into a customer and the whole menu swaps to their world, with a Back row to climb out. Build this frame once. Every page after this only changes the content."
       installCode={`import { AppShell, AppShellNavTrigger, TopBar, SideNav, ProductTile, PageHeader } from 'vipre-design-system'`}
     >
       <Section
         title="Anatomy"
-        note="Everything is live. Click pages in the rail, open and close product cards, collapse the rail with the bottom row. Then click 'Scope into Acme Corp' — the account header swaps, the sections become Acme's products, and a Back row appears. Click Back to climb out again. Below the lg breakpoint the rail becomes a drawer; the hamburger in the top bar opens it."
+        note="Everything is live. Click pages in the rail, open and close product cards, collapse the rail with the bottom row. Then click 'Scope into Acme Corp' — the account header swaps, the sections become Acme's products, and a Back row appears. Click Back to climb out again. On a narrow screen the rail turns into a slide-out drawer; the hamburger in the top bar opens it."
       >
         <Preview
           canvas={<ShellDemo />}
@@ -243,10 +243,10 @@ const [page, setPage] = useState('dashboard')
       <Section title="Regions">
         <div className="vds-text vds-text--body" style={{ display: 'grid', gap: '0.75rem', maxWidth: 720 }}>
           {[
-            ['App frame', 'Owns the layout: rail column, top bar, scrolling content. Below the lg breakpoint the rail becomes an off-canvas drawer.', <IC key="a">AppShell</IC>],
+            ['App frame', 'Holds the layout: rail on the left, top bar up top, scrolling page. On a narrow screen the rail slides out as a drawer.', <IC key="a">AppShell</IC>],
             ['Top bar', 'The navy strip on top. Hamburger on the left (only shows on small screens), brand in the middle, account actions on the right.', <span key="b"><IC>TopBar tone="navy"</IC> + <IC>AppShellNavTrigger</IC></span>],
             ['Product rail', 'The navy menu. Account header up top, product cards in the middle, admin rows pinned at the bottom. Always navy in both themes.', <span key="c"><IC>SideNav</IC> (<IC>vds-sidenav</IC>)</span>],
-            ['Scope header', 'Who you are working on. Scoping into a customer swaps the account and sections; onBack adds the "Back to …" row.', <span key="d"><IC>SideNav</IC> account + <IC>onBack</IC></span>],
+            ['Scope header', 'Who you are working on. Step into a customer and the account and sections swap; onBack adds the "Back to …" row.', <span key="d"><IC>SideNav</IC> account + <IC>onBack</IC></span>],
             ['Page header', 'Names the page and holds its controls. Only the title is required.', <IC key="e">PageHeader</IC>],
             ['Body', 'The only part that changes per page. See the other templates for full bodies.', <span key="f">your page content</span>],
           ].map(([region, resp, comp]) => (

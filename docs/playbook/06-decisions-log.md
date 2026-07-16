@@ -709,3 +709,150 @@ The decisions that matter going forward:
   every stray landed in its new home, no console errors.
 - **Note for future**: item order within a group is now hand-authored intent, NOT alphabetical — the
   previous convention (commit 15b231b) is superseded. Add new items where they belong in the flow.
+
+## 2026-07-16 · New "Token Reference" page (all tokens, one lookup)
+
+- Added `src/docs/pages/TokensPage.jsx` — a single flat, scannable reference for every `--vds-*` token,
+  grouped the way a dev reaches for them: **How tokens layer → Color (semantic → primitive ramps) →
+  Typography (scale, weight, leading, font) → Spacing → Radius → Elevation/shadow → Motion → Layout &
+  grid → Breakpoints → Z-index → Controls & focus → Effects → Using a token**. Registered at
+  `/foundation/tokens` as the FIRST item in Foundations (the reference entry point).
+- Division of labour: the teaching pages (Colors, Typography, Spacing, Depth, Responsiveness) own the
+  "why"; this page is the "what + value". To avoid duplicating the 144-swatch Colors grid, primitive
+  ramps render as compact 12-step strips (hover = hex) with a pointer to the Colors page.
+- Composes only existing pieces: `DocPage` + `Section` + a local `RefTable` reusing the `.vds-ref-table`
+  shell, plus small token-bound preview swatches (colour chip, radius corner, shadow box, spacing bar)
+  and live `Text`/`Heading` samples for the type scale. No new component or token values invented.
+- **tokens.js additions (mirror of _tokens.scss — kept in sync):** `SHADOWS` (--vds-shadow-xs…lg),
+  `ZINDEX` (--vds-z-base…tooltip), `EFFECTS` (--vds-focus-ring, --vds-scrim), and `FONT`
+  (--vds-font-sans). These existed in `_tokens.scss` but had no docs mirror until now.
+- Verified live: 15 sections render, swatches resolve real theme colours (--vds-canvas → rgb(247,248,250)),
+  shadow/radius/spacing previews and type samples paint, no console/compile errors.
+
+## 2026-07-16 · Popover panels now portal to `<body>` (fixed positioning)
+
+- **Change:** `Popover` (the base every Menu / Select / Combobox / picker composes) now renders its
+  panel through `createPortal(..., document.body)` with `position: fixed`, positioned against the
+  viewport. Previously the panel was `position: absolute` inside the `.vds-popover` wrapper.
+- **Why:** an absolutely-positioned panel is a descendant of whatever scroll container it opens in.
+  Inside a `.vds-table__scroll` (which is `overflow-x: auto`), opening a row's kebab menu enlarged the
+  scrollable area and forced a spurious horizontal scrollbar — the table visibly jumped. Portaling to
+  `<body>` takes the panel out of every ancestor's overflow, so it can never distort (or get clipped
+  by) a scrolling parent. Fixes it once for all overlay consumers, not just the table.
+- **Follow-on fixes in the same change:** placement math now stores raw viewport coords (no
+  wrap-relative offset); outside-click dismissal checks `panelRef` too (the panel is no longer inside
+  `wrapRef`, so a click on a menu item must not read as "outside"). Existing viewport flip/clamp,
+  scroll/resize reposition, Escape, and focus-return are unchanged and still apply.
+- **Verified live:** Row-menu kebab opens at trigger (top = trigger bottom + 6px gap), clamps to the
+  viewport's right edge, `.vds-table__scroll` shows **no** overflow (scrollWidth == clientWidth before
+  and after opening); clicking an item selects and closes; panel sits in `document.body` at
+  `position: fixed`. No new console errors.
+
+## 2026-07-16 · Table auto-aligns columns by data type; Avatar tint deepened
+
+- **Table — infer column alignment from the data.** `align` was left-default and had to be hand-set to
+  `'right'` on every numeric column; forgetting it left numbers ragged-left, which reads oddly (and the
+  header floats away from its data). Added `alignOf(col, data)` in `Table.jsx`: an explicit `align` still
+  wins, otherwise the column samples its first non-null `row[col.key]` and goes **right for `number`,
+  left for everything else**. Custom-`render` columns can't be sniffed (output type is unknown), so they
+  stay left unless `align` is set — set it explicitly for rendered numerics (e.g. `` `${r.risk}%` ``).
+  Applied to the header, body, and skeleton cells so header + data share one alignment. Backward
+  compatible (explicit `align` unchanged); dropped the now-redundant `align:'right'` from the Sortable
+  demo's plain `risk` column to exercise the inference. Verified: `risk` header + cells compute
+  `text-align: right` with no `align` prop.
+- **Avatar — a touch more saturated.** Identity chips filled with the bare `--vds-accent-<fam>-soft`
+  (≈50 step) read almost white. Deepened to `color-mix(in oklab, <fam>-soft, <fam> 15%)` — both are
+  tokens, so it still flips per theme. Verified: tint chroma rose ~0.006 → ~0.033 while staying light
+  (oklab L ≈ 0.91); initials-ink contrast unchanged.
+
+## 2026-07-16 · Zebra stripe lifts (not sinks) in dark mode so status badges stay visible
+
+- **Problem:** Status `Badge`s use a ~16%-opacity soft tint. The zebra stripe reused `--vds-canvas`,
+  which in dark mode is `midnight-950` — *darker* than the `midnight-900` surface. On those darker
+  striped rows the translucent badge fill washed out toward black and the pills got hard to read.
+- **Fix:** Added a `--vds-table-zebra` token (in `_tokens.scss`, both themes). Light keeps the faint
+  recess (`--vds-canvas`, graphite-50 — unchanged, light badges already read). Dark flips to a subtle
+  **lift** (`--vds-surface-raised` = `midnight-800`, one step *above* the surface) instead of sinking
+  below it. `Table.scss`'s zebra rule now reads the token. Chose "lighter zebra" over reworking the
+  badge tint because the badge tokens are shared system-wide; the stripe is the local cause.
+- **Verified:** Dark zebra row `midnight-950 → midnight-800` (rgb 11,25,45 → 21,46,81; relative
+  luminance ~24 → ~43), now lighter than the surface so badges sit on a lighter base. Light-mode zebra
+  unchanged (graphite-50). Build passes.
+
+## 2026-07-16 · Consolidated the docs token tables + tokens-only (no code)
+
+- **Problem**: the docs had four+ parallel table implementations — the shared `PropsTable`, a
+  `RefTable` on the new Token Reference page, a live-value `TokenTable` copy-pasted in Button AND Input,
+  a `TokenTables` variant in NumberInput/PasswordInput, and `TokenGroup` copied into 6 pages. The dev
+  team also wants tokens documented, not component code, for now.
+- **Fix**: two shared primitives in `src/docs/primitives.jsx`:
+  - `RefTable({ headers, rows })` — the one dense node-in-cell table (replaces the per-page RawTable/RefTable copies).
+  - `TokenSpecTable({ scope, prefix, groups })` — the ONE canonical component-token table: Token / Bound
+    to / Live value / What it controls. Self-probing: renders a hidden element with the component's root
+    class (`scope`) and reads each `--vds-{name}-*` token's live computed value off it; tokens outside
+    `prefix` resolve on `<html>`. Re-resolves on theme flip (MutationObserver on the html class), so the
+    values stay honest in light and dark. Data shape: `groups: [{ label, tokens: [{token, bound, controls}] }]`.
+- **Applied** to Button, Input, and every component page that documents `--vds-{name}-*` tokens
+  (Field, SideNav, DatePicker, FileUpload, PinInput, TagsInput, NumberInput, PasswordInput). Each page
+  now declares a single `{NAME}_TOKEN_GROUPS` const and renders one `<TokenSpecTable>`.
+- **Tokens-only**: removed the code-oriented sections from these pages — "Reference implementation" /
+  "Markup" sections and standalone `<Code>` blocks in the token/reference area. Interactive playgrounds,
+  Props, Accessibility, and the tokens-CSS install line stay. Code "may come later" per the dev team.
+- **Token Reference** (`/foundation/tokens`) now imports the shared `RefTable`, dropped its "Using a
+  token" code block, and gained a "Component tokens" section that documents the per-component
+  `--vds-{name}-*` namespaces and links to each component page's live spec table.
+
+## 2026-07-16 · Docs voice → "explain like I'm 5" + gentle spacing tighten
+
+- **Ask**: make all docs copy concise + ELI5, and improve layout/spacing across the system.
+- **Voice**: simplify PROSE only (page `description`, Section `note`, a11y bullets, body `<p>`/`<Text>`
+  paragraphs). Leave lookup facts intact — prop/column tables, token names/values, and code snippets
+  are reference, not story. Banned jargon: token-first, typescale, chrome, fluid type, breakpoint
+  mixins, compile, reference implementation, token contract, "custom property" (say "variable"),
+  matrix, choreography, orthogonal, invariant. Voice guide saved to session scratchpad
+  (eli5-voice-guide.md) for future pages.
+- **Layout**: tightened section rhythm (`.vds-section-h`) from 4rem+2.75rem to space-12+space-8 (~108px
+  → 80px between sections) and moved those values onto spacing tokens so the docs eat their own food;
+  added line-height 1.6 to `.vds-page__desc`. In `_showcase.scss`.
+- **Rollout**: phase 1 by hand (Home, the shared Colors note in ComponentPage.jsx that shows on every
+  component page, Button exemplar). Then 8 parallel subagents over the other ~75 pages, one file-set
+  each (no collisions), then a 9th sweep for the dev-facing "Reference implementation" body `<p>`s.
+  Finding: most pages were already near this voice, so total edits were modest (~80 strings).
+- **Verified**: `npm run build` green after both the main pass and the cleanup sweep (290 modules); live
+  spot-checks (Home, Button, SideNav, Token Reference) render with no error overlay.
+- **Left alone on purpose**: ButtonPage.jsx body prose (user was live-editing it — one "typescale"
+  remains there); a couple of jargon hits inside `<Code>` snippets and one anatomy-table data row.
+
+## 2026-07-16 · Table gains expandable detail rows + a compact audit-log pattern
+
+- **Component:** `Table` now takes `renderDetail(row, i)`. When set, each row gets a leading expand
+  caret (an inline chevron, no icon dep — like SortGlyph) that reveals the returned node in a
+  full-width `colSpan` drawer beneath the row. Open state is `expandedKeys`/`onExpandedChange`
+  (controlled) or `defaultExpandedKeys` (uncontrolled — the common case), mirroring Popover's
+  open/defaultOpen split. The caret is a real `<button>` with `aria-expanded` + `aria-controls`; it
+  stops propagation so it never fires `onRowClick`. `totalCols` accounts for the extra column so
+  loading/empty colSpans stay correct. Non-expandable tables are byte-for-byte unchanged.
+- **Why:** dense, multi-dimension rows (a DLP audit log) are tall because 2–3 columns each stack
+  several lines. The fix is to make the row a one-line summary and move the verbose breakdown into a
+  drawer — which needs first-class expandable rows, so it belongs in the component, not a page.
+- **Docs pattern (`TablePage` → "Compact audit log"):** `density="compact"` + inline count chips.
+  Recipients / attachments / DLP-outcomes each collapse to a single line of tinted `Icon`+number
+  chips (semantic-token colors: `--vds-primary` internal, `--vds-on-warning-soft` external,
+  `--vds-danger` forbidden/removals). Status is one `Badge`. Result: rows dropped from ~67px to
+  **~34px** (roughly half the source screenshot's height) with nothing lost — the full sentence-form
+  breakdown lives in the drawer. The 10-column table scrolls horizontally by design (dense log).
+- **Verified live:** 34–35px summary rows, caret toggles a colSpan=10 drawer showing all six fields,
+  glyph rotates on open, keyboard/ARIA wired, Basic (7 cols)/Selection (4 cols) tables unaffected.
+
+## 2026-07-16 · Tooltip reveal made elegant (direction-aware ease-out)
+
+- Reworked the tooltip enter animation from a flat 120ms 2px rise to a direction-aware reveal: fade +
+  `scale(0.96)→1` that blooms from the trigger's edge (`transform-origin` per placement) and slides in
+  from the trigger's direction (`--_tt-from` set per `.vds-tooltip--{side}`). Runs on `--vds-dur-base`
+  (200ms) with `--vds-ease-out` (the soft expo curve) for a fast start and calm landing. Token-bound;
+  `prefers-reduced-motion` still kills it.
+- **No exit transition:** the chip unmounts the instant `open` flips false (`{open && createPortal(...)}`),
+  so an out-animation would need a JS closing-state lifecycle. Left as a deliberate follow-up — the
+  enter refinement is the elegance win without risking hover-flicker on close.
+- Verified via compiled `dist/vipre.css` (classifier outage blocked live DOM checks): per-side
+  `--_tt-from` values, `scale(0.96)` in the keyframe, and `dur-base`/`ease-out` all present. Build passes.
