@@ -5,19 +5,93 @@ import {
 } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from '../colorUsage.js'
-import { Section, Preview, Kbd, IC, PropsTable } from '../primitives.jsx'
+import { Section, Preview, Kbd, IC, TokenSpecTable } from '../primitives.jsx'
 import { SideNav, ProductTile } from '../../components/SideNav/index.js'
 import { Button } from '../../components/Button/index.js'
 
-/* A labelled token table for the Tokens section. */
-function TokenGroup({ label, headers, rows }) {
-  return (
-    <div style={{ marginTop: '1.25rem' }}>
-      <p className="vds-text vds-text--eyebrow" style={{ margin: '0 0 0.4rem' }}>{label}</p>
-      <PropsTable headers={headers} rows={rows} />
-    </div>
-  )
-}
+/* Live values resolve off a hidden .vds-sidenav probe. `bound` is taken verbatim
+   from SideNav.scss; raw literals (label clamps, the 2px nest step, and the named
+   motion beats) have no binding and show their computed value only. */
+const SIDENAV_TOKEN_GROUPS = [
+  {
+    label: 'Color — the fixed navy look',
+    tokens: [
+      { token: '--vds-sidenav-bg', bound: 'var(--vds-midnight-950)', controls: 'Rail background' },
+      { token: '--vds-sidenav-well', bound: 'var(--vds-midnight-1000)', controls: 'Card wells + dividers' },
+      { token: '--vds-sidenav-ink', bound: 'var(--vds-midnight-200)', controls: 'Row labels' },
+      { token: '--vds-sidenav-ink-dim', bound: 'var(--vds-midnight-300)', controls: 'Eyebrows, back row, account type' },
+      { token: '--vds-sidenav-icon', bound: 'var(--vds-midnight-400)', controls: 'Resting row icons' },
+      { token: '--vds-sidenav-icon-faint', bound: 'var(--vds-midnight-600)', controls: 'Escape-row ("Full portal") icon at rest' },
+      { token: '--vds-sidenav-chev', bound: 'var(--vds-midnight-500)', controls: 'Product chevron at rest' },
+      { token: '--vds-sidenav-hover', bound: 'var(--vds-midnight-800)', controls: 'Hover fill' },
+      { token: '--vds-sidenav-press', bound: 'var(--vds-midnight-700)', controls: 'Pressed fill (one step brighter)' },
+      { token: '--vds-sidenav-accent', bound: 'var(--vds-nav-accent)', controls: 'Selected fill — the one brandable value' },
+      { token: '--vds-sidenav-accent-hover', bound: 'nav-accent 88% + midnight-1000', controls: 'Selected row, hovered' },
+      { token: '--vds-sidenav-accent-press', bound: 'nav-accent 78% + midnight-1000', controls: 'Selected row, pressed' },
+      { token: '--vds-sidenav-toplight', bound: 'white 10% → transparent', controls: 'Sheen gradient on selected fills' },
+      { token: '--vds-sidenav-hairline', bound: 'inset white 8%', controls: 'Top hairline on selected fills' },
+    ],
+  },
+  {
+    label: 'Sizes',
+    tokens: [
+      { token: '--vds-sidenav-w', controls: 'Expanded rail width' },
+      { token: '--vds-sidenav-w-collapsed', controls: 'Collapsed rail width (2 × the 36px icon column)' },
+      { token: '--vds-sidenav-icon-size', bound: 'var(--vds-space-4)', controls: 'Row icon + lock badge box' },
+      { token: '--vds-sidenav-tile-size', bound: 'var(--vds-space-8)', controls: 'Product / account tile' },
+      { token: '--vds-sidenav-account-h', bound: 'var(--vds-control-h-md)', controls: 'Account header height (fixed, so collapse never shifts y)' },
+      { token: '--vds-sidenav-back-h', bound: 'var(--vds-space-6)', controls: 'Back-row height' },
+      { token: '--vds-sidenav-chev-size', bound: 'var(--vds-space-6)', controls: 'Chevron hit box' },
+      { token: '--vds-sidenav-label-max', controls: 'Row label clamp before ellipsis' },
+      { token: '--vds-sidenav-label-max-pill', controls: 'Product / account label clamp' },
+    ],
+  },
+  {
+    label: 'Spacing',
+    tokens: [
+      { token: '--vds-sidenav-nest', controls: 'Concentric padding step (tile → pill → card)' },
+      { token: '--vds-sidenav-pad-x', bound: 'var(--vds-space-4)', controls: "Rail's base horizontal padding" },
+      { token: '--vds-sidenav-section-pad-y', bound: 'var(--vds-space-2-5)', controls: 'Section top / bottom padding' },
+      { token: '--vds-sidenav-section-gap', bound: 'var(--vds-space-1)', controls: 'Gap between rows in a section' },
+      { token: '--vds-sidenav-row-pad-x', bound: 'var(--vds-space-2-5)', controls: 'Row inner x padding' },
+      { token: '--vds-sidenav-row-pad-y', bound: 'var(--vds-space-1-5)', controls: 'Row inner y padding' },
+      { token: '--vds-sidenav-label-gap', bound: 'var(--vds-space-2)', controls: 'Icon → label lead margin (acts as the gap)' },
+    ],
+  },
+  {
+    label: 'Radius — the concentric +2 rule',
+    tokens: [
+      { token: '--vds-sidenav-r-tile', bound: 'var(--vds-radius-md)', controls: 'Tiles (the 32px product / account tiles)' },
+      { token: '--vds-sidenav-r-pill', bound: 'r-tile + nest', controls: 'Pills / rows / account (tile + 2px)' },
+      { token: '--vds-sidenav-r-card', bound: 'r-pill + nest', controls: 'Product cards (pill + 2px)' },
+    ],
+  },
+  {
+    label: 'Typography — weights (sizes come from the text-size steps)',
+    tokens: [
+      { token: '--vds-sidenav-weight-label', bound: 'var(--vds-weight-medium)', controls: 'Row labels' },
+      { token: '--vds-sidenav-weight-pill', bound: 'var(--vds-weight-semibold)', controls: 'Product name + account name' },
+      { token: '--vds-sidenav-weight-quiet', bound: 'var(--vds-weight-regular)', controls: '"Full portal" + account type' },
+    ],
+  },
+  {
+    label: 'Motion — one easing + named beats',
+    tokens: [
+      { token: '--vds-sidenav-ease', bound: 'var(--vds-ease-emphatic)', controls: 'One curve for every nav motion' },
+      { token: '--vds-sidenav-dur-collapse', controls: 'Rail width + label slide' },
+      { token: '--vds-sidenav-dur-hover-in', controls: 'Hover fill lands (near-instant)' },
+      { token: '--vds-sidenav-dur-hover-out', controls: 'Hover fill releases (slow)' },
+      { token: '--vds-sidenav-dur-press', controls: 'Tile settle on press' },
+      { token: '--vds-sidenav-dur-label-out', controls: 'Label / eyebrow / badge fade out on collapse' },
+      { token: '--vds-sidenav-delay-label-in', controls: 'Label fade-in delay on expand (width leads first)' },
+      { token: '--vds-sidenav-dur-accordion', bound: 'var(--vds-dur-slow)', controls: 'Product card open / close' },
+      { token: '--vds-sidenav-delay-item-in', controls: 'Card items fade in a beat after the card' },
+      { token: '--vds-sidenav-dur-item-out', controls: 'Card items drop out on close' },
+      { token: '--vds-sidenav-dur-tip', controls: 'Collapsed-rail tooltip fade + slide' },
+      { token: '--vds-sidenav-dur-shimmer', controls: 'Loading skeleton shimmer loop' },
+    ],
+  },
+]
 
 /* ----------------------------------------------------------------------------
    Product glyphs — SVG path strings drawn on the tile's 32×32 grid. In a real
@@ -160,7 +234,7 @@ export function SideNavPage() {
   return (
     <ComponentPage
       title="Side Nav"
-      description="The navy menu rail on the left of every product screen. You give it data — an account, sections, products — and it draws the whole thing: open-and-close product cards, locked products, loading shimmer, a collapse button, and tooltips when the rail is thin. The navy never changes with the theme; it is chrome, not a surface. The blue highlight follows one token, --vds-nav-accent, so a reseller can re-brand it."
+      description="The navy menu rail on the left of every product screen. You give it data — an account, sections, products — and it draws the whole thing: product cards that open and close, locked products, a loading shimmer, a collapse button, and tooltips when the rail is thin. The navy never changes with the theme; it is a fixed frame, not a page surface. The blue highlight follows one token, --vds-nav-accent, so a reseller can re-brand it."
       installCode={`<!-- Tokens-only: link the CSS variables, build your own rail against them. -->
 <link rel="stylesheet" href="vipre-tokens.css">`}
       colors={COMPONENT_COLORS.SideNav}
@@ -221,7 +295,7 @@ export function SideNavPage() {
         <><IC>prefers-reduced-motion</IC> turns off all the animation — collapse and cards snap, shimmer freezes.</>,
       ]}
     >
-      <Section title="Tokens only" note="The design system ships this rail's LOOK-AND-FEEL and its tokens — not the component. Each team builds the menu in its own framework (React / Angular / Bootstrap) and binds to the --vds-sidenav-* variables below. The React build on this page is a reference that renders these demos; it is not published (a versioned, installable package may come later — the token contract won't change).">
+      <Section title="Tokens only" note="The design system ships this rail's look-and-feel and its tokens — not the component. Each team builds the menu in its own framework (React / Angular / Bootstrap) and hooks it up to the --vds-sidenav-* variables below. The React build on this page just renders these demos; it is not published (a package you can install may come later — the tokens won't change).">
         <p className="vds-text vds-text--body" style={{ margin: 0 }}>
           Start with the pilot spec — look-and-feel, tokens, and the motion spec in one place:{' '}
           <a href="#/pilot/msp-menu"><strong>MSP Menu pilot →</strong></a>
@@ -243,7 +317,7 @@ export function SideNavPage() {
 
       <Section
         title="Loading"
-        note="While you fetch which products an account has, set loading — the sections show shimmering placeholder cards, so the menu change reads as a fetch, not a flicker."
+        note="While you're loading which products an account has, set loading — the sections show shimmering placeholder cards, so the change reads as loading, not a flicker."
       >
         <Preview canvas={<LoadingRail />} />
       </Section>
@@ -265,93 +339,15 @@ export function SideNavPage() {
       </Section>
 
       <Section
-        title="Reference implementation"
-        note="How the demos on this page are built — reference only. The design system does not ship this markup or CSS; it ships the tokens above. Your team writes its own component (its own classes, its own framework) and binds to the --vds-sidenav-* variables."
-      >
-        <p className="vds-text vds-text--body vds-text--tone-muted" style={{ margin: 0 }}>
-          The reference build lives in the repo under <IC>src/components/SideNav</IC>. Treat it as a worked
-          example of the tokens — not something to install today. It's also the seed of a future
-          <em> versioned, installable</em> package: when Vipre is ready, the same token contract makes that a
-          drop-in, not a rewrite.
-        </p>
-      </Section>
-
-      <Section
         title="Tokens"
-        note="Every visual value is a --vds-sidenav-* custom property set on the .vds-sidenav root — so the whole rail is grabbable and overridable. Re-declare any of them on your own selector to retheme or re-space the menu; nothing else in the system changes. Colors point at the fixed midnight ramp (so the rail stays navy in both themes); motion is one shared easing plus named beats."
+        note="Every visual value is a --vds-sidenav-* variable set on the .vds-sidenav root — so the whole rail is easy to grab and override. Re-set any of them on your own selector to re-color or re-space the menu; nothing else in the system changes. Colors point at the fixed navy ramp (so the rail stays navy in both themes); motion is one shared curve plus named beats."
       >
-        <TokenGroup label="Color — the fixed navy chrome" headers={['Token', 'Maps to', 'Controls']} rows={[
-          [{ code: '--vds-sidenav-bg' }, { code: '--vds-midnight-950' }, 'Rail background'],
-          [{ code: '--vds-sidenav-well' }, { code: '--vds-midnight-1000' }, 'Card wells + dividers'],
-          [{ code: '--vds-sidenav-ink' }, { code: '--vds-midnight-200' }, 'Row labels'],
-          [{ code: '--vds-sidenav-ink-dim' }, { code: '--vds-midnight-300' }, 'Eyebrows, back row, account type'],
-          [{ code: '--vds-sidenav-icon' }, { code: '--vds-midnight-400' }, 'Resting row icons'],
-          [{ code: '--vds-sidenav-icon-faint' }, { code: '--vds-midnight-600' }, 'Escape-row ("Full portal") icon at rest'],
-          [{ code: '--vds-sidenav-chev' }, { code: '--vds-midnight-500' }, 'Product chevron at rest'],
-          [{ code: '--vds-sidenav-hover' }, { code: '--vds-midnight-800' }, 'Hover fill'],
-          [{ code: '--vds-sidenav-press' }, { code: '--vds-midnight-700' }, 'Pressed fill (one step brighter)'],
-          [{ code: '--vds-sidenav-accent' }, { code: '--vds-nav-accent' }, 'Selected fill — the one brandable value'],
-          [{ code: '--vds-sidenav-accent-hover' }, 'accent 88% + midnight-1000', 'Selected row, hovered'],
-          [{ code: '--vds-sidenav-accent-press' }, 'accent 78% + midnight-1000', 'Selected row, pressed'],
-          [{ code: '--vds-sidenav-toplight' }, 'white 10% → transparent', 'Sheen gradient on selected fills'],
-          [{ code: '--vds-sidenav-hairline' }, 'inset white 8%', 'Top hairline on selected fills'],
-        ]} />
-
-        <TokenGroup label="Sizes" headers={['Token', 'Value', 'Controls']} rows={[
-          [{ code: '--vds-sidenav-w' }, { code: '242px' }, 'Expanded rail width'],
-          [{ code: '--vds-sidenav-w-collapsed' }, { code: '72px' }, 'Collapsed rail width (2 × the 36px icon column)'],
-          [{ code: '--vds-sidenav-icon-size' }, { code: '16px' }, 'Row icon + lock badge box'],
-          [{ code: '--vds-sidenav-tile-size' }, { code: '32px' }, 'Product / account tile'],
-          [{ code: '--vds-sidenav-account-h' }, { code: '36px' }, 'Account header height (fixed, so collapse never shifts y)'],
-          [{ code: '--vds-sidenav-back-h' }, { code: '24px' }, 'Back-row height'],
-          [{ code: '--vds-sidenav-chev-size' }, { code: '24px' }, 'Chevron hit box'],
-          [{ code: '--vds-sidenav-label-max' }, { code: '200px' }, 'Row label clamp before ellipsis'],
-          [{ code: '--vds-sidenav-label-max-pill' }, { code: '160px' }, 'Product / account label clamp'],
-        ]} />
-
-        <TokenGroup label="Spacing" headers={['Token', 'Value', 'Controls']} rows={[
-          [{ code: '--vds-sidenav-nest' }, { code: '2px' }, 'Concentric padding step (tile → pill → card)'],
-          [{ code: '--vds-sidenav-pad-x' }, { code: '16px' }, "Rail's base horizontal padding"],
-          [{ code: '--vds-sidenav-section-pad-y' }, { code: '10px' }, 'Section top / bottom padding'],
-          [{ code: '--vds-sidenav-section-gap' }, { code: '4px' }, 'Gap between rows in a section'],
-          [{ code: '--vds-sidenav-row-pad-x' }, { code: '10px' }, 'Row inner x padding'],
-          [{ code: '--vds-sidenav-row-pad-y' }, { code: '6px' }, 'Row inner y padding'],
-          [{ code: '--vds-sidenav-label-gap' }, { code: '8px' }, 'Icon → label lead margin (acts as the gap)'],
-        ]} />
-
-        <TokenGroup label="Radius — the concentric +2 rule" headers={['Token', 'Value', 'Controls']} rows={[
-          [{ code: '--vds-sidenav-r-tile' }, { code: '8px' }, 'Tiles (= --vds-radius-md)'],
-          [{ code: '--vds-sidenav-r-pill' }, { code: '10px' }, 'Pills / rows / account (tile + nest)'],
-          [{ code: '--vds-sidenav-r-card' }, { code: '12px' }, 'Product cards (pill + nest)'],
-        ]} />
-
-        <TokenGroup label="Typography — weights (sizes come from the typescale)" headers={['Token', 'Value', 'Controls']} rows={[
-          [{ code: '--vds-sidenav-weight-label' }, { code: '500' }, 'Row labels'],
-          [{ code: '--vds-sidenav-weight-pill' }, { code: '600' }, 'Product name + account name'],
-          [{ code: '--vds-sidenav-weight-quiet' }, { code: '400' }, '"Full portal" + account type'],
-        ]} />
-        <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.5rem' }}>
-          Sizes are typescale steps, not raw values: eyebrow &amp; account type = <IC>nano</IC>,
+        <TokenSpecTable scope="vds-sidenav" prefix="--vds-sidenav-" groups={SIDENAV_TOKEN_GROUPS} />
+        <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.75rem' }}>
+          Type sizes are text-size steps, not raw values: eyebrow &amp; account type = <IC>nano</IC>,
           escape row = <IC>micro</IC>, row label = <IC>detail</IC>, sub-row &amp; account name = <IC>caption</IC>,
-          product label = <IC>body</IC>.
-        </p>
-
-        <TokenGroup label="Motion — one easing + named beats" headers={['Token', 'Value', 'Controls']} rows={[
-          [{ code: '--vds-sidenav-ease' }, { code: '--vds-ease-emphatic' }, 'One curve for every nav motion'],
-          [{ code: '--vds-sidenav-dur-collapse' }, { code: '220ms' }, 'Rail width + label slide'],
-          [{ code: '--vds-sidenav-dur-hover-in' }, { code: '50ms' }, 'Hover fill lands (near-instant)'],
-          [{ code: '--vds-sidenav-dur-hover-out' }, { code: '280ms' }, 'Hover fill releases (slow)'],
-          [{ code: '--vds-sidenav-dur-press' }, { code: '80ms' }, 'Tile settle on press'],
-          [{ code: '--vds-sidenav-dur-label-out' }, { code: '90ms' }, 'Label / eyebrow / badge fade out on collapse'],
-          [{ code: '--vds-sidenav-delay-label-in' }, { code: '70ms' }, 'Label fade-in delay on expand (width leads first)'],
-          [{ code: '--vds-sidenav-dur-accordion' }, { code: '240ms' }, 'Product card open / close (= --vds-dur-slow)'],
-          [{ code: '--vds-sidenav-delay-item-in' }, { code: '60ms' }, 'Card items fade in a beat after the card'],
-          [{ code: '--vds-sidenav-dur-item-out' }, { code: '110ms' }, 'Card items drop out on close'],
-          [{ code: '--vds-sidenav-dur-tip' }, { code: '140ms' }, 'Collapsed-rail tooltip fade + slide'],
-          [{ code: '--vds-sidenav-dur-shimmer' }, { code: '1.15s' }, 'Loading skeleton shimmer loop'],
-        ]} />
-        <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.5rem' }}>
-          All of it is disabled under <IC>prefers-reduced-motion</IC> — collapse and cards snap, the shimmer freezes.
+          product label = <IC>body</IC>. All motion is disabled under <IC>prefers-reduced-motion</IC> —
+          collapse and cards snap, the shimmer freezes.
         </p>
       </Section>
     </ComponentPage>

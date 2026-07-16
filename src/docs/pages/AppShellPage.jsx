@@ -94,7 +94,7 @@ export function AppShellPage() {
   return (
     <ComponentPage
       title="App Shell"
-      description="The frame every product screen sits in. It holds three things: your nav rail on the left, an optional top bar, and your page content. The shell fills the screen and pins the chrome — only the content scrolls. On small screens the rail tucks away and slides in as a drawer."
+      description="The frame every product screen sits in. It holds three things: the nav rail on the left, an optional top bar, and your page content. The shell fills the screen and keeps the nav and top bar in place — only the content scrolls. On small screens the rail tucks away and slides in as a drawer."
       installCode={`import { AppShell, AppShellNavTrigger } from 'vipre-design-system'`}
       props={[
         {
@@ -128,7 +128,7 @@ export function AppShellPage() {
     >
       <Section
         title="The frame"
-        note="Nav on the left, top bar over the content, content below it. The nav column has no width of its own — it hugs the SideNav, so when the rail collapses, the content slides over with the same easing, for free. Click Collapse in the rail to feel it. The content area gets --vds-canvas, --vds-page-pad padding, and its own scrollbar."
+        note="Nav on the left, top bar over the content, content below it. The nav column has no width of its own — it hugs the SideNav. So when the rail collapses, the content slides over to fill the space. Click Collapse in the rail to try it. The content area gets --vds-canvas, --vds-page-pad padding, and its own scrollbar."
       >
         <Preview
           canvas={<ShellDemo />}
@@ -147,7 +147,7 @@ export function AppShellPage() {
 
       <Section
         title="Mobile drawer"
-        note="Below the lg breakpoint (1024px) the rail leaves the layout. The hamburger (AppShellNavTrigger) appears — put it in your TopBar's leading slot and forget it; it hides itself on wide screens. Tapping it slides the nav in from the left over a scrim, on the same emphasized curve as the Drawer component. Esc, a scrim tap, or growing the window past lg closes it. Shrink this window to try it. State is uncontrolled by default; pass navOpen + onNavOpenChange to own it."
+        note="On screens narrower than 1024px the rail leaves the layout. The hamburger (AppShellNavTrigger) shows up — put it in your TopBar's leading slot and forget it; it hides itself on wide screens. Tapping it slides the nav in from the left over a dim backdrop, the same way the Drawer component does. Esc, a tap on the backdrop, or growing the window past 1024px closes it. Shrink this window to try it. By default the shell handles the open and close itself; pass navOpen + onNavOpenChange to own it."
       >
         <Code>{`// Uncontrolled — the trigger and the shell handle everything
 <AppShell nav={<SideNav … />} topBar={<TopBar leading={<AppShellNavTrigger />} … />}>
@@ -159,7 +159,7 @@ const [navOpen, setNavOpen] = useState(false)
 
       <Section
         title="Container queries"
-        note="The content area is a size container (container-type: inline-size). Style your page with @container rules and it responds to the space it actually has — which changes when the rail collapses — not the window width."
+        note="The content area is a size container (container-type: inline-size). Write your page with @container rules and it reacts to the space it actually has — which changes when the rail collapses — not to the window width."
       >
         <Code>{`/* in a page's css */
 @container (min-width: 800px) {
@@ -169,7 +169,7 @@ const [navOpen, setNavOpen] = useState(false)
 
       <Section
         title="Markup"
-        note="The rendered HTML with the vds- classes, for teams not using React. JS you must supply yourself: toggle vds-appshell--nav-open (plus render the scrim) below lg, close on Esc and scrim click, and lock body scroll while the drawer is open."
+        note="The rendered HTML with the vds- classes, for teams not using React. You wire up the JS yourself: toggle vds-appshell--nav-open (and render the scrim) on narrow screens, close on Esc and scrim click, and stop the page behind from scrolling while the drawer is open."
       >
         <Code>{`<div class="vds-appshell">                       <!-- add vds-appshell--nav-open on mobile -->
   <!-- scrim: only rendered while the mobile drawer is open -->

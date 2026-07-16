@@ -264,11 +264,11 @@ export function EntityDetailTemplatePage() {
         <div className="vds-text vds-text--body" style={{ display: 'grid', gap: '0.75rem', maxWidth: 720 }}>
           {[
             ['Breadcrumb', 'The trail from the root to this account. The last crumb is the current page; long trails fold their middle into a … menu.', <IC key="a">Breadcrumb</IC>],
-            ['Identity header', 'Who this is: tile, name, status Badge, type Tag — with Open portal and a … actions Menu on the right. Composed from primitives, no bespoke component.', <span key="b"><IC>Avatar</IC> + <IC>Badge</IC>/<IC>Tag</IC> + <IC>Menu</IC></span>],
+            ['Identity header', 'Who this is: tile, name, status Badge, type Tag — with Open portal and a … actions Menu on the right. Built from basic pieces, no special component.', <span key="b"><IC>Avatar</IC> + <IC>Badge</IC>/<IC>Tag</IC> + <IC>Menu</IC></span>],
             ['Tabs', 'Splits the page into Overview / Products / Details. Panels stay mounted, so state survives switching.', <span key="c"><IC>Tabs</IC> (<IC>vds-tabs</IC>)</span>],
             ['Overview', 'One hero number with target + breakdown, three quick stats, then per-product adoption rows with trends.', <span key="d"><IC>MetricCard</IC> + <IC>StatTile</IC>s + <IC>Card</IC> with <IC>Sparkline</IC> rows</span>],
             ['Products', 'A card per product with an adoption bar; locked products get a teaser card with the fix action.', <span key="e"><IC>Grid</IC> of <IC>Card</IC>s + <IC>Progress</IC> + <IC>EmptyState inset</IC></span>],
-            ['Details', 'Labelled facts in two container-responsive columns, with an Alert above for the must-know.', <span key="f"><IC>DescriptionList</IC> + <IC>Alert</IC></span>],
+            ['Details', 'Labelled facts in two columns that drop to one when narrow, with an Alert above for the must-know.', <span key="f"><IC>DescriptionList</IC> + <IC>Alert</IC></span>],
           ].map(([region, resp, comp]) => (
             <div key={region} style={{ display: 'grid', gridTemplateColumns: '8rem 1fr', gap: '0.75rem', alignItems: 'start' }}>
               <strong style={{ color: 'var(--vds-ink)' }}>{region}</strong>

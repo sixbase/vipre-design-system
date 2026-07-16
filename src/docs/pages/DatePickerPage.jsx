@@ -1,18 +1,41 @@
 import { useState } from 'react'
 import { ComponentPage } from '../ComponentPage.jsx'
-import { Section, Preview, Kbd, IC, PropsTable } from '../primitives.jsx'
+import { Section, Preview, Kbd, IC, TokenSpecTable } from '../primitives.jsx'
 import { DatePicker } from '../../components/DatePicker/index.js'
 import { Text } from '../../components/index.js'
 
-/* A labelled token table for the Tokens section (same shape SideNav uses). */
-function TokenGroup({ label, headers, rows }) {
-  return (
-    <div style={{ marginTop: '1.25rem' }}>
-      <p className="vds-text vds-text--eyebrow" style={{ margin: '0 0 0.4rem' }}>{label}</p>
-      <PropsTable headers={headers} rows={rows} />
-    </div>
-  )
-}
+/* The one token spec — Token / Bound to / What it controls, grouped. Live
+   values are read at render by the shared TokenSpecTable off a .vds-datepicker
+   probe. Only the calendar's own --vds-datepicker-* tokens live here; the
+   trigger borrows Input's chrome, noted in the prose below the table. */
+const DATEPICKER_TOKEN_GROUPS = [
+  {
+    label: 'Calendar — sizing & shape',
+    tokens: [
+      { token: '--vds-datepicker-cell', bound: 'var(--vds-control-h-sm)', controls: 'Day cell size (~32px)' },
+      { token: '--vds-datepicker-gap', bound: 'var(--vds-space-1)', controls: 'Gap between cells (4px)' },
+      { token: '--vds-datepicker-pad', bound: 'var(--vds-space-2)', controls: 'Panel inset (8px)' },
+      { token: '--vds-datepicker-radius', bound: 'var(--vds-radius-sm)', controls: 'Cell + nav-button radius' },
+    ],
+  },
+  {
+    label: 'Calendar — color',
+    tokens: [
+      { token: '--vds-datepicker-accent', bound: 'var(--vds-primary)', controls: 'Selected day fill' },
+      { token: '--vds-datepicker-on-accent', bound: 'var(--vds-on-primary)', controls: 'Selected day ink' },
+      { token: '--vds-datepicker-today-ring', bound: 'var(--vds-focus-ring)', controls: "Today's ring" },
+      { token: '--vds-datepicker-muted', bound: 'var(--vds-ink-subtle)', controls: 'Outside-month days + weekday header' },
+      { token: '--vds-datepicker-hover', bound: 'ink 7% → transparent', controls: 'Day / nav hover fill' },
+    ],
+  },
+  {
+    label: 'Motion',
+    tokens: [
+      { token: '--vds-datepicker-dur', bound: 'var(--vds-dur-fast)', controls: 'Hover / focus transition' },
+      { token: '--vds-datepicker-ease', bound: 'var(--vds-ease-out)', controls: 'The easing curve' },
+    ],
+  },
+]
 
 /* Live pickers — the docs page owns the state; the component just reports back. */
 function BasicPicker() {
@@ -59,7 +82,7 @@ export function DatePickerPage() {
   return (
     <ComponentPage
       title="Date Picker"
-      description="A field that looks like an Input but opens a little month calendar when you click it. You move around with the arrow keys, pick a day, and it closes — the panel flips up if there's no room below, closes on Escape, and puts focus back on the field, all borrowed from Popover. The calendar is drawn with plain date math (no date library) and weeks start on Sunday. This page is tokens-only: the design system ships the --vds-datepicker-* variables and this worked example, not an installable component."
+      description="A field that looks like an Input but opens a little month calendar when you click it. You move around with the arrow keys, pick a day, and it closes — the panel flips up if there's no room below, closes on Escape, and puts focus back on the field, all borrowed from Popover. The calendar is drawn with plain date math (no date library) and weeks start on Sunday. This page is tokens-only: the design system ships the --vds-datepicker-* variables and this example, not a component you can install."
       installCode={`<!-- Tokens-only: link the CSS variables, build your own picker against them. -->
 <link rel="stylesheet" href="vipre-tokens.css">`}
       props={[
@@ -132,42 +155,14 @@ export function DatePickerPage() {
       </Section>
 
       <Section
-        title="Reference implementation"
-        note="How the demos on this page are built — reference only. The design system ships the tokens below, not this markup. Your team writes its own picker (its own classes, its own framework) and binds to the --vds-datepicker-* variables. The reference build lives in the repo under src/components/DatePicker and computes the month grid with plain Date math — no date library, weeks start Sunday."
-      >
-        <p className="vds-text vds-text--body vds-text--tone-muted" style={{ margin: 0 }}>
-          The trigger reuses Input's <IC>--vds-input-*</IC> chrome tokens (it is an input dressed
-          up), and the calendar panel rides on Popover for placement, Escape, outside-click, and
-          focus-return — so this component invents no new overlay behavior.
-        </p>
-      </Section>
-
-      <Section
         title="Tokens"
-        note="Every visual value is a custom property on the .vds-datepicker root — grab or re-declare any of them on your own selector to retheme the picker without touching the rest of the system. The trigger borrows Input's field tokens; the calendar has its own small set below."
+        note="Every look comes from a variable on the .vds-datepicker root. Grab or re-set any of them on your own selector to restyle the picker without touching anything else. Live value is what the browser shows right now. The field borrows Input's tokens; the calendar has its own small set below."
       >
-        <TokenGroup label="Calendar — sizing & shape" headers={['Token', 'Maps to', 'Controls']} rows={[
-          [{ code: '--vds-datepicker-cell' }, { code: '--vds-control-h-sm' }, 'Day cell size (~32px)'],
-          [{ code: '--vds-datepicker-gap' }, { code: '--vds-space-1' }, 'Gap between cells (4px)'],
-          [{ code: '--vds-datepicker-pad' }, { code: '--vds-space-2' }, 'Panel inset (8px)'],
-          [{ code: '--vds-datepicker-radius' }, { code: '--vds-radius-sm' }, 'Cell + nav-button radius'],
-        ]} />
+        <TokenSpecTable scope="vds-datepicker" prefix="--vds-datepicker-" groups={DATEPICKER_TOKEN_GROUPS} />
 
-        <TokenGroup label="Calendar — color" headers={['Token', 'Maps to', 'Controls']} rows={[
-          [{ code: '--vds-datepicker-accent' }, { code: '--vds-primary' }, 'Selected day fill'],
-          [{ code: '--vds-datepicker-on-accent' }, { code: '--vds-on-primary' }, 'Selected day ink'],
-          [{ code: '--vds-datepicker-today-ring' }, { code: '--vds-focus-ring' }, "Today's ring"],
-          [{ code: '--vds-datepicker-muted' }, { code: '--vds-ink-subtle' }, 'Outside-month days + weekday header'],
-          [{ code: '--vds-datepicker-hover' }, 'ink 7% → transparent', 'Day / nav hover fill'],
-        ]} />
-
-        <TokenGroup label="Motion" headers={['Token', 'Maps to', 'Controls']} rows={[
-          [{ code: '--vds-datepicker-dur' }, { code: '--vds-dur-fast' }, 'Hover / focus transition'],
-          [{ code: '--vds-datepicker-ease' }, { code: '--vds-ease-out' }, 'The easing curve'],
-        ]} />
-        <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.5rem' }}>
+        <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.75rem' }}>
           The trigger also reads Input's <IC>--vds-input-fill</IC>, <IC>--vds-input-border</IC>,
-          <IC>--vds-input-border-hover</IC>, and <IC>--vds-input-muted</IC> — the same field chrome
+          <IC>--vds-input-border-hover</IC>, and <IC>--vds-input-muted</IC> — the same field look
           Select and Textarea use — so a date field matches the text fields beside it.
         </p>
       </Section>

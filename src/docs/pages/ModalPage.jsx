@@ -176,7 +176,7 @@ export function ModalPage() {
 
       <Section
         title="Sizes"
-        note="Four widths. Below the sm breakpoint every size goes near-full-width with small margins, and tall content scrolls inside the body."
+        note="Four widths. On small screens every size goes nearly full-width with small margins, and tall content scrolls inside the body."
       >
         <Preview
           canvas={

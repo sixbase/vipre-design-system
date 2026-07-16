@@ -263,12 +263,12 @@ export function DeviceListTemplatePage() {
   return (
     <ComponentPage
       title="Device List"
-      description="The fleet page: every endpoint in scope. Filters live in two places — quick ones in the header (search, OS, risk, a child-orgs switch) and deep ones in a facet sidebar (checkbox groups with counts). A KPI strip above the table re-counts as you filter, so the numbers always describe what you see. This body slots into the MSP Shell template's content region."
+      description="The fleet page: every endpoint in scope. Filters live in two places — quick ones in the header (search, OS, risk, a child-orgs switch) and deeper ones in a side panel (checkbox groups with counts). A KPI strip above the table re-counts as you filter, so the numbers always describe what you see. This body slots into the MSP Shell template's content region."
       installCode={`import { PageHeader, SearchInput, Select, Switch, Accordion, Checkbox, StatTile, Table, Progress } from 'vipre-design-system'`}
     >
       <Section
         title="Anatomy"
-        note="All live. Search, pick an OS or risk level, tick facet checkboxes — the table and the KPI strip both follow. Flip 'Include child orgs' off to scope down to just your own org's devices. On a narrow container the sidebar wraps on top of the table, and the table's responsive mode turns rows into labelled cards."
+        note="All live. Search, pick an OS or risk level, tick the filter checkboxes — the table and the KPI strip both follow. Flip 'Include child orgs' off to show just your own org's devices. When space gets tight the sidebar wraps on top of the table, and narrow rows turn into labelled cards."
       >
         <Preview
           canvas={<DeviceListDemo />}
@@ -328,10 +328,10 @@ export function DeviceListTemplatePage() {
         <div className="vds-text vds-text--body" style={{ display: 'grid', gap: '0.75rem', maxWidth: 720 }}>
           {[
             ['Page header', 'Names the page. The filters slot holds the quick controls: search, two selects, a switch.', <span key="a"><IC>PageHeader</IC> with a <IC>filters</IC> row</span>],
-            ['KPI strip', 'Compliance, risk, and scan coverage for what the table currently shows. Recomputes as filters change.', <span key="b"><IC>Grid</IC> of <IC>StatTile</IC>s</span>],
-            ['Facet sidebar', 'Deep filters as checkbox groups with counts, each group collapsible. A Clear button appears once something is ticked.', <span key="c"><IC>Surface</IC> + <IC>Accordion</IC> + <IC>Checkbox</IC></span>],
+            ['KPI strip', 'Compliance, risk, and scan coverage for what the table currently shows. Updates as filters change.', <span key="b"><IC>Grid</IC> of <IC>StatTile</IC>s</span>],
+            ['Facet sidebar', 'Deeper filters as checkbox groups with counts, and each group can fold up. A Clear button appears once something is ticked.', <span key="c"><IC>Surface</IC> + <IC>Accordion</IC> + <IC>Checkbox</IC></span>],
             ['Device table', 'The fleet. Composed cells: an icon for the device kind, a warning glyph on outdated agents, a Badge for risk, a Progress bar for compliance.', <span key="d"><IC>Table responsive density="compact"</IC></span>],
-            ['Stacking', 'No breakpoint code: the sidebar and table share a flex-wrap row. Too narrow for both → the sidebar wraps on top.', <span key="e">flex-wrap layout glue</span>],
+            ['Stacking', 'No special screen-size code: the sidebar and table share one wrapping row. Too narrow for both and the sidebar wraps on top.', <span key="e">flex-wrap layout glue</span>],
           ].map(([region, resp, comp]) => (
             <div key={region} style={{ display: 'grid', gridTemplateColumns: '8rem 1fr', gap: '0.75rem', alignItems: 'start' }}>
               <strong style={{ color: 'var(--vds-ink)' }}>{region}</strong>

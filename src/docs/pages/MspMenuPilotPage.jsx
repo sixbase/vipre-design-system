@@ -128,31 +128,31 @@ export function MspMenuPilotPage() {
   return (
     <ComponentPage
       title="MSP Menu"
-      description="The pilot for our tokens-only design system. We don't ship this menu as code — we ship its look-and-feel plus the tokens that define it, and each team builds the menu in React, Angular, or Bootstrap bound to those tokens. This page is the whole spec: match the look, use the tokens, follow the motion spec."
+      description="The first try at our tokens-only design system. We don't ship this menu as code. We ship its look and feel plus the tokens that define it, and each team builds the menu in React, Angular, or Bootstrap tied to those tokens. This page is the whole guide: match the look, use the tokens, follow the motion notes."
       installCode={`<!-- One file, every framework. Link the design tokens once; -->
 <!-- then bind your own components to the --vds-* CSS variables. -->
 <link rel="stylesheet" href="vipre-tokens.css">`}
     >
-      <Section title="1 · Look and feel" note="The reference to match. Click a row, open a product card, press Collapse, click Customers to scope into a customer, then Back to pop out. Build your menu to look and behave like this.">
+      <Section title="1 · Look and feel" note="The one to match. Click a row, open a product card, press Collapse, click Customers to step into a customer, then Back to pop out. Build your menu to look and act like this.">
         <Preview canvas={<MenuOnly />} />
       </Section>
 
-      <Section title="2 · Tokens — the spec" note="Everything visual is a --vds-sidenav-* CSS variable: color, sizes, spacing, radius, type weight, and motion. They map to plain CSS custom properties, so React, Angular, and Bootstrap all bind to the exact same values. This is the contract — the numbers your build must hit.">
+      <Section title="2 · Tokens — the spec" note="Everything visual is a --vds-sidenav-* variable: color, sizes, spacing, radius, type weight, and motion. They are plain CSS variables, so React, Angular, and Bootstrap all use the exact same values. These are the numbers your build must hit.">
         <p className="vds-text vds-text--body" style={{ margin: 0 }}>
           Full token reference (48 tokens, grouped by Color / Sizes / Spacing / Radius / Typography / Motion):{' '}
           <a href="#/components/side-nav"><strong>Side Nav → Tokens →</strong></a>
         </p>
       </Section>
 
-      <Section title="3 · Motion spec" note="A token names the BEAT (a duration, an easing). This spec names the CHOREOGRAPHY — which property moves, in what order, and why. You need both to reproduce the feel: the tokens alone won't tell you that labels fade out fast but in late. One curve drives all of it — --vds-sidenav-ease (emphasized decelerate: starts brisk, lands soft).">
+      <Section title="3 · Motion spec" note="A token sets the timing (how long, what easing). This part sets the dance — which thing moves, in what order, and why. You need both to get the feel right: the tokens alone won't tell you that labels fade out fast but in late. One curve drives all of it — --vds-sidenav-ease (starts brisk, lands soft).">
         <PropsTable
           headers={['Interaction', 'What moves', 'Tokens & timing']}
           rows={MOTION.map(([a, b, c]) => [a, b, { code: c }])}
         />
         <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.6rem' }}>
-          The guiding principle: motion is <strong>asymmetric on purpose</strong> — things leave fast and
-          arrive late, so the layout leads and the content follows. Keep that and the menu feels engineered;
-          make it symmetric and it feels cheap.
+          The main idea: motion is <strong>lopsided on purpose</strong> — things leave fast and
+          arrive late, so the layout leads and the content follows. Keep that and the menu feels well-made;
+          make it even and it feels cheap.
         </p>
       </Section>
 
@@ -171,13 +171,13 @@ export function MspMenuPilotPage() {
             binding to the tokens above. Your team owns the component.
           </p>
           <p style={{ margin: 0 }}>
-            <strong>The React build in this repo is a reference</strong>, not a package — it renders the demos
-            and proves the tokens produce the intended look. It is not something you install.
+            <strong>The React build in this repo is an example</strong>, not a package — it renders the demos
+            and shows the tokens produce the intended look. It is not something you install.
           </p>
           <p style={{ margin: 0 }}>
-            <strong>Later:</strong> as Vipre's agentic workflow matures, that reference becomes a
-            <em> versioned, installable</em> package you can pull in and update deliberately. The token
-            contract stays identical either way — so nothing you build against the tokens now is throwaway.
+            <strong>Later:</strong> as Vipre's agentic workflow matures, that example becomes
+            <em> a package you can install</em> and update on your own schedule. The tokens
+            stay exactly the same either way — so nothing you build against the tokens now is throwaway.
           </p>
         </div>
       </Section>

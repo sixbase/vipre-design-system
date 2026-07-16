@@ -282,12 +282,12 @@ export function CurrentNavShellPage() {
   return (
     <ComponentPage
       title="Current Nav Shell"
-      description="A whole-page app layout built around Current Left Nav — the real VIPRE frame, saved so we can prototype against it. The rail stays put (always navy); the content area (page header + body) swaps with each page you pick. Click through products and pages to feel how it navigates today — a few pages use real widgets, the rest are placeholders. Made from CurrentLeftNav + PageHeader + TimeframeSelect + StatTile / Card / Table."
+      description="A full-page app layout built around Current Left Nav — the real VIPRE frame, saved so we can build against it. The rail stays put (always navy). The content area (page header + body) swaps with each page you pick. Click through products and pages to feel how it works today — a few pages use real widgets, the rest are placeholders. Made from CurrentLeftNav + PageHeader + TimeframeSelect + StatTile / Card / Table."
       installCode={`import { CurrentLeftNav, PageHeader } from 'vipre-design-system'`}
     >
       <Section
         title="Live shell"
-        note="A working prototype, not a picture. Click Overview, or go into IES → Message Logs or EDR → Devices to see real widgets; the rail lights up the product that holds the current page and keeps it open. SafeSend starts closed; SAT and Archive are locked. Flip the page theme — the rail stays navy on purpose (Current Left Nav doesn't follow the theme), so the frame stays steady while the workspace changes."
+        note="A working demo, not a picture. Click Overview, or go into IES → Message Logs or EDR → Devices to see real widgets. The rail lights up the product that holds the current page and keeps it open. SafeSend starts closed; SAT and Archive are locked. Flip the page theme — the rail stays navy on purpose, so the frame stays steady while the page changes."
       >
         <Preview
           canvas={<ShellDemo />}

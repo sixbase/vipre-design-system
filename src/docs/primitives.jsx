@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { Heading, Text } from '../components/index.js'
 
 /* ----------------------------------------------------------------------------
@@ -78,6 +78,114 @@ export function PropsTable({ headers, rows }) {
         </tbody>
       </table>
     </div>
+  )
+}
+
+/**
+ * RefTable — a dense reference table whose cells may be ANY React node (swatch,
+ * <code>, live value, plain text). PropsTable only takes strings / {code}; reach
+ * for RefTable when a cell holds a rendered node. Shared by the Token Reference
+ * page and the component spec tables.
+ * headers: string[]; rows: node[][].
+ */
+export function RefTable({ headers, rows }) {
+  return (
+    <div className="vds-ref-table-wrap">
+      <table className="vds-ref-table">
+        <thead>
+          <tr>{headers.map((h) => <th key={h}>{h}</th>)}</tr>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => (
+            <tr key={i}>{row.map((cell, j) => <td key={j}>{cell}</td>)}</tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+/**
+ * TokenSpecTable — the one canonical component-token table: Token / Bound to /
+ * Live value / What it controls, grouped by category. Renders a hidden probe
+ * carrying the component's root class (`scope`) so its --vds-{name}-* custom
+ * properties resolve to the value the browser actually computes; tokens outside
+ * `prefix` resolve on <html> (shared foundation tokens). Live values re-resolve
+ * whenever the theme class flips, so they stay honest in light and dark.
+ *
+ * Props:
+ * - scope:  component root BEM class for the probe (e.g. 'vds-button')
+ * - prefix: token namespace resolved on the probe (e.g. '--vds-button-'); any
+ *           token not starting with it resolves on <html>
+ * - groups: [{ label, tokens: [{ token, bound, controls }] }]
+ *           `bound` may be omitted for a token that holds a raw value.
+ */
+export function TokenSpecTable({ scope, prefix, groups }) {
+  const probeRef = useRef(null)
+  const [values, setValues] = useState({})
+
+  useEffect(() => {
+    const probe = probeRef.current
+    if (!probe) return
+    const resolve = () => {
+      const cs = getComputedStyle(probe)
+      const root = getComputedStyle(document.documentElement)
+      const next = {}
+      for (const g of groups) {
+        for (const { token } of g.tokens) {
+          const src = prefix && token.startsWith(prefix) ? cs : root
+          next[token] = src.getPropertyValue(token).trim() || '—'
+        }
+      }
+      setValues(next)
+    }
+    resolve()
+    const mo = new MutationObserver(resolve)
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    return () => mo.disconnect()
+  }, [scope, prefix, groups])
+
+  return (
+    <>
+      {/* hidden probe: carries the component's custom-property context */}
+      <span
+        ref={probeRef}
+        className={scope}
+        aria-hidden="true"
+        style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden', pointerEvents: 'none' }}
+      />
+      <div className="vds-ref-table-wrap">
+        <table className="vds-ref-table">
+          <thead>
+            <tr>
+              <th>Token</th>
+              <th>Bound to</th>
+              <th>Live value</th>
+              <th>What it controls</th>
+            </tr>
+          </thead>
+          <tbody>
+            {groups.map((g) => (
+              <Fragment key={g.label}>
+                <tr>
+                  <td colSpan={4}>
+                    <span className="vds-text vds-text--eyebrow vds-text--tone-muted">{g.label}</span>
+                  </td>
+                </tr>
+                {g.tokens.map(({ token, bound, controls }) => (
+                  <tr key={token}>
+                    <td><code>{token}</code></td>
+                    <td>{bound ? <code>{bound}</code> : '—'}</td>
+                    <td><code>{values[token] || '…'}</code></td>
+                    <td>{controls}</td>
+                  </tr>
+                ))}
+              </Fragment>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   )
 }
 

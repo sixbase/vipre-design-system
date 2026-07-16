@@ -125,7 +125,7 @@ export function StepperPage() {
 
       <Section
         title="Responsive"
-        note="A horizontal stepper switches to the vertical layout below the sm breakpoint automatically — pure CSS, nothing to configure. Shrink this window to watch it flip."
+        note="A horizontal stepper switches to the vertical layout on small screens by itself — nothing to configure. Shrink this window to watch it flip."
       >
         <Preview
           canvas={<Stepper steps={DEPLOY_STEPS} current={2} />}

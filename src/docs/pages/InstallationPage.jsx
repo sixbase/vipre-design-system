@@ -22,7 +22,7 @@ npm install ../vipre-design-system`}</Code>
 
       <Section
         title="2a. Tokens only"
-        note="The lightest way in. One file of --vds-* CSS variables (built from dist/vipre-tokens.css). They're plain custom properties, so they work with any styling setup — SCSS, CSS modules, Tailwind themes, anything. This is what the prototypes use today."
+        note="The lightest way in. One file of --vds-* variables (built from dist/vipre-tokens.css). They're plain CSS variables, so they work with any styling setup — SCSS, CSS modules, Tailwind themes, anything. This is what the prototypes use today."
       >
         <Code>{`@import "vipre-design-system/tokens.css";
 
@@ -36,7 +36,7 @@ npm install ../vipre-design-system`}</Code>
 
       <Section
         title="2b. Full stylesheet (no React needed)"
-        note="One file with everything: tokens, the Rubik typescale, and every component's styles as vds- BEM classes (built from dist/vipre.css). Write the HTML shown in each component's Markup section and the classes just work. Behaviors that need JavaScript (opening a menu, trapping focus) are noted on each page — you wire those yourself."
+        note="One file with everything: tokens, the Rubik text sizes, and every component's styles as vds- BEM classes (built from dist/vipre.css). Write the HTML shown in each component's Markup section and the classes just work. Behaviors that need JavaScript (opening a menu, trapping focus) are noted on each page — you wire those yourself."
       >
         <Code>{`@import "vipre-design-system/styles.css";`}</Code>
         <Code>{`<button class="vds-button vds-button--solid vds-button--primary vds-button--md">
@@ -73,7 +73,7 @@ export function Toolbar() {
         </Text>
       </Section>
 
-      <Section title="Building the bundles" note="Both CSS files are compiled from the SCSS source in this repo.">
+      <Section title="Building the bundles" note="Both CSS files are built from the SCSS source in this repo.">
         <Code>{`npm run build:tokens   # dist/vipre-tokens.css — tokens only
 npm run build:styles   # dist/vipre.css — tokens + typescale + components
 npm run build:lib      # both`}</Code>

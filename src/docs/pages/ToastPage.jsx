@@ -178,7 +178,7 @@ dismiss(id)`}
 
       <Section
         title="Static cards"
-        note="The presentational <Toast> is exported on its own — no provider needed. Useful for docs and tests."
+        note="The plain <Toast> is exported on its own — no provider needed. Handy for docs and tests."
       >
         <Preview
           canvas={

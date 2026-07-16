@@ -261,6 +261,9 @@ $magenta: ( // accent — hot pink (hue 348)
   --vds-surface-overlay:  var(--vds-white); // light = shadow-led, so tone stays white
   --vds-surface-disabled: var(--vds-graphite-100); // inert control / field background
   --vds-surface-sunken:   var(--vds-white);        // recessed wells — form-field fills (flush in light, recessed in dark)
+  // Zebra stripe. Light = a faint recess (graphite-50); dark flips to a subtle
+  // LIFT (see .dark) so translucent status badges keep contrast on striped rows.
+  --vds-table-zebra:      var(--vds-canvas);
 
   // ---- Interaction-state fills (neutral, stepped up the GRAPHITE ramp) ----
   // Shared by rows / list & menu items / nav rails for hover + selected
@@ -358,6 +361,9 @@ $magenta: ( // accent — hot pink (hue 348)
   --vds-surface-overlay:  var(--vds-midnight-700); // dark = lightness-led: higher = lighter
   --vds-surface-disabled: var(--vds-midnight-900);
   --vds-surface-sunken:   var(--vds-midnight-950); // recessed below surface-900 — form-field fills
+  // Zebra LIFTS in dark (midnight-800, one step above surface) rather than sinking
+  // toward black — a darker stripe would swallow the ~16%-opacity status badges.
+  --vds-table-zebra:      var(--vds-surface-raised);
 
   // ---- Interaction-state fills (MIDNIGHT ramp; mirror of the light graphite ladder) ----
   --vds-surface-hover:          var(--vds-midnight-900);

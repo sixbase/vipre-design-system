@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { ShieldCheck, Mail, Globe, Database, Eye, Pencil, Trash2, Copy, MoreHorizontal, Download, ShieldAlert, Search, Send, Lock } from '@icons'
+import { ShieldCheck, Mail, Globe, Database, Eye, Pencil, Trash2, Copy, MoreHorizontal, Download, ShieldAlert, Search, Send, Lock, Shield, TriangleAlert, Paperclip, Clock, CircleCheck, X, Check, Calendar, FileText, Users } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, Code, IC } from '../primitives.jsx'
@@ -136,6 +136,188 @@ function UserRowMenu({ user }) {
   )
 }
 
+/* ============================================================================
+   Compact audit log — a dense, log-style table. Each row is a ONE-LINE summary;
+   the three columns that make audit logs tall (recipients, attachments, DLP
+   outcomes) collapse into single-line count chips, and the verbose breakdown
+   moves into the Table's expandable detail drawer. Nothing is lost — it just
+   isn't in the resting row.
+   ========================================================================== */
+
+/* One inline count: a small tinted icon + tabular number, kept to a single
+   line. `color` is always a semantic token — never a raw value. */
+function Count({ icon, n, color, label }) {
+  return (
+    <span
+      title={label}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: '0.15rem', color }}
+    >
+      <Icon as={icon} size="xs" />
+      <Text as="span" variant="detail" tabular style={{ color: 'inherit', fontWeight: 600 }}>{n}</Text>
+    </span>
+  )
+}
+
+/* Recipients by trust zone: internal (brand), external (caution), forbidden
+   (danger). One line replaces the source's stacked pills. */
+function CountRow({ children }) {
+  // inline-flex is flex-wrap:nowrap by default, so the chips never stack — the
+  // cell stays one line and the column just widens to fit (the table scrolls
+  // sideways if it must). That single line is the whole point of "compact".
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--vds-space-2)', whiteSpace: 'nowrap' }}>
+      {children}
+    </span>
+  )
+}
+
+function RecipientCounts({ internal, external, forbidden }) {
+  return (
+    <CountRow>
+      {internal ? <Count icon={Shield} n={internal} color="var(--vds-primary)" label={`${internal} internal`} /> : null}
+      {external ? <Count icon={Globe} n={external} color="var(--vds-on-warning-soft)" label={`${external} external`} /> : null}
+      {forbidden ? <Count icon={TriangleAlert} n={forbidden} color="var(--vds-danger)" label={`${forbidden} forbidden`} /> : null}
+    </CountRow>
+  )
+}
+
+function AttachmentCounts({ scanned, attached, failed }) {
+  if (!scanned && !attached && !failed) return <Text as="span" variant="detail" tone="subtle">—</Text>
+  return (
+    <CountRow>
+      {failed ? <Count icon={X} n={failed} color="var(--vds-danger)" label={`${failed} failed`} /> : null}
+      {attached ? <Count icon={Paperclip} n={attached} color="var(--vds-ink-muted)" label={`${attached} attached`} /> : null}
+      {scanned ? <Count icon={Check} n={scanned} color="var(--vds-ink-subtle)" label={`${scanned} scanned`} /> : null}
+    </CountRow>
+  )
+}
+
+/* DLP outcome: a "DLP" flag when the scan matched, plus danger-tinted removal
+   counts. The full sentence-form list is in the drawer. */
+function DlpFlags({ matches, recipientsRemoved, attachmentsRemoved }) {
+  if (!matches && !recipientsRemoved && !attachmentsRemoved)
+    return <Text as="span" variant="detail" tone="subtle">—</Text>
+  return (
+    <CountRow>
+      {matches ? <Tag size="sm" tone="amber">DLP</Tag> : null}
+      {recipientsRemoved ? <Count icon={Users} n={`−${recipientsRemoved}`} color="var(--vds-danger)" label={`${recipientsRemoved} recipients removed`} /> : null}
+      {attachmentsRemoved ? <Count icon={Paperclip} n={`−${attachmentsRemoved}`} color="var(--vds-danger)" label={`${attachmentsRemoved} attachments removed`} /> : null}
+    </CountRow>
+  )
+}
+
+/* Status → a single Badge (tone + icon) instead of the source's colored pill. */
+const LOG_STATUS = {
+  'Confirmed & Sent': { tone: 'success', icon: CircleCheck },
+  'Modified & Sent': { tone: 'info', icon: Pencil },
+  Sent: { tone: 'success', icon: Check },
+  'Not Allowed': { tone: 'danger', icon: TriangleAlert },
+  'Timed Out': { tone: 'warning', icon: Clock },
+  Cancelled: { tone: 'neutral', icon: X },
+  'Review Required': { tone: 'warning', icon: Eye },
+}
+function LogStatus({ status }) {
+  const s = LOG_STATUS[status] ?? { tone: 'neutral' }
+  return <Badge tone={s.tone} icon={s.icon ? <Icon as={s.icon} /> : undefined}>{status}</Badge>
+}
+
+const LOG_TYPE = { meeting: Calendar, mail: Mail, other: FileText }
+
+/* Fixture — a DLP audit log. Recipient counts + statuses track the source
+   design; attachment and DLP outcomes are plausible fillers. */
+const AUDIT_LOG = [
+  { id: 'l1', type: 'other', date: 'Jun 10, 2026', time: '11:49:57 AM', sender: 'frank@zackdevsandbox.onmicrosoft.com', subject: 'E2E-LOG006-1749…', policy: 'Default Policy', rcpt: { internal: 3 }, status: 'Confirmed & Sent', att: { failed: 2, attached: 2 }, dlp: { matches: true, recipientsRemoved: 2, attachmentsRemoved: 1 } },
+  { id: 'l2', type: 'mail', date: 'Jun 10, 2026', time: '10:51:02 AM', sender: 'bob@zackdevsandbox.onmicrosoft.com', subject: 'E2E-LOG005-1749…', policy: 'Default Policy', rcpt: { internal: 2, external: 3, forbidden: 2 }, status: 'Confirmed & Sent', att: { failed: 2, attached: 1 }, dlp: { matches: true } },
+  { id: 'l3', type: 'other', date: 'Jun 10, 2026', time: '10:48:56 AM', sender: 'alice@zackdevsandbox.onmicrosoft.com', subject: 'E2E-LOG002-1749…', policy: 'Default Policy', rcpt: { internal: 2, external: 1, forbidden: 2 }, status: 'Modified & Sent', att: { attached: 1 }, dlp: { matches: true, recipientsRemoved: 1, attachmentsRemoved: 1 } },
+  { id: 'l4', type: 'meeting', date: 'Jun 10, 2026', time: '10:42:28 AM', sender: 'alicebrown@zackdevsandbox.com', subject: 'E2E-LOG001-1749…', policy: 'Default Policy', rcpt: { internal: 3, external: 1 }, status: 'Not Allowed', att: { attached: 1 }, dlp: { matches: true, attachmentsRemoved: 1 } },
+  { id: 'l5', type: 'meeting', date: 'Jun 10, 2026', time: '10:07:56 AM', sender: 'evedavis@zackdevsandbox.com', subject: 'E2E-LOG002-1749…', policy: 'Default Policy', rcpt: { internal: 1, external: 4 }, status: 'Timed Out', att: { scanned: 1 }, dlp: { attachmentsRemoved: 1 } },
+  { id: 'l6', type: 'other', date: 'Jun 10, 2026', time: '10:01:37 AM', sender: 'jwhite@zackdevsandbox.onmicrosoft.com', subject: 'E2E-LOG002-1749…', policy: 'Default Policy', rcpt: { external: 5 }, status: 'Sent', att: { scanned: 2, attached: 1 }, dlp: { recipientsRemoved: 2, attachmentsRemoved: 1 } },
+  { id: 'l7', type: 'meeting', date: 'Jun 10, 2026', time: '9:22:40 AM', sender: 'alicewilson@zackdevsandbox.com', subject: 'E2E-LOG001-1749…', policy: 'Default Policy', rcpt: { internal: 3, external: 1 }, status: 'Cancelled', att: { scanned: 1 }, dlp: { matches: true, attachmentsRemoved: 2 } },
+  { id: 'l8', type: 'meeting', date: 'Jun 10, 2026', time: '8:58:38 AM', sender: 'sara@zackdevsandbox.onmicrosoft.com', subject: 'E2E-LOG004-1749…', policy: 'Default Policy', rcpt: { internal: 3, external: 3, forbidden: 1 }, status: 'Cancelled', att: { scanned: 3 }, dlp: { recipientsRemoved: 1 } },
+  { id: 'l9', type: 'mail', date: 'Jun 10, 2026', time: '8:55:38 AM', sender: 'sarajohnson@zackdevsandbox.com', subject: 'E2E-LOG006-1749…', policy: 'Default Policy', rcpt: { internal: 4, external: 2 }, status: 'Not Allowed', att: { scanned: 1, failed: 2, attached: 1 }, dlp: { matches: true, recipientsRemoved: 2, attachmentsRemoved: 2 } },
+  { id: 'l10', type: 'meeting', date: 'Jun 10, 2026', time: '8:47:09 AM', sender: 'etaylor@zackdevsandbox.com', subject: 'E2E-LOG006-1749…', policy: 'Default Policy', rcpt: { external: 1 }, status: 'Review Required', att: { scanned: 3 }, dlp: { attachmentsRemoved: 1 } },
+]
+
+/* One labelled field in the expanded drawer. */
+function DetailField({ label, children }) {
+  return (
+    <Stack gap={0} style={{ minWidth: 0 }}>
+      <Text as="span" variant="eyebrow" tone="subtle">{label}</Text>
+      <Text as="span" variant="detail">{children}</Text>
+    </Stack>
+  )
+}
+
+/* The verbose breakdown, shown only when a row is open. */
+function AuditDetail(row) {
+  const list = (parts) => parts.filter(Boolean).join(', ')
+  const dlp = list([
+    row.dlp.matches && 'DLP matches found',
+    row.dlp.recipientsRemoved && `${row.dlp.recipientsRemoved} recipient${row.dlp.recipientsRemoved > 1 ? 's' : ''} removed`,
+    row.dlp.attachmentsRemoved && `${row.dlp.attachmentsRemoved} attachment${row.dlp.attachmentsRemoved > 1 ? 's' : ''} removed`,
+  ])
+  const att = list([
+    row.att.failed && `${row.att.failed} failed`,
+    row.att.attached && `${row.att.attached} attached`,
+    row.att.scanned && `${row.att.scanned} scanned`,
+  ])
+  const rcpt = list([
+    row.rcpt.internal && `${row.rcpt.internal} internal`,
+    row.rcpt.external && `${row.rcpt.external} external`,
+    row.rcpt.forbidden && `${row.rcpt.forbidden} forbidden`,
+  ])
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(11rem, 1fr))', gap: 'var(--vds-space-4)' }}>
+      <DetailField label="Message ID">{row.subject}</DetailField>
+      <DetailField label="Sent">{row.date} · {row.time}</DetailField>
+      <DetailField label="Sender">{row.sender}</DetailField>
+      <DetailField label="Recipients">{rcpt}</DetailField>
+      <DetailField label="Attachments">{att || 'None'}</DetailField>
+      <DetailField label="DLP outcome">{dlp || 'No action'}</DetailField>
+    </div>
+  )
+}
+
+function AuditLogDemo() {
+  const columns = [
+    { key: 'type', header: '', align: 'center', width: '1%', render: (r) => (
+      <span style={{ color: 'var(--vds-ink-subtle)', display: 'inline-flex' }}>
+        <Icon as={LOG_TYPE[r.type] ?? FileText} size="sm" />
+      </span>
+    ) },
+    { key: 'date', header: 'Date', render: (r) => (
+      <span style={{ whiteSpace: 'nowrap' }}>
+        <Text as="span" variant="detail" style={{ fontWeight: 600 }}>{r.date.replace(', 2026', '')}</Text>
+        <Text as="span" variant="detail" tone="subtle">{` · ${r.time.replace(/:\d\d /, ' ')}`}</Text>
+      </span>
+    ) },
+    { key: 'sender', header: 'Sender', render: (r) => (
+      <Text as="span" variant="detail" title={r.sender} style={{ display: 'block', maxWidth: '16ch', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.sender}</Text>
+    ) },
+    { key: 'subject', header: 'Subject', render: (r) => (
+      <Text as="span" variant="detail" tone="muted" tabular title={r.subject} style={{ display: 'block', maxWidth: '14ch', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.subject}</Text>
+    ) },
+    { key: 'policy', header: 'Policy', render: (r) => <Text as="span" variant="detail" tone="muted" style={{ whiteSpace: 'nowrap' }}>{r.policy}</Text> },
+    { key: 'rcpt', header: 'Recipients', render: (r) => <RecipientCounts {...r.rcpt} /> },
+    { key: 'status', header: 'Status', render: (r) => <LogStatus status={r.status} /> },
+    { key: 'att', header: 'Attach', render: (r) => <AttachmentCounts {...r.att} /> },
+    { key: 'dlp', header: 'DLP', render: (r) => <DlpFlags {...r.dlp} /> },
+  ]
+  return (
+    <div style={{ width: '100%' }}>
+      <Table
+        density="compact"
+        columns={columns}
+        data={AUDIT_LOG}
+        minWidth={760}
+        renderDetail={AuditDetail}
+        defaultExpandedKeys={['l1']}
+        caption="Email DLP audit log"
+      />
+    </div>
+  )
+}
+
 /* Sample product catalog — each row leads with a product icon. */
 const PRODUCTS = [
   { id: 'p1', name: 'Endpoint Defense', category: 'Security', icon: ShieldCheck, seats: 1284, status: 'Active', tone: 'success' },
@@ -262,7 +444,8 @@ function SortableDemo() {
         { key: 'name', header: 'Device', sortable: true },
         { key: 'owner', header: 'Owner', sortable: true },
         STATUS_COL,
-        { key: 'risk', header: 'Risk', align: 'right', sortable: true },
+        // No align set — `risk` is numeric, so the column auto-aligns right.
+        { key: 'risk', header: 'Risk', sortable: true },
       ]}
       data={data}
       sort={sort}
@@ -275,7 +458,7 @@ function SortableDemo() {
 function SelectableDemo() {
   const [selected, setSelected] = useState(['d2'])
   return (
-    <div>
+    <div style={{ width: '100%' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
         {/* tabular-nums keeps every digit the same width, so "Clear" doesn't
             shift left/right as the count changes (1 is narrower than 4 otherwise). */}
@@ -307,7 +490,7 @@ function BulkActionsDemo() {
   const count = selected.length
   const clear = () => setSelected([])
   return (
-    <Stack gap={0}>
+    <Stack gap={0} style={{ width: '100%' }}>
       {/* The toolbar swaps in only while rows are picked. It sits on the same
           hairline as the table's top edge, so it reads as one surface. */}
       <div
@@ -352,7 +535,7 @@ function BulkActionsDemo() {
           { key: 'name', header: 'Device' },
           { key: 'owner', header: 'Owner' },
           STATUS_COL,
-          { key: 'seen', header: 'Last seen', align: 'right' },
+          { key: 'seen', header: 'Last seen' },
         ]}
         data={DEVICES}
       />
@@ -390,7 +573,7 @@ function PaginationDemo() {
   }))
 
   return (
-    <Stack gap={4}>
+    <Stack gap={4} style={{ width: '100%' }}>
       <Table columns={columns} data={padded} />
       <Inline justify="between" gap={3} style={{ flexWrap: 'wrap' }}>
         <Text variant="caption" tone="muted" style={{ fontVariantNumeric: 'tabular-nums' }}>
@@ -415,7 +598,6 @@ function UserManagementDemo() {
     {
       key: 'active',
       header: 'Last activity',
-      align: 'right',
       render: (r) =>
         r.active
           ? <Text as="span" variant="detail" tone="muted">{r.active}</Text>
@@ -424,7 +606,7 @@ function UserManagementDemo() {
     { key: 'actions', header: '', align: 'right', width: '1%', render: (r) => <UserRowMenu user={r} /> },
   ]
   return (
-    <Stack gap={0}>
+    <Stack gap={0} style={{ width: '100%' }}>
       {/* Bulk bar: sits on the table's top edge, tints while rows are picked. */}
       <div
         style={{
@@ -499,6 +681,10 @@ export function TablePage() {
             [{ code: 'selectedKeys' }, { code: 'array | Set' }, '—', 'Which rows are checked'],
             [{ code: 'onSelectionChange' }, { code: '(keys[]) => void' }, '—', 'Runs when the checked rows change'],
             [{ code: 'onRowClick' }, { code: '(row, i) => void' }, '—', 'Makes rows clickable (with hover + keyboard)'],
+            [{ code: 'renderDetail' }, { code: '(row, i) => ReactNode' }, '—', 'Adds an expand caret to each row that reveals this node in a full-width drawer below it — how you keep a dense row to one line'],
+            [{ code: 'defaultExpandedKeys' }, { code: 'array | Set' }, { code: '[]' }, 'Which rows start expanded (uncontrolled)'],
+            [{ code: 'expandedKeys' }, { code: 'array | Set' }, '—', 'Which rows are expanded (controlled)'],
+            [{ code: 'onExpandedChange' }, { code: '(keys[]) => void' }, '—', 'Runs when a row is expanded or collapsed'],
             [{ code: 'loading' }, { code: 'boolean' }, { code: 'false' }, 'Shows placeholder rows'],
             [{ code: 'skeletonRows' }, { code: 'number' }, { code: '5' }, 'How many placeholder rows to show while loading'],
             [{ code: 'empty' }, { code: 'ReactNode' }, { code: "'No data'" }, 'What to show when there are no rows'],
@@ -513,7 +699,7 @@ export function TablePage() {
           rows: [
             [{ code: 'key' }, { code: 'string' }, 'Which field to read from the row, and what to sort by'],
             [{ code: 'header' }, { code: 'ReactNode' }, 'The column title (uses the key if you skip it)'],
-            [{ code: 'align' }, { code: "'left' | 'center' | 'right'" }, "Which side the cell sits on ('right' lines up numbers neatly)"],
+            [{ code: 'align' }, { code: "'left' | 'center' | 'right'" }, "Which side the cell sits on. Skip it and the column auto-aligns by data type — number columns go right (digits line up), everything else left."],
             [{ code: 'width' }, { code: 'string' }, 'Any CSS width (e.g. "120px", "20%")'],
             [{ code: 'render' }, { code: '(row, i) => node' }, 'Your own cell content (badges, links, actions…)'],
             [{ code: 'sortable' }, { code: 'boolean' }, 'Makes the header clickable to sort'],
@@ -525,6 +711,7 @@ export function TablePage() {
         <>In <IC>responsive</IC> card mode the header row is only hidden visually — screen readers still get the real table, and each value is labelled by its column name.</>,
         <>Sortable headers are <IC>{'<button>'}</IC>s inside the <IC>{'<th>'}</IC>, and they set <IC>aria-sort</IC> to say which way it's sorted.</>,
         <>Clickable rows (<IC>onRowClick</IC>) can be reached with the keyboard and open with <IC>Enter</IC> or <IC>Space</IC>.</>,
+        <>The <IC>renderDetail</IC> expand caret is a real <IC>{'<button>'}</IC> with <IC>aria-expanded</IC> and <IC>aria-controls</IC> pointing at the drawer, so screen readers announce it and it opens from the keyboard.</>,
         <>The little sort arrow is just for looks (<IC>aria-hidden</IC>) — the sort direction comes from <IC>aria-sort</IC>, not from color.</>,
         <>Pass <IC>caption</IC> to give the table a name. It's hidden on screen but read out by screen readers.</>,
         <>The product icon at the front of a row is just for looks — <IC>Icon</IC> is <IC>aria-hidden</IC> by default, so the meaning comes from the name next to it.</>
@@ -540,7 +727,7 @@ export function TablePage() {
                 { key: 'os', header: 'OS' },
                 { key: 'ip', header: 'IP address' },
                 STATUS_COL,
-                { key: 'seen', header: 'Last seen', align: 'right' },
+                { key: 'seen', header: 'Last seen' },
                 { key: 'risk', header: 'Risk', align: 'right', render: (r) => `${r.risk}%` },
               ]}
               data={DEVICES}
@@ -554,7 +741,7 @@ export function TablePage() {
     { key: 'ip', header: 'IP address' },
     { key: 'status', header: 'Status',
       render: (r) => <Badge tone={r.tone} dot>{r.status}</Badge> },
-    { key: 'seen', header: 'Last seen', align: 'right' },
+    { key: 'seen', header: 'Last seen' },
     { key: 'risk', header: 'Risk', align: 'right',
       render: (r) => \`\${r.risk}%\` },
   ]}
@@ -979,7 +1166,7 @@ const cols = columns.map((col) => ({
                 columns={[
                   { key: 'name', header: 'Device' },
                   { key: 'owner', header: 'Owner' },
-                  { key: 'seen', header: 'Last seen', align: 'right' },
+                  { key: 'seen', header: 'Last seen' },
                 ]}
                 data={[]}
               />
@@ -987,7 +1174,7 @@ const cols = columns.map((col) => ({
                 columns={[
                   { key: 'name', header: 'Device' },
                   { key: 'owner', header: 'Owner' },
-                  { key: 'seen', header: 'Last seen', align: 'right' },
+                  { key: 'seen', header: 'Last seen' },
                 ]}
                 data={[]}
                 empty="No devices match your filters."
@@ -1081,7 +1268,7 @@ const columns = [
   { key: 'attachments', header: 'Attachments', align: 'right', render: (u) => num(u.attachments) },
   { key: 'policy', header: 'Top policy', render: (u) => <Tag size="sm" tone={POLICY_TONE[u.policy]}>{u.policy}</Tag> },
   {
-    key: 'active', header: 'Last activity', align: 'right',
+    key: 'active', header: 'Last activity',
     render: (u) => u.active
       ? <Text as="span" variant="detail" tone="muted">{u.active}</Text>
       : <Text as="span" variant="detail" tone="subtle">—</Text>,
@@ -1119,6 +1306,23 @@ const [selected, setSelected] = useState([])
   onSelectionChange={setSelected}
   columns={columns}
   data={users}
+/>`}
+        />
+      </Section>
+
+      <Section
+        title="Compact audit log"
+        note="A dense, log-style alternative for rows carrying a lot of dimensions. Instead of stacking pills and bulleted outcomes (which makes rows tall), each row is a single line: recipients, attachments, and DLP outcomes each collapse to a run of tinted count chips. The verbose breakdown moves into the Table's renderDetail drawer — expand a row (or the pre-opened first one) to see it. Uses density='compact'."
+      >
+        <Preview
+          canvas={<AuditLogDemo />}
+          code={`// Row summary stays one line; the full breakdown lives in renderDetail.
+<Table
+  density="compact"
+  columns={columns}          // recipients/attachments/DLP render as count chips
+  data={auditLog}
+  renderDetail={(row) => <AuditDetail row={row} />}
+  defaultExpandedKeys={['l1']}
 />`}
         />
       </Section>

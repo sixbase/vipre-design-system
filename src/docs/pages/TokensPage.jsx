@@ -1,5 +1,5 @@
 import { DocPage } from '../DocPage.jsx'
-import { Section, Code, IC } from '../primitives.jsx'
+import { Section, IC, RefTable } from '../primitives.jsx'
 import { Text, Heading } from '../../components/index.js'
 import {
   PRIMITIVES, SEMANTIC_GROUPS, TYPE_SCALE, WEIGHTS, LEADING, SPACING,
@@ -13,25 +13,6 @@ import {
    page is the "what + value". Data comes straight from tokens.js (the mirror of
    _tokens.scss), so it stays in sync.
    ========================================================================== */
-
-/* A dense reference table. Cells may be any node (swatch, <code>, text). Reuses
-   the same .vds-ref-table shell as the component Props tables. */
-function RefTable({ headers, rows }) {
-  return (
-    <div className="vds-ref-table-wrap">
-      <table className="vds-ref-table">
-        <thead>
-          <tr>{headers.map((h) => <th key={h}>{h}</th>)}</tr>
-        </thead>
-        <tbody>
-          {rows.map((cells, i) => (
-            <tr key={i}>{cells.map((c, j) => <td key={j}>{c}</td>)}</tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )
-}
 
 const Tok = ({ children }) => <code className="vds-inline-code">{children}</code>
 
@@ -75,7 +56,7 @@ export function TokensPage() {
   return (
     <DocPage
       title="Token Reference"
-      description="Every design token in one place — names, values, and what each is for. Tokens are plain CSS custom properties (--vds-*), so they work in any framework: reach for var(--vds-…) and never hard-code a colour, size, or duration. Semantic tokens flip automatically between light and dark. This page is the flat lookup; the Foundation pages (Colors, Typography, Spacing, Depth) cover the reasoning."
+      description="Every design token in one place — names, values, and what each is for. Tokens are plain CSS variables (--vds-*), so they work in any framework: reach for var(--vds-…) and never hard-code a colour, size, or duration. Semantic tokens flip automatically between light and dark. This page is the flat lookup; the Foundation pages (Colors, Typography, Spacing, Depth) cover the reasoning."
     >
       <Section
         title="How tokens are layered"
@@ -145,7 +126,7 @@ export function TokensPage() {
       {/* ---- TYPOGRAPHY ------------------------------------------------------ */}
       <Section
         title="Typography · scale"
-        note="One ramp of 11 steps. Render text through Text / Heading — the class is applied for you. Fluid steps (display / title / heading) show their range at a 320px viewport → full size."
+        note="One ramp of 11 steps. Render text through Text / Heading — the class is applied for you. The steps that scale (display / title / heading) show their range at a 320px viewport → full size."
       >
         <RefTable
           headers={['Sample', 'Class', 'Size (px)', 'Line', 'Weight', 'Tracking', 'Usage']}
@@ -222,7 +203,7 @@ export function TokensPage() {
       </Section>
 
       {/* ---- BREAKPOINTS ----------------------------------------------------- */}
-      <Section title="Breakpoints" note="The responsive tiers. Style with the SCSS mixins; the --vds-bp-* tokens are informational (for JS — CSS media queries can't read custom properties).">
+      <Section title="Breakpoints" note="The responsive tiers. Style with the SCSS mixins; the --vds-bp-* tokens are just for JS — CSS media queries can't read variables.">
         <RefTable
           headers={['Name', 'Token', 'Value', 'Usage']}
           rows={BREAKPOINTS.map((b) => [<strong key="n">{b.name}</strong>, <Tok key="t">{b.token}</Tok>, b.value, b.usage])}
@@ -252,19 +233,23 @@ export function TokensPage() {
         />
       </Section>
 
-      <Section title="Using a token" note="Same everywhere — it's just a CSS variable.">
-        <Code>{`/* CSS / SCSS */
-.thing {
-  color: var(--vds-ink);
-  padding: var(--vds-space-4);
-  border-radius: var(--vds-radius-md);
-  box-shadow: var(--vds-shadow-sm);
-}
-
-/* Inline style in JSX */
-<div style={{ background: 'var(--vds-primary-soft)' }} />`}</Code>
+      {/* ---- COMPONENT TOKENS ------------------------------------------------ */}
+      <Section
+        title="Component tokens"
+        note="Every component also re-exposes a small family of its own tokens under a --vds-{name}-* namespace, each bound to one of the foundation tokens above. Re-point them on your own selector to re-space or re-shape that component — nothing else in the system moves. Each component page documents its own set in a live Token / Bound to / Live value / What it controls table."
+      >
+        <RefTable
+          headers={['Component', 'Token namespace', 'Full spec']}
+          rows={[
+            [<strong key="b">Button</strong>, <Tok key="t">--vds-button-*</Tok>, <a key="l" href="#/components/button">Button → Tokens</a>],
+            [<strong key="i">Input</strong>, <Tok key="t">--vds-input-*</Tok>, <a key="l" href="#/primitives/input">Input → Tokens</a>],
+            [<strong key="f">Field</strong>, <Tok key="t">--vds-field-*</Tok>, <a key="l" href="#/primitives/field">Field → Tokens</a>],
+            [<strong key="s">Select</strong>, <Tok key="t">--vds-select-*</Tok>, <a key="l" href="#/primitives/select">Select → Tokens</a>],
+            [<span key="x" className="vds-text vds-text--tone-muted">…and so on</span>, <span key="y" className="vds-text vds-text--tone-muted">one namespace per component</span>, <span key="z" className="vds-text vds-text--tone-muted">see each component page</span>],
+          ]}
+        />
         <Text variant="caption" tone="muted" style={{ marginTop: 'var(--vds-space-3)' }}>
-          Consumers import the CSS bundle once (<IC>vipre-design-system/styles.css</IC>) or just the tokens (<IC>vipre-design-system/tokens.css</IC>) and every <IC>--vds-*</IC> above is available.
+          Consumers import the CSS bundle once (<IC>vipre-design-system/styles.css</IC>) or just the tokens (<IC>vipre-design-system/tokens.css</IC>) and every <IC>--vds-*</IC> above is available as a plain CSS variable — reach for <IC>var(--vds-…)</IC> in any framework.
         </Text>
       </Section>
     </DocPage>

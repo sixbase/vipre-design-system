@@ -119,3 +119,76 @@ icon's center. When you nudge the label down to fix it, the line box will look s
 purpose — that's the box compensating for high ink. Rubik runs ~0.5–0.9px high; worst at the smallest
 button sizes where 1px is a big fraction of the height. All-caps demo labels exaggerate it (no
 descenders), so test with a real sentence-case word too.
+
+## A `width:100%` component still shrinks inside the centered Preview canvas
+
+`.vds-preview__canvas` is `display:flex; align-items:center`, so a *single* child that isn't
+`width:100%` becomes a flex item sized to its content — it shrinks to the columns' natural width, not
+the canvas. A bare `<Table>` fills (it sets `width:100%` itself), but the moment you wrap it in a
+demo shell (`Stack`, a toolbar `div`) that wrapper is the flex item and it collapses, dragging the
+table in with it. Fix at the wrapper: `style={{ width: '100%' }}`. Don't change the canvas — most
+component previews (Button, Badge) *want* the centering. Measure with `getBoundingClientRect()` per
+section; a page of tables at 879px with three stragglers at ~350–460px is this bug, not the component.
+
+## Right-align numbers, not text — including relative times
+
+Right-alignment is for numeric *magnitudes* (counts, %, currency) so digits line up by place value;
+the header inherits the column's align, so it sits right above the figures (the Table already does
+this — don't "fix" it). A relative-time column ("2 min ago", "Yesterday", "—") is variable-length
+*text*: right-aligning it just gives a ragged left edge and reads as weird next to left-aligned
+columns. Left-align those. Actions/icon columns stay right (they hug the row's trailing edge).
+
+## An overlay that isn't portaled will distort the scroll container it opens in
+
+A `position: absolute` popover/menu/tooltip is still a *descendant* of its nearest scrolling ancestor.
+Open one near the right edge of an `overflow-x: auto` box (a `.vds-table__scroll`, a horizontally
+scrolling toolbar) and its width gets added to that box's scrollable area — you get a phantom
+horizontal scrollbar and the content jumps. Clamping the panel to the *viewport* doesn't help; the
+overflow is measured against the *container*. The fix is structural: **portal the panel to `<body>`
+and position it `fixed`** against the viewport, so no ancestor's overflow can ever see it. Do this in
+the base primitive (`Popover`) once — every Menu/Select/Combobox that composes it inherits the fix.
+Two things move with the panel when you portal it: (1) placement coords become raw viewport values
+(drop any wrapper-relative offset), and (2) outside-click dismissal must also check the panel's own
+ref, since it's no longer inside the trigger wrapper — miss that and clicking an item reads as an
+outside click and the menu closes before the action fires.
+
+## Reading React state straight after a synthetic click lies to you
+
+Firing `el.click()` in one `javascript_exec` and reading `aria-expanded` / `.vds-popover__panel` in the
+*same* call shows the pre-click state — React hasn't committed the re-render yet, and the portaled
+panel mounts in a later frame. Split it: click in one call, measure in the next. Also, two synchronous
+clicks on the same toggle in one call both see the same stale `open` closure, so they cancel out (open
+then open-again reads as still-closed). Verify overlay behaviour across separate tool calls, not within
+one script.
+
+## A live-value token table for a *composed* component needs the composed scope
+
+The `TokenSpecTable` primitive resolves each `--vds-{name}-*` token by reading it off a hidden probe
+that carries the component's root class (`scope`). That works for a standalone component, but a
+component that *composes* another (TimeInput renders an Input: its real root is
+`class="vds-input vds-timeinput"`, both on one element) has tokens that reference the parent's tokens —
+`--vds-timeinput-icon: var(--vds-input-muted)`. A bare `scope="vds-timeinput"` probe can't resolve
+`--vds-input-muted` (it's declared on `.vds-input`), so the Live value column silently shows `—`.
+Fix: give the probe **both** classes exactly as the real DOM carries them —
+`scope="vds-input vds-timeinput"` (className accepts the space-separated list). Rule of thumb: the
+probe scope must be the literal class string on the component's root element, not just its own BEM block.
+
+## `Inline` wraps — don't use it for count chips that must stay on one line
+
+`Inline` defaults to `flex-wrap: wrap`. Drop three little `Icon`+number chips into it inside a narrow
+table column and they silently stack to 2–3 lines — which quietly doubled a "compact" row from ~34px
+to 67px, and the heights were all *equal* (every cell wrapped the same way), so it didn't look like a
+wrapping bug at first. For a run of chips that should never break, use a plain
+`display: inline-flex` span (flex-wrap defaults to `nowrap` there) with `white-space: nowrap`; the
+cell then stays one line and the column just widens (the table scrolls sideways if it must). Also:
+`innerText` on inline-flex items still shows `\n` between them even when they render on one line — that
+newline is a serialization artifact, not proof of wrapping. Measure `getBoundingClientRect().height`
+of the container to know for sure, and measure *per cell* to find which column is the tall one.
+
+## Keep a compact row's controls from taxing its height
+
+A single-line row's height is set by its tallest cell. An expand-caret `<button>` sized 1.375rem, or a
+`Badge`/`Tag`, can quietly become that tallest thing and add a few px to every row. Give control
+buttons a small negative block margin (`margin: -0.25rem 0`) so their box doesn't push the row taller
+than its text line, and prefer `Icon size="xs"` (14px) over `sm` for in-cell chips. Verify by
+measuring row height, not by eye — 34px vs 40px is invisible in a screenshot but real in a 50-row log.

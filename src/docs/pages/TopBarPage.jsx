@@ -12,7 +12,7 @@ export function TopBarPage() {
   return (
     <ComponentPage
       title="Top Bar"
-      description="The strip across the top of a screen. It is --vds-topbar-h (56px) tall and has three slots: leading (left, never shrinks), children (the middle — your title or breadcrumb; it truncates first), and trailing (right, never shrinks). Two tones: surface follows the theme; navy is the same fixed midnight as the Side Nav, in both themes. Its side padding respects phone notches."
+      description="The strip across the top of a screen. It is --vds-topbar-h (56px) tall and has three slots: leading (left, never shrinks), children (the middle — your title or breadcrumb; it gives way first), and trailing (right, never shrinks). Two tones: surface follows the theme; navy is the same fixed dark blue as the Side Nav, in both light and dark. Its side padding leaves room for phone notches."
       installCode={`import { TopBar } from 'vipre-design-system'`}
       props={[
         {
@@ -29,8 +29,8 @@ export function TopBarPage() {
       accessibility={[
         <>Renders a real <IC>{'<header>'}</IC> landmark.</>,
         <>The bar itself is not interactive — the things you put in it (buttons, links) carry their own keyboard support and focus rings.</>,
-        <>On the navy tone, focus rings inside the bar are re-mixed from white and the accent so they stay visible on midnight.</>,
-        <>The middle slot truncates with an ellipsis — edge actions are never pushed off-screen, so nothing becomes unreachable.</>,
+        <>On the navy tone, focus rings inside the bar are mixed from white and the accent so they stay easy to see on the dark blue.</>,
+        <>The middle slot shrinks and ends in a … — edge actions are never pushed off-screen, so nothing becomes unreachable.</>,
       ]}
     >
       <Section
@@ -74,7 +74,7 @@ export function TopBarPage() {
 
       <Section
         title="Navy tone"
-        note="The fixed midnight chrome — the same navy as the Side Nav rail, and it does NOT flip with the theme. Use it when the bar is product chrome (a logo strip) rather than part of the page."
+        note="The fixed dark-blue bar — the same navy as the Side Nav rail, and it does NOT flip with the theme. Use it when the bar is a fixed frame (like a logo strip) rather than part of the page."
       >
         <Preview
           canvas={
@@ -92,7 +92,7 @@ export function TopBarPage() {
 
       <Section
         title="Truncation"
-        note="Squeeze the bar and the middle gives way first — it shrinks and ellipsizes. The edge slots hold their ground, so actions never fall off the screen."
+        note="Squeeze the bar and the middle gives way first — it shrinks and ends in a …. The edge slots hold their ground, so actions never fall off the screen."
       >
         <Preview
           canvas={

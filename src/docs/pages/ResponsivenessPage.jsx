@@ -33,7 +33,7 @@ export function ResponsivenessPage() {
           <>
             A breakpoint is a screen width where the layout is allowed to change. There are five,
             and they are the only ones. The <IC>--vds-bp-*</IC> tokens are for JavaScript
-            (like <IC>matchMedia</IC>) — CSS media queries can't read custom properties, so in
+            (like <IC>matchMedia</IC>) — CSS media queries can't read variables, so in
             styles you use the SCSS mixins below instead.
           </>
         }

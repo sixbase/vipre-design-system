@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { ComponentPage } from '../ComponentPage.jsx'
-import { Section, Preview, PropsTable, IC } from '../primitives.jsx'
+import { Section, Preview, IC, TokenSpecTable } from '../primitives.jsx'
 import {
   FileUpload,
-  Heading,
   Text,
   Stack,
   Inline,
@@ -15,17 +14,42 @@ import {
 
 const SIZES = ['sm', 'md', 'lg']
 
-/* One group of the token table — a subheading over a 3-col PropsTable. */
-function TokenGroup({ label, rows }) {
-  return (
-    <>
-      <Heading level="subheading" as="h3" style={{ margin: '1.25rem 0 0.5rem' }}>
-        {label}
-      </Heading>
-      <PropsTable headers={['Token', 'Bound to', 'What it controls']} rows={rows} />
-    </>
-  )
-}
+/* The one token spec — Token / Bound to / What it controls, grouped. Live
+   values are read at render by the shared TokenSpecTable off a .vds-fileupload
+   probe. Only tokens actually declared in FileUpload.scss are documented. */
+const FILEUPLOAD_TOKEN_GROUPS = [
+  {
+    label: 'Color',
+    tokens: [
+      { token: '--vds-fileupload-fill', bound: 'var(--vds-surface-sunken)', controls: 'Resting background' },
+      { token: '--vds-fileupload-fill-active', bound: 'surface + primary 5%', controls: 'Hover / drag-over background' },
+      { token: '--vds-fileupload-border', bound: 'var(--vds-line-strong)', controls: 'Resting dashed border' },
+      { token: '--vds-fileupload-border-active', bound: 'var(--vds-primary)', controls: 'Border on hover / drag / focus' },
+      { token: '--vds-fileupload-ink', bound: 'var(--vds-ink)', controls: 'Active label + file names' },
+      { token: '--vds-fileupload-ink-muted', bound: 'var(--vds-ink-subtle)', controls: 'Resting label' },
+      { token: '--vds-fileupload-icon', bound: 'var(--vds-ink-subtle)', controls: 'The upload glyph' },
+      { token: '--vds-fileupload-ring', bound: 'focus-ring @ ring-tint', controls: 'Soft focus ring (field recipe)' },
+    ],
+  },
+  {
+    label: 'Shape & spacing',
+    tokens: [
+      { token: '--vds-fileupload-radius', bound: 'var(--vds-radius-md)', controls: 'Corner radius' },
+      { token: '--vds-fileupload-border-w', bound: 'var(--vds-border-w)', controls: 'Border hairline width' },
+      { token: '--vds-fileupload-gap', bound: 'var(--vds-space-2)', controls: 'Icon ↔ label gap; zone ↔ list gap' },
+      { token: '--vds-fileupload-pad-sm', bound: 'var(--vds-space-4)', controls: 'Zone padding — sm' },
+      { token: '--vds-fileupload-pad-md', bound: 'var(--vds-space-6)', controls: 'Zone padding — md' },
+      { token: '--vds-fileupload-pad-lg', bound: 'var(--vds-space-8)', controls: 'Zone padding — lg' },
+    ],
+  },
+  {
+    label: 'Motion',
+    tokens: [
+      { token: '--vds-fileupload-dur', bound: 'var(--vds-dur-fast)', controls: 'Border / background / ring transition speed' },
+      { token: '--vds-fileupload-ease', bound: 'var(--vds-ease-out)', controls: 'Easing curve (gated behind prefers-reduced-motion)' },
+    ],
+  },
+]
 
 function ControlField({ label, children }) {
   return (
@@ -136,51 +160,9 @@ export function FileUploadPage() {
 
       <Section
         title="Tokens"
-        note="Every visual value is a --vds-fileupload-* custom property on the .vds-fileupload root, bound to foundation tokens only. Re-declare any of them on your own selector to retheme or re-space the zone; colors point at semantic tokens, so light/dark comes free."
+        note="Every look comes from a --vds-fileupload-* variable on the .vds-fileupload root, bound to foundation tokens only. Live value is what the browser shows right now. Re-set any of them on your own selector to restyle or re-space the zone; colors point at semantic tokens, so light/dark comes free."
       >
-        <TokenGroup
-          label="Color"
-          rows={[
-            [{ code: '--vds-fileupload-fill' }, { code: 'var(--vds-surface-sunken)' }, 'Resting background'],
-            [{ code: '--vds-fileupload-fill-active' }, 'surface + primary 5%', 'Hover / drag-over background'],
-            [{ code: '--vds-fileupload-border' }, { code: 'var(--vds-line-strong)' }, 'Resting dashed border'],
-            [{ code: '--vds-fileupload-border-active' }, { code: 'var(--vds-primary)' }, 'Border on hover / drag / focus'],
-            [{ code: '--vds-fileupload-ink' }, { code: 'var(--vds-ink)' }, 'Active label + file names'],
-            [{ code: '--vds-fileupload-ink-muted' }, { code: 'var(--vds-ink-subtle)' }, 'Resting label'],
-            [{ code: '--vds-fileupload-icon' }, { code: 'var(--vds-ink-subtle)' }, 'The upload glyph'],
-            [{ code: '--vds-fileupload-ring' }, 'focus-ring @ ring-tint', 'Soft focus ring (field recipe)'],
-          ]}
-        />
-        <TokenGroup
-          label="Shape & spacing"
-          rows={[
-            [{ code: '--vds-fileupload-radius' }, { code: 'var(--vds-radius-md)' }, 'Corner radius'],
-            [{ code: '--vds-fileupload-border-w' }, { code: 'var(--vds-border-w)' }, 'Border hairline width'],
-            [{ code: '--vds-fileupload-gap' }, { code: 'var(--vds-space-2)' }, 'Icon ↔ label gap; zone ↔ list gap'],
-            [{ code: '--vds-fileupload-pad-sm' }, { code: 'var(--vds-space-4)' }, 'Zone padding — sm'],
-            [{ code: '--vds-fileupload-pad-md' }, { code: 'var(--vds-space-6)' }, 'Zone padding — md'],
-            [{ code: '--vds-fileupload-pad-lg' }, { code: 'var(--vds-space-8)' }, 'Zone padding — lg'],
-          ]}
-        />
-        <TokenGroup
-          label="Motion"
-          rows={[
-            [{ code: '--vds-fileupload-dur' }, { code: 'var(--vds-dur-fast)' }, 'Border / background / ring transition speed'],
-            [{ code: '--vds-fileupload-ease' }, { code: 'var(--vds-ease-out)' }, 'Easing curve (gated behind prefers-reduced-motion)'],
-          ]}
-        />
-      </Section>
-
-      <Section
-        title="Reference implementation"
-        note="How the demo on this page is built — reference only. The design system does not ship this markup or CSS; it ships the tokens above. Your team writes its own dropzone (its own classes, its own framework) and binds to the --vds-fileupload-* variables."
-      >
-        <p className="vds-text vds-text--body vds-text--tone-muted" style={{ margin: 0 }}>
-          The reference build lives in the repo under <IC>src/components/FileUpload</IC>. Treat it as a worked
-          example of the tokens — not something to install today. It's also the seed of a future
-          <em> versioned, installable</em> package: when Vipre is ready, the same token contract makes that a
-          drop-in, not a rewrite.
-        </p>
+        <TokenSpecTable scope="vds-fileupload" prefix="--vds-fileupload-" groups={FILEUPLOAD_TOKEN_GROUPS} />
       </Section>
     </ComponentPage>
   )

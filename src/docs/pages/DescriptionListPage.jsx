@@ -131,7 +131,7 @@ export function DescriptionListPage() {
 
       <Section
         title="Markup"
-        note="The rendered HTML with the vds- classes, for teams not using React. Pure CSS — the container folding uses CSS container queries, no JS."
+        note="The rendered HTML with the vds- classes, for teams not using React. Pure CSS — the folding into fewer columns is all CSS, no JS."
       >
         <Code>{`<div class="vds-dl vds-dl--cols-2 vds-dl--vertical vds-dl--divided">
   <dl class="vds-dl__list">

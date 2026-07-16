@@ -119,7 +119,7 @@ export function AccordionPage() {
         />
       </Section>
 
-      <Section title="Motion" note="Height animates with grid-template-rows 0fr → 1fr over 240ms (--vds-dur-slow, --vds-ease-emphatic). The body fades in a beat later — same choreography as the MSP v2 nav. Reduced motion makes it instant.">
+      <Section title="Motion" note="The box grows open smoothly over 240ms (--vds-dur-slow, --vds-ease-emphatic), then the text fades in a beat later — same timing as the MSP v2 nav. Reduced motion makes it instant.">
         <Preview
           canvas={
             <div style={{ width: '100%', maxWidth: '28rem' }}>

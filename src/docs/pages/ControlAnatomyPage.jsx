@@ -28,7 +28,7 @@ export function ControlAnatomyPage() {
   return (
     <DocPage
       title="Control Anatomy"
-      description="The grammar tokens can't hold on their own — how any control, existing or new, human-built or AI-explored, composes foundation tokens into the Vipre look. Read alongside the token file and a couple of reference components."
+      description="The rules tokens can't hold on their own — how any control, old or new, built by a person or explored by AI, puts foundation tokens together into the Vipre look. Read it next to the token file and a couple of example components."
     >
       <Section
         title="The binding rule"
@@ -55,7 +55,7 @@ export function ControlAnatomyPage() {
 
       <Section
         title="Motion scale"
-        note="The full duration + easing vocabulary controls bind to. The anatomy above uses --vds-dur-fast + --vds-ease-out for hover/focus; larger chrome (panels, the sidenav) reaches for the slower steps. A control's --vds-{name}-dur / -ease resolve here."
+        note="The full set of durations and easings controls use. The anatomy above uses --vds-dur-fast + --vds-ease-out for hover/focus; bigger pieces (panels, the sidenav) use the slower steps. A control's --vds-{name}-dur / -ease point here."
       >
         <PropsTable
           headers={['Token', 'Value', 'Controls']}
@@ -65,7 +65,7 @@ export function ControlAnatomyPage() {
 
       <Section
         title="The two focus rings"
-        note={<>Two recipes, kept deliberately separate — unifying them is a rendering change (<IC>outline</IC> and <IC>box-shadow</IC> behave differently with clipping and stacking), not a token rename, and it's already been rejected.</>}
+        note={<>Two recipes, kept apart on purpose. Merging them changes how they render — <IC>outline</IC> and <IC>box-shadow</IC> behave differently with clipping and stacking — so it's not just a rename. It has already been turned down.</>}
       >
         <PropsTable
           headers={['Control class', 'When', 'Recipe']}
@@ -107,7 +107,7 @@ export function ControlAnatomyPage() {
           rows={PAD_RHYTHM}
         />
         <p className="vds-text vds-text--body vds-text--tone-muted" style={{ margin: '0.75rem 0 0.4rem' }}>
-          <strong>Select</strong> is the worked example of a principled deviation: its left pad-x
+          <strong>Select</strong> is the example of bending the rule on purpose: its left pad-x
           matches the field family exactly; its right pad-x is one step tighter, to leave room
           for the caret.
         </p>
@@ -127,7 +127,7 @@ export function ControlAnatomyPage() {
 
       <Section
         title="Composition patterns beyond controls"
-        note="The same grammar extends past form controls into any composite surface."
+        note="The same rules reach past form controls into any built-up surface."
       >
         <PropsTable
           headers={['Pattern', 'Rule', 'Reference']}
@@ -147,7 +147,7 @@ export function ControlAnatomyPage() {
           <li><span className="vds-depth-order__n">1</span><div><strong>Look-and-feel review.</strong> Agree on states, sizes, and whether it&rsquo;s action- or field-class before any token gets written.</div></li>
           <li><span className="vds-depth-order__n">2</span><div><strong>Bind to the anatomy above.</strong> Height, radius, border, text step, gap, motion, disabled, touch — pull from the shared slice first.</div></li>
           <li><span className="vds-depth-order__n">3</span><div><strong>Define <IC>--vds-{'{name}'}-*</IC> tokens</strong> that reference foundation only — no raw values except a commented, justified literal.</div></li>
-          <li><span className="vds-depth-order__n">4</span><div><strong>Document the tokens + any motion spec.</strong> A grouped Tokens table, and prose for any choreography a token can&rsquo;t capture.</div></li>
+          <li><span className="vds-depth-order__n">4</span><div><strong>Document the tokens + any motion spec.</strong> A grouped Tokens table, and notes for any motion a token can&rsquo;t capture.</div></li>
           <li><span className="vds-depth-order__n">5</span><div><strong>Flag true gaps as foundation proposals.</strong> One raw value is a shortcut; two controls with the same raw value is a missing token.</div></li>
         </ol>
         <p className="vds-text vds-text--body vds-text--tone-muted" style={{ marginTop: '0.6rem' }}>

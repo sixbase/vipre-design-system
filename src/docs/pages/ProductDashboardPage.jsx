@@ -174,7 +174,7 @@ export function ProductDashboardPage() {
     >
       <Section
         title="Anatomy"
-        note="The full frame. The scope bar and product rail stay put; the content area changes per page. Move around the scope bar, open a product in the rail, change the timeframe — then imagine each grey block as a real widget. The body is a 12-column grid: a row of 4 KPIs, a big chart next to a smaller one, then two ranked lists. The rail is always the navy chrome in both themes; its selected color is the brandable --vds-nav-accent token."
+        note="The full frame. The scope bar and product rail stay put; the content area changes per page. Move around the scope bar, open a product in the rail, change the timeframe — then imagine each grey block as a real widget. The body is a 12-column grid: a row of 4 KPIs, a big chart next to a smaller one, then two ranked lists. The rail is always navy in both themes; its selected color is the brandable --vds-nav-accent token."
       >
         <Preview canvas={<ShellDemo />} code={`<AppShell
   nav={
@@ -199,7 +199,7 @@ export function ProductDashboardPage() {
       <Section title="Regions">
         <div className="vds-text vds-text--body" style={{ display: 'grid', gap: '0.75rem', maxWidth: 720 }}>
           {[
-            ['App frame', 'Owns the layout: rail column, top bar, scrolling content. Below the lg breakpoint the rail becomes an off-canvas drawer.', <IC key="f">AppShell</IC>],
+            ['App frame', 'Holds the layout: rail on the left, top bar up top, scrolling page. On a narrow screen the rail slides out as a drawer.', <IC key="f">AppShell</IC>],
             ['Scope bar', 'Which account am I working on. Stays put.', <IC key="a">ScopeNavigator</IC>],
             ['Product rail', 'Switch product or section; locks and "Full portal" live here. Stays put, always navy.', <IC key="b">SideNav</IC>],
             ['Page header', 'Says what the page is and sets the timeframe. Only the title is required.', <IC key="c">PageHeader</IC>],

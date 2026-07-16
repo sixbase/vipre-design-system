@@ -52,9 +52,12 @@
   &--xl .vds-avatar__initials { @include type.step(subheading); line-height: 1; }
 
   // ---- deterministic accent families (soft tint + matching ink) ----
+  // The tint is the family's soft step deepened ~15% toward its saturated base,
+  // so identity chips read a touch more chromatic than a bare -soft fill without
+  // muddying the initials' contrast. Both steps are tokens (flip per theme).
   @each $fam in rose, clay, amber, "lime", emerald, harbor, "azure", "purple", "orchid", "magenta" {
     &--fam-#{$fam} {
-      background-color: var(--vds-accent-#{$fam}-soft);
+      background-color: color-mix(in oklab, var(--vds-accent-#{$fam}-soft), var(--vds-accent-#{$fam}) 15%);
       color: var(--vds-accent-#{$fam});
     }
   }

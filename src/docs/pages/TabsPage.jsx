@@ -63,7 +63,7 @@ export function TabsPage() {
       ]}
       accessibility={[
         <>Follows the WAI-ARIA tabs pattern: <IC>role="tablist"</IC>, <IC>role="tab"</IC>, <IC>role="tabpanel"</IC>, with <IC>aria-selected</IC> and <IC>aria-controls</IC> wired for you.</>,
-        <>Roving tabindex: <Kbd>Tab</Kbd> lands on the selected tab; <Kbd>←</Kbd> <Kbd>→</Kbd> move and select; <Kbd>Home</Kbd> / <Kbd>End</Kbd> jump to the ends.</>,
+        <>Just one tab stop: <Kbd>Tab</Kbd> lands on the selected tab; <Kbd>←</Kbd> <Kbd>→</Kbd> move and select; <Kbd>Home</Kbd> / <Kbd>End</Kbd> jump to the ends.</>,
         <>Give the <IC>TabList</IC> an <IC>aria-label</IC> that says what the set is about.</>,
         <>The focus ring uses <IC>--vds-focus-ring</IC> and sits inside the strip so scrolling never hides it.</>,
         <>Panels keep <IC>tabIndex=0</IC> so keyboard users can scroll long content.</>,

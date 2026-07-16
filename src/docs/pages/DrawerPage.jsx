@@ -169,7 +169,7 @@ export function DrawerPage() {
 
       <Section
         title="Sides"
-        note="Three edges. The slide uses the emphasized-decelerate curve (--vds-ease-emphatic) — fast start, soft landing."
+        note="Three edges. It slides in fast, then eases to a soft stop."
       >
         <Preview
           canvas={
@@ -185,7 +185,7 @@ export function DrawerPage() {
 
       <Section
         title="Sizes"
-        note="Width for side drawers, height for the bottom sheet. Below the sm breakpoint, side drawers go full-width."
+        note="Width for side drawers, height for the bottom sheet. On small screens, side drawers go full-width."
       >
         <Preview
           canvas={

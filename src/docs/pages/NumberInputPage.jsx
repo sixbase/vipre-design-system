@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ComponentPage } from '../ComponentPage.jsx'
-import { Section, Preview, IC, PropsTable } from '../primitives.jsx'
+import { Section, Preview, IC, TokenSpecTable } from '../primitives.jsx'
 import { NumberInput } from '../../components/NumberInput/index.js'
 import { Surface, Stack, Inline, Text, SegmentedControl, Switch, Divider, Field } from '../../components/index.js'
 
@@ -73,45 +73,33 @@ function Playground() {
 }
 
 /* ---------------------------------------------------------------------------
-   Tokens — the --vds-number-* set, grouped.
+   Tokens — the --vds-number-* set, grouped. Live values are read at render by
+   the shared TokenSpecTable off a .vds-number probe.
    -------------------------------------------------------------------------- */
 
-const TOKEN_GROUPS = [
+const NUMBERINPUT_TOKEN_GROUPS = [
   {
     label: 'Alignment',
-    rows: [
-      [{ code: '--vds-number-align' }, { code: 'right' }, 'Text alignment — numbers read better flush-right (a CSS keyword, so it stays literal)'],
+    tokens: [
+      { token: '--vds-number-align', bound: 'right', controls: 'Text alignment — numbers read better flush-right (a CSS keyword, so it stays literal)' },
     ],
   },
   {
     label: 'Stepper buttons',
-    rows: [
-      [{ code: '--vds-number-step-ink' }, { code: 'var(--vds-input-muted)' }, 'Resting +/- glyph color'],
-      [{ code: '--vds-number-step-ink-hover' }, { code: 'var(--vds-ink)' }, '+/- glyph color on hover / focus'],
-      [{ code: '--vds-number-step-radius' }, { code: 'var(--vds-radius-sm)' }, 'Corner of a stepper button’s focus ring'],
+    tokens: [
+      { token: '--vds-number-step-ink', bound: 'var(--vds-input-muted)', controls: 'Resting +/- glyph color' },
+      { token: '--vds-number-step-ink-hover', bound: 'var(--vds-ink)', controls: '+/- glyph color on hover / focus' },
+      { token: '--vds-number-step-radius', bound: 'var(--vds-radius-sm)', controls: 'Corner of a stepper button’s focus ring' },
     ],
   },
   {
     label: 'Motion',
-    rows: [
-      [{ code: '--vds-number-step-dur' }, { code: 'var(--vds-dur-fast)' }, 'Glyph color transition speed'],
-      [{ code: '--vds-number-step-ease' }, { code: 'var(--vds-ease-out)' }, 'Easing curve'],
+    tokens: [
+      { token: '--vds-number-step-dur', bound: 'var(--vds-dur-fast)', controls: 'Glyph color transition speed' },
+      { token: '--vds-number-step-ease', bound: 'var(--vds-ease-out)', controls: 'Easing curve' },
     ],
   },
 ]
-
-function TokenTables() {
-  return (
-    <Stack gap={5}>
-      {TOKEN_GROUPS.map((g) => (
-        <div key={g.label}>
-          <p className="vds-text vds-text--eyebrow vds-text--tone-muted" style={{ margin: '0 0 0.4rem' }}>{g.label}</p>
-          <PropsTable headers={['Token', 'Bound to', 'What it controls']} rows={g.rows} />
-        </div>
-      ))}
-    </Stack>
-  )
-}
 
 /* ---------------------------------------------------------------------------
    Page
@@ -212,18 +200,7 @@ export function NumberInputPage() {
         title="Tokens"
         note="The shell IS an Input, so it reuses every --vds-input-* token for height, padding, border, fill, and the focus ring. The only Number-specific tokens are the right-alignment keyword and the stepper glyphs — all bound to foundation tokens, so light/dark comes free."
       >
-        <TokenTables />
-      </Section>
-
-      <Section
-        title="Reference implementation"
-        note="How the demos on this page are built — reference only. The design system ships the tokens above, not this markup. Your team writes its own field (its own classes, its own framework) and binds to the --vds-input-* and --vds-number-* variables."
-      >
-        <p className="vds-text vds-text--body vds-text--tone-muted" style={{ margin: 0 }}>
-          The reference build lives in the repo under <IC>src/components/NumberInput</IC>. Treat it as a
-          worked example of the tokens — an Input plus a two-button stepper — not something to install
-          today. The same token contract makes a future <em>versioned, installable</em> package a drop-in.
-        </p>
+        <TokenSpecTable scope="vds-number" prefix="--vds-number-" groups={NUMBERINPUT_TOKEN_GROUPS} />
       </Section>
     </ComponentPage>
   )

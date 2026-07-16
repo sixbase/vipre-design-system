@@ -29,6 +29,9 @@ Deeper detail lives in the numbered playbook files and `CLAUDE.md`; this is the 
 ## How Alvin likes it
 
 - Talk to him in **extremely short, baby-simple words**. No jargon.
+- **Docs copy is ELI5 too**: page descriptions, Section notes, and a11y bullets use short plain
+  sentences and everyday words. Keep lookup facts (prop tables, token names/values, code) technical.
+  Banned jargon list + examples live in the 2026-07-16 decisions-log entry.
 - When a request is ambiguous, pick the most literal reading, **say which**, and move — he'll correct.
 - Push/merge only when asked. This repo works straight on `main` (linear history).
 

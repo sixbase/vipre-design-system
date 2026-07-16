@@ -236,7 +236,7 @@ export function CustomerListTemplatePage() {
     >
       <Section
         title="Anatomy"
-        note="All live. Type in the search to filter. Click a row to open the customer drawer; the row menu (…) has quick actions. The toggle above the frame flips the page between its three states — the table shows skeleton rows while loading, and an EmptyState when there's nothing to show. The table has its responsive mode on: below ~640px of its own width, rows become labelled cards. Try the drawer at a narrow window too."
+        note="All live. Type in the search to filter. Click a row to open the customer drawer; the row menu (…) has quick actions. The toggle above the frame flips the page between its three states — the table shows skeleton rows while loading, and an EmptyState when there's nothing to show. When the table gets narrow (under ~640px wide), each row becomes a labelled card. Try the drawer at a narrow window too."
       >
         <Preview
           canvas={<CustomerListDemo />}

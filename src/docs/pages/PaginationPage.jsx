@@ -61,7 +61,7 @@ export function PaginationPage() {
 
       <Section
         title="Compact"
-        note="Below the sm breakpoint the numbers hide automatically (pure CSS media query — both forms are always in the DOM). The compact prop forces this form at every width, shown here."
+        note="On small screens the numbers hide by themselves. The compact prop forces this simple “Page 3 of 12” form at every width, shown here."
       >
         <Preview
           canvas={<LiveExample pageCount={12} start={3} compact />}

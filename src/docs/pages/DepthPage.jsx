@@ -89,7 +89,7 @@ export function DepthPage() {
         </div>
       </Section>
 
-      <Section title="Radius scale" note="Corner rounding for surfaces and controls. Chrome controls all share radius-sm; surfaces step up with their size. Each chip below is the real token — where a control's --vds-{name}-radius resolves.">
+      <Section title="Radius scale" note="Corner rounding for surfaces and controls. Controls all use radius-sm; surfaces step up with their size. Each chip below is the real token that a control's --vds-{name}-radius points to.">
         <div className="vds-shadow-row">
           {RADIUS.map((r) => (
             <div key={r.token} className="vds-shadow-item">

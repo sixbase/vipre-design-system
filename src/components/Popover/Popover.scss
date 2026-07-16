@@ -1,7 +1,7 @@
 // ============================================================================
-// Popover — the anchored-overlay primitive. The wrapper is the positioning
-// context; the panel is an absolutely-positioned Surface whose top/left are
-// set inline by the JS placement logic (flip + clamp). Styles here own the
+// Popover — the anchored-overlay primitive. The panel is a Surface portaled to
+// <body> and `position: fixed`, with top/left set inline by the JS placement
+// logic (flip + clamp) against the viewport. Styles here own the
 // chrome JS shouldn't (layering, scroll, the open animation) plus the canonical
 // menu/item look every dropdown shares — see `__menu` / `__item` below.
 // ============================================================================

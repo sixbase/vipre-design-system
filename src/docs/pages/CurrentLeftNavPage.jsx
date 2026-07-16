@@ -82,7 +82,7 @@ export function CurrentLeftNavPage() {
   return (
     <ComponentPage
       title="Current Left Nav"
-      description="The VIPRE left menu bar the way it ships today, saved as a component. One component builds the whole rail: a centered logo, a standalone Overview entry, a stack of product cards (each with sub-pages you can open and close, and a “full portal” link out), locked teaser rows for products you don't have, and a pinned account footer. It never follows the theme — it always shows the navy look, set by its own --vds-clnav-* values. This is the faithful snapshot of the shipped nav; new builds should use SideNav instead."
+      description="The VIPRE left menu bar the way it ships today, saved as a component. One component builds the whole rail: a centered logo, a standalone Overview entry, a stack of product cards (each with sub-pages you can open and close, and a “full portal” link out), locked teaser rows for products you don't have, and a pinned account footer. It never follows the theme — it always shows the navy look, set by its own --vds-clnav-* values. This is an exact copy of the shipped nav; new builds should use SideNav instead."
       installCode={`import { CurrentLeftNav } from 'vipre-design-system'`}
       props={[
         {
