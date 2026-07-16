@@ -628,3 +628,84 @@ The decisions that matter going forward:
   set). Decorative (`aria-hidden`), sized in em (1.1em) so it tracks the label. Optically centered by a
   measured `translateY(-0.08em)` — the icon nudges UP to the text's high ink center, the OPPOSITE of the
   dot (which nudges down toward the lowercase body). Verified: icon center within 0.06px of text ink.
+
+## 2026-07-16 · Field gains public text-color tokens
+
+- **`--vds-field-label-color` / `--vds-field-help-color` / `--vds-field-error-color`**: Field previously
+  exposed only `--vds-field-gap` and inlined its colors (`--vds-ink-muted`, `--vds-danger`) straight into
+  the label/help/error rules. A reviewer (Allan) flagged the thin token surface — every other control
+  exposes a full `--vds-<name>-*` family. Promoted the three colors to public custom properties on the
+  `.vds-field` root, each bound to a semantic token per the control contract, so consumers can re-point
+  them without touching markup. Docs (FieldPage Tokens section) gained a "Text color" group. Defaults are
+  unchanged — the semantic tokens still flip light/dark on their own, so no re-theming needed.
+
+## 2026-07-16 · Table docs — six new examples (compose-only)
+
+- Added six example sections to `TablePage.jsx`, all built by **composing existing primitives** — no
+  changes to the `Table` component, its SCSS, or tokens. New sections:
+  - **Sticky header** — fills a real doc gap: `stickyHeader` + `maxHeight` were documented in the props
+    table but never shown live. Uses a new 12-row `FLEET` fixture so the scroll actually happens.
+  - **Rich cells** — owner as an `Avatar` (deterministic initials/tint) + name; risk as a `Progress`
+    bar whose tone tracks the score (`≥80` danger, `≥40` warning, else success) with a tabular %.
+  - **Row menu** — kebab `Menu` in the actions column (`MoreHorizontal` trigger) as the scalable
+    alternative to a wall of icon Buttons once a row has >2–3 actions.
+  - **Bulk actions** — selection driving a contextual toolbar that swaps in above the table while any
+    row is picked (Export / Quarantine / Delete / Clear).
+  - **Pagination** — `Table` + `Pagination` over `FLEET`, page state owned by the demo (slice the rows
+    yourself), with an "N–M of T" range readout.
+  - **Rich empty state** — `EmptyState` (inset, `Search` icon, title + action) passed to the `empty`
+    prop, showing it takes any node, not just a string.
+- Rationale: the page already covered the mechanics (sort/select/density/responsive); the gap was
+  **real-world composition** patterns. Keeping them page-level respects "pages compose, don't invent."
+
+## 2026-07-16 · Radius + Motion get foundation reference tables
+
+- **Gap**: a reviewer (Allan) asked where the tokens in the Button "Bound to" column are defined. Most
+  resolved (space → Spacing, weights → Typography, control heights/border/ring → Control Anatomy), but
+  `--vds-radius-*` had no dedicated docs table (only `radius-sm` mentioned in passing) and the `MOTION`
+  scale (`--vds-dur-*` / `--vds-ease-*`) only rendered on a Pilot page.
+- **Fix**: added a **Radius scale** section to Foundation → Depth (live corner chips + token table, new
+  `RADIUS` array in `tokens.js`) and a **Motion scale** section to Foundation → Control Anatomy (renders
+  the existing `MOTION` array, sits right under the anatomy table that already cites `--vds-dur-fast`).
+- **Placement rationale**: radius is surface/shape chrome → Depth; motion is where controls bind their
+  `--vds-{name}-dur/-ease` → Control Anatomy. No new page — kept the foundation nav flat. Source of truth
+  is still `_tokens.scss`; `tokens.js` mirrors it.
+
+## 2026-07-16 · Table docs — "User management" capstone example
+
+- Added a **User management** section to `TablePage.jsx` — a self-contained people table composed from
+  existing primitives (no component/token changes). It's the capstone that ties the earlier examples
+  together, and doubles as the reference pattern for user-management tables in the DS.
+- Composition + the semantic call it teaches:
+  - **Identity** = `Avatar` (deterministic initials/tint) + name over email (`Stack` of `Text`).
+  - **Role** = `Tag` — a *category*, so it uses chromatic tones (`ROLE_TONE`: Owner→amber, Admin→emerald,
+    Member/Viewer→neutral). Deliberately NOT a Badge: roles carry no good/bad meaning.
+  - **Status** = `Badge` dot — a *health signal*, so it uses status tones (active→success,
+    invited→warning, suspended→danger). This Tag-vs-Badge split is the reusable lesson.
+  - **Last active** = muted `Text`, with an em dash for invited users who never signed in.
+  - **Row menu** = state-aware `Menu`: invited users gain "Resend invite"; suspended users show
+    "Reactivate" instead of "Suspend". Wrapped in a `stopPropagation` span so it's row-click-safe.
+  - **Bulk bar** = selection-driven toolbar (Change role / Suspend / Remove / Clear) on the table's top
+    edge; when nothing is selected it shows the member count + an "Invite people" primary action.
+- Verified live: 8 rows render with all cell types; selection toggles the bar; the menu items shift per
+  state (Active→Suspend, Suspended→Reactivate, Invited→+Resend invite). No console errors.
+
+## 2026-07-16 · Docs sidebar — reordered + regrouped by function
+
+- **Problem**: groups were ordered *alphabetically*, so Getting Started landed 6th and Foundation 5th
+  (below team-process "Adoption" and a vague catch-all "Components"). "Components" told you nothing
+  (everything is a component), and "Primitives" was really form inputs plus strays (Popover, Spinner,
+  Visually Hidden) filed in the wrong place.
+- **Fix** (in `src/docs/routes.js` — `App.jsx` renders `NAV` verbatim, no runtime sort): switched to an
+  intentional **learn-then-reference flow** and grouped components by *what they do*:
+  Getting Started → Foundations → Forms & Inputs → Actions → Data Display → Feedback → Navigation →
+  Overlays → App Chrome → Utilities → Templates → Adoption → Pilot.
+- **Regrouping** (paths/pages unchanged — only `group` labels + order): dissolved "Components" (Button→
+  Actions; Avatar/Badge/Tag/Card/Table/Description List/Sparkline/Kbd→Data Display); renamed "Primitives"
+  → "Forms & Inputs" (18 form controls); merged "Metrics" (Stat Tile, Metric Card) into Data Display;
+  moved Icon→Data Display, Spinner + Toast→Feedback, Popover→Overlays; added a small **Utilities** group
+  for Visually Hidden (an a11y helper that fit nowhere else — flagged to Alvin as the one judgment call).
+- Verified live: 76 items before and after (no page dropped), group order matches the approved outline,
+  every stray landed in its new home, no console errors.
+- **Note for future**: item order within a group is now hand-authored intent, NOT alphabetical — the
+  previous convention (commit 15b231b) is superseded. Add new items where they belong in the flow.

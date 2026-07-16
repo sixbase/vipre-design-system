@@ -292,6 +292,14 @@ export const CONTROLS = [
   { token: '--vds-control-font-touch-min', value: '16px', usage: 'iOS zoom guard — minimum font-size on md text controls for coarse pointers' },
 ]
 
+/* Radius scale — mirrors --vds-radius-* in _tokens.scss. */
+export const RADIUS = [
+  { token: '--vds-radius-sm', px: '4px', usage: 'Default for chrome controls — buttons, inputs, badges' },
+  { token: '--vds-radius-md', px: '8px', usage: 'Cards, panels, menus, larger surfaces' },
+  { token: '--vds-radius-lg', px: '12px', usage: 'Big cards, modals, drawers, hero tiles' },
+  { token: '--vds-radius-xl', px: '16px', usage: 'Largest corners — full-bleed hero surfaces' },
+]
+
 /* Motion — mirrors the Tier 3 motion tokens in _tokens.scss. */
 export const MOTION = [
   { token: '--vds-ease-out', value: 'cubic-bezier(0.16, 1, 0.3, 1)', usage: 'Default easing for small state changes' },
@@ -306,4 +314,37 @@ export const WEIGHTS = [
   { name: 'medium', value: 500, token: '--vds-weight-medium' },
   { name: 'semibold', value: 600, token: '--vds-weight-semibold' },
   { name: 'bold', value: 700, token: '--vds-weight-bold' },
+]
+
+/* Font family — mirrors --vds-font-sans in _tokens.scss. */
+export const FONT = [
+  { token: '--vds-font-sans', value: "'Rubik', ui-sans-serif, system-ui, …", usage: 'The one UI typeface. Rubik with a system fallback stack' },
+]
+
+/* Elevation — the shadow ramp. Mirrors --vds-shadow-* in _tokens.scss. Every
+   shadow is tinted with the Midnight navy for a cool cast. */
+export const SHADOWS = [
+  { token: '--vds-shadow-xs', usage: 'Faintest lift — resting cards, stat tiles' },
+  { token: '--vds-shadow-sm', usage: 'Low float — raised cards, hover lift' },
+  { token: '--vds-shadow-md', usage: 'Popovers, menus, dropdowns' },
+  { token: '--vds-shadow-lg', usage: 'High float — modals, drawers' },
+]
+
+/* Stacking order — mirrors --vds-z-* in _tokens.scss. Reference one of these,
+   never a hand-written z-index. Gaps leave room to slot layers in. */
+export const ZINDEX = [
+  { token: '--vds-z-base', value: '0', usage: 'Default in-flow content' },
+  { token: '--vds-z-raised', value: '10', usage: 'In-component lift — e.g. the Table sticky header' },
+  { token: '--vds-z-sticky', value: '100', usage: 'Page-level sticky toolbars / headers' },
+  { token: '--vds-z-dropdown', value: '200', usage: 'Menus, selects, popovers, comboboxes' },
+  { token: '--vds-z-drawer', value: '300', usage: 'Side drawers / sheets' },
+  { token: '--vds-z-modal', value: '400', usage: 'Modal dialogs' },
+  { token: '--vds-z-toast', value: '500', usage: 'Toasts / notifications' },
+  { token: '--vds-z-tooltip', value: '600', usage: 'Tooltips — always on top' },
+]
+
+/* Effects — focus ring + scrim. Mirror the Focus & scrim block in _tokens.scss. */
+export const EFFECTS = [
+  { token: '--vds-focus-ring', ref: 'midnight-500 → 400', usage: 'Keyboard focus outline via :focus-visible — never decorative' },
+  { token: '--vds-scrim', ref: 'midnight navy @ 45%', usage: 'Dims the page behind modals and drawers' },
 ]
