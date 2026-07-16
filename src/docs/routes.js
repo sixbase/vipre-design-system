@@ -74,14 +74,154 @@ import { PinInputPage } from './pages/PinInputPage.jsx'
 import { TagsInputPage } from './pages/TagsInputPage.jsx'
 import { MeetingGuidePage } from './pages/MeetingGuidePage.jsx'
 import { MenuQuickstartPage } from './pages/MenuQuickstartPage.jsx'
+import { TokensPage } from './pages/TokensPage.jsx'
 
-/* Single source of truth for both the sidebar nav and the hash router. */
+/* Single source of truth for both the sidebar nav and the hash router.
+   Group ORDER and item order are intentional (a learn-then-reference flow),
+   NOT alphabetical — App.jsx renders NAV verbatim. The flow is:
+     Getting Started → Foundations → the component families (Forms, Actions,
+     Data Display, Feedback, Navigation, Overlays) → App Chrome → Utilities →
+     Templates → Adoption → Pilot.
+   Component families are grouped by what a component DOES, so the label tells
+   you where to look. (The home route is resolved via ROUTE_MAP['/'].) */
 export const NAV = [
   {
     group: 'Getting Started',
     items: [
       { path: '/', name: 'Introduction', Page: HomePage },
       { path: '/getting-started/installation', name: 'Installation', Page: InstallationPage },
+    ],
+  },
+  {
+    // The design language — tokens + principles every component is built on.
+    group: 'Foundations',
+    items: [
+      { path: '/foundation/tokens', name: 'Token Reference', Page: TokensPage },
+      { path: '/foundation/colors', name: 'Colors', Page: ColorsPage },
+      { path: '/foundation/color-usage', name: 'Color usage', Page: ColorUsagePage },
+      { path: '/foundation/typography', name: 'Typography', Page: TypographyPage },
+      { path: '/foundation/spacing', name: 'Spacing', Page: SpacingPage },
+      { path: '/foundation/layout', name: 'Layout', Page: LayoutPage },
+      { path: '/foundation/depth', name: 'Depth', Page: DepthPage },
+      { path: '/foundation/responsiveness', name: 'Responsiveness', Page: ResponsivenessPage },
+      { path: '/foundation/control-anatomy', name: 'Control Anatomy', Page: ControlAnatomyPage },
+    ],
+  },
+  {
+    // Everything a user types or picks into — the form controls.
+    group: 'Forms & Inputs',
+    items: [
+      { path: '/primitives/field', name: 'Field', Page: FieldPage },
+      { path: '/primitives/input', name: 'Input', Page: InputPage },
+      { path: '/primitives/textarea', name: 'Textarea', Page: TextareaPage },
+      { path: '/primitives/select', name: 'Select', Page: SelectPage },
+      { path: '/primitives/combobox', name: 'Combobox', Page: ComboboxPage },
+      { path: '/primitives/checkbox', name: 'Checkbox', Page: CheckboxPage },
+      { path: '/primitives/radio', name: 'Radio', Page: RadioPage },
+      { path: '/primitives/switch', name: 'Switch', Page: SwitchPage },
+      { path: '/primitives/slider', name: 'Slider', Page: SliderPage },
+      { path: '/primitives/segmented-control', name: 'Segmented Control', Page: SegmentedControlPage },
+      { path: '/primitives/search-input', name: 'Search Input', Page: SearchInputPage },
+      { path: '/primitives/password-input', name: 'Password Input', Page: PasswordInputPage },
+      { path: '/primitives/number-input', name: 'Number Input', Page: NumberInputPage },
+      { path: '/primitives/date-picker', name: 'Date Picker', Page: DatePickerPage },
+      { path: '/primitives/time-input', name: 'Time Input', Page: TimeInputPage },
+      { path: '/primitives/pin-input', name: 'Pin Input', Page: PinInputPage },
+      { path: '/primitives/file-upload', name: 'File Upload', Page: FileUploadPage },
+      { path: '/primitives/tags-input', name: 'Tags Input', Page: TagsInputPage },
+    ],
+  },
+  {
+    // Controls that trigger something.
+    group: 'Actions',
+    items: [
+      { path: '/components/button', name: 'Button', Page: ButtonPage },
+    ],
+  },
+  {
+    // Showing data + identity. Includes the KPI tiles (was "Metrics") and Icon.
+    group: 'Data Display',
+    items: [
+      { path: '/components/avatar', name: 'Avatar', Page: AvatarPage },
+      { path: '/components/badge', name: 'Badge', Page: BadgePage },
+      { path: '/components/tag', name: 'Tag', Page: TagPage },
+      { path: '/components/card', name: 'Card', Page: CardPage },
+      { path: '/components/table', name: 'Table', Page: TablePage },
+      { path: '/components/description-list', name: 'Description List', Page: DescriptionListPage },
+      { path: '/components/sparkline', name: 'Sparkline', Page: SparklinePage },
+      { path: '/metrics/stat-tile', name: 'Stat Tile', Page: StatTilePage },
+      { path: '/metrics/metric-card', name: 'Metric Card', Page: MetricCardPage },
+      { path: '/components/kbd', name: 'Kbd', Page: KbdPage },
+      { path: '/primitives/icon', name: 'Icon', Page: IconPage },
+    ],
+  },
+  {
+    // Telling the user what's happening — status & loading.
+    group: 'Feedback',
+    items: [
+      { path: '/components/alert', name: 'Alert', Page: AlertPage },
+      { path: '/components/toast', name: 'Toast', Page: ToastPage },
+      { path: '/components/progress', name: 'Progress', Page: ProgressPage },
+      { path: '/primitives/spinner', name: 'Spinner', Page: SpinnerPage },
+      { path: '/components/skeleton', name: 'Skeleton', Page: SkeletonPage },
+      { path: '/components/empty-state', name: 'Empty State', Page: EmptyStatePage },
+    ],
+  },
+  {
+    // Wayfinding — moving through pages, steps, and long lists.
+    group: 'Navigation',
+    items: [
+      { path: '/components/breadcrumb', name: 'Breadcrumb', Page: BreadcrumbPage },
+      { path: '/components/tabs', name: 'Tabs', Page: TabsPage },
+      { path: '/components/accordion', name: 'Accordion', Page: AccordionPage },
+      { path: '/components/stepper', name: 'Stepper', Page: StepperPage },
+      { path: '/components/pagination', name: 'Pagination', Page: PaginationPage },
+    ],
+  },
+  {
+    // Floating layers — everything on the z-index scale above the page.
+    group: 'Overlays',
+    items: [
+      { path: '/components/modal', name: 'Modal', Page: ModalPage },
+      { path: '/components/drawer', name: 'Drawer', Page: DrawerPage },
+      { path: '/primitives/popover', name: 'Popover', Page: PopoverPage },
+      { path: '/components/tooltip', name: 'Tooltip', Page: TooltipPage },
+      { path: '/components/menu', name: 'Menu', Page: MenuPage },
+      { path: '/components/command-palette', name: 'Command Palette', Page: CommandPalettePage },
+    ],
+  },
+  {
+    // The app frame — chrome that wraps every product page.
+    group: 'App Chrome',
+    items: [
+      { path: '/components/app-shell', name: 'App Shell', Page: AppShellPage },
+      { path: '/components/top-bar', name: 'Top Bar', Page: TopBarPage },
+      { path: '/components/side-nav', name: 'Side Nav', Page: SideNavPage },
+      { path: '/components/current-left-nav', name: 'Current Left Nav', Page: CurrentLeftNavPage },
+      { path: '/components/page-header', name: 'Page Header', Page: PageHeaderPage },
+      { path: '/components/scope-navigator', name: 'Scope Navigator', Page: ScopeNavigatorPage },
+      { path: '/components/timeframe-select', name: 'Timeframe Select', Page: TimeframeSelectPage },
+    ],
+  },
+  {
+    // Low-level helpers that render for assistive tech, not for looks.
+    group: 'Utilities',
+    items: [
+      { path: '/primitives/visually-hidden', name: 'Visually Hidden', Page: VisuallyHiddenPage },
+    ],
+  },
+  {
+    // Page templates — full-screen compositions of the components above. A
+    // template is documented by its regions/slots; the body is swappable.
+    group: 'Templates',
+    items: [
+      { path: '/templates/msp-shell', name: 'MSP Shell', Page: MspShellTemplatePage },
+      { path: '/templates/current-nav-shell', name: 'Current Nav Shell', Page: CurrentNavShellPage },
+      { path: '/templates/customer-list', name: 'Customer Directory', Page: CustomerListTemplatePage },
+      { path: '/templates/device-list', name: 'Device List', Page: DeviceListTemplatePage },
+      { path: '/templates/policy-list', name: 'Policy List', Page: PolicyListTemplatePage },
+      { path: '/templates/entity-detail', name: 'Entity Detail', Page: EntityDetailTemplatePage },
+      { path: '/templates/product-dashboard', name: 'Product Dashboard', Page: ProductDashboardPage },
     ],
   },
   {
@@ -94,133 +234,10 @@ export const NAV = [
     ],
   },
   {
-    group: 'Foundation',
-    items: [
-      { path: '/foundation/color-usage', name: 'Color usage', Page: ColorUsagePage },
-      { path: '/foundation/colors', name: 'Colors', Page: ColorsPage },
-      { path: '/foundation/control-anatomy', name: 'Control Anatomy', Page: ControlAnatomyPage },
-      { path: '/foundation/depth', name: 'Depth', Page: DepthPage },
-      { path: '/foundation/layout', name: 'Layout', Page: LayoutPage },
-      { path: '/foundation/responsiveness', name: 'Responsiveness', Page: ResponsivenessPage },
-      { path: '/foundation/spacing', name: 'Spacing', Page: SpacingPage },
-      { path: '/foundation/typography', name: 'Typography', Page: TypographyPage },
-    ],
-  },
-  {
-    group: 'Primitives',
-    items: [
-      { path: '/primitives/checkbox', name: 'Checkbox', Page: CheckboxPage },
-      { path: '/primitives/combobox', name: 'Combobox', Page: ComboboxPage },
-      { path: '/primitives/date-picker', name: 'Date Picker', Page: DatePickerPage },
-      { path: '/primitives/field', name: 'Field', Page: FieldPage },
-      { path: '/primitives/file-upload', name: 'File Upload', Page: FileUploadPage },
-      { path: '/primitives/icon', name: 'Icon', Page: IconPage },
-      { path: '/primitives/input', name: 'Input', Page: InputPage },
-      { path: '/primitives/number-input', name: 'Number Input', Page: NumberInputPage },
-      { path: '/primitives/password-input', name: 'Password Input', Page: PasswordInputPage },
-      { path: '/primitives/pin-input', name: 'Pin Input', Page: PinInputPage },
-      { path: '/primitives/popover', name: 'Popover', Page: PopoverPage },
-      { path: '/primitives/radio', name: 'Radio', Page: RadioPage },
-      { path: '/primitives/search-input', name: 'Search Input', Page: SearchInputPage },
-      { path: '/primitives/segmented-control', name: 'Segmented Control', Page: SegmentedControlPage },
-      { path: '/primitives/select', name: 'Select', Page: SelectPage },
-      { path: '/primitives/slider', name: 'Slider', Page: SliderPage },
-      { path: '/primitives/spinner', name: 'Spinner', Page: SpinnerPage },
-      { path: '/primitives/switch', name: 'Switch', Page: SwitchPage },
-      { path: '/primitives/tags-input', name: 'Tags Input', Page: TagsInputPage },
-      { path: '/primitives/textarea', name: 'Textarea', Page: TextareaPage },
-      { path: '/primitives/time-input', name: 'Time Input', Page: TimeInputPage },
-      { path: '/primitives/visually-hidden', name: 'Visually Hidden', Page: VisuallyHiddenPage },
-    ],
-  },
-  {
-    group: 'Components',
-    items: [
-      { path: '/components/avatar', name: 'Avatar', Page: AvatarPage },
-      { path: '/components/badge', name: 'Badge', Page: BadgePage },
-      { path: '/components/button', name: 'Button', Page: ButtonPage },
-      { path: '/components/card', name: 'Card', Page: CardPage },
-      { path: '/components/description-list', name: 'Description List', Page: DescriptionListPage },
-      { path: '/components/kbd', name: 'Kbd', Page: KbdPage },
-      { path: '/components/sparkline', name: 'Sparkline', Page: SparklinePage },
-      { path: '/components/table', name: 'Table', Page: TablePage },
-      { path: '/components/tag', name: 'Tag', Page: TagPage },
-    ],
-  },
-  {
-    // Floating layers — everything on the z-index scale above the page.
-    group: 'Overlays',
-    items: [
-      { path: '/components/command-palette', name: 'Command Palette', Page: CommandPalettePage },
-      { path: '/components/drawer', name: 'Drawer', Page: DrawerPage },
-      { path: '/components/menu', name: 'Menu', Page: MenuPage },
-      { path: '/components/modal', name: 'Modal', Page: ModalPage },
-      { path: '/components/toast', name: 'Toast', Page: ToastPage },
-      { path: '/components/tooltip', name: 'Tooltip', Page: TooltipPage },
-    ],
-  },
-  {
-    // Wayfinding — moving through pages, steps, and long lists.
-    group: 'Navigation',
-    items: [
-      { path: '/components/accordion', name: 'Accordion', Page: AccordionPage },
-      { path: '/components/breadcrumb', name: 'Breadcrumb', Page: BreadcrumbPage },
-      { path: '/components/pagination', name: 'Pagination', Page: PaginationPage },
-      { path: '/components/stepper', name: 'Stepper', Page: StepperPage },
-      { path: '/components/tabs', name: 'Tabs', Page: TabsPage },
-    ],
-  },
-  {
-    // Status & loading — telling the user what's happening.
-    group: 'Feedback',
-    items: [
-      { path: '/components/alert', name: 'Alert', Page: AlertPage },
-      { path: '/components/empty-state', name: 'Empty State', Page: EmptyStatePage },
-      { path: '/components/progress', name: 'Progress', Page: ProgressPage },
-      { path: '/components/skeleton', name: 'Skeleton', Page: SkeletonPage },
-    ],
-  },
-  {
-    // The app frame — chrome that wraps every product page.
-    group: 'App Chrome',
-    items: [
-      { path: '/components/app-shell', name: 'App Shell', Page: AppShellPage },
-      { path: '/components/current-left-nav', name: 'Current Left Nav', Page: CurrentLeftNavPage },
-      { path: '/components/page-header', name: 'Page Header', Page: PageHeaderPage },
-      { path: '/components/scope-navigator', name: 'Scope Navigator', Page: ScopeNavigatorPage },
-      { path: '/components/side-nav', name: 'Side Nav', Page: SideNavPage },
-      { path: '/components/timeframe-select', name: 'Timeframe Select', Page: TimeframeSelectPage },
-      { path: '/components/top-bar', name: 'Top Bar', Page: TopBarPage },
-    ],
-  },
-  {
-    // One KPI family, two densities: Stat Tile (compact) and Metric Card (hero).
-    // Shared visual language — soft icon chip, 12px corners, resting elevation.
-    group: 'Metrics',
-    items: [
-      { path: '/metrics/metric-card', name: 'Metric Card', Page: MetricCardPage },
-      { path: '/metrics/stat-tile', name: 'Stat Tile', Page: StatTilePage },
-    ],
-  },
-  {
     // Pilot — isolated artifacts staged for an engineering handoff. Temporary.
     group: 'Pilot',
     items: [
       { path: '/pilot/msp-menu', name: 'MSP Menu (isolated)', Page: MspMenuPilotPage },
-    ],
-  },
-  {
-    // Page templates — full-screen compositions of the components above. A
-    // template is documented by its regions/slots; the body is swappable.
-    group: 'Templates',
-    items: [
-      { path: '/templates/current-nav-shell', name: 'Current Nav Shell', Page: CurrentNavShellPage },
-      { path: '/templates/customer-list', name: 'Customer Directory', Page: CustomerListTemplatePage },
-      { path: '/templates/device-list', name: 'Device List', Page: DeviceListTemplatePage },
-      { path: '/templates/entity-detail', name: 'Entity Detail', Page: EntityDetailTemplatePage },
-      { path: '/templates/msp-shell', name: 'MSP Shell', Page: MspShellTemplatePage },
-      { path: '/templates/policy-list', name: 'Policy List', Page: PolicyListTemplatePage },
-      { path: '/templates/product-dashboard', name: 'Product Dashboard', Page: ProductDashboardPage },
     ],
   },
 ]

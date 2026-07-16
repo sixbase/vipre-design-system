@@ -1,5 +1,6 @@
 import { DocPage } from '../DocPage.jsx'
 import { Section, Code, PropsTable, IC } from '../primitives.jsx'
+import { MOTION } from '../tokens.js'
 
 /* The shared seven-part skeleton every control binds to (§2 of the playbook doc). */
 const ANATOMY = [
@@ -50,6 +51,16 @@ export function ControlAnatomyPage() {
         note="Every control — action or field — binds to the same seven-part skeleton before it does anything of its own."
       >
         <PropsTable headers={['Part', 'Token(s)', 'Recipe']} rows={ANATOMY} />
+      </Section>
+
+      <Section
+        title="Motion scale"
+        note="The full duration + easing vocabulary controls bind to. The anatomy above uses --vds-dur-fast + --vds-ease-out for hover/focus; larger chrome (panels, the sidenav) reaches for the slower steps. A control's --vds-{name}-dur / -ease resolve here."
+      >
+        <PropsTable
+          headers={['Token', 'Value', 'Controls']}
+          rows={MOTION.map((m) => [{ code: m.token }, { code: m.value }, m.usage])}
+        />
       </Section>
 
       <Section

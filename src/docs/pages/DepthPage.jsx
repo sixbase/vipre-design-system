@@ -1,6 +1,7 @@
 import { DocPage } from '../DocPage.jsx'
 import { Section, PropsTable, IC } from '../primitives.jsx'
 import { Text, Surface } from '../../components/index.js'
+import { RADIUS } from '../tokens.js'
 
 /* The five semantic elevation levels. Each row is rendered as a live tile so
    the surface tone + border + shadow combination is the real thing, not a
@@ -86,6 +87,25 @@ export function DepthPage() {
             </div>
           ))}
         </div>
+      </Section>
+
+      <Section title="Radius scale" note="Corner rounding for surfaces and controls. Chrome controls all share radius-sm; surfaces step up with their size. Each chip below is the real token — where a control's --vds-{name}-radius resolves.">
+        <div className="vds-shadow-row">
+          {RADIUS.map((r) => (
+            <div key={r.token} className="vds-shadow-item">
+              <div
+                className="vds-shadow-chip"
+                style={{ borderRadius: `var(${r.token})`, background: 'var(--vds-surface-selected)', boxShadow: 'none' }}
+              />
+              <Text variant="caption" className="vds-mono">{r.token.replace('--vds-radius-', '')}</Text>
+              <Text variant="caption" tone="muted">{r.px}</Text>
+            </div>
+          ))}
+        </div>
+        <PropsTable
+          headers={['Token', 'Value', 'Controls']}
+          rows={RADIUS.map((r) => [{ code: r.token }, r.px, r.usage])}
+        />
       </Section>
 
       <Section title="Surface ladder" note="The color side of depth. In light mode shadows do the work, so the surfaces barely change. In dark mode color does the work — higher up means lighter — so each step gets a lighter navy. Flip the theme (top-left) to see the difference.">

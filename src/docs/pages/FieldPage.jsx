@@ -71,15 +71,20 @@ export function FieldPage() {
 
       <Section
         title="Tokens"
-        note="Field owns the vertical rhythm between the label, the control, and the help/error line below it — one custom property, set on the .vds-field root."
+        note="Field owns the vertical rhythm and the label / help / error text color. Every value is a public custom property set on the .vds-field root — re-point any of them to re-shape the field without touching markup."
       >
         <TokenGroup label="Spacing" headers={['Token', 'Value', 'Controls']} rows={[
           [{ code: '--vds-field-gap' }, { code: '0.375rem (6px)' }, 'Vertical gap: label → control → help/error'],
         ]} />
+        <TokenGroup label="Text color" headers={['Token', 'Bound to', 'Controls']} rows={[
+          [{ code: '--vds-field-label-color' }, { code: '--vds-ink-muted' }, 'Label text above the control'],
+          [{ code: '--vds-field-help-color' }, { code: '--vds-ink-muted' }, 'Helper text below the control'],
+          [{ code: '--vds-field-error-color' }, { code: '--vds-danger' }, 'Error message below the control'],
+        ]} />
         <p className="vds-text vds-text--detail vds-text--tone-muted" style={{ marginTop: '0.5rem' }}>
-          Label and help text color bind to <IC>--vds-ink-muted</IC>; the error line binds to{' '}
-          <IC>--vds-danger</IC>. No field-specific color tokens are needed — both already flip light/dark
-          on their own.
+          The color tokens bind to semantic tokens (<IC>--vds-ink-muted</IC>, <IC>--vds-danger</IC>) that
+          already flip light/dark on their own — so the defaults need no theming. Label, help, and error type
+          come from the <IC>detail</IC> / <IC>eyebrow</IC> typescale steps.
         </p>
       </Section>
 
