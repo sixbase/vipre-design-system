@@ -54,14 +54,14 @@
       background: var(--vds-surface-hover);
     }
     &:focus-visible {
-      outline: 2px solid var(--vds-focus-ring);
-      outline-offset: 2px;
+      outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+      outline-offset: var(--vds-control-ring-offset);
     }
 
     // Current page: full ink, not interactive, never truncated away.
     &--current {
       color: var(--vds-ink);
-      font-weight: 500;
+      font-weight: var(--vds-weight-medium);
       cursor: default;
       &:hover {
         background: transparent;
@@ -112,8 +112,8 @@
       background: var(--vds-surface-hover);
     }
     &:focus-visible {
-      outline: 2px solid var(--vds-focus-ring);
-      outline-offset: 2px;
+      outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+      outline-offset: var(--vds-control-ring-offset);
     }
   }
 }

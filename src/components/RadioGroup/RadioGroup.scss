@@ -22,7 +22,7 @@
   &__label {
     color: var(--vds-ink);
     @include type.step(body);
-    font-weight: 500;
+    font-weight: var(--vds-weight-medium);
   }
 
   &__items {

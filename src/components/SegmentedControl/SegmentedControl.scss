@@ -10,12 +10,17 @@
 @use '../../styles/breakpoints' as bp;
 
 .vds-segmented {
+  // Track inset — the gutter between the track edge and the thumb, and between
+  // segments. Half a space-1 step (2px): the 4px grid has no step this fine, and
+  // the thumb's top/bottom must match the padding or the pill sits off-centre.
+  --vds-segmented-inset: calc(var(--vds-space-1) / 2);
+
   position: relative;
   display: inline-flex;
   align-items: stretch;
-  gap: calc(var(--vds-space-1) / 2);
+  gap: var(--vds-segmented-inset);
   max-width: 100%;
-  padding: calc(var(--vds-space-1) / 2);
+  padding: var(--vds-segmented-inset);
   border: 1px solid var(--vds-line);
   border-radius: var(--vds-radius-md);
   background-color: var(--vds-surface-hover); // recessed neutral track
@@ -38,8 +43,8 @@
   // ---- the sliding pill (JS-measured; absolute children scroll with content) ----
   &__thumb {
     position: absolute;
-    top: calc(var(--vds-space-1) / 2);
-    bottom: calc(var(--vds-space-1) / 2);
+    top: var(--vds-segmented-inset);
+    bottom: var(--vds-segmented-inset);
     left: 0;
     border-radius: var(--vds-radius-sm);
     background-color: var(--vds-primary);
@@ -92,11 +97,11 @@
   &--sm &__face {
     padding: 0 var(--vds-space-2);
     @include type.step(detail);
-    font-weight: 500;
+    font-weight: var(--vds-weight-medium);
   }
   &--md &__face {
     @include type.step(body);
-    font-weight: 500;
+    font-weight: var(--vds-weight-medium);
   }
 
   &__icon {
@@ -120,8 +125,8 @@
 
   // focus ring on the segment's face, keyboard only
   &__input:focus-visible ~ &__face {
-    outline: 2px solid var(--vds-focus-ring);
-    outline-offset: 2px;
+    outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+    outline-offset: var(--vds-control-ring-offset);
   }
 }
 

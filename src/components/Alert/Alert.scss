@@ -43,7 +43,7 @@
   }
   &__title {
     @include type.step(body);
-    font-weight: 600;
+    font-weight: var(--vds-weight-semibold);
     color: var(--vds-ink);
   }
   &__desc {
@@ -65,8 +65,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 1.5rem;
-    height: 1.5rem;
+    width: var(--vds-icon-btn-sm);
+    height: var(--vds-icon-btn-sm);
     margin: -0.125rem -0.25rem 0 0; // tuck into the padding, keep the visual grid
     padding: 0;
     border: 0;
@@ -83,8 +83,8 @@
       background-color: color-mix(in oklab, currentColor 12%, transparent);
     }
     &:focus-visible {
-      outline: 2px solid var(--vds-focus-ring);
-      outline-offset: 2px;
+      outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+      outline-offset: var(--vds-control-ring-offset);
     }
 
     // finger-sized hit area on touch, without growing the visual glyph

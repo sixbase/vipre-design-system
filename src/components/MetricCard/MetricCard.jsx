@@ -5,6 +5,7 @@ import { Surface } from '../Surface/Surface.jsx'
 import { Icon } from '../Icon/Icon.jsx'
 import { Badge } from '../Badge/Badge.jsx'
 import { Divider } from '../Divider/Divider.jsx'
+import { Progress } from '../Progress/Progress.jsx'
 
 /* Number → locale string, wrapped by prefix/suffix. Strings pass through. */
 function formatValue(value, prefix, suffix) {
@@ -157,7 +158,7 @@ function resolveDelta(delta, invert) {
  * A flagship KPI card — the rich counterpart to StatTile. It stacks a header
  * (soft icon chip + title + period), a hero value with a signed delta badge,
  * an optional target progress bar, and an optional breakdown list. Composes
- * Surface + Icon + Badge + Divider.
+ * Surface + Icon + Badge + Progress + Divider.
  *
  * For a dense one-line KPI use StatTile; reach for MetricCard when a single
  * metric is the hero of a panel and deserves context (target, breakdown).
@@ -304,19 +305,14 @@ export const MetricCard = forwardRef(function MetricCard(
                 <AnimatedValue className="vds-metric__progress-pct" value={`${progress.value}%`} active={inView} />
               </div>
             )}
-            <div
-              className="vds-metric__bar"
-              role="progressbar"
-              aria-valuenow={pct}
-              aria-valuemin={0}
-              aria-valuemax={100}
+            {/* Grows from 0 the first time the card scrolls in, matching the
+                count-up: inView flips once, then Progress transitions the width. */}
+            <Progress
+              value={inView ? pct : 0}
+              tone={barTone}
+              size="md"
               aria-label={progress.caption || progress.label || 'Progress'}
-            >
-              <div
-                className={cx('vds-metric__bar-fill', `vds-metric__bar-fill--${barTone}`)}
-                style={{ width: inView ? `${pct}%` : '0%' }}
-              />
-            </div>
+            />
             {progress.caption && <span className="vds-metric__progress-caption">{progress.caption}</span>}
           </div>
         )}

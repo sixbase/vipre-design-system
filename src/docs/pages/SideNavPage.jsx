@@ -75,6 +75,29 @@ const SIDENAV_TOKEN_GROUPS = [
     ],
   },
   {
+    label: 'Not-subscribed badge — the "go get this" corner arrow',
+    tokens: [
+      { token: '--vds-sidenav-unsub-disc', bound: 'var(--vds-midnight-600)', controls: 'The little disc behind the arrow' },
+      { token: '--vds-sidenav-unsub-ring', bound: 'var(--vds-midnight-950)', controls: "Ring around the disc — the rail's own navy, so it cuts a clean hole in the tile" },
+      { token: '--vds-sidenav-unsub-ink', bound: 'var(--vds-midnight-100)', controls: 'The arrow' },
+      { token: '--vds-sidenav-unsub-stroke', controls: 'How thick the arrow is drawn' },
+    ],
+  },
+  {
+    label: 'Edge handle — the round button on the rail\'s outer edge',
+    tokens: [
+      { token: '--vds-sidenav-edge-size', bound: 'var(--vds-space-6)', controls: 'The round button' },
+      { token: '--vds-sidenav-edge-glyph', bound: 'var(--vds-space-4)', controls: 'The arrow inside it' },
+      { token: '--vds-sidenav-edge-bg', bound: 'var(--vds-nav-accent)', controls: 'Its fill — follows the brand, like every selected row' },
+      { token: '--vds-sidenav-edge-ink', bound: 'var(--vds-white)', controls: 'Its arrow' },
+      { token: '--vds-sidenav-edge-ring', bound: 'white, 2px', controls: 'The white ring that lifts it off both sides of the edge' },
+      { token: '--vds-sidenav-edge-lift', bound: 'var(--vds-shadow-md)', controls: 'Its shadow at rest' },
+      { token: '--vds-sidenav-edge-lift-hover', bound: 'var(--vds-shadow-lg)', controls: 'Its shadow when you point at it' },
+      { token: '--vds-sidenav-edge-press-scale', controls: 'How far it squashes when pressed' },
+      { token: '--vds-sidenav-edge-stroke', controls: 'How thick its arrow is drawn' },
+    ],
+  },
+  {
     label: 'Motion — one easing + named beats',
     tokens: [
       { token: '--vds-sidenav-ease', bound: 'var(--vds-ease-emphatic)', controls: 'One curve for every nav motion' },
@@ -88,6 +111,7 @@ const SIDENAV_TOKEN_GROUPS = [
       { token: '--vds-sidenav-delay-item-in', controls: 'Card items fade in a beat after the card' },
       { token: '--vds-sidenav-dur-item-out', controls: 'Card items drop out on close' },
       { token: '--vds-sidenav-dur-tip', controls: 'Collapsed-rail tooltip fade + slide' },
+      { token: '--vds-sidenav-dur-edge', controls: 'Edge handle fades in as the cursor nears' },
       { token: '--vds-sidenav-dur-shimmer', controls: 'Loading skeleton shimmer loop' },
     ],
   },
@@ -230,6 +254,47 @@ function LoadingRail() {
   )
 }
 
+/* An account with nothing to manage. The section says why rather than sitting
+   blank under its eyebrow. */
+function UnmanagedRail() {
+  return (
+    <div style={{ height: 300, display: 'flex' }}>
+      <SideNav
+        aria-label="Product"
+        account={{ name: 'Bell & Sons', typeLabel: 'Customer', tile: AcmeTile }}
+        sections={[
+          { id: 'products', label: 'Products', items: [], empty: 'No managed products — this account is unmanaged.' },
+        ]}
+        collapseToggle={false}
+      />
+    </div>
+  )
+}
+
+/* The handle lives ON the seam, so the demo needs a slab of "page" beside the
+   rail — there is no seam without something on the other side. */
+function EdgeHandleRail() {
+  const [collapsed, setCollapsed] = useState(false)
+  return (
+    <div style={{ height: 420, display: 'flex', backgroundColor: 'var(--vds-canvas)' }}>
+      <SideNav
+        aria-label="Product"
+        edgeHandle
+        collapsed={collapsed}
+        onCollapsedChange={setCollapsed}
+        account={{ name: 'Melvin Industries', typeLabel: 'Distributor', tile: MelvinTile }}
+        sections={[SECTIONS[0]]}
+        activeId="dashboard"
+      />
+      <div style={{ flex: 1, display: 'grid', placeItems: 'center' }}>
+        <p className="vds-text vds-text--detail" style={{ margin: 0, color: 'var(--vds-ink-subtle)' }}>
+          Move your cursor toward the rail&rsquo;s edge.
+        </p>
+      </div>
+    </div>
+  )
+}
+
 export function SideNavPage() {
   return (
     <ComponentPage
@@ -249,6 +314,7 @@ export function SideNavPage() {
             [{ code: 'footerSections' }, { code: 'Section[]' }, { code: '[]' }, 'Sections pinned to the bottom'],
             [{ code: 'utilities' }, { code: 'Item[]' }, { code: '[]' }, 'Small rows at the very bottom (give each an onClick)'],
             [{ code: 'collapseToggle' }, { code: 'boolean' }, { code: 'true' }, 'Show the built-in Collapse row'],
+            [{ code: 'edgeHandle' }, { code: 'boolean' }, { code: 'false' }, "Also show a round button on the rail's outer edge that appears when the cursor comes near. A mouse shortcut only — the Collapse row is still the keyboard way"],
             [{ code: 'collapsed' }, { code: 'boolean' }, '—', 'You own the collapse state (controlled)'],
             [{ code: 'defaultCollapsed' }, { code: 'boolean' }, { code: 'false' }, 'Start collapsed (uncontrolled)'],
             [{ code: 'onCollapsedChange' }, { code: '(collapsed) => void' }, '—', 'Runs when the rail opens or closes'],
@@ -264,6 +330,7 @@ export function SideNavPage() {
             [{ code: 'id' }, { code: 'string' }, 'A unique id'],
             [{ code: 'label' }, { code: 'string' }, 'The small uppercase eyebrow (optional)'],
             [{ code: 'items' }, { code: 'Item[]' }, 'What the section holds — see the item shapes below'],
+            [{ code: 'empty' }, { code: 'string | node' }, 'Shown when the section has no items — say why it is empty (e.g. an account with nothing to manage). Hidden on the collapsed rail, where there is no room for a sentence'],
           ],
         },
         {
@@ -272,7 +339,7 @@ export function SideNavPage() {
           rows: [
             ['Bare row', { code: '{ id, label, icon?, badge?, onClick? }' }, 'A plain link: 16px icon + label + an optional count pill'],
             ['Tile row', { code: '{ id, label, tile | glyph }' }, 'A 32px tile + label, no children (like Dashboard)'],
-            ['Product group', { code: '{ id, label, tile | glyph, items, escape?, locked?, lockHint?, defaultOpen? }' }, 'A darker card that opens and closes. escape is the "Full portal" link out. locked mutes the tile, adds a padlock, and hides the items'],
+            ['Product group', { code: '{ id, label, tile | glyph, items, escape?, locked?, lockHint?, defaultOpen? }' }, 'A darker card that opens and closes. escape is the "Full portal" link out. locked mutes the tile, adds the little corner arrow, and hides the items'],
           ],
         },
         {
@@ -291,7 +358,8 @@ export function SideNavPage() {
         <>The rail is a real <IC>{'<nav>'}</IC> — give it an <IC>aria-label</IC>. Every row is a <IC>{'<button>'}</IC> you can <Kbd>Tab</Kbd> to; the focus ring is mixed from white and the accent so it shows on navy.</>,
         <>Product cards set <IC>aria-expanded</IC>; the current page gets <IC>aria-current="page"</IC>. Closed card items are hidden from the tab order.</>,
         <>Collapsed, every row shows a <IC>role="tooltip"</IC> label on hover <em>and</em> keyboard focus. Expanded, rows carry a native <IC>title</IC> instead.</>,
-        <>Locked products are not clickable, and the padlock badge means color alone never says "locked".</>,
+        <>Products you have not bought are not clickable, and the little corner arrow means color alone never says so.</>,
+        <>The edge handle is a mouse shortcut, so it is hidden from screen readers and skipped by <Kbd>Tab</Kbd> on purpose — it does the same job as the Collapse row, and meeting the same button twice is confusing. Everyone can still collapse the rail from that row.</>,
         <><IC>prefers-reduced-motion</IC> turns off all the animation — collapse and cards snap, shimmer freezes.</>,
       ]}
     >
@@ -336,6 +404,20 @@ export function SideNavPage() {
             </div>
           }
         />
+      </Section>
+
+      <Section
+        title="Nothing to manage"
+        note="Some accounts have no products. Say so in plain words instead of leaving an empty space under the heading — a blank gap reads as something failed to load. Pass empty on the section. It hides when the rail is collapsed, because 72px cannot hold a sentence."
+      >
+        <Preview canvas={<UnmanagedRail />} />
+      </Section>
+
+      <Section
+        title="Edge handle"
+        note="An extra way to close the rail: a round button that rides the outer edge and fades in when your cursor comes near it, then follows your pointer up and down. It is a mouse shortcut only — the Collapse row at the bottom still does the same job for keyboards and screen readers. Turn it on with edgeHandle. Do not clip overflow on the box around the rail, or you will cut the button in half."
+      >
+        <Preview canvas={<EdgeHandleRail />} />
       </Section>
 
       <Section

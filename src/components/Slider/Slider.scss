@@ -11,8 +11,8 @@
 
 .vds-slider {
   // knobs (component-scoped, all bound to tokens)
-  --vds-slider-thumb: 1.25rem;                    // 20px — never smaller
-  --vds-slider-track-h: 0.375rem;
+  --vds-slider-thumb: var(--vds-space-5);         // 20px — never smaller
+  --vds-slider-track-h: var(--vds-space-1-5);
   --vds-slider-fill: var(--vds-primary);
   --vds-slider-track: var(--vds-line-strong);
 
@@ -21,7 +21,7 @@
   gap: var(--vds-space-3);
   width: 100%;
 
-  &--sm { --vds-slider-track-h: 0.25rem; }
+  &--sm { --vds-slider-track-h: var(--vds-space-1); }
 
   &--disabled {
     opacity: 0.5;
@@ -71,7 +71,7 @@
   // ---- WebKit / Blink ----
   &__input::-webkit-slider-runnable-track {
     height: var(--vds-slider-track-h);
-    border-radius: 999px;
+    border-radius: var(--vds-radius-full);
     background: linear-gradient(
       to right,
       var(--vds-slider-fill) var(--vds-slider-stop),
@@ -85,7 +85,7 @@
     height: var(--vds-slider-thumb);
     margin-top: calc((var(--vds-slider-track-h) - var(--vds-slider-thumb)) / 2);
     border: 1px solid var(--vds-line-strong);
-    border-radius: 999px;
+    border-radius: var(--vds-radius-full);
     background-color: var(--vds-white); // matches the Switch thumb, both themes
     box-shadow: var(--vds-shadow-sm);
   }
@@ -93,19 +93,19 @@
   // ---- Gecko (Firefox) ----
   &__input::-moz-range-track {
     height: var(--vds-slider-track-h);
-    border-radius: 999px;
+    border-radius: var(--vds-radius-full);
     background-color: var(--vds-slider-track);
   }
   &__input::-moz-range-progress {
     height: var(--vds-slider-track-h);
-    border-radius: 999px;
+    border-radius: var(--vds-radius-full);
     background-color: var(--vds-slider-fill);
   }
   &__input::-moz-range-thumb {
     width: var(--vds-slider-thumb);
     height: var(--vds-slider-thumb);
     border: 1px solid var(--vds-line-strong);
-    border-radius: 999px;
+    border-radius: var(--vds-radius-full);
     background-color: var(--vds-white);
     box-shadow: var(--vds-shadow-sm);
   }
@@ -115,12 +115,12 @@
     outline: none;
   }
   &__input:focus-visible::-webkit-slider-thumb {
-    outline: 2px solid var(--vds-focus-ring);
-    outline-offset: 2px;
+    outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+    outline-offset: var(--vds-control-ring-offset);
   }
   &__input:focus-visible::-moz-range-thumb {
-    outline: 2px solid var(--vds-focus-ring);
-    outline-offset: 2px;
+    outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+    outline-offset: var(--vds-control-ring-offset);
   }
 
   // ---- marks (optional ticks) -----------------------------------------------
@@ -140,7 +140,7 @@
     );
     width: 0.125rem;
     height: 0.125rem;
-    border-radius: 999px;
+    border-radius: var(--vds-radius-full);
     background-color: var(--vds-ink-subtle);
     transform: translate(-50%, -50%);
   }

@@ -262,7 +262,11 @@ export const Table = forwardRef(function Table(
           {expandable && <td className="vds-table__td vds-table__cell--expand" />}
           {selectable && (
             <td className="vds-table__td vds-table__cell--select">
-              <span className="vds-table__skeleton" style={{ width: '1rem' }} aria-hidden="true" />
+              <span
+                className="vds-table__skeleton"
+                style={{ width: 'var(--vds-space-4)' }}
+                aria-hidden="true"
+              />
             </td>
           )}
           {columns.map((col) => (

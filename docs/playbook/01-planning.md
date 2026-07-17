@@ -41,7 +41,7 @@ All ✅ = built, token-bound, documented (with a framework-agnostic Markup secti
 
 **Data & metrics:** Table (sortable, selectable, sticky, opt-in `responsive` stacked-card mode) · StatTile · MetricCard · Sparkline
 
-**App chrome:** AppShell (+ AppShellNavTrigger) · TopBar · SideNav (the MSP v2 navy rail, + ProductTile) · CurrentLeftNav (legacy shipped nav, frozen) · PageHeader · ScopeNavigator · TimeframeSelect
+**App chrome:** AppShell (+ AppShellNavTrigger) · TopBar · SideNav (the MSP v2 navy rail, + ProductTile — caught up to the prototype 2026-07-16 except the account switcher, which waits on right-side `Popover` placement) · CurrentLeftNav (legacy shipped nav, frozen) · PageHeader · ScopeNavigator · TimeframeSelect
 
 ## Templates
 

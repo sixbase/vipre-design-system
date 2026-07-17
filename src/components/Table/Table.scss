@@ -25,8 +25,12 @@
   font-family: var(--vds-font-sans);
 
   // per-density cell padding (set by the density modifiers below)
-  --vds-table-pad-y: 0.625rem;
+  --vds-table-pad-y: var(--vds-space-2-5);
   --vds-table-pad-x: 0.875rem;
+
+  // Expand-caret box. The detail row indents by this same measure to align its
+  // content under the caret, so the two must move together.
+  --vds-table-caret-size: 1.375rem;
 
   // ---- scroll body — horizontal overflow never breaks the page layout ----
   // Responsive baseline: when a `minWidth` table is wider than its shell, the
@@ -155,8 +159,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 1.375rem;
-    height: 1.375rem;
+    width: var(--vds-table-caret-size);
+    height: var(--vds-table-caret-size);
     margin: -0.25rem 0; // absorb the button box so it doesn't tax the row height
     padding: 0;
     border: 0;
@@ -173,8 +177,8 @@
       background-color: var(--vds-line);
     }
     &:focus-visible {
-      outline: 2px solid var(--vds-focus-ring);
-      outline-offset: -2px;
+      outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+      outline-offset: var(--vds-control-ring-offset-inset);
     }
   }
 
@@ -189,7 +193,7 @@
   // faint recessed fill so it reads as a sub-panel of the row above it. ----
   &__row--detail > &__detail {
     padding: var(--vds-space-3) var(--vds-table-pad-x);
-    padding-left: calc(var(--vds-table-pad-x) + 1.375rem); // align under the caret
+    padding-left: calc(var(--vds-table-pad-x) + var(--vds-table-caret-size)); // align under the caret
     background-color: var(--vds-canvas);
     color: var(--vds-ink-muted);
   }
@@ -203,8 +207,8 @@
 
     &:hover { background-color: var(--vds-canvas); }
     &:focus-visible {
-      outline: 2px solid var(--vds-focus-ring);
-      outline-offset: -2px;
+      outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+      outline-offset: var(--vds-control-ring-offset-inset);
     }
   }
 
@@ -223,12 +227,12 @@
 
   // ---- density ----
   &--comfortable {
-    --vds-table-pad-y: 0.625rem;
+    --vds-table-pad-y: var(--vds-space-2-5);
     --vds-table-pad-x: 0.875rem;
   }
   &--compact {
-    --vds-table-pad-y: 0.375rem;
-    --vds-table-pad-x: 0.625rem;
+    --vds-table-pad-y: var(--vds-space-1-5);
+    --vds-table-pad-x: var(--vds-space-2-5);
 
     .vds-table__td { @include type.step(caption); }
   }
@@ -247,7 +251,7 @@
   &__sort-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.375rem;
+    gap: var(--vds-space-1-5);
     width: 100%;
     padding: var(--vds-table-pad-y) var(--vds-table-pad-x);
     border: 0;
@@ -261,8 +265,8 @@
 
     &:hover { color: var(--vds-ink-muted); }
     &:focus-visible {
-      outline: 2px solid var(--vds-focus-ring);
-      outline-offset: -2px;
+      outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+      outline-offset: var(--vds-control-ring-offset-inset);
     }
   }
   // right-aligned sortable columns flip the button content to the right

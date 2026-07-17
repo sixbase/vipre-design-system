@@ -4,10 +4,12 @@
 @use '../../styles/typography' as type;
 
 .vds-badge {
+  --vds-badge-dot-size: 0.3125rem;
+
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.125rem 0.5rem;
+  gap: var(--vds-space-1);
+  padding: 0.125rem var(--vds-space-2);
   border: 1px solid transparent;
   border-radius: var(--vds-radius-sm);
   white-space: nowrap;
@@ -33,9 +35,9 @@
   }
 
   &__dot {
-    width: 0.3125rem;
-    height: 0.3125rem;
-    border-radius: 9999px;
+    width: var(--vds-badge-dot-size);
+    height: var(--vds-badge-dot-size);
+    border-radius: var(--vds-radius-full);
     background-color: currentColor;
     // Optical centering. `align-items: center` centers the dot on the LINE
     // BOX, but the text's ink isn't centered in that box — the font's

@@ -1,4 +1,4 @@
-import { Fragment, createElement, forwardRef, isValidElement, useEffect, useState } from 'react'
+import { Fragment, createElement, forwardRef, isValidElement, useEffect, useRef, useState } from 'react'
 import { cx } from '../../lib/cx.js'
 import { ProductTile } from './ProductTile.jsx'
 
@@ -36,13 +36,29 @@ function CollapseGlyph({ collapsed }) {
     </svg>
   )
 }
-/* Corner badge overlaid on a locked product tile. */
-function LockBadge() {
+/* Corner badge on a not-subscribed product tile. The "expand out" arrow reads as
+   "add / go get this" — an invitation. A padlock only says no, which is the wrong
+   note for a product the customer can buy. Same disc + ring geometry as before, so
+   it sits identically over the tile's corner. Painted from SCSS, not inline. */
+function UnsubscribedBadge() {
   return (
-    <svg className="vds-sidenav__lock" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-      <circle cx="8" cy="8" r="7.5" style={{ fill: 'var(--vds-midnight-600)', stroke: 'var(--vds-midnight-950)' }} />
-      <path d="M6.3 7.4V6.2a1.7 1.7 0 0 1 3.4 0v1.2" style={{ stroke: 'var(--vds-midnight-100)' }} strokeWidth="1.2" />
-      <rect x="5.5" y="7.4" width="5" height="3.7" rx="1" style={{ fill: 'var(--vds-midnight-100)' }} />
+    <svg className="vds-sidenav__unsub" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <circle className="vds-sidenav__unsub-disc" cx="8" cy="8" r="7.25" />
+      <path
+        className="vds-sidenav__unsub-arrow"
+        d="M5.9 10.1 10.1 5.9M6.7 5.9h3.4v3.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+/* The seam handle's chevron — points the way the rail will move. */
+function EdgeChevron({ collapsed }) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d={collapsed ? 'M6.25 3.5 10.75 8l-4.5 4.5' : 'M9.75 3.5 5.25 8l4.5 4.5'} />
     </svg>
   )
 }
@@ -129,7 +145,7 @@ function ProductGroup({ group, activeId, collapsed, onSelect, open, onToggle }) 
         <span className="vds-sidenav__pill-main">
           <span className="vds-sidenav__tile">
             {renderTile(group, locked)}
-            {locked && <LockBadge />}
+            {locked && <UnsubscribedBadge />}
           </span>
           <span className="vds-sidenav__label vds-sidenav__label--pill">{group.label}</span>
         </span>
@@ -158,6 +174,14 @@ function ProductGroup({ group, activeId, collapsed, onSelect, open, onToggle }) 
 /* Shimmer placeholders standing in for product cards while entitlements load.
    Widths cycle so the skeleton reads as real, varied labels. */
 const SKELETON_WIDTHS = [80, 96, 64, 84, 72]
+
+/* How close the cursor must come to the seam before the edge handle shows —
+   behaviour (hit-testing), not styling, so it lives here rather than in a token.
+   Asymmetric on purpose: the reach extends further INTO the rail than out into
+   the content, because sliding out of the rail is the gesture that means "I want
+   the edge", while drifting in from the page usually does not. */
+const EDGE_REACH_IN = 26
+const EDGE_REACH_OUT = 18
 function SkeletonCard({ labelWidth }) {
   return (
     <div className="vds-sidenav__card">
@@ -180,6 +204,19 @@ function SectionBlock({ section, activeId, collapsed, onSelect, isOpen, onToggle
         {Array.from({ length: Math.min(count, 5) }, (_, i) => (
           <SkeletonCard key={i} labelWidth={SKELETON_WIDTHS[i % SKELETON_WIDTHS.length]} />
         ))}
+      </div>
+    )
+  }
+
+  // Nothing to show — an account with no managed products, say. Say so in words
+  // rather than leaving a bare eyebrow over a void. The note hides on the
+  // collapsed rail: a 72px column can't carry a sentence, and there is no icon to
+  // stand in for one.
+  if (section.empty && !(section.items || []).length) {
+    return (
+      <div className="vds-sidenav__section">
+        {section.label && <p className="vds-sidenav__eyebrow">{section.label}</p>}
+        <p className="vds-sidenav__empty">{section.empty}</p>
       </div>
     )
   }
@@ -248,7 +285,7 @@ function SectionBlock({ section, activeId, collapsed, onSelect, isOpen, onToggle
  * - Product group: { id, label, tile|glyph, items: Item[], escape?, locked?,
  *   lockHint?, defaultOpen? } — a recessed card that opens/closes. `escape` is
  *   the "Full portal" door out ({ id, label, icon? }). `locked` renders the
- *   muted tile + lock badge and hides the items.
+ *   muted tile + the "go get this" badge and hides the items.
  * `icon` and `tile` accept a React element or a component; `glyph` is an SVG
  * path string rendered via ProductTile. The component ships no icon set.
  *
@@ -262,12 +299,21 @@ function SectionBlock({ section, activeId, collapsed, onSelect, isOpen, onToggle
  * - onBack:            () => void — shows a "Back to {parentName}" row above
  *                      the account header.
  * - parentName:        string — names the back target.
- * - sections:          Section[] = { id, label?, items } — the scrollable middle,
- *                      separated by inset hairlines.
+ * - sections:          Section[] = { id, label?, items, empty? } — the scrollable
+ *                      middle, separated by inset hairlines. `empty` is a message
+ *                      shown in place of an empty section (e.g. an unmanaged
+ *                      account with no products); it hides on the collapsed rail.
  * - footerSections:    Section[] — pinned above the utility rows.
  * - utilities:         Item[] — bare rows in the pinned bottom cluster (e.g. a
  *                      dark-mode toggle; give it an onClick).
  * - collapseToggle:    boolean — render the built-in Collapse row (default true).
+ * - edgeHandle:        boolean — also show a round collapse handle on the rail's
+ *                      outer seam, which fades in as the cursor nears it (default
+ *                      false). A pointer shortcut layered on top of the Collapse
+ *                      row, never a replacement: it is aria-hidden and untabbable,
+ *                      so keyboard and screen-reader users still go through the
+ *                      row. Needs a positioned shell around the rail only if you
+ *                      clip overflow — the handle sticks out by half its width.
  * - collapsed:         boolean — controlled collapse state.
  * - defaultCollapsed:  boolean — uncontrolled initial state (default false).
  * - onCollapsedChange: (collapsed) => void
@@ -306,6 +352,7 @@ export const SideNav = forwardRef(function SideNav(
     footerSections = [],
     utilities = [],
     collapseToggle = true,
+    edgeHandle = false,
     collapsed: collapsedProp,
     defaultCollapsed = false,
     onCollapsedChange,
@@ -353,6 +400,45 @@ export const SideNav = forwardRef(function SideNav(
   }
   const hideTip = () => setTip(null)
 
+  // ---- edge handle: a collapse control that rides the nav/content seam and
+  // surfaces only when you reach for it, so the rail stays quiet at rest.
+  // Proximity is tracked on `window` and measured against the rail's OWN right
+  // edge — deliberately not delegated to a parent wrapper. The cursor approaches
+  // across the content, which the rail does not own, so a self-listener is what
+  // keeps this a drop-in rather than a contract on whoever renders the shell.
+  // The footer's Collapse row remains the keyboard-reachable path; this is a
+  // pointer affordance layered on top, never the only way through. ----
+  const navRef = useRef(null)
+  const setNavRef = (node) => {
+    navRef.current = node
+    if (typeof ref === 'function') ref(node)
+    else if (ref) ref.current = node
+  }
+  const [edge, setEdge] = useState({ y: 0, on: false })
+  useEffect(() => {
+    if (!edgeHandle) return undefined
+    let frame = 0
+    const onMove = (e) => {
+      if (frame) return
+      frame = requestAnimationFrame(() => {
+        frame = 0
+        const r = navRef.current?.getBoundingClientRect()
+        if (!r) return
+        const near =
+          e.clientX >= r.right - EDGE_REACH_IN &&
+          e.clientX <= r.right + EDGE_REACH_OUT &&
+          e.clientY >= r.top &&
+          e.clientY <= r.bottom
+        setEdge((prev) => (near ? { y: e.clientY - r.top, on: true } : prev.on ? { ...prev, on: false } : prev))
+      })
+    }
+    window.addEventListener('pointermove', onMove)
+    return () => {
+      window.removeEventListener('pointermove', onMove)
+      if (frame) cancelAnimationFrame(frame)
+    }
+  }, [edgeHandle])
+
   const backLabel = parentName ? `Back to ${parentName}` : 'Back'
   const accountTile = account?.tile
   const accountTip = account ? [account.name, account.typeLabel].filter(Boolean).join(' · ') : undefined
@@ -362,7 +448,7 @@ export const SideNav = forwardRef(function SideNav(
 
   return (
     <nav
-      ref={ref}
+      ref={setNavRef}
       className={cx('vds-sidenav', collapsed && 'vds-sidenav--collapsed', className)}
       onMouseOver={showTip}
       onMouseLeave={hideTip}
@@ -456,6 +542,24 @@ export const SideNav = forwardRef(function SideNav(
             </>
           )}
         </div>
+      )}
+
+      {/* Edge handle — sits ON the seam (half in the rail, half in the content),
+          riding the cursor's y. aria-hidden + tabIndex -1 ON PURPOSE: it is a
+          duplicate of the footer's Collapse row, which is already in the tab
+          order and announced. Exposing both would make a screen reader meet the
+          same control twice. */}
+      {edgeHandle && (
+        <button
+          type="button"
+          aria-hidden="true"
+          tabIndex={-1}
+          className={cx('vds-sidenav__edge', edge.on && 'vds-sidenav__edge--on')}
+          style={{ top: edge.y }}
+          onClick={() => setCollapsed(!collapsed)}
+        >
+          <EdgeChevron collapsed={collapsed} />
+        </button>
       )}
 
       {/* Collapsed-rail tooltip — pinned right of the hovered/focused row; fixed

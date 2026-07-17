@@ -30,16 +30,22 @@ Intent-mapped. These are what components use. Bound to primitives in `:root`
 
 | Token | Light | Dark |
 | --- | --- | --- |
-| `--vds-canvas` | graphite-50 | graphite-950 |
-| `--vds-surface` | graphite-0 | graphite-900 |
-| `--vds-surface-raised` | graphite-0 | graphite-800 |
-| `--vds-line` / `-strong` | graphite-200 / 300 | graphite-800 / 700 |
-| `--vds-ink` / `-muted` / `-subtle` | graphite-900 / 600 / 500 | graphite-50 / 400 / 500 |
-| `--vds-primary` / `-hover` | iris-600 / 700 | iris-500 / 400 |
+| `--vds-canvas` | graphite-50 | midnight-950 (#0b192d) |
+| `--vds-surface` | white | midnight-900 |
+| `--vds-surface-raised` | white | midnight-800 |
+| `--vds-line` / `-strong` | graphite-200 / 300 | midnight-800 / 700 |
+| `--vds-ink` / `-muted` / `-subtle` | graphite-900 / 600 / 500 | midnight-50 / 300 / 400 |
+| `--vds-primary` / `-hover` | cobalt-600 / 700 | cobalt-400 / 300 |
 | `--vds-on-primary` | white | graphite-950 |
-| `--vds-primary-soft` | iris-50 | iris-500 @16% |
+| `--vds-primary-soft` | cobalt-50 | cobalt-400 @16% |
 | `--vds-success/warning/danger/info` (+ `-soft`) | *-600 / *-50 | *-500 / *-500 @16% |
-| `--vds-focus-ring` | iris-500 | iris-400 |
+| `--vds-focus-ring` | → `--vds-primary` | → `--vds-primary` |
+
+`--vds-focus-ring` **binds to `--vds-primary`, not to a ramp step** — the focus ring is the brand
+ring (every control's SCSS calls it that), so a rebrand has to carry it automatically. It was pinned
+to a ramp once and silently kept the *old* brand when primary moved; binding removes that class of
+bug. Don't re-pin it. If a future case genuinely needs focus ≠ primary, that's a new token, not a
+re-pin of this one.
 
 Soft status backgrounds in dark use `color-mix(in oklab, … 16%, transparent)`.
 

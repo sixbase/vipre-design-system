@@ -35,7 +35,7 @@
     background: transparent;
     border-radius: var(--vds-radius-sm);
     font-family: var(--vds-font-sans);
-    font-weight: 500;
+    font-weight: var(--vds-weight-medium);
     font-variant-numeric: tabular-nums;
     color: var(--vds-ink-muted);
     cursor: pointer;
@@ -49,8 +49,8 @@
       color: var(--vds-ink);
     }
     &:focus-visible {
-      outline: 2px solid var(--vds-focus-ring);
-      outline-offset: 2px;
+      outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+      outline-offset: var(--vds-control-ring-offset);
     }
     &:disabled {
       opacity: 0.5;
@@ -92,9 +92,9 @@
     .vds-pagination__btn,
     .vds-pagination__gap {
       @include type.step(detail);
-      font-weight: 500;
-      min-width: 2rem;
-      height: 2rem;
+      font-weight: var(--vds-weight-medium);
+      min-width: var(--vds-control-h-sm); // square: min-width tracks the height
+      height: var(--vds-control-h-sm);
       padding: 0 var(--vds-space-1);
     }
   }
@@ -102,9 +102,9 @@
     .vds-pagination__btn,
     .vds-pagination__gap {
       @include type.step(body);
-      font-weight: 500;
-      min-width: 2.25rem;
-      height: 2.25rem;
+      font-weight: var(--vds-weight-medium);
+      min-width: var(--vds-control-h-md); // square: min-width tracks the height
+      height: var(--vds-control-h-md);
       padding: 0 var(--vds-space-1);
     }
   }

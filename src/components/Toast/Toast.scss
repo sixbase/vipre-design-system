@@ -52,7 +52,7 @@
 
 .vds-toast__title {
   @include type.step(body);
-  font-weight: 500;
+  font-weight: var(--vds-weight-medium);
   color: var(--vds-ink);
 }
 
@@ -71,7 +71,7 @@
   background: transparent;
   color: var(--vds-primary);
   font-family: var(--vds-font-sans);
-  font-weight: 500;
+  font-weight: var(--vds-weight-medium);
   cursor: pointer;
   transition: background-color var(--vds-dur-fast) var(--vds-ease-out);
 
@@ -79,8 +79,8 @@
     background-color: var(--vds-primary-soft);
   }
   &:focus-visible {
-    outline: 2px solid var(--vds-focus-ring);
-    outline-offset: 2px;
+    outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+    outline-offset: var(--vds-control-ring-offset);
   }
 }
 
@@ -89,8 +89,8 @@
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: var(--vds-icon-btn-sm);
+  height: var(--vds-icon-btn-sm);
   border: 0;
   border-radius: var(--vds-radius-sm);
   background: transparent;
@@ -105,8 +105,8 @@
     color: var(--vds-ink);
   }
   &:focus-visible {
-    outline: 2px solid var(--vds-focus-ring);
-    outline-offset: 2px;
+    outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+    outline-offset: var(--vds-control-ring-offset);
   }
 }
 

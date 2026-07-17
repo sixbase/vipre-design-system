@@ -21,11 +21,14 @@
 .vds-skeleton {
   display: block;
   width: 100%;
+  // Bar height is pinned to the Table (__skeleton) and StatTile bars so mixed
+  // loading states line up; changing it here alone would break that match.
+  --_skeleton-bar-h: 0.75rem;
 
   // ---- single bar of text ----
   &--text {
     @extend %vds-skeleton-shimmer;
-    height: 0.75rem; // matches the Table skeleton bar
+    height: var(--_skeleton-bar-h);
     border-radius: var(--vds-radius-sm);
   }
 
@@ -41,7 +44,7 @@
     @extend %vds-skeleton-shimmer;
     width: 2.5rem;
     height: 2.5rem;
-    border-radius: 9999px;
+    border-radius: var(--vds-radius-full);
   }
 
   // ---- multi-line text: root is a plain stack; the bars shimmer ----
@@ -53,7 +56,7 @@
   &__line {
     @extend %vds-skeleton-shimmer;
     display: block;
-    height: 0.75rem;
+    height: var(--_skeleton-bar-h);
     border-radius: var(--vds-radius-sm);
 
     &:last-child:not(:only-child) {

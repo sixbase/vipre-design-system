@@ -40,7 +40,7 @@
     background: transparent;
     font-family: var(--vds-font-sans);
     @include type.step(body);
-    font-weight: 500;
+    font-weight: var(--vds-weight-medium);
     color: var(--vds-ink);
     text-align: left;
     cursor: pointer;
@@ -50,8 +50,8 @@
       background: var(--vds-surface-hover);
     }
     &:focus-visible {
-      outline: 2px solid var(--vds-focus-ring);
-      outline-offset: -2px; // inset: the item edge is flush with the box border
+      outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+      outline-offset: var(--vds-control-ring-offset-inset); // the item edge is flush with the box border
       border-radius: var(--vds-radius-sm);
     }
   }

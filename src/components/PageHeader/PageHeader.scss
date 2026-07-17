@@ -54,8 +54,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: var(--vds-chip-sm);
+    height: var(--vds-chip-sm);
     flex-shrink: 0;
     border-radius: var(--vds-radius-lg);
     background-color: var(--vds-ph-icon-bg);

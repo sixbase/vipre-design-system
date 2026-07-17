@@ -39,5 +39,8 @@
     "style-dictionary": "^4.4.0",
     "unplugin-icons": "^23.0.1",
     "vite": "^8.0.0"
+  },
+  "dependencies": {
+    "gsap": "^3.15.0"
   }
 }

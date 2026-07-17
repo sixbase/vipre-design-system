@@ -116,8 +116,8 @@
     background-color: color-mix(in srgb, currentColor 10%, transparent);
   }
   &:focus-visible {
-    outline: 2px solid var(--vds-focus-ring);
-    outline-offset: 2px;
+    outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+    outline-offset: var(--vds-control-ring-offset);
   }
 
   @include bp.up(lg) {

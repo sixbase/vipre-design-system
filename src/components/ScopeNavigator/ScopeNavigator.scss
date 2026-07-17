@@ -1,6 +1,13 @@
 // ============================================================================
-// ScopeNavigator — the MSP hierarchy breadcrumb bar. Composes Surface (popovers)
-// + Input (dropdown search) + Icon.
+// ScopeNavigator — the MSP hierarchy breadcrumb bar. Composes Popover (every
+// overlay) + Input (dropdown search) + Icon.
+//
+// PORTALED PANELS: the three overlays are Popover panels, which render through a
+// portal to <body>. They are therefore NOT DOM descendants of `.vds-scope`, so
+// nothing here may reach them by descent — every panel rule is a top-level BEM
+// class, and the handful of things they used to INHERIT from the bar (font, the
+// focus ring, the dark-mode token remaps, the basic variant's chip size) is
+// re-rooted onto the panel classes in the block below the bar.
 //
 // THEME-FOLLOWING: the bar is built from plain SEMANTIC tokens, so it renders
 // LIGHT in light mode and switches to the product navy under a `.dark` ancestor —
@@ -57,9 +64,8 @@
     flex-shrink: 0;
   }
 
-  // ---- breadcrumb segment (the direct trail child + the popover's anchor) ----
+  // ---- breadcrumb segment (the direct trail child) ----
   &__seg {
-    position: relative;
     display: flex;
     align-items: center;
     min-width: 0;
@@ -261,18 +267,11 @@
   }
 
   // ========================================================================
-  // Popover (drill-down) — a real Surface (dark, via the scoped cascade),
-  // positioned under its trigger. Anchored left; JS clamps `left` on-screen.
+  // Drill-down panel — a Popover panel. Popover owns placement, layering,
+  // scroll, and the height cap; only the width is ours.
   // ========================================================================
   &__pop {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    margin-top: var(--vds-space-1);
     width: calc(100vw - 1.5rem);
-    z-index: var(--vds-z-dropdown);
-    overscroll-behavior: contain;
-    white-space: normal;
 
     @include bp.up(sm) {
       width: 320px;
@@ -295,8 +294,6 @@
   }
 
   &__pop-toolbar {
-    position: relative;
-    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -315,9 +312,6 @@
   }
 
   // ---- toolbar menu (sort / filter) ----
-  &__menu {
-    position: relative;
-  }
   &__menu-btn {
     display: flex;
     align-items: center;
@@ -342,18 +336,10 @@
       background-color: var(--vds-primary-soft);
     }
   }
+  // A Popover panel — the Surface behind it supplies the fill, hairline, radius,
+  // and elevation that this rule used to hand-roll.
   &__menu-pop {
-    position: absolute;
-    right: 0;
-    top: 100%;
-    margin-top: var(--vds-space-1);
     width: 160px;
-    background-color: var(--vds-surface-overlay);
-    border: 1px solid var(--vds-line);
-    border-radius: var(--vds-radius-md);
-    box-shadow: var(--vds-shadow-md);
-    z-index: var(--vds-z-dropdown);
-    overflow: hidden;
   }
   &__menu-item {
     display: block;
@@ -388,7 +374,6 @@
   // scope reads like Select's selected option (primary-soft fill + primary text +
   // a check affix) rather than a separate "Current" tag.
   &__results {
-    position: relative;
     // 352px of rows, but never more than half the viewport — keeps the whole
     // popover (header + search + toolbar + list) on-screen on short phones.
     max-height: min(352px, 50vh);
@@ -460,7 +445,6 @@
   // Ellipsis (collapsed middle) menu
   // ========================================================================
   &__ellipsis-wrap {
-    position: relative;
     display: flex;
     align-items: center;
     gap: var(--vds-space-3);
@@ -486,13 +470,7 @@
     }
   }
   &__ellipsis-pop {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    margin-top: var(--vds-space-1);
     width: calc(100vw - 1.5rem);
-    z-index: var(--vds-z-dropdown);
-    overflow: hidden;
 
     @include bp.up(sm) {
       width: 256px;
@@ -561,21 +539,49 @@
 }
 
 // ============================================================================
+// Portaled panels — re-rooted inheritance.
+//
+// Each of these three panels used to sit inside `.vds-scope` and quietly inherit
+// from it. As Popover panels they hang off <body>, so anything that reached them
+// by descent has to be re-stated here, anchored on the panel's own class.
+// ============================================================================
+.vds-scope__pop,
+.vds-scope__menu-pop,
+.vds-scope__ellipsis-pop {
+  // Was inherited from `.vds-scope`'s font-family.
+  font-family: var(--vds-font-sans);
+
+  // Was `.vds-scope button:focus-visible`. These rows aren't `.vds-popover__item`,
+  // so they'd otherwise fall back to the UA ring.
+  button:focus-visible {
+    outline: 2px solid var(--vds-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+// Was `.vds-scope--basic .vds-scope__chip--sm`. Only the "…" panel is affected —
+// the drill-down list uses `--md` chips, which the basic variant never retuned.
+.vds-scope__ellipsis-pop--basic .vds-scope__chip--sm {
+  width: 18px;
+  height: 18px;
+}
+
+// ============================================================================
 // Dark-mode-only refinements. The base styles above already render correctly on
 // navy via the flipping tokens; these only fix two things specific to the dark
 // surface:
 //   1. The drill-down popovers read too BRIGHT at the overlay step (midnight-700)
 //      sitting on the near-black bar — drop them one step to the raised tone
-//      (midnight-800). Remapping the token cascades to the real <Surface> + the
-//      sort/filter menu. (Light mode keeps white overlays — no change needed.)
+//      (midnight-800). The remap has to land on each panel: they're portaled, so
+//      a remap on `.vds-scope` would no longer reach them.
 //   2. That darker popover bg now equals --vds-line, so step the dividers/outline
 //      up one notch inside the popovers to keep them visible.
+// (Light mode keeps white overlays — no change needed.)
 // ============================================================================
-.dark .vds-scope {
-  --vds-surface-overlay: var(--vds-surface-raised);
-}
 .dark .vds-scope__pop,
+.dark .vds-scope__menu-pop,
 .dark .vds-scope__ellipsis-pop {
+  --vds-surface-overlay: var(--vds-surface-raised);
   --vds-line: var(--vds-line-strong);
 }
 

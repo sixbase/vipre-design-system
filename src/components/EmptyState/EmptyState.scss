@@ -28,7 +28,7 @@
     justify-content: center;
     width: var(--_es-ring);
     height: var(--_es-ring);
-    border-radius: 9999px;
+    border-radius: var(--vds-radius-full);
     background-color: var(--_es-ring-bg);
     border: 1px solid var(--vds-line);
     color: var(--vds-ink-subtle);
@@ -57,8 +57,8 @@
   // ---- sizes ----
   &--sm {
     --_es-pad: var(--vds-space-6);
-    --_es-ring: 2.5rem;
-    .vds-empty__title { @include type.step(subheading); font-weight: 600; }
+    --_es-ring: var(--vds-chip-sm);
+    .vds-empty__title { @include type.step(subheading); font-weight: var(--vds-weight-semibold); }
   }
   &--md {
     .vds-empty__title { @include type.step(heading); }

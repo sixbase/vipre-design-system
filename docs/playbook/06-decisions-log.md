@@ -856,3 +856,120 @@ The decisions that matter going forward:
   enter refinement is the elegance win without risking hover-flicker on close.
 - Verified via compiled `dist/vipre.css` (classifier outage blocked live DOM checks): per-side
   `--_tt-from` values, `scale(0.96)` in the keyframe, and `dur-base`/`ease-out` all present. Build passes.
+
+## 2026-07-16 · Z-scale: `dropdown` moved ABOVE `drawer`/`modal`
+
+- **Bug:** every Popover-based component (Select, Menu, Combobox, DatePicker, TimeframeSelect) was
+  invisible inside a `Modal`. `Popover` portals to `<body>`, `Modal` portals to `<body>`, so the two
+  land as siblings and z-index alone decides — and `dropdown` (200) lost to `modal` (400). The open
+  listbox rendered at full opacity, behind the panel. Found by the first real consumer of `Modal`
+  (scope-navigator's `ProvisioningModal`); the DS had shipped `Modal` with no adopter, so a
+  Select-in-Modal had never been exercised. No showcase page covered the combination either.
+- **Root cause (the interesting part):** the z-scale was ordered by the *elevation ladder* — level 2
+  `raised` → `dropdown`, level 3 `overlay` → `modal`. But elevation ("how high does it look") and
+  stack order ("who wins when they overlap") are different questions, and they come apart for
+  anything **spawned from an overlay**. A Select inside a Modal is level 2 by look, yet must paint
+  over the level-3 surface that opened it. Ranking z by level guarantees this bug.
+- **Fix:** reordered so stack order reads *"who was opened by whom"* — drawer 200, modal 300,
+  **dropdown 400** (was: dropdown 200, drawer 300, modal 400). base/raised/sticky/toast/tooltip
+  unchanged. Safe because a page-level dropdown is never open behind a modal (opening an overlay
+  dismisses it, and the scrim blocks the page anyway). Every consumer references the tokens by name
+  — no hardcoded z-index in `src/` — so renumbering the values is a no-op for callers.
+- **Considered and rejected:** portaling Popover into the nearest overlay ancestor instead of `<body>`.
+  Conceptually tidier, but `.vds-modal__body` is `overflow-y: auto`, so an in-panel popover gets
+  clipped by the scroll container — which is why it portals in the first place.
+- Playbook `10-depth.md` updated: new *"Stack order is not the elevation ladder"* section, corrected
+  scale table, and a footnote on the ladder's z column so the two never get re-conflated.
+
+## 2026-07-16 · `--vds-focus-ring` bound to `--vds-primary` (was a stale navy pin)
+
+- **Bug:** the focus ring rendered **navy** (`midnight-500` #3d68a4) while the brand rendered
+  **cobalt** (`--vds-primary` = `cobalt-600` #0068cb) — visible on every focused Input/Select in the
+  provisioning modal, and reported from the prototype. Every control's SCSS already calls this "the
+  unified BRAND ring" (see `Input.scss`), so the paint contradicted the contract.
+- **Root cause:** `--vds-focus-ring` was pinned to `midnight-500` back when `--vds-primary` was
+  *also* midnight — they matched by construction, so nothing looked wrong. When primary moved to
+  cobalt (Vipre brand blue), the ring silently kept the **old brand**. Nothing failed; it just
+  quietly became the previous identity. The only focus entry ever logged (2026-07-09) governs the
+  ring's SHAPE (hard outline vs soft ring), never its colour — so the navy was never a decision.
+- **Fix:** `--vds-focus-ring: var(--vds-primary)` in BOTH `:root` and `.dark`. Binding rather than
+  re-pinning to `cobalt-600`/`cobalt-400`: primary is already per-mode, so dark lightening comes for
+  free, and a future rebrand carries the ring automatically. Re-pinning would fix today's value and
+  leave the *class* of bug in place — this was the second stale-pin found in one session (cf. the
+  z-scale entry above), so the pattern, not the value, is the thing to kill.
+- **If focus ever genuinely needs to differ from primary**, that's a NEW token — not a re-pin of
+  this one.
+- **Playbook `02-tokens.md` was two generations stale** and corrected in the same pass: it listed
+  `--vds-primary`/`-soft`/`focus-ring` as **iris** (a ramp deleted in the OKLCH regeneration) and the
+  whole dark column as **graphite** when dark neutrals are **midnight**. Rows now carry verified
+  values; the focus-ring row documents the binding and says not to re-pin it.
+- **Blast radius:** every `:focus-visible` ring system-wide (Button, Checkbox, Input, Select,
+  Textarea, and the prototype's own `.prov-*` rows, which bind the same token). Intended.
+
+## 2026-07-16 · SideNav catches up to the MSP v2 rail (badge, empty state, edge handle)
+
+The DS `SideNav` was extracted from `MspShellV2.jsx` on 2026-07-15 (`6203dad`), then tokenized
+(`6d9032b`). The prototype kept moving afterwards, so the rail gained three things the DS never had.
+Alvin's call: **the MSP v2 nav is the latest — the DS takes it, but rebuilt to DS rules.** That
+qualifier is the whole entry. The prototype expresses this nav as 179 inline `style={{}}` objects and
+raw px; a straight port would have dragged that in and undone the tokenization. So each feature was
+re-derived, not pasted.
+
+- **Not-subscribed badge: padlock → "expand out" arrow.** The prototype's comment is the argument —
+  the arrow *"reads as 'add / go get this'"*. A padlock only says no, which is the wrong note for a
+  product the customer can buy. Same disc + ring geometry, so it drops onto the tile corner
+  identically. The prototype hardcodes `#4D5666 / #0A192C / #E2E6ED`; those are just
+  `midnight-600 / -950 / -100`, which the DS `LockBadge` already used — so the port **changed the
+  glyph only** and kept the tokens. New: `--vds-sidenav-unsub-{disc,ring,ink,stroke}`.
+- **Corner position was raw px in the DS too** (`left: 20px; top: 20px`) — a pre-existing violation
+  the rewrite removed. 20 isn't a number anyone chose; it's `tile(32) − badge(16) + overhang(4)`.
+  Now written as that calc, so the corner survives a change to either size. Verified still 20px.
+- **Empty section (`section.empty`).** An unmanaged account has no products; the rail used to render
+  a bare eyebrow over a void, which reads as "failed to load" rather than "nothing here". Fades on
+  collapse rather than unmounting — same rule as the eyebrow, so section heights never jump.
+- **Edge handle (`edgeHandle`, default false).** The round chevron riding the nav/content seam,
+  fading in on cursor proximity and tracking its y.
+  - **It listens on `window`, not on a parent.** The prototype puts the listener on the shell row
+    that wraps nav + content — the cursor approaches *across the content*, which the rail doesn't
+    own. Taking that shape would have made the handle a contract on whoever renders the shell. The
+    rail measures its **own** `getBoundingClientRect().right` instead, so it stays a drop-in.
+  - **`left: 100%`, not `right: 0`** — the rail's width animates on collapse, and a percentage left
+    rides that animation for free instead of needing its own `left` transition.
+  - **Inert at rest** (`pointer-events: none`, not just `opacity: 0`) — otherwise an invisible 24px
+    disc sits on the seam eating clicks meant for the page.
+  - **`aria-hidden` + `tabIndex={-1}` ON PURPOSE.** It duplicates the footer's Collapse row, which is
+    already tabbable and announced. Exposing both makes a screen reader meet the same control twice.
+    It is a **pointer shortcut layered on top of** the row, never a replacement — the prototype ships
+    both (`MspShellV2.jsx:674` + the handle), and that pairing is the accessible half of the design.
+  - Reduced motion drops the fade, never the control — proximity *is* the affordance.
+- **Reach is asymmetric** (26px into the rail, 18px into the content) — carried from the prototype.
+  Sliding out of the rail means "I want the edge"; drifting in from the page usually doesn't. Kept in
+  JS as behaviour (hit-testing), not tokenized — it isn't a visual value.
+
+**Contract change:** `.vds-sidenav__lock` → `.vds-sidenav__unsub` (+ `__unsub-disc` / `__unsub-arrow`).
+Class names ARE the contract under the tokens-only model, so a name that says "lock" over an arrow is
+a real defect, not cosmetic. Cheap to fix now: the only consumer, `scope-navigator`, doesn't render
+the DS `SideNav` at all. `handoff/msp-menu/` is a Jul 8 snapshot and is **already** stale (it predates
+the cobalt repoint) — it needs a regenerate regardless.
+
+**Verified** (docs site, real computed values): badge corner `left/top: 20px` from the calc; disc
+`rgb(43,82,136)` = midnight-600, ring `rgb(11,25,45)` = midnight-950; handle centre-x **555 = the
+rail's right edge 555**, so it truly straddles the seam; `--vds-sidenav-edge-bg` resolves to
+**#0068cb** (the cobalt chain holds end-to-end); at rest `opacity: 0` + `pointer-events: none`; build
+clean, no console errors.
+
+**NOT verified — the cursor-proximity fade.** The preview pane never painted (`document.hidden ===
+true`), so `requestAnimationFrame` is paused and the handler that the throttle sits behind never runs.
+Patching rAF from `javascript_tool` doesn't help — it evaluates in an isolated world and can't reach
+the page's own globals. Static facts hold (the button only renders when `edgeHandle` is true, and it
+is in the DOM, so prop + effect are both live), but the live fade wants a human with a real cursor.
+**Lesson for the next agent: a blank screenshot + a 30s `javascript_tool` timeout on an rAF await are
+the same symptom — check `document.visibilityState` first rather than hunting a phantom bug.**
+
+**Still open — the account switcher.** The fourth and biggest MSP v2 delta is untouched. The DS
+`account` prop is static data (`{ name, typeLabel?, tile? }`); the prototype's is an interactive
+sibling-picker with a popover, search, managed/unmanaged filter chips and a radio list. That is an API
+change, not a style port, and it wants `Popover` to learn **right-side placement** — today `Popover`
+only flips top/bottom and clamps horizontally (`Popover.jsx`, the `compute()` in the placement
+effect). `Popover` is composed by Menu / Select / Combobox / TimeframeSelect, so that lands as its own
+change with its own regression pass, rather than riding in on a SideNav commit.

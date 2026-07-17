@@ -61,8 +61,28 @@
   );
   --vds-sidenav-hairline: inset 0 1px 0 color-mix(in srgb, var(--vds-white) 8%, transparent);
 
+  // ---- the "go get this" badge on a not-subscribed tile ----
+  --vds-sidenav-unsub-disc: var(--vds-midnight-600);  // grey disc — reads as "off", not "broken"
+  --vds-sidenav-unsub-ring: var(--vds-midnight-950);  // ring = the rail's own navy, so the disc punches a hole in the tile
+  --vds-sidenav-unsub-ink: var(--vds-midnight-100);   // the arrow itself
+  --vds-sidenav-unsub-stroke: 1.6px;                  // arrow weight — optical, tuned against the 16px disc; not a scale step
+
+  // ---- edge handle (the collapse control riding the nav/content seam) ----
+  --vds-sidenav-edge-size: var(--vds-space-6);        // 24px — the disc
+  --vds-sidenav-edge-glyph: var(--vds-space-4);       // 16px — chevron box inside it
+  --vds-sidenav-edge-bg: var(--vds-nav-accent);       // follows the brand, like every other selected fill
+  --vds-sidenav-edge-ink: var(--vds-white);
+  // A white ring detaches the disc from BOTH surfaces it straddles (navy rail on
+  // one side, page canvas on the other) — no single border colour can do that.
+  --vds-sidenav-edge-ring: 0 0 0 2px var(--vds-white);
+  --vds-sidenav-edge-lift: var(--vds-shadow-md);       // resting drop shadow
+  --vds-sidenav-edge-lift-hover: var(--vds-shadow-lg); // …deepens so it lifts off the seam
+  --vds-sidenav-edge-press-scale: 0.92;
+  --vds-sidenav-edge-stroke: 2px;                      // chevron weight — heavier than the nav's 1.5 chrome glyphs so it holds up at 16px on a saturated fill
+  --vds-sidenav-dur-edge: 130ms;                       // fade in/out as the cursor nears
+
   // ---- sizes ----
-  --vds-sidenav-icon-size: var(--vds-space-4);        // 16px — row icon + lock badge box
+  --vds-sidenav-icon-size: var(--vds-space-4);        // 16px — row icon + unsubscribed badge box
   --vds-sidenav-tile-size: var(--vds-space-8);        // 32px — product / account tile
   --vds-sidenav-account-h: var(--vds-control-h-md);   // 36px — fixed account-header height; ties the nav's account row into the shared control-height family
   --vds-sidenav-back-h: var(--vds-space-6);           // 24px — fixed back-row height
@@ -122,8 +142,8 @@
   // ---- keyboard focus: a ring readable ON the navy (white pulled toward the
   // accent), hugging the pill radius. Mouse clicks stay clean. ----
   button:focus-visible {
-    outline: 2px solid color-mix(in srgb, var(--vds-white) 70%, var(--vds-nav-accent));
-    outline-offset: -2px;
+    outline: var(--vds-control-ring-w) solid color-mix(in srgb, var(--vds-white) 70%, var(--vds-nav-accent));
+    outline-offset: var(--vds-control-ring-offset-inset);
   }
 
   // --------------------------------------------------------------------------
@@ -167,7 +187,7 @@
   &__divider {
     flex-shrink: 0;
     height: 1px;
-    margin: 0 12px;
+    margin: 0 var(--vds-space-3);
     background-color: var(--vds-sidenav-well);
   }
 
@@ -210,6 +230,26 @@
   }
   &--collapsed &__eyebrow {
     opacity: 0;
+    transition: opacity var(--vds-sidenav-dur-label-out) ease;
+  }
+
+  // Empty-section note ("No managed products…"). Wraps to as many lines as it
+  // needs — unlike a row label, which must stay on one line — so it gets its own
+  // leading rather than the nav's tight default.
+  &__empty {
+    @include type.step(detail);
+    margin: 0;
+    padding: var(--vds-sidenav-row-pad-y) var(--vds-sidenav-row-pad-x);
+    color: var(--vds-sidenav-ink-dim);
+    line-height: var(--vds-leading-snug);
+    opacity: 1;
+    transition: opacity var(--vds-dur-base) ease var(--vds-sidenav-delay-label-in);
+  }
+  // The collapsed rail has no room for a sentence — fade it with the labels
+  // rather than unmounting, so the section keeps its height and nothing jumps.
+  &--collapsed &__empty {
+    opacity: 0;
+    pointer-events: none;
     transition: opacity var(--vds-sidenav-dur-label-out) ease;
   }
 
@@ -279,7 +319,7 @@
   // Sub rows (inside a product card) read a step larger.
   &__row--sub {
     @include type.step(caption);
-    font-weight: 500;
+    font-weight: var(--vds-weight-medium);
   }
 
   // Escape row ("Full portal") — the quiet door out: faint icon that brightens
@@ -302,13 +342,13 @@
   // Back row — fixed 24px, chevron holds the icon column's x.
   &__back {
     height: var(--vds-sidenav-back-h);
-    padding-block: 4px;
+    padding-block: var(--vds-space-1);
     color: var(--vds-sidenav-ink-dim);
     .vds-sidenav__row-icon {
       color: var(--vds-sidenav-ink-dim);
     }
     .vds-sidenav__label {
-      margin-left: 6px;
+      margin-left: var(--vds-space-1-5);
       max-width: var(--vds-sidenav-label-max-pill);
     }
   }
@@ -349,7 +389,7 @@
   }
   &__row--sub .vds-sidenav__label {
     @include type.step(caption);
-    font-weight: 500;
+    font-weight: var(--vds-weight-medium);
   }
 
   // Count badge at the row's end — collapses with the label.
@@ -357,8 +397,8 @@
     @include type.step(micro);
     flex-shrink: 0;
     margin-left: auto;
-    padding: 0 6px;
-    border-radius: 9999px;
+    padding: 0 var(--vds-space-1-5);
+    border-radius: var(--vds-radius-full);
     background-color: color-mix(in srgb, var(--vds-white) 12%, transparent);
     color: var(--vds-sidenav-ink);
     overflow: hidden;
@@ -448,19 +488,89 @@
     transition-duration: var(--vds-sidenav-dur-press);
   }
 
-  // Corner lock badge on a locked product tile.
-  &__lock {
+  // "Go get this" badge on a not-subscribed product tile. Sits on the tile's
+  // bottom-right corner, overhanging by 4px so it reads as applied ON TOP of the
+  // tile rather than tucked inside it. Derived from the geometry — tile, minus
+  // the badge, plus the overhang — so the corner holds if either size changes.
+  &__unsub {
     position: absolute;
-    left: 20px;
-    top: 20px;
+    left: calc(var(--vds-sidenav-tile-size) - var(--vds-sidenav-icon-size) + var(--vds-space-1));
+    top: calc(var(--vds-sidenav-tile-size) - var(--vds-sidenav-icon-size) + var(--vds-space-1));
     width: var(--vds-sidenav-icon-size);
     height: var(--vds-sidenav-icon-size);
+  }
+  &__unsub-disc {
+    fill: var(--vds-sidenav-unsub-disc);
+    stroke: var(--vds-sidenav-unsub-ring);
+    stroke-width: var(--vds-border-w);
+  }
+  &__unsub-arrow {
+    stroke: var(--vds-sidenav-unsub-ink);
+    stroke-width: var(--vds-sidenav-unsub-stroke);
   }
 
   &__pill--locked {
     cursor: default;
     .vds-sidenav__label--pill {
       color: var(--vds-sidenav-ink); // muted vs the white of a live product
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Edge handle — the round collapse control riding the nav/content seam.
+  // Centred ON the rail's right edge (translateX(-50%)), so it is half navy-side
+  // and half page-side: it belongs to the boundary, not to either surface. Its y
+  // is set inline from the cursor, so it meets your hand where you reached.
+  // --------------------------------------------------------------------------
+  &__edge {
+    position: absolute;
+    // `left: 100%` rather than `right: 0` — the rail's width animates on
+    // collapse, and a percentage left tracks that animation for free instead of
+    // needing its own transition on `left`.
+    left: 100%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    place-items: center;
+    width: var(--vds-sidenav-edge-size);
+    height: var(--vds-sidenav-edge-size);
+    padding: 0;
+    border: 0;
+    border-radius: var(--vds-radius-full);
+    background-color: var(--vds-sidenav-edge-bg);
+    color: var(--vds-sidenav-edge-ink);
+    box-shadow: var(--vds-sidenav-edge-ring), var(--vds-sidenav-edge-lift);
+    cursor: pointer;
+    // Hidden AND inert at rest: opacity alone would leave an invisible disc
+    // eating clicks meant for the content underneath.
+    opacity: 0;
+    pointer-events: none;
+    z-index: var(--vds-z-raised);
+    transition: opacity var(--vds-sidenav-dur-edge) ease;
+
+    svg {
+      display: block;
+      width: var(--vds-sidenav-edge-glyph);
+      height: var(--vds-sidenav-edge-glyph);
+      stroke-width: var(--vds-sidenav-edge-stroke);
+    }
+
+    &--on {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    &:hover {
+      box-shadow: var(--vds-sidenav-edge-ring), var(--vds-sidenav-edge-lift-hover);
+    }
+    &:active {
+      transform: translate(-50%, -50%) scale(var(--vds-sidenav-edge-press-scale));
+    }
+  }
+
+  // Cursor proximity is the whole point of the handle, and a reduced-motion user
+  // still gets that — we only drop the fade, never the control.
+  @media (prefers-reduced-motion: reduce) {
+    &__edge {
+      transition: none;
     }
   }
 
@@ -473,7 +583,7 @@
     max-width: var(--vds-sidenav-chev-size);
     flex-shrink: 0;
     overflow: hidden;
-    border-radius: 12px;
+    border-radius: var(--vds-radius-lg);
     color: var(--vds-sidenav-chev);
     opacity: 1;
     transition:
@@ -617,7 +727,7 @@
   &__skel-row {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--vds-space-2);
     padding: var(--vds-sidenav-nest);
   }
   &__skel {
@@ -637,7 +747,7 @@
     border-radius: var(--vds-sidenav-r-tile);
   }
   &__skel--label {
-    height: 12px;
+    height: var(--vds-space-3);
     flex: 1 1 auto;
     border-radius: var(--vds-radius-sm);
   }
@@ -662,7 +772,7 @@
     box-shadow: var(--vds-shadow-lg);
     color: var(--vds-white);
     @include type.step(detail);
-    font-weight: 500;
+    font-weight: var(--vds-weight-medium);
     line-height: var(--vds-leading-none);
     white-space: nowrap;
     animation: vds-sidenav-tip-in var(--vds-sidenav-dur-tip) var(--vds-sidenav-ease);

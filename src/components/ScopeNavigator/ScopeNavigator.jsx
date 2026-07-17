@@ -1,11 +1,4 @@
-import {
-  Fragment,
-  forwardRef,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react'
+import { Fragment, forwardRef, useEffect, useRef, useState } from 'react'
 import {
   Boxes,
   Building2,
@@ -21,9 +14,10 @@ import {
   MoreHorizontal,
 } from '@icons'
 import { cx } from '../../lib/cx.js'
-import { Surface } from '../Surface/Surface.jsx'
 import { Icon } from '../Icon/Icon.jsx'
 import { Input } from '../Input/Input.jsx'
+import { Popover } from '../Popover/Popover.jsx'
+import { menuKeyDown } from '../Popover/menuKeyDown.js'
 
 /* ----------------------------------------------------------------------------
    Default Vipre taxonomy. The component is data-driven — every consumer entity
@@ -59,19 +53,6 @@ export const defaultSortOptions = [
   { value: 'status', label: 'Status' },
   { value: 'level', label: 'Level' },
 ]
-
-/* Close the popover when a click lands outside the referenced element. */
-function useClickOutside(onClose) {
-  const ref = useRef(null)
-  useEffect(() => {
-    function handle(e) {
-      if (ref.current && !ref.current.contains(e.target)) onClose()
-    }
-    document.addEventListener('mousedown', handle)
-    return () => document.removeEventListener('mousedown', handle)
-  }, [onClose])
-  return ref
-}
 
 /* Sort a list of entities. `typeOrder` / `statusOrder` are derived from the
    config map key order so the domain taxonomy drives ranking without hardcoding. */
@@ -112,9 +93,14 @@ function getDropdownHeader(items, mode, typeConfig) {
 }
 
 /* A filled, family-tinted square holding an entity-type (or root) icon. The root
-   has no `tone`, so it falls back to the chip's default navy (midnight-600). */
+   has no `tone`, so it falls back to the chip's default navy (midnight-600).
+
+   The fill MUST be the semantic accent, not a primitive ramp step: the chip's
+   glyph rides --vds-on-primary, which flips light→dark between modes. A frozen
+   `-600` fill left the glyph dark-on-dark in dark mode. The accent token flips
+   600→400 in step with it, so the pair stays legible in both. */
 function TypeChip({ tone, icon, size = 'sm' }) {
-  const tint = tone ? `var(--vds-${tone}-600)` : undefined
+  const tint = tone ? `var(--vds-accent-${tone})` : undefined
   return (
     <span
       className={cx('vds-scope__chip', `vds-scope__chip--${size}`)}
@@ -146,20 +132,40 @@ function StatusDot({ status, statusConfig, showLabel = false }) {
   )
 }
 
-/* A toolbar dropdown (Sort / Filter) inside the segment popover. */
-function ToolbarMenu({ icon, label, isActive, isOpen, onToggle, children }) {
+/* A toolbar dropdown (Sort / Filter) inside the segment popover. `children` is a
+   render-prop — `({ close }) => nodes` — so a picked row can dismiss the menu.
+
+   Opening one menu dismisses the other for free: each Popover treats a mousedown
+   on the sibling trigger as an outside click. */
+function ToolbarMenu({ icon, label, menuLabel, isActive, children }) {
   return (
-    <div className="vds-scope__menu">
-      <button
-        type="button"
-        onClick={onToggle}
-        className={cx('vds-scope__menu-btn', isActive && 'vds-scope__menu-btn--active')}
-      >
-        <Icon as={icon} size="xs" />
-        <span>{label}</span>
-      </button>
-      {isOpen && <div className="vds-scope__menu-pop">{children}</div>}
-    </div>
+    <Popover
+      role="menu"
+      placement="bottom-end"
+      aria-label={menuLabel}
+      className="vds-scope__menu"
+      panelClassName="vds-scope__menu-pop"
+      surfaceProps={{
+        onKeyDown: menuKeyDown,
+        // This panel is portaled to <body>, so it is NOT a DOM descendant of the
+        // segment dropdown's panel. That popover would read a mousedown in here
+        // as an outside click and close — unmounting this menu before the row's
+        // onClick could ever run. Keep the event from reaching its document
+        // listener; a mousedown inside a nested overlay is nobody's outside click.
+        onMouseDown: (e) => e.stopPropagation(),
+      }}
+      trigger={
+        <button
+          type="button"
+          className={cx('vds-scope__menu-btn', isActive && 'vds-scope__menu-btn--active')}
+        >
+          <Icon as={icon} size="xs" />
+          <span>{label}</span>
+        </button>
+      }
+    >
+      {children}
+    </Popover>
   )
 }
 
@@ -167,6 +173,7 @@ function MenuButton({ active, onClick, children }) {
   return (
     <button
       type="button"
+      role="menuitem"
       onClick={onClick}
       className={cx('vds-scope__menu-item', active && 'vds-scope__menu-item--active')}
     >
@@ -175,8 +182,11 @@ function MenuButton({ active, onClick, children }) {
   )
 }
 
-/* The searchable, sortable, filterable list of children/siblings for a segment. */
-function DropdownPopover({
+/* The searchable, sortable, filterable list of children/siblings for a segment —
+   the content of the segment Popover's panel. Placement, dismissal, and focus all
+   belong to Popover; this only owns the search / sort / filter state, which resets
+   on close because the panel unmounts with it. */
+function DropdownPanel({
   items,
   onSelect,
   onClose,
@@ -191,35 +201,6 @@ function DropdownPopover({
   const [search, setSearch] = useState('')
   const [sortBy, setSortBy] = useState('level')
   const [statusFilter, setStatusFilter] = useState(null)
-  const [activeMenu, setActiveMenu] = useState(null)
-  const ref = useClickOutside(onClose)
-  const inputRef = useRef(null)
-
-  // Keep the panel on-screen. It's anchored under its trigger (left: 0), but a
-  // deep/right-side trigger would push a viewport-wide panel off the edge. We
-  // measure after layout and shift its actual `left` (not a transform) so the
-  // layout box itself stays in view — otherwise the off-screen box widens the
-  // scroll area.
-  useLayoutEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const clamp = () => {
-      el.style.left = '0px'
-      const r = el.getBoundingClientRect()
-      const m = 8
-      let dx = 0
-      if (r.left < m) dx = m - r.left
-      else if (r.right > window.innerWidth - m) dx = window.innerWidth - m - r.right
-      el.style.left = dx ? `${dx}px` : ''
-    }
-    clamp()
-    window.addEventListener('resize', clamp)
-    return () => window.removeEventListener('resize', clamp)
-  }, [])
-
-  // Note: the search input is intentionally NOT auto-focused on open — clicking a
-  // node should just reveal the list, not put the cursor in the search field. The
-  // user can click/tab into search when they want to filter.
 
   const statusKeys = Object.keys(statusConfig)
   let displayed = items.filter((i) => i.name.toLowerCase().includes(search.toLowerCase()))
@@ -227,13 +208,7 @@ function DropdownPopover({
   displayed = applySorting(displayed, sortBy, typeOrder, statusOrder)
 
   return (
-    <Surface
-      ref={ref}
-      elevation="overlay"
-      padding={null}
-      radius="md"
-      className="vds-scope__pop"
-    >
+    <>
       {header && (
         <div className="vds-scope__pop-header">
           <span className="vds-scope__eyebrow">{header}</span>
@@ -241,7 +216,6 @@ function DropdownPopover({
       )}
       <div className="vds-scope__pop-search">
         <Input
-          ref={inputRef}
           size="sm"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -255,56 +229,55 @@ function DropdownPopover({
           {displayed.length} {displayed.length === 1 ? 'Result' : 'Results'}
         </span>
         <div className="vds-scope__toolbar-actions">
-          <ToolbarMenu
-            icon={ArrowUpDown}
-            label="Sort"
-            isActive={false}
-            isOpen={activeMenu === 'sort'}
-            onToggle={() => setActiveMenu(activeMenu === 'sort' ? null : 'sort')}
-          >
-            {sortOptions.map((opt) => (
-              <MenuButton
-                key={opt.value}
-                active={sortBy === opt.value}
-                onClick={() => {
-                  setSortBy(opt.value)
-                  setActiveMenu(null)
-                }}
-              >
-                {opt.label}
-              </MenuButton>
-            ))}
+          <ToolbarMenu icon={ArrowUpDown} label="Sort" menuLabel="Sort results" isActive={false}>
+            {({ close }) =>
+              sortOptions.map((opt) => (
+                <MenuButton
+                  key={opt.value}
+                  active={sortBy === opt.value}
+                  onClick={() => {
+                    setSortBy(opt.value)
+                    close()
+                  }}
+                >
+                  {opt.label}
+                </MenuButton>
+              ))
+            }
           </ToolbarMenu>
           <ToolbarMenu
             icon={Filter}
             label={statusFilter ? statusConfig[statusFilter].label : 'Filter'}
+            menuLabel="Filter by status"
             isActive={!!statusFilter}
-            isOpen={activeMenu === 'filter'}
-            onToggle={() => setActiveMenu(activeMenu === 'filter' ? null : 'filter')}
           >
-            {statusFilter && (
-              <MenuButton
-                onClick={() => {
-                  setStatusFilter(null)
-                  setActiveMenu(null)
-                }}
-              >
-                <Icon as={X} size="xs" className="vds-scope__menu-item-icon" />
-                Clear filter
-              </MenuButton>
+            {({ close }) => (
+              <>
+                {statusFilter && (
+                  <MenuButton
+                    onClick={() => {
+                      setStatusFilter(null)
+                      close()
+                    }}
+                  >
+                    <Icon as={X} size="xs" className="vds-scope__menu-item-icon" />
+                    Clear filter
+                  </MenuButton>
+                )}
+                {statusKeys.map((s) => (
+                  <MenuButton
+                    key={s}
+                    active={statusFilter === s}
+                    onClick={() => {
+                      setStatusFilter(s)
+                      close()
+                    }}
+                  >
+                    <StatusDot status={s} statusConfig={statusConfig} showLabel />
+                  </MenuButton>
+                ))}
+              </>
             )}
-            {statusKeys.map((s) => (
-              <MenuButton
-                key={s}
-                active={statusFilter === s}
-                onClick={() => {
-                  setStatusFilter(s)
-                  setActiveMenu(null)
-                }}
-              >
-                <StatusDot status={s} statusConfig={statusConfig} showLabel />
-              </MenuButton>
-            ))}
           </ToolbarMenu>
         </div>
       </div>
@@ -342,49 +315,54 @@ function DropdownPopover({
           })
         )}
       </div>
-    </Surface>
+    </>
   )
 }
 
 /* The collapsed "…" menu holding middle breadcrumb segments at tight widths. */
-function EllipsisMenu({ hiddenSegments, typeConfig }) {
-  const [open, setOpen] = useState(false)
-  const ref = useClickOutside(() => setOpen(false))
-
+function EllipsisMenu({ hiddenSegments, typeConfig, isBasic }) {
   return (
-    <div ref={ref} className="vds-scope__ellipsis-wrap">
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        className="vds-scope__ellipsis"
-        aria-label="Show hidden breadcrumb levels"
-      >
-        <Icon as={MoreHorizontal} size="md" />
-      </button>
-      {open && (
-        <Surface elevation="overlay" padding={null} radius="md" className="vds-scope__ellipsis-pop">
-          <div className="vds-scope__ellipsis-list">
-            {hiddenSegments.map((seg) => {
-              const cfg = typeConfig[seg.entityType]
-              return (
-                <button
-                  type="button"
-                  key={seg.id}
-                  onClick={() => {
-                    seg.onClick()
-                    setOpen(false)
-                  }}
-                  className="vds-scope__ellipsis-item"
-                >
-                  <TypeChip tone={cfg?.tone} icon={cfg?.icon} size="sm" />
-                  <span className="vds-scope__ellipsis-label">{seg.label}</span>
-                </button>
-              )
-            })}
-          </div>
-        </Surface>
+    <Popover
+      role="menu"
+      aria-label="Hidden breadcrumb levels"
+      className="vds-scope__ellipsis-wrap"
+      // The panel is portaled to <body>, so `.vds-scope--basic` is no longer an
+      // ancestor — the basic variant's tighter chip has to be flagged on the
+      // panel itself to survive the trip.
+      panelClassName={cx('vds-scope__ellipsis-pop', isBasic && 'vds-scope__ellipsis-pop--basic')}
+      trigger={
+        <button
+          type="button"
+          className="vds-scope__ellipsis"
+          aria-label="Show hidden breadcrumb levels"
+        >
+          <Icon as={MoreHorizontal} size="md" />
+        </button>
+      }
+    >
+      {({ close }) => (
+        <div className="vds-scope__ellipsis-list" role="none" onKeyDown={menuKeyDown}>
+          {hiddenSegments.map((seg) => {
+            const cfg = typeConfig[seg.entityType]
+            return (
+              <button
+                type="button"
+                role="menuitem"
+                key={seg.id}
+                onClick={() => {
+                  seg.onClick()
+                  close()
+                }}
+                className="vds-scope__ellipsis-item"
+              >
+                <TypeChip tone={cfg?.tone} icon={cfg?.icon} size="sm" />
+                <span className="vds-scope__ellipsis-label">{seg.label}</span>
+              </button>
+            )
+          })}
+        </div>
       )}
-    </div>
+    </Popover>
   )
 }
 
@@ -432,34 +410,44 @@ function BreadcrumbSegment({
           <span className="vds-scope__label">{label}</span>
         </button>
         {hasDropdown && (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation()
-              setOpen(!open)
-            }}
-            className={cx('vds-scope__caret', open && 'vds-scope__caret--open')}
-            aria-label="Drill into this scope"
-            aria-expanded={open}
+          // Controlled purely so the caret can carry its own --open styling;
+          // Popover owns the toggle, the ARIA, and the dismissal.
+          //
+          // The role stays Popover's default `dialog`: the panel is a composite —
+          // search field, sort/filter menus, then the scope list — not a bare
+          // listbox, and its rows are plain buttons with no option semantics.
+          <Popover
+            open={open}
+            onOpenChange={setOpen}
+            aria-label={dropdownHeader || label}
+            panelClassName="vds-scope__pop"
+            trigger={
+              <button
+                type="button"
+                className={cx('vds-scope__caret', open && 'vds-scope__caret--open')}
+                aria-label="Drill into this scope"
+              >
+                <Icon as={ChevronDown} size="xs" />
+              </button>
+            }
           >
-            <Icon as={ChevronDown} size="xs" />
-          </button>
+            {({ close }) => (
+              <DropdownPanel
+                items={dropdownItems}
+                onSelect={onDropdownSelect}
+                onClose={close}
+                header={dropdownHeader}
+                currentEntityId={currentEntityId}
+                typeConfig={typeConfig}
+                statusConfig={statusConfig}
+                sortOptions={sortOptions}
+                typeOrder={typeOrder}
+                statusOrder={statusOrder}
+              />
+            )}
+          </Popover>
         )}
       </div>
-      {open && hasDropdown && (
-        <DropdownPopover
-          items={dropdownItems}
-          onSelect={onDropdownSelect}
-          onClose={() => setOpen(false)}
-          header={dropdownHeader}
-          currentEntityId={currentEntityId}
-          typeConfig={typeConfig}
-          statusConfig={statusConfig}
-          sortOptions={sortOptions}
-          typeOrder={typeOrder}
-          statusOrder={statusOrder}
-        />
-      )}
     </div>
   )
 }
@@ -476,7 +464,10 @@ function BreadcrumbSegment({
  * Data-driven: pass `path` (root→current entities) and an `onNavigate` callback;
  * the bar renders from `typeConfig` / `statusConfig` (Vipre defaults baked in,
  * fully overridable). Each entity is `{ id, name, type, status, children? }`.
- * Composes Surface + Input + Icon. The bar follows the ambient theme: a light bar
+ * Every overlay — the drill-down dropdown, its sort/filter menus, and the "…"
+ * menu — composes Popover, so placement (flip + clamp + height cap), Escape,
+ * outside-click, and focus-return come from one implementation rather than three
+ * hand-rolled ones. Composes Popover + Input + Icon. The bar follows the ambient theme: a light bar
  * in light mode, the product navy (light-on-dark) under a `.dark` ancestor — so
  * place it inside `.dark` wherever the chrome should stay dark. It is purely the
  * scope trail: search (the ⌘K palette) and product toggles (e.g. "Future State")
@@ -652,7 +643,11 @@ export const ScopeNavigator = forwardRef(function ScopeNavigator(
                 return (
                   <Fragment key="ellipsis">
                     {sep}
-                    <EllipsisMenu hiddenSegments={ellipsisSegments} typeConfig={typeConfig} />
+                    <EllipsisMenu
+                      hiddenSegments={ellipsisSegments}
+                      typeConfig={typeConfig}
+                      isBasic={isBasic}
+                    />
                   </Fragment>
                 )
               }

@@ -28,8 +28,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2.5rem;   // sized to roughly the value+label block; per-size below
-    height: 2.5rem;
+    width: var(--vds-chip-sm);   // sized to roughly the value+label block; per-size below
+    height: var(--vds-chip-sm);
     color: var(--vds-stat-accent);
   }
 
@@ -37,13 +37,13 @@
   // outline (default, Vipre style): a thin neutral ring, transparent center,
   // the glyph carries the meaning via tone.
   &--icon-outline .vds-stat__icon {
-    border-radius: 9999px;
+    border-radius: var(--vds-radius-full);
     border: 1px solid var(--vds-line-strong);
     background-color: transparent;
   }
   // soft: filled circle tinted to the tone (same shape as outline, filled).
   &--icon-soft .vds-stat__icon {
-    border-radius: 9999px;
+    border-radius: var(--vds-radius-full);
     background-color: var(--vds-stat-soft);
   }
 
@@ -74,10 +74,12 @@
   &__delta--chip {
     display: inline-flex;
     align-items: center;
-    font-size: 0.75rem;
-    font-weight: 600;
+    @include type.step(detail);
+    // Both overrides are load-bearing: detail ships weight 400 + a 1rem leading;
+    // the chip needs semibold and single-line so it centers against the icon.
+    font-weight: var(--vds-weight-semibold);
+    line-height: var(--vds-leading-none);
     font-variant-numeric: tabular-nums;
-    line-height: 1;
   }
   &__delta--good { color: var(--vds-success); }
   &__delta--bad { color: var(--vds-danger); }
@@ -97,7 +99,7 @@
 
     &--label { width: 6rem; height: 0.75rem; }
     // gap between the label bar and the value bar (label renders first)
-    &--value { width: 4.5rem; height: 1.5rem; margin-top: 0.5rem; }
+    &--value { width: 4.5rem; height: 1.5rem; margin-top: var(--vds-space-2); }
   }
 
   // ---- inner layout wrapper ----
@@ -144,15 +146,15 @@
   // ---- sizes (value step + icon chip scaled to the value+label height) ----
   &--size-sm {
     .vds-stat__value { @include type.step(heading); }
-    .vds-stat__icon { width: 2.5rem; height: 2.5rem; }
+    .vds-stat__icon { width: var(--vds-chip-sm); height: var(--vds-chip-sm); }
   }
   &--size-md {
     .vds-stat__value { @include type.step(title); }
-    .vds-stat__icon { width: 3rem; height: 3rem; }
+    .vds-stat__icon { width: var(--vds-chip-md); height: var(--vds-chip-md); }
   }
   &--size-lg {
     .vds-stat__value { @include type.step(display); }
-    .vds-stat__icon { width: 3.25rem; height: 3.25rem; }
+    .vds-stat__icon { width: var(--vds-chip-lg); height: var(--vds-chip-lg); }
   }
 
   // ---- interactive (drill-in) — shared metrics-family recipe ----

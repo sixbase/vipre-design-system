@@ -90,7 +90,7 @@
   // current value this way; the check affix sits in `__item-check`).
   &--active {
     color: var(--vds-primary);
-    font-weight: 500;
+    font-weight: var(--vds-weight-medium);
     background-color: var(--vds-primary-soft);
   }
   &[disabled],

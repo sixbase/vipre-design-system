@@ -10,7 +10,7 @@
 .vds-tag {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: var(--vds-space-1);
   border: 1px solid transparent;
   border-radius: var(--vds-radius-sm);
   font-family: var(--vds-font-sans);
@@ -27,8 +27,8 @@
   color: var(--_tag-ink);
 
   // ---- sizes ----
-  &--sm { height: 1.375rem; padding: 0 0.5rem;   @include type.step(micro); }
-  &--md { height: 1.75rem;  padding: 0 0.625rem; @include type.step(detail); font-weight: 500; }
+  &--sm { height: 1.375rem; padding: 0 var(--vds-space-2);   @include type.step(micro); }
+  &--md { height: var(--vds-control-h-xs); padding: 0 var(--vds-space-2-5); @include type.step(detail); font-weight: var(--vds-weight-medium); }
 
   &__label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 
@@ -61,8 +61,8 @@
 
     &:hover { background-color: var(--_tag-soft-hover); }
     &:focus-visible {
-      outline: 2px solid var(--vds-focus-ring);
-      outline-offset: 2px;
+      outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+      outline-offset: var(--vds-control-ring-offset);
     }
   }
 
@@ -74,9 +74,9 @@
   &__action {
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: var(--vds-space-1);
     height: 100%;
-    padding: 0 0.25rem 0 0.625rem;
+    padding: 0 var(--vds-space-1) 0 var(--vds-space-2-5);
     border: 0;
     border-radius: inherit;
     background: none;
@@ -88,11 +88,11 @@
 
     &:hover { background-color: var(--_tag-soft-hover); }
     &:focus-visible {
-      outline: 2px solid var(--vds-focus-ring);
-      outline-offset: -2px;
+      outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+      outline-offset: var(--vds-control-ring-offset-inset);
     }
   }
-  &--sm .vds-tag__action { padding: 0 0.25rem 0 0.5rem; }
+  &--sm .vds-tag__action { padding: 0 var(--vds-space-1) 0 var(--vds-space-2); }
 
   // ---- dismiss (×) ----
   &__dismiss {
@@ -100,8 +100,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 1rem;
-    height: 1rem;
+    width: var(--vds-icon-btn-xs);
+    height: var(--vds-icon-btn-xs);
     margin-right: -0.25rem; // optically balance against the label padding
     padding: 0;
     border: 0;
@@ -119,7 +119,7 @@
       background-color: color-mix(in oklab, currentColor 15%, transparent);
     }
     &:focus-visible {
-      outline: 2px solid var(--vds-focus-ring);
+      outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
       outline-offset: 1px;
       opacity: 1;
     }
@@ -137,7 +137,7 @@
       }
     }
   }
-  &--split .vds-tag__dismiss { margin-right: 0.25rem; }
+  &--split .vds-tag__dismiss { margin-right: var(--vds-space-1); }
 
   // ---- disabled — the standard recipe, never a new gray ----
   &--disabled,

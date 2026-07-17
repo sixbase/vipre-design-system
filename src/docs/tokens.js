@@ -286,10 +286,22 @@ export const CONTROLS = [
   { token: '--vds-border-w', value: '1px', usage: 'Control hairline border width — stays px on purpose, never rem' },
   { token: '--vds-control-ring-w', value: '2px', usage: 'Focus-ring thickness — shared by both ring recipes (outline + shadow)' },
   { token: '--vds-control-ring-offset', value: '2px', usage: 'Focus-ring outline-offset — outline recipe only (Button, Checkbox)' },
+  { token: '--vds-control-ring-offset-inset', value: '-2px', usage: 'Focus-ring drawn inside the box — for edges flush with a container (rows, tabs, panel items)' },
   { token: '--vds-control-ring-tint', value: '35%', usage: 'Focus-ring shadow tint, valid state — shadow recipe (Input, Select, Textarea)' },
   { token: '--vds-control-ring-tint-invalid', value: '30%', usage: 'Focus-ring shadow tint, invalid state — reads stronger than 35% at equal alpha' },
   { token: '--vds-control-hover-mix', value: '30%', usage: 'Border darken ratio on hover — field controls' },
   { token: '--vds-control-font-touch-min', value: '16px', usage: 'iOS zoom guard — minimum font-size on md text controls for coarse pointers' },
+  { token: '--vds-chip-sm', value: '40px', usage: 'Icon chip (soft-tinted glyph circle) — page headers, dense tiles' },
+  { token: '--vds-chip-md', value: '48px', usage: 'Icon chip — default metric / stat card' },
+  { token: '--vds-chip-lg', value: '52px', usage: 'Icon chip — hero tile' },
+  { token: '--vds-icon-btn-xs', value: '16px', usage: 'Bare-glyph button box — inline chip dismiss (Tag)' },
+  { token: '--vds-icon-btn-sm', value: '24px', usage: 'Bare-glyph button box — banner / toast dismiss' },
+  { token: '--vds-icon-btn-md', value: '32px', usage: 'Bare-glyph button box — dialog + drawer close' },
+  { token: '--vds-avatar-xs', value: '20px', usage: 'Avatar diameter — xs' },
+  { token: '--vds-avatar-sm', value: '24px', usage: 'Avatar diameter — sm' },
+  { token: '--vds-avatar-md', value: '32px', usage: 'Avatar diameter — md' },
+  { token: '--vds-avatar-lg', value: '40px', usage: 'Avatar diameter — lg' },
+  { token: '--vds-avatar-xl', value: '56px', usage: 'Avatar diameter — xl' },
 ]
 
 /* Radius scale — mirrors --vds-radius-* in _tokens.scss. */
@@ -298,6 +310,7 @@ export const RADIUS = [
   { token: '--vds-radius-md', px: '8px', usage: 'Cards, panels, menus, larger surfaces' },
   { token: '--vds-radius-lg', px: '12px', usage: 'Big cards, modals, drawers, hero tiles' },
   { token: '--vds-radius-xl', px: '16px', usage: 'Largest corners — full-bleed hero surfaces' },
+  { token: '--vds-radius-full', px: '9999px', usage: 'Pills + circles — avatars, badges, switch tracks, progress bars' },
 ]
 
 /* Motion — mirrors the Tier 3 motion tokens in _tokens.scss. */

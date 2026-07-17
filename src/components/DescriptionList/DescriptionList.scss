@@ -42,7 +42,7 @@
 
   &__term {
     @include type.step(detail);
-    font-weight: 500;
+    font-weight: var(--vds-weight-medium);
     color: var(--vds-ink-muted);
   }
   &__desc {

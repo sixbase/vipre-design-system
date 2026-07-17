@@ -32,8 +32,11 @@ matches what it *is*; the level decides surface, border, shadow, and stack order
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | **0** | `flat` | `--vds-canvas` | none | none | none | base | page background, inline table cells |
 | **1** | `resting` | `--vds-surface` | `--vds-line` | `shadow-xs` (whisper) | surface 1 step lighter than canvas | — | Card, Panel, Table shell, StatTile, MetricCard |
-| **2** | `raised` | `--vds-surface-raised` | `--vds-line` | `shadow-md` | surface lighter + hairline | `dropdown` | Menu, Select, Popover, Combobox, hover Card |
+| **2** | `raised` | `--vds-surface-raised` | `--vds-line` | `shadow-md` | surface lighter + hairline | `dropdown` † | Menu, Select, Popover, Combobox, hover Card |
 | **3** | `overlay` | `--vds-surface-overlay` | `--vds-line` | `shadow-lg` + **scrim** | surface lighter still + scrim | `drawer` / `modal` | Drawer, Modal, Dialog |
+
+† The z column is **not** ranked by level — `dropdown` (400) deliberately sits above `drawer`/`modal`
+so a Select opened inside a Modal isn't buried by it. See *Stack order is not the elevation ladder*.
 | **4** | `floating` | `--vds-surface-raised` | none | `shadow-lg` | surface lift | `toast` / `tooltip` | Toast, Tooltip |
 
 ## Light vs. dark: the core rule
@@ -79,13 +82,34 @@ A single source of truth for stacking. Components never invent a `z-index`; they
 | `--vds-z-base` | 0 | default flow |
 | `--vds-z-raised` | 10 | in-component lift (e.g. Table sticky header — replaces the stray `z-index: 1`) |
 | `--vds-z-sticky` | 100 | page-level sticky toolbars / headers |
-| `--vds-z-dropdown` | 200 | menus, selects, popovers, comboboxes |
-| `--vds-z-drawer` | 300 | side drawers / sheets |
-| `--vds-z-modal` | 400 | modal dialogs |
+| `--vds-z-drawer` | 200 | side drawers / sheets |
+| `--vds-z-modal` | 300 | modal dialogs |
+| `--vds-z-dropdown` | 400 | menus, selects, popovers, comboboxes — **above** drawer/modal |
 | `--vds-z-toast` | 500 | toasts / notifications |
 | `--vds-z-tooltip` | 600 | tooltips (always on top) |
 
 Gaps of 100 (10 at the low end) leave room to slot a layer in later without renumbering.
+
+#### Stack order is not the elevation ladder
+
+The two look alike and are not the same question:
+
+- **Elevation** = how high a surface *looks* (tone + border + shadow). A Popover is level 2 `raised`.
+- **Stack order** = who *wins* when two floating layers overlap.
+
+They come apart for anything **spawned from an overlay**. A `Select` inside a `Modal` is level 2
+by look, but the Modal that opened it is level 3 — and because `Popover` portals to `<body>`, the
+two land as siblings where document order can't help. Ordering z by elevation level therefore
+renders the dropdown *behind* the modal that owns it, which is why `dropdown` sits above
+`drawer`/`modal` here while staying level 2 in the ladder above.
+
+Read the scale as **"who was opened by whom"**, not "how high it floats". The inversion is safe:
+a page-level dropdown is never open *behind* a modal, because opening an overlay dismisses it —
+and the overlay's scrim blocks the page regardless.
+
+> **Why Popover portals at all:** `.vds-modal__body` scrolls (`overflow-y: auto`), so a popover
+> rendered inside the panel would be clipped by it. Portaling escapes the clip; the z-scale is what
+> pays for that escape.
 
 ### Scrim (Tier 2 · semantic, per-mode) — **new**
 

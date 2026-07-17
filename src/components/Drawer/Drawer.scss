@@ -25,8 +25,8 @@
   flex-direction: column;
 
   &:focus-visible {
-    outline: 2px solid var(--vds-focus-ring);
-    outline-offset: -2px; // inside — the panel hugs the viewport edge
+    outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+    outline-offset: var(--vds-control-ring-offset-inset); // inside — the panel hugs the viewport edge
   }
 }
 
@@ -91,8 +91,8 @@
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: var(--vds-icon-btn-md);
+  height: var(--vds-icon-btn-md);
   margin-left: auto; // stays right-aligned even without a title
   border: 0;
   border-radius: var(--vds-radius-sm);

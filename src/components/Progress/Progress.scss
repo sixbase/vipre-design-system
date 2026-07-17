@@ -27,7 +27,7 @@
   }
   &__value {
     @include type.step(detail);
-    font-weight: 600;
+    font-weight: var(--vds-weight-semibold);
     font-variant-numeric: tabular-nums;
     color: var(--vds-ink);
   }
@@ -35,17 +35,17 @@
   // ---- track + fill (MetricCard geometry) ----
   &__track {
     width: 100%;
-    border-radius: 9999px;
+    border-radius: var(--vds-radius-full);
     background-color: var(--vds-line);
     overflow: hidden;
   }
   &__fill {
     height: 100%;
-    border-radius: 9999px;
+    border-radius: var(--vds-radius-full);
     background-color: var(--_bar-fill);
     // Emphatic settle when the value changes; falls back to ease-out until the
     // foundation tokens land.
-    transition: width var(--vds-dur-slow, 400ms) var(--vds-ease-emphatic, var(--vds-ease-out));
+    transition: width var(--vds-dur-slow) var(--vds-ease-emphatic, var(--vds-ease-out));
   }
 
   // ---- sizes (track height) ----

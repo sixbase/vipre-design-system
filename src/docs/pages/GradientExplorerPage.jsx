@@ -84,7 +84,10 @@ function GradientTile({ family, light, dark, direction, glyph, mode, offset, id 
 
 export function GradientExplorerPage() {
   const [glyph, setGlyph] = useState('ies')
-  const [direction, setDirection] = useState('light-dark')
+  // Default to dark → light so the saturated/dark step sits at the top, matching the
+  // prototype tile — this puts the fill's top at a dark step, so the 2-step-lighter
+  // gradient outline reads (a pale top would swallow it).
+  const [direction, setDirection] = useState('dark-light')
   const [mode, setMode] = useState('tile')
 
   // Optically center the glyph: measure its real bounding box and translate so the

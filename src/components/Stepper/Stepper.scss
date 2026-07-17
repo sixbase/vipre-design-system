@@ -10,6 +10,7 @@
 @use '../../styles/breakpoints' as bp;
 
 $indicator: 1.75rem; // circle diameter (rem so it scales with root font size)
+$connector: 2px;     // connector line thickness — px so it stays a crisp rule at any root size
 
 // ---- shared (axis-independent) ---------------------------------------------
 .vds-stepper {
@@ -39,8 +40,8 @@ $indicator: 1.75rem; // circle diameter (rem so it scales with root font size)
       color: var(--vds-primary);
     }
     &:focus-visible {
-      outline: 2px solid var(--vds-focus-ring);
-      outline-offset: 2px;
+      outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+      outline-offset: var(--vds-control-ring-offset);
     }
   }
 
@@ -63,7 +64,7 @@ $indicator: 1.75rem; // circle diameter (rem so it scales with root font size)
 
   &__number {
     @include type.step(detail);
-    font-weight: 500;
+    font-weight: var(--vds-weight-medium);
     font-variant-numeric: tabular-nums;
   }
 
@@ -77,7 +78,7 @@ $indicator: 1.75rem; // circle diameter (rem so it scales with root font size)
 
   &__label {
     @include type.step(body);
-    font-weight: 500;
+    font-weight: var(--vds-weight-medium);
     color: var(--vds-ink-muted);
   }
 
@@ -147,9 +148,9 @@ $indicator: 1.75rem; // circle diameter (rem so it scales with root font size)
     &:not(:first-child)::before {
       content: '';
       flex: 1;
-      height: 2px;
+      height: $connector;
       min-width: var(--vds-space-4);
-      margin: calc(($indicator - 2px) / 2) var(--vds-space-2) 0;
+      margin: calc(($indicator - $connector) / 2) var(--vds-space-2) 0;
       border-radius: var(--vds-radius-sm);
       background: var(--vds-line);
     }
@@ -185,8 +186,8 @@ $indicator: 1.75rem; // circle diameter (rem so it scales with root font size)
       position: absolute;
       top: calc($indicator + var(--vds-space-1));
       bottom: var(--vds-space-1);
-      left: calc(($indicator - 2px) / 2);
-      width: 2px;
+      left: calc(($indicator - $connector) / 2);
+      width: $connector;
       border-radius: var(--vds-radius-sm);
       background: var(--vds-line);
     }

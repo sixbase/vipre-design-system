@@ -144,6 +144,11 @@ $magenta: ( // accent — hot pink (hue 348)
   --vds-radius-md: 0.5rem;   // 8px — cards, panels, larger surfaces
   --vds-radius-lg: 0.75rem;  // 12px
   --vds-radius-xl: 1rem;     // 16px
+  // Pill / circle. Not a size — an INTENT: "round this end completely". Any
+  // number past half the box's height reads identically, so the exact value is
+  // arbitrary and must never be retyped per component (it was hand-written as
+  // 9999px/999px in 14 components before this token existed).
+  --vds-radius-full: 9999px; // pills + circles (avatar, badge, switch, bars)
 
   // Border width — value stays px ON PURPOSE. Hairlines must not scale with
   // root font-size: rem hairlines round away or double at fractional DPRs.
@@ -157,12 +162,22 @@ $magenta: ( // accent — hot pink (hue 348)
 
   // Stacking order — every floating layer references one of these; never a
   // hand-written z-index. Gaps leave room to slot a layer in without renumbering.
+  //
+  // Stack order is NOT the elevation ladder. Elevation says how high a surface
+  // LOOKS (tone + shadow); this says who WINS when two floating layers overlap.
+  // They diverge for anything spawned FROM an overlay: a Select is elevation
+  // `raised` (level 2) but is opened BY a Modal (level 3), and Popover portals to
+  // <body> as the Modal's sibling — so plain document order can't save it and its
+  // z must beat the Modal's. Hence dropdown sits ABOVE drawer/modal here while
+  // staying level 2 in the ladder. (Ordered by "who was opened by whom", not "how
+  // high it floats".)
   --vds-z-base:     0;
   --vds-z-raised:   10;   // in-component lift (e.g. Table sticky header)
   --vds-z-sticky:   100;  // page-level sticky toolbars / headers
-  --vds-z-dropdown: 200;  // menus, selects, popovers, comboboxes
-  --vds-z-drawer:   300;  // side drawers / sheets
-  --vds-z-modal:    400;  // modal dialogs
+  --vds-z-drawer:   200;  // side drawers / sheets
+  --vds-z-modal:    300;  // modal dialogs
+  --vds-z-dropdown: 400;  // menus, selects, popovers, comboboxes — ABOVE drawer/modal:
+                          // they are opened from inside one and must render over it
   --vds-z-toast:    500;  // toasts / notifications
   --vds-z-tooltip:  600;  // tooltips — always on top
 
@@ -215,6 +230,36 @@ $magenta: ( // accent — hot pink (hue 348)
   --vds-control-h-xl: 3.25rem;  // 52px — hero / marketing call-to-action
   --vds-tap-target: 44px;      // minimum hit area on coarse (touch) pointers
 
+  // Icon chip — the soft-tinted circle that carries a glyph at the head of a
+  // metric/stat/page-header block. One scale for the whole family: before this
+  // token the same pattern shipped at FOUR sizes (MetricCard 2.75rem, StatTile
+  // 2.5/3/3.25rem, PageHeader 40px). Chip size is its own decision, NOT a
+  // control height — chips aren't hit targets, so they don't inherit -h-*.
+  --vds-chip-sm: 2.5rem;   // 40px — page headers, dense tiles
+  --vds-chip-md: 3rem;     // 48px — default metric/stat card
+  --vds-chip-lg: 3.25rem;  // 52px — hero tile
+
+  // Icon button — the square box of a bare glyph control (dismiss/close/caret).
+  // Its own family ON PURPOSE: it is NOT a --vds-space-* step (spacing is scoped
+  // to padding/gaps, not element boxes) and NOT a --vds-control-h-* step (those
+  // are text-control heights). Before this token the same close button shipped
+  // five ways: raw 2rem, raw 1.5rem, space-6, space-4 and control-h-sm.
+  // Sub-tap-target sizes are fine here only where the glyph sits inside a larger
+  // hit area (a chip) or a dialog's padded corner.
+  --vds-icon-btn-xs: 1rem;    // 16px — inline chip dismiss (Tag)
+  --vds-icon-btn-sm: 1.5rem;  // 24px — banner / toast dismiss
+  --vds-icon-btn-md: 2rem;    // 32px — dialog + drawer close
+
+  // Avatar diameter ramp. Its own family for the same reason as the chip scale:
+  // an avatar is an element box, not a control height or a spacing step. Four of
+  // these coincidentally equal a space step and one (xl) matches nothing, so
+  // borrowing --vds-space-* would half-tokenize one coherent ramp.
+  --vds-avatar-xs: 1.25rem;  // 20px
+  --vds-avatar-sm: 1.5rem;   // 24px
+  --vds-avatar-md: 2rem;     // 32px
+  --vds-avatar-lg: 2.5rem;   // 40px
+  --vds-avatar-xl: 3.5rem;   // 56px
+
   // Control focus-ring family — TWO recipes, both deliberate (not drift):
   //   outline recipe (Button, Checkbox — action controls): outline: var(--vds-control-ring-w)
   //     solid var(--vds-focus-ring); outline-offset: var(--vds-control-ring-offset). Reads
@@ -225,6 +270,11 @@ $magenta: ( // accent — hot pink (hue 348)
   //     pairs with the border-color change. Unifying the two is a rendering change — rejected.
   --vds-control-ring-w: 2px;            // ring thickness, both recipes
   --vds-control-ring-offset: 2px;       // outline recipe only (buttons/checks)
+  // Inset variant — the ring is drawn INSIDE the box. For controls whose edge is
+  // flush with a container: a row in a scroll box, an item flush with a panel
+  // border, a tab in a clipping strip. An outset ring there would be clipped or
+  // collide with the neighbour. Hand-written as -2px in 8 places before this.
+  --vds-control-ring-offset-inset: -2px;
   // The 35%/30% tint split is intentional: danger hues read stronger than midnight at
   // equal alpha, so the invalid ring drops to 30% to balance. Do not unify these two.
   --vds-control-ring-tint: 35%;         // shadow recipe tint, valid state
@@ -347,7 +397,12 @@ $magenta: ( // accent — hot pink (hue 348)
   --vds-accent-magenta-soft: var(--vds-magenta-50);
 
   // ---- Focus & scrim ----
-  --vds-focus-ring:     var(--vds-midnight-500); // keyboard focus outline (:focus-visible)
+  // Bound to --vds-primary, not to a ramp step: the focus ring IS the brand ring (every
+  // control's SCSS already calls it that), so a rebrand must carry it automatically. It
+  // was pinned to midnight-500 back when primary was ALSO midnight — they matched by
+  // construction, then primary moved to cobalt and the ring silently kept the old brand.
+  // Binding removes the class of bug rather than re-pinning it to today's answer.
+  --vds-focus-ring:     var(--vds-primary);      // keyboard focus outline (:focus-visible)
   --vds-scrim:          rgb(11 25 45 / 0.45);    // dim behind modals / drawers — midnight navy
 }
 
@@ -442,7 +497,9 @@ $magenta: ( // accent — hot pink (hue 348)
   --vds-accent-magenta-soft: color-mix(in oklab, var(--vds-magenta-400) 16%, transparent);
 
   // ---- Focus & scrim ----
-  --vds-focus-ring:     var(--vds-midnight-400);
+  // Same binding as light — --vds-primary is already per-mode (cobalt-600 / cobalt-400),
+  // so the ring inherits the dark-mode lightening for free.
+  --vds-focus-ring:     var(--vds-primary);
   // Deeper scrim in dark — the near-black canvas needs more weight to separate.
   --vds-scrim:          rgb(2 6 12 / 0.65);
 
