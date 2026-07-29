@@ -7,8 +7,8 @@ export { Card } from './Card/index.js'
 export { StatTile } from './StatTile/index.js'
 export { MetricCard } from './MetricCard/index.js'
 export { Sparkline } from './Sparkline/index.js'
-export { Table } from './Table/index.js'
 export { Sankey } from './Sankey/index.js'
+export { Table } from './Table/index.js'
 export { Stack } from './Stack/index.js'
 export { Inline } from './Inline/index.js'
 export { Grid } from './Grid/index.js'
@@ -63,6 +63,7 @@ export { Progress } from './Progress/index.js'
 export { Skeleton } from './Skeleton/index.js'
 export { Avatar, AvatarGroup } from './Avatar/index.js'
 export { Tag } from './Tag/index.js'
+export { ToggleChip, ToggleChipGroup } from './ToggleChip/index.js'
 export { EmptyState } from './EmptyState/index.js'
 export { DescriptionList, DescriptionListItem } from './DescriptionList/index.js'
 export { VisuallyHidden } from './VisuallyHidden/index.js'
@@ -73,6 +74,15 @@ export { AppShell, AppShellNavTrigger } from './AppShell/index.js'
 export { TopBar } from './TopBar/index.js'
 export { CurrentLeftNav, CurrentLeftNavLogOutIcon } from './CurrentLeftNav/index.js'
 export { PageHeader } from './PageHeader/index.js'
+export {
+  Filter,
+  FilterGroup,
+  FilterPills,
+  FilterCheckList,
+  FilterChips,
+  FilterCompare,
+  useFilterPanel,
+} from './Filter/index.js'
 export {
   ScopeNavigator,
   defaultTypeConfig,

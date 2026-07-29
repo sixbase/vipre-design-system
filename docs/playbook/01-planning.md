@@ -31,15 +31,15 @@ All ✅ = built, token-bound, documented (with a framework-agnostic Markup secti
 
 **Typography:** Text · Heading
 
-**Controls:** Button · Icon · Field · Input · SearchInput · Textarea · Checkbox · Radio + RadioGroup · Switch · Select · Combobox · Slider · SegmentedControl · Popover · Spinner
+**Controls:** Button · Icon · Field · Input · SearchInput · Textarea · Checkbox · Radio + RadioGroup · Switch · Select · Combobox · Slider · SegmentedControl · Popover · Spinner · Filter (+ FilterGroup / FilterPills / FilterCheckList / FilterChips / FilterCompare — the table filter popover, shipped 2026-07-29)
 
 **Overlays:** Modal · Drawer · Menu (+ MenuItem/MenuSeparator/MenuLabel) · Tooltip · Toast (+ ToastProvider/useToast) · CommandPalette
 
 **Navigation:** Tabs (+ TabList/Tab/TabPanel) · Accordion (+ Item/Trigger/Content) · Breadcrumb · Pagination · Stepper · Kbd
 
-**Feedback & display:** Badge · Tag · Avatar (+ AvatarGroup) · Alert · Progress · Skeleton · EmptyState · DescriptionList · VisuallyHidden
+**Feedback & display:** Badge · Tag · ToggleChip (+ ToggleChipGroup) · Avatar (+ AvatarGroup) · Alert · Progress · Skeleton · EmptyState · DescriptionList · VisuallyHidden
 
-**Data & metrics:** Table (sortable, selectable, sticky, opt-in `responsive` stacked-card mode) · StatTile · MetricCard · Sparkline
+**Data & metrics:** Table (sortable, selectable, sticky, opt-in `responsive` stacked-card mode) · StatTile · MetricCard · Sparkline · Sankey (Apache ECharts, token-themed — the system's first charting dependency)
 
 **App chrome:** AppShell (+ AppShellNavTrigger) · TopBar · SideNav (the MSP v2 navy rail, + ProductTile — caught up to the prototype 2026-07-16 except the account switcher, which waits on right-side `Popover` placement) · CurrentLeftNav (legacy shipped nav, frozen) · PageHeader · ScopeNavigator · TimeframeSelect
 
@@ -49,6 +49,6 @@ Full-page compositions documented under `/templates/*`: Product Dashboard · MSP
 
 ## Roadmap
 
-Candidates, not commitments: DatePicker/Calendar · FileUpload · toolbar/DataGrid extensions (column resize, virtualization) · charts beyond Sparkline · Combobox multi-select (tag input) · Figma library sync.
+Candidates, not commitments: DatePicker/Calendar · FileUpload · toolbar/DataGrid extensions (column resize, virtualization) · more ECharts vis on the `Sankey` token-bridge pattern (bar/line/donut) · Combobox multi-select (tag input) · Figma library sync.
 
 When you complete one, move it into the status list and add its docs page + route.
