@@ -21,6 +21,7 @@ import { StatTilePage } from './pages/StatTilePage.jsx'
 import { MetricCardPage } from './pages/MetricCardPage.jsx'
 import { SparklinePage } from './pages/SparklinePage.jsx'
 import { TablePage } from './pages/TablePage.jsx'
+import { SankeyPage } from './pages/SankeyPage.jsx'
 import { SideNavPage } from './pages/SideNavPage.jsx'
 import { CurrentLeftNavPage } from './pages/CurrentLeftNavPage.jsx'
 import { PageHeaderPage } from './pages/PageHeaderPage.jsx'
@@ -149,6 +150,7 @@ export const NAV = [
       { path: '/components/tag', name: 'Tag', Page: TagPage },
       { path: '/components/card', name: 'Card', Page: CardPage },
       { path: '/components/table', name: 'Table', Page: TablePage },
+      { path: '/components/sankey', name: 'Sankey', Page: SankeyPage },
       { path: '/components/description-list', name: 'Description List', Page: DescriptionListPage },
       { path: '/components/sparkline', name: 'Sparkline', Page: SparklinePage },
       { path: '/metrics/stat-tile', name: 'Stat Tile', Page: StatTilePage },

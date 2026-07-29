@@ -183,6 +183,10 @@ export const COMPONENT_COLORS = {
     scope: 'vds-sparkline',
     rows: rows(['--vds-accent-amber', '--vds-accent-azure', '--vds-accent-clay', '--vds-accent-emerald', '--vds-accent-harbor', '--vds-accent-orchid', '--vds-accent-rose', '--vds-danger', '--vds-ink-subtle', '--vds-primary', '--vds-success', '--vds-warning'], LOCALS),
   },
+  Sankey: {
+    scope: 'vds-sankey',
+    rows: rows(['--vds-accent-amber', '--vds-accent-azure', '--vds-accent-clay', '--vds-accent-cobalt', '--vds-accent-emerald', '--vds-accent-harbor', '--vds-accent-lime', '--vds-accent-magenta', '--vds-accent-orchid', '--vds-accent-purple', '--vds-accent-rose', '--vds-ink', '--vds-ink-muted', '--vds-line', '--vds-surface'], LOCALS),
+  },
   Spinner: {
     scope: 'vds-spinner',
     rows: rows(['--vds-primary'], LOCALS),
@@ -231,6 +235,7 @@ export const COLOR_USAGE_ORDER = [
   'TimeframeSelect',
   'Table',
   'Sparkline',
+  'Sankey',
   'StatTile',
   'MetricCard',
   'PageHeader',
