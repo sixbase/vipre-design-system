@@ -973,3 +973,258 @@ change, not a style port, and it wants `Popover` to learn **right-side placement
 only flips top/bottom and clamps horizontally (`Popover.jsx`, the `compute()` in the placement
 effect). `Popover` is composed by Menu / Select / Combobox / TimeframeSelect, so that lands as its own
 change with its own regression pass, rather than riding in on a SideNav commit.
+
+## 2026-07-17 · ProductTile optically centers its glyph (any glyph, no magic numbers)
+
+Alvin flagged the SAT / Archive tiles: the marks sat visibly off-center. Root cause — both the DS
+`ProductTile` and the prototype's copy just drop `<path d={glyph}>` at the glyph's own coordinates, and
+Material-Symbols marks are NOT all centered on the 32-grid. Measured live: IES lands dead-on, SAT's ink
+center is at (17, 16.5), others differ again. So there is no single nudge — a per-glyph offset would be
+a magic number per product and would break the next glyph a consumer passes.
+
+Fix (rule #4, "measure the ink"): a `CenteredGlyph` wrapper measures the path via `getBBox` in a
+`useLayoutEffect` and translates it so its center lands at (16,16). Self-correcting and stable —
+`getBBox` reports local geometry and ignores the element's own transform, so a re-measure returns the
+same box rather than chasing its own tail. Below a quarter-px it applies no transform, so an
+already-centered glyph (IES) stays identity, no churn. Geometric center is the pragmatic read of
+"optical" here: these product marks are visually balanced, so ink-center is optical-center. Children
+(custom SVG) are left alone — the JSDoc says center those yourself.
+
+**Verified** (docs site, live `getBBox` + applied transform): every product tile's rendered glyph
+center is (16,16) ±0.02px; SAT muted tile carries `translate(-1.00 -0.50)` (its exact offset); IES
+carries none. Build clean, no console errors.
+
+**Prototype note:** the screenshot Alvin showed is the prototype's OWN `src/shell/ProductTile.jsx`
+(a separate hand-written copy, not the vendored DS one), so this DS fix does NOT reach that screen on
+its own. Mirroring the same `CenteredGlyph` into the prototype copy is a one-file follow-up — offered,
+not yet done, and it sits in another session's working tree.
+
+## 2026-07-17 · First charting dependency: `Sankey` on Apache ECharts, themed from tokens
+
+Alvin wanted real data-vis (a Sankey) — the existing `Sparkline` is a hand-rolled SVG with no chart
+engine, which doesn't scale to flow/layout charts. Added `echarts` (^6.1) as the system's **first**
+runtime chart dependency and a new `Sankey` component (`src/components/Sankey/`).
+
+The tension: ECharts paints on a `<canvas>` and takes a JS `option` object of literal color strings — it
+can't read `--vds-*` CSS custom properties the way our SCSS components do. Resolution — the component
+reads the **live resolved hex** of each token off the host via `getComputedStyle().getPropertyValue()`
+(the same trick the docs ColorUsage table uses; the browser substitutes the `var()` chain to a hex), then
+feeds those into the `option`. To stay live across theme flips, a `MutationObserver` on
+`<html>`'s `class` re-runs the render on light↔dark toggle, and a `ResizeObserver` calls `chart.resize()`.
+Node colors come from the categorical **accent** palette (no good/bad hue meaning); links draw as a soft
+source→target gradient with `emphasis.focus: 'adjacency'` so hovering lights up a whole path. Animation is
+gated on `prefers-reduced-motion`. The `.scss` owns only the container (surface, radius, sizing) — the
+canvas is themed entirely in JS, which is the honest boundary given canvas can't consume our tokens.
+
+`ref` forwards to the **root div** (house convention — every other component does), not the ECharts
+instance. The init effect uses `[]` deps and reads live inputs through a `cfg` ref; a second effect re-runs
+the stored `render` closure when data/props change, so the chart re-themes and re-renders without a costly
+dispose/re-init.
+
+**Label clipping fix:** last-column node labels draw to their right and were clipping the container edge.
+Reserved a right gutter (`series.right: 12%` horizontal, `10%` vertical + a bottom gutter) rather than
+per-node `label.position` flipping — the per-node approach proved unreliable for sankey nodes.
+
+**Verification note:** SCSS bundle builds clean and `vds-sankey` is in `dist/vipre.css`; verified live in
+the docs site (asset-coverage + threat-triage examples render, labels no longer clip, no console errors).
+The token-gutter is a standard ECharts `grid`-style margin. Browser-driving was intermittent all session
+from a flapping tool classifier + a hash-router reload gotcha (see 07).
+
+**Token purity follow-up:** the tooltip's drop-shadow and corner radius were initially inline literals in
+`extraCssText` (the tooltip is a DOM node, so canvas token-reads don't reach it). Bound them to
+`--vds-shadow-lg` / `--vds-radius-md` (read as CSS strings in `readVars`, interpolated into the
+`extraCssText` template). The component is now fully token-bound — every color, the shadow, and both radii
+resolve from `--vds-*`; nothing is a raw value.
+
+## 2026-07-29 · Filter — the table filter popover (+ pills, check list, chips, compare)
+
+Tables across the product each grew their own filter UI (the MSP accounts table had a bespoke
+`Filter` button + popover; the account-tree column had another). This lands ONE filter surface in
+the DS so they converge, built as a **shell rather than a fixed filter set** — `Filter` owns the
+trigger/panel/footer chrome, and each table composes whichever controls it needs inside it.
+
+**Shipped:** `Filter`, `FilterGroup`, `FilterPills`, `FilterCheckList`, `FilterChips`,
+`FilterCompare`, `useFilterPanel`. Docs page at `/primitives/filter` with 11 sections.
+
+- **Shell, not a schema.** The alternative was a declarative `filters={[…]}` config. Rejected: every
+  table would then need the DS to grow a new field type before it could ship, and the config would
+  slowly reinvent JSX. Composition means a table can drop in any DS input — Select, Slider,
+  DatePicker, Switch — and still get one consistent panel.
+- **`onApply`'s PRESENCE picks the commit model.** No `mode="live|apply"` enum: passing an apply
+  handler *is* the statement that changes should be staged. Live (no handler) shows a "Done" button
+  instead, so the footer never looks amputated. Live is right for client-side filtering where the
+  result count updates as you click; apply is right when filtering costs a request.
+- **Three-band panel** — fixed head, scrolling body, fixed foot. The two things you need while
+  scanning a long filter set ("how do I undo this", "how many rows is this leaving me") must not
+  scroll away. Only the body scrolls, and it sets `overscroll-behavior: contain` so the page behind
+  doesn't chain-scroll.
+- **Space between groups, not hairlines.** Groups are already short and labelled; a rule between
+  every one turns a 6-group panel into a ladder. Head/foot keep their hairlines because there the
+  line means "this edge is fixed", not "new topic".
+- **`FilterPills` is the multi-select twin of `SegmentedControl`.** SegmentedControl picks exactly
+  one and can't return to "nothing picked" — which makes it wrong for an optional filter. Pills are
+  independent `aria-pressed` toggles that wrap; `single` gives one-of where clicking the live pill
+  clears it.
+- **Pills use soft brand fill, not solid.** Several can be on at once, and a row of solid primary
+  fills competes with the footer's one real call to action.
+- **Facet counts are the feature, and a 0-count option is DISABLED, not hidden.** The counts say
+  what a pick is worth *before* you make it. Hiding empties makes the list reshuffle under the
+  cursor, which is worse than a dead row. Counts are tabular-figure so they form a scannable column.
+- **`FilterChips` lives ABOVE the table, outside the popover** — a filter you can't see from the
+  table is a filter you forget you set. Each chip's ✕ carries its own label ("Remove Type Reseller")
+  so the row isn't a stack of identical "remove" buttons.
+- **`FilterCompare` exists because sliders need a ceiling.** For spend/seats/device counts there
+  isn't one, and an invented max is always wrong for somebody — so operator + number instead.
+
+**Tokens:** no new global tokens. Two decisions worth recording: (a) the group count badge uses
+`primary-soft` bg + `primary` text, matching `Badge --primary` rather than inventing
+`--vds-on-primary-soft`; (b) the comparator's 2px well inset is a local `--vds-filter-op-nest`,
+following SideNav's `--nest` precedent — it's a concentric-nesting step, not a spacing choice, and
+the spacing scale starts at 4px.
+
+**Verified** in the docs site: all 11 sections render, no console errors; trigger badge 3→4 and the
+group badge Status 1→2 on toggle; collapsible group expands via `aria-expanded`; the zero-count DNS
+row renders disabled; end-to-end in the table demo — checking Distributor produced the chip, cut the
+table 4→2 rows, and lit the trigger badge.
+
+**Testing gotcha (cost ~20 min):** synthetic `.click()` never fires `mousedown`, and Popover
+dismisses on `mousedown` — so scripted clicks leave multiple panels open and look like a
+dismissal bug. It isn't; a real pointer closes them. Separately, holding a DOM node reference
+across a React re-render silently no-ops the second click (the node was replaced). Re-query
+between clicks.
+
+**Not built (deliberate):** no saved/named filter sets, and no URL-state serialisation. Both are
+real needs at scale but they're app concerns — the DS shouldn't own a router or a persistence
+story. Revisit if two consumers hand-roll the same thing.
+
+## 2026-07-29 · Filter reuse audit → 5 hand-built parts replaced, ToggleChip promoted
+
+Audited the Filter component (shipped hours earlier) against what the DS already had. It composed
+Popover / Button / Checkbox / SearchInput / Icon correctly, but **five parts had been hand-rolled
+that already existed**. All five are now swapped, and the one genuinely-new part is promoted.
+
+**Replaced with the existing component:**
+- `FilterChips` chip → **`Tag`** with `onDismiss`. The hand-rolled ✕ was a **16px hit target with no
+  coarse-pointer rule**; Tag's grows to `--vds-tap-target` (44px) on touch while the glyph stays
+  small. This was a real accessibility regression, not a style nit. `dismissLabel` is passed
+  explicitly because the chip's children aren't plain text.
+- `FilterCompare` operator buttons → **`SegmentedControl`**. The hand-rolled version used
+  `aria-pressed` on a **mutually exclusive** set — a known anti-pattern; "one of these" is radios,
+  which is what SegmentedControl already renders. Verified: the compare row now emits three
+  `type="radio"` inputs and zero stray `aria-pressed`.
+- `FilterCompare` number field → **`NumberInput`** (steppers, min/max clamping, invalid state — a
+  bare `<input type="number">` had none).
+- Both count badges → **`Badge tone="primary"`**. The hand-styled versions had literally re-copied
+  Badge's soft-bg/brand-text pairing by hand.
+- Empty-list text → **`Text`** instead of a raw `<p>` + local type/colour rules.
+
+**Promoted: `ToggleChip` + `ToggleChipGroup`** — its own component + docs page at
+`/primitives/toggle-chip`. `FilterPills` is now a thin alias so one implementation serves both.
+The gap was real: `Tag` can be clicked but carries **no on/off state**, and `SegmentedControl` is
+radios so it can never be empty — which is exactly why an optional filter can't be one. The chip is
+useful well beyond filtering (tag pickers, category selectors), so it belongs outside Filter.
+
+`aria-pressed` is correct on ToggleChip *because* several can be on at once — the same attribute
+that was wrong on the comparator. The distinction is the point, and both docs pages say so.
+
+**Remaining gap, logged not fixed:** `NumberInput` has **no `prefix`/`suffix`** while `Input` does —
+so a unit ("seats") has to ride alongside the field instead of inside the border. Caught by trying
+to pass `suffix` and finding it would have spread onto the DOM node as an invalid attribute. Worth
+adding for parity; FilterCompare has a note pointing here.
+
+**Kept as-is, deliberately:** the facet row (Checkbox + trailing count) is small and filter-specific;
+`FilterGroup`'s collapsible re-implements a disclosure that `Accordion` also has, but Accordion
+brings its own card chrome that would fight the panel. Flagged so the duplication is a decision, not
+a drift. The three-band panel (fixed head / scroll body / fixed foot) is the same skeleton `Modal`
+uses — if a third consumer wants it, extract a shared scaffold rather than writing it a third time.
+
+**Verified in the docs site:** 9 ToggleChips + 4 Tag-based chips + 1 SegmentedControl + 1 NumberInput
+render inside Filter; zero `.vds-filter-pill` / `.vds-filter-chip__x` / `.vds-filter-compare__input`
+left; chip dismiss reads "Remove Type Reseller"; both pages error-free.
+
+---
+
+## D6 — Optical centering: align ink, not boxes
+
+**Decision:** any small element sitting beside text (status dot, numeral in a count pill, icon,
+entity tile, chip in a table cell) is aligned to the text's **cap-band centre**, not to its line
+box. `align-items: center` is not sufficient and is not the finished state.
+
+**Why:** Rubik's ascent/descent are asymmetric, so a text run's visible ink sits above its
+line-box centre — 0.85px at 11px. Small enough to pass code review, obvious enough on screen
+that it was reported and re-fixed four separate times (Badge dot, Tag label, Filter trigger
+count, PageHeader entity tile).
+
+**Method (and the trap):** measure with canvas font metrics (`measureText('H')`), not per-string
+ink. A label with a descender ("Managed") measures differently from one without ("Distributor"),
+so per-string centring makes sibling chips disagree with each other. Font metrics are
+string-independent. Numerals are the easy case — digits carry no descender, so their ink *is*
+the cap band.
+
+**Applied:** `Badge__dot` was nudged +0.03em toward the x-height on a reasoned (unmeasured)
+argument, which put it ~1.3px low; corrected to −0.085em, measured onto the text's ink centre.
+`Tag__label` and `Filter__count` both take +0.077em (≈0.85px at 11px). Each carries the
+measurement in a comment, because these read as magic numbers and get deleted otherwise.
+
+**Rule of thumb:** verify by comparing rendered centres in the browser. "Both boxes are
+centred" is precisely the state that looks wrong. Full method in
+`11-control-anatomy.md` §6 (D6).
+
+---
+
+## D7 — Reserve space for conditional affordances
+
+**Decision:** a row that can hold a conditional control carries a `min-height` equal to its
+tallest state, reserved against the token of whatever lands there. `align-items: center` on a
+content-sized row is not enough.
+
+**Why:** `Filter` grew twice on first interaction — the panel head by 8px when "Clear all"
+appeared (`activeCount > 0`), and each `FilterGroup` head by 4px when its count Badge appeared
+(`count > 0`). Both made the popover jump the moment you used it, which is exactly when a user
+is looking at it. Both were reported from use, not caught in review, because a static
+screenshot of either state looks correct.
+
+**Applied:** `.vds-filter__head { min-height: var(--vds-control-h-xs) }` (holds an xs Button)
+and `.vds-filter-group__head { min-height: var(--vds-space-5) }` (holds a Badge). Reserved
+against the token of the held component, so the reservation tracks it.
+
+**Testing note that matters:** measure the FIRST interaction. Later picks don't grow anything
+once the conditional element exists, so a second-click test passes while the bug is live — which
+is why three earlier attempts to reproduce this came back clean. Measure per group as well as
+per panel: a group head that grows pushes the panel even when the panel's own chrome is fine.
+
+Full method in `11-control-anatomy.md` §6 (D7).
+
+---
+
+## D8 — A row of numbers is one component, not N cards in a grid
+
+**Decision:** KPI strips use `MetricRow`, not `Grid`. The row publishes
+`--vds-metric-title-lines: 2`, which every `MetricCard.__title` inside it reads as a
+`min-block-size` — so a card whose title wraps to two lines has the same header height as one
+whose title doesn't, and every hero value sits on the same line.
+
+**Why:** a card is content-sized, so in a plain grid a two-line title ("Package Adoption")
+pushes its number a line below its neighbours. That alone would be a static blemish; what makes
+it a defect is that the **wrap point moves with the container width**, so the same row reads
+correctly at 1440, breaks at tablet, and re-forms on a phone. The numbers appear to jump around
+as you resize, and the row stops reading as one set of figures.
+
+**Why not the alternatives:**
+- *Bottom-anchor the figure in equal-height cards* — aligns card bottoms, not values. A card
+  with a delta Badge and one with a plain caption have different footer heights, so the numbers
+  still disagree.
+- *Subgrid* — aligns every band exactly and costs no dead space, but the padding lives on
+  `__in` and the card's internal gap would have to become the grid's `row-gap`, coupling a
+  card's insides to the row that holds it. Too clever to hand to a consuming team.
+- *Truncate or shorten titles* — pushes the fix onto every consumer, forever, and loses words.
+
+**Cost, stated plainly:** a row whose titles all fit one line carries ~24px of reserved space it
+doesn't visibly use. That's the price of the guarantee, and it's opt-in — a card standing alone
+defaults to `1` and stays content-sized.
+
+**Applied:** `MetricCard/MetricRow.jsx`, `.vds-metric-row` in `MetricCard.scss`, documented on
+the Metric Card page (§KPI row, §Why the row exists). First consumer: the MSP v2 dashboard.
+
+**Rule of thumb:** when a layout only breaks at *some* widths, fix the thing that varies with
+width — don't tune the one breakpoint you happened to screenshot.

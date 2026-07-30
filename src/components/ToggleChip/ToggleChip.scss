@@ -1,0 +1,93 @@
+// ============================================================================
+// ToggleChip — an on/off chip. Token-bound only.
+//
+// ON is a SOFT brand fill, not the solid primary: several chips can be on at
+// once, and a row of solid fills competes with whatever the real call to action
+// on the surface is (a filter panel's Apply, a form's Save). Soft carries "these
+// are picked" without shouting.
+// ============================================================================
+@use '../../styles/typography' as type;
+
+.vds-toggle-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vds-space-1-5);
+}
+
+.vds-toggle-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--vds-space-1-5);
+  border: var(--vds-border-w) solid var(--vds-line);
+  border-radius: var(--vds-radius-full);
+  background: transparent;
+  color: var(--vds-ink-muted);
+  font-family: var(--vds-font-sans);
+  cursor: pointer;
+  transition:
+    background-color var(--vds-dur-fast) var(--vds-ease-out),
+    border-color var(--vds-dur-fast) var(--vds-ease-out),
+    color var(--vds-dur-fast) var(--vds-ease-out);
+
+  &--md {
+    height: var(--vds-control-h-sm);
+    padding: 0 var(--vds-space-3);
+    @include type.step(detail);
+  }
+  &--sm {
+    height: var(--vds-control-h-xs);
+    padding: 0 var(--vds-space-2-5);
+    @include type.step(micro);
+  }
+
+  &:hover:not(:disabled) {
+    border-color: var(--vds-line-strong);
+    color: var(--vds-ink);
+  }
+  &:focus-visible {
+    outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+    outline-offset: var(--vds-control-ring-offset);
+  }
+  &:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &--on {
+    border-color: var(--vds-primary);
+    background: var(--vds-primary-soft);
+    color: var(--vds-primary);
+    font-weight: var(--vds-weight-medium);
+  }
+
+  // Facet count — tabular so a row of chips keeps its numbers steady.
+  &__count {
+    @include type.step(micro);
+    color: currentColor;
+    opacity: 0.7;
+    font-variant-numeric: tabular-nums;
+  }
+
+  // Decorative status dot. Meaning lives in the label, never in this colour.
+  &__dot {
+    width: var(--vds-space-1-5);
+    height: var(--vds-space-1-5);
+    border-radius: var(--vds-radius-full);
+    flex-shrink: 0;
+    background: var(--vds-ink-subtle);
+
+    &--success { background: var(--vds-success); }
+    &--warning { background: var(--vds-warning); }
+    &--danger  { background: var(--vds-danger); }
+    &--info    { background: var(--vds-info); }
+  }
+
+  // Comfortable target on touch, without inflating the chip on a mouse.
+  @media (pointer: coarse) {
+    min-height: var(--vds-tap-target);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vds-toggle-chip { transition: none; }
+}

@@ -87,11 +87,41 @@ export const Modal = forwardRef(function Modal(
 ) {
   const { mounted, closing } = usePresence(open, EXIT_MS)
   const panelRef = useRef(null)
+  const bodyRef = useRef(null)
   const titleId = useId()
   const descId = useId()
 
   useScrollLock(mounted)
   useFocusReturn(open)
+
+  // Soft scroll fade: instead of a hard clipped edge (or a divider rule) where the body
+  // scrolls, fade whichever edge still has hidden content. We toggle two CSS vars the
+  // stylesheet reads (--fade-top / --fade-bottom); each fade region collapses to 0 on an
+  // edge that's fully scrolled, so a fade only shows when it means "there's more". Watches
+  // scroll, panel resize, and content changes (e.g. an accordion opening) so it stays honest.
+  useEffect(() => {
+    const el = bodyRef.current
+    if (!mounted || !el) return
+    const update = () => {
+      el.style.setProperty('--fade-top', el.scrollTop > 1 ? '1' : '0')
+      el.style.setProperty(
+        '--fade-bottom',
+        Math.ceil(el.scrollTop + el.clientHeight) < el.scrollHeight - 1 ? '1' : '0',
+      )
+    }
+    update()
+    el.addEventListener('scroll', update, { passive: true })
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    // childList/characterData only — NOT attributes, or our own --fade-* writes would loop.
+    const mo = new MutationObserver(update)
+    mo.observe(el, { childList: true, subtree: true, characterData: true })
+    return () => {
+      el.removeEventListener('scroll', update)
+      ro.disconnect()
+      mo.disconnect()
+    }
+  }, [mounted])
 
   // Move focus into the panel on open.
   useEffect(() => {
@@ -164,7 +194,7 @@ export const Modal = forwardRef(function Modal(
             )}
           </header>
         )}
-        <div className="vds-modal__body">{children}</div>
+        <div ref={bodyRef} className="vds-modal__body">{children}</div>
         {footer != null && <footer className="vds-modal__footer">{footer}</footer>}
       </Surface>
     </div>,

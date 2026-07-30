@@ -13,6 +13,7 @@
 @use '../components/StatTile/StatTile';
 @use '../components/MetricCard/MetricCard';
 @use '../components/Sparkline/Sparkline';
+@use '../components/Sankey/Sankey';
 @use '../components/Table/Table';
 @use '../components/SideNav/SideNav';
 @use '../components/AppShell/AppShell';
@@ -71,7 +72,9 @@
 @use '../components/Skeleton/Skeleton';
 @use '../components/Avatar/Avatar';
 @use '../components/Tag/Tag';
+@use '../components/ToggleChip/ToggleChip';
 @use '../components/EmptyState/EmptyState';
+@use '../components/Filter/Filter';
 @use '../components/DescriptionList/DescriptionList';
 @use '../components/VisuallyHidden/VisuallyHidden';
 // Text/Heading have no component styles — they use the typescale classes

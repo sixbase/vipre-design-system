@@ -192,3 +192,45 @@ A single-line row's height is set by its tallest cell. An expand-caret `<button>
 buttons a small negative block margin (`margin: -0.25rem 0`) so their box doesn't push the row taller
 than its text line, and prefer `Icon size="xs"` (14px) over `sm` for in-cell chips. Verify by
 measuring row height, not by eye — 34px vs 40px is invisible in a screenshot but real in a 50-row log.
+
+## Canvas charts (ECharts) can't read `--vds-*` — resolve tokens to hex in JS
+
+A `<canvas>`-based chart (`Sankey`) takes a JS `option` of literal colors; it can't consume our CSS
+custom properties like an SCSS component. The bridge: read the **resolved** value with
+`getComputedStyle(host).getPropertyValue('--vds-accent-azure')` — the browser substitutes the whole
+`var()` chain down to a hex — and feed those into the option. To stay live, re-run the render on two
+signals: a `MutationObserver` on `<html>`'s `class` (light↔dark flip) and a `ResizeObserver`
+(`chart.resize()`). The `.scss` should own only the container; don't try to token-theme the canvas from
+CSS — it won't reach the paint. This is the pattern any future ECharts/canvas viz should copy.
+
+## Verifying a React edit needs a HARD reload, not a hash-route nav
+
+Chasing a "my fix isn't showing" ghost on the docs site: editing a component that runs its setup in a
+`useEffect([])` (e.g. ECharts `init`) does **not** re-run under Vite Fast Refresh — the instance is
+preserved — and navigating the hash router to the *same* `#/route` doesn't reload the page either. So
+the screenshot kept showing the very first render across several edits. To actually see a component-init
+change, force `location.reload()` (or unmount/remount by clicking away to another route and back). Lesson:
+when a browser screenshot looks byte-identical after a real code change, suspect a stale mount before
+suspecting the code.
+
+## A misalignment that only shows at some widths is a wrapping bug
+
+If a row looks right on your monitor and wrong on a tablet, stop adjusting the breakpoint and go
+find what changes with width. Nine times out of ten it's a text block that gains a line: the
+block below it moves down, and only on the card whose label happened to wrap. Reserving the
+taller state (`min-block-size: calc(var(--lines) * 1lh)`) fixes every width at once, where a
+per-breakpoint nudge fixes exactly the width you tested. `1lh` is the unit to reach for — it
+tracks whatever line-height the typescale step set, so the reservation can't drift out of sync
+with the type.
+
+## `minmax(min(Xpx, 100%), 1fr)` collapses unless the grid has an explicit width
+
+The auto-fit recipe we use everywhere contains a percentage, so the grid's width depends on a
+track that depends on the grid's width. In a normal block context the browser resolves that
+against the parent and all is well — but drop the same grid into any shrink-to-fit context (a
+flex row, a table cell, an inline-block) and it breaks the cycle by resolving the percentage
+against zero: the whole row collapses to ~2px and every card inside it goes with it. `Grid`
+already carried `width: 100%` for this reason; `MetricRow` didn't, and its very first render —
+inside the docs `Preview` canvas, which is `display: flex` — collapsed. If a new component uses
+that track recipe, give it `width: 100%` in the same declaration block, and test it once inside
+a flex parent before shipping.

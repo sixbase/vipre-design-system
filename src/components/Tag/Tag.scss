@@ -30,7 +30,18 @@
   &--sm { height: 1.375rem; padding: 0 var(--vds-space-2);   @include type.step(micro); }
   &--md { height: var(--vds-control-h-xs); padding: 0 var(--vds-space-2-5); @include type.step(detail); font-weight: var(--vds-weight-medium); }
 
-  &__label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  // Optical centering, measured from FONT metrics (not per-string ink — a label with a
+  // descender like "Managed" measures differently from "Distributor", so per-string
+  // centering would make chips disagree with each other). At sm (11px Rubik in a 22px
+  // box) the baseline lands 14px down, putting the cap-height band's centre 0.85px ABOVE
+  // the box centre, so the text reads high. This drops it onto the cap centre; em-based
+  // so it tracks the type step.
+  &__label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transform: translateY(0.077em);
+  }
 
   // ---- neutral keeps a visible hairline (its fill matches the canvas) ----
   &--neutral { border-color: var(--vds-line); }

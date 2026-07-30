@@ -1,5 +1,39 @@
-import { forwardRef, useId } from 'react'
+import { forwardRef, useId, useLayoutEffect, useRef, useState } from 'react'
 import { cx } from '../../lib/cx.js'
+
+/* Optically center a glyph on the 32×32 grid.
+
+   Consumer glyphs are drawn to their OWN bounds — most Material Symbols sit a
+   fraction off the tile's true center, and each by a different amount (measured:
+   some land dead-on, some off by ~1px in x or y). Hand-nudging per glyph would be
+   a magic number per product and would break the moment someone passes a new one.
+
+   Instead we measure the rendered path box once and translate it so its center
+   lands at (16,16). getBBox reports the ink's geometry in local coordinates and
+   ignores the element's own transform, so this is stable — a re-measure returns
+   the same box, never chasing its own tail. Below a quarter-px we leave it alone,
+   so an already-centered glyph (like IES) takes an identity transform, not churn.
+   Geometric center is the pragmatic read of "optical center" here; these product
+   marks are visually balanced, so their ink center is their optical center. */
+function CenteredGlyph({ glyph, fill, style }) {
+  const ref = useRef(null)
+  const [transform, setTransform] = useState(undefined)
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el) return
+    let b
+    try {
+      b = el.getBBox()
+    } catch {
+      return // not rendered (e.g. display:none) — leave it uncentered
+    }
+    if (!b.width && !b.height) return
+    const dx = 16 - (b.x + b.width / 2)
+    const dy = 16 - (b.y + b.height / 2)
+    setTransform(Math.abs(dx) < 0.25 && Math.abs(dy) < 0.25 ? undefined : `translate(${dx.toFixed(2)} ${dy.toFixed(2)})`)
+  }, [glyph])
+  return <path ref={ref} d={glyph} transform={transform} fill={fill} style={style} />
+}
 
 /**
  * ProductTile
@@ -16,7 +50,9 @@ import { cx } from '../../lib/cx.js'
  *
  * Props:
  * - glyph:    string — an SVG path `d` drawn on the 32×32 grid (see the SideNav
- *             docs for ready-made product glyphs). Ignored when children given.
+ *             docs for ready-made product glyphs). Optically centered for you —
+ *             draw it to its own bounds and the tile lands it on center. Ignored
+ *             when children given (center those yourself).
  * - children: custom SVG content (e.g. a <path>/<g>) rendered on the same
  *             32×32 grid instead of `glyph`. Muted tint is NOT applied to
  *             children — style them yourself.
@@ -52,7 +88,7 @@ export const ProductTile = forwardRef(function ProductTile(
         {...props}
       >
         <rect width="32" height="32" rx="8" style={{ fill: 'var(--vds-midnight-900)' }} />
-        {children ?? (glyph && <path d={glyph} style={{ fill: 'var(--vds-midnight-400)' }} />)}
+        {children ?? (glyph && <CenteredGlyph glyph={glyph} style={{ fill: 'var(--vds-midnight-400)' }} />)}
       </svg>
     )
   }
@@ -74,7 +110,7 @@ export const ProductTile = forwardRef(function ProductTile(
     >
       <rect width="32" height="32" rx="8" fill={`url(#${bg})`} />
       <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke={`url(#${bd})`} strokeOpacity="0.25" />
-      {children ?? (glyph && <path d={glyph} fill={`url(#${gl})`} />)}
+      {children ?? (glyph && <CenteredGlyph glyph={glyph} fill={`url(#${gl})`} />)}
       <defs>
         {/* Tile face: accent → deepest navy, top-lit. */}
         <linearGradient id={bg} x1="16" y1="0" x2="16" y2="32" gradientUnits="userSpaceOnUse">

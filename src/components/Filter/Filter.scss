@@ -1,0 +1,303 @@
+// ============================================================================
+// Filter — the table/list filter popover and its building blocks.
+//
+// The panel is a THREE-BAND layout: a fixed head (title + clear all), a
+// scrolling body of groups, and a fixed foot (result count + actions). Head and
+// foot stay put so the two things you need while scanning a long filter set —
+// "how do I undo this" and "how many rows is this leaving me" — never scroll
+// away. The body is the only scroller; the panel itself never grows past the
+// viewport (Popover caps its height and we fill that).
+//
+// Separation inside the body is SPACE, not rules: filter groups are already
+// short and labelled, and hairlines between every one of them turns a 6-group
+// panel into a ladder. The head/foot bands keep their hairlines because they
+// are chrome around a scroll region — there the line means "this edge is fixed".
+// ============================================================================
+@use '../../styles/typography' as type;
+
+.vds-filter {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;      // lets the body scroll inside Popover's height cap
+  padding: 0;         // the bands own their padding, so head/foot can sit flush
+  overflow: hidden;   // clip the bands to the panel radius
+
+  // ---- head ----------------------------------------------------------------
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--vds-space-2);
+    flex-shrink: 0;
+    padding: var(--vds-space-3) var(--vds-space-4);
+    border-bottom: var(--vds-border-w) solid var(--vds-line);
+  }
+
+  // The head must not change height when "Clear all" appears — a panel that grows 8px
+  // the moment you pick something makes the whole popover jump. The title reserves the
+  // xs-button height so the row measures the same with or without the button (and the
+  // flex centring keeps the label optically centred in that reserved space).
+  &__title {
+    @include type.step(body);
+    font-weight: var(--vds-weight-medium);
+    color: var(--vds-ink);
+    display: flex;
+    align-items: center;
+    min-height: var(--vds-control-h-xs);
+  }
+
+  // Badge paints the trigger's count, but a Badge is sized for WORDS ("Active"): its 8px
+  // side padding made a single digit 23px wide, and its own margin stacked on top of the
+  // Button's 8px gap for 14px on the right against 8px on the left — the label ended up
+  // floating between two unequal gaps.
+  //
+  // So: drop the margin (the Button's gap already spaces the slot) and trade the word
+  // padding for a min-width, which is what a COUNTER wants — one digit reads as a round
+  // 20px pill, two digits grow symmetrically instead of starting over-wide.
+  &__count {
+    // MATCHES the leading icon's gap (--vds-space-2) so the label sits between two equal
+    // gaps. The Button's own gap doesn't reach this slot — the label box absorbs it — so
+    // dropping the margin entirely put the badge flush against the "r". Measured: 8px
+    // icon-to-text, 8px text-to-badge.
+    margin-left: var(--vds-space-2);
+    min-width: var(--vds-space-5);
+    padding-inline: var(--vds-space-1);
+    justify-content: center;
+  }
+
+  // ---- trigger -------------------------------------------------------------
+  // With a count chip, the trigger's trailing pad is DERIVED from the chip's own vertical
+  // inset so the space above, right of, and below the chip is identical. That inset is just
+  // the leftover half-height, (control height - chip height) / 2, minus the border the
+  // measurement includes. The Button's default trailing pad is tuned for TEXT — a letter
+  // carries whitespace inside its glyph box, a filled chip's ink does not — so left as-is
+  // it reads as a hole after the chip. Per size, because the control height is per size.
+  &__trigger--counted {
+    &.vds-button--sm { padding-inline-end: calc((var(--vds-control-h-sm) - var(--vds-space-5)) / 2 - var(--vds-border-w)); }
+    &.vds-button--md { padding-inline-end: calc((var(--vds-control-h-md) - var(--vds-space-5)) / 2 - var(--vds-border-w)); }
+    &.vds-button--lg { padding-inline-end: calc((var(--vds-control-h-lg) - var(--vds-space-5)) / 2 - var(--vds-border-w)); }
+  }
+
+  // ---- body ----------------------------------------------------------------
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--vds-space-5);
+    flex: 1;
+    min-height: 0;
+    padding: var(--vds-space-4);
+    overflow-y: auto;
+    overscroll-behavior: contain;   // don't chain the scroll to the page behind
+  }
+
+  // ---- foot ----------------------------------------------------------------
+  &__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--vds-space-3);
+    flex-shrink: 0;
+    padding: var(--vds-space-3) var(--vds-space-4);
+    border-top: var(--vds-border-w) solid var(--vds-line);
+  }
+
+  // The count NEVER wraps. It's the panel's one live readout, and reflowing it to a second
+  // line changes the footer's height — so the panel would grow and shrink under the cursor
+  // as the numbers change while you filter. The panel's default width is set to hold this
+  // row (see Filter.jsx); nowrap here is what makes that guarantee hold if a consumer's
+  // counts run longer than the ones we sized for.
+  &__result {
+    @include type.step(detail);
+    color: var(--vds-ink-muted);
+    white-space: nowrap;
+    b {
+      color: var(--vds-ink);
+      font-weight: var(--vds-weight-medium);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--vds-space-2);
+    margin-left: auto;
+    flex-shrink: 0;   // the buttons hold their size; the count band gives way first
+  }
+}
+
+// ---- group -----------------------------------------------------------------
+.vds-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vds-space-2);
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--vds-space-2);
+    // Reserve the count Badge's height. The head is 16px on a bare label and 20px once a
+    // Badge lands in it, so the FIRST pick in a group grew the whole panel by 4px — the
+    // panel jumping the moment you use it. Same rule as the panel head's "Clear all":
+    // anything that appears conditionally gets its space reserved up front.
+    min-height: var(--vds-space-5);
+
+    &--button {
+      width: 100%;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      font-family: inherit;
+      cursor: pointer;
+      &:focus-visible {
+        outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+        outline-offset: var(--vds-control-ring-offset);
+        border-radius: var(--vds-radius-sm);
+      }
+    }
+  }
+
+  &__label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--vds-space-1-5);
+    @include type.step(detail);
+    font-weight: var(--vds-weight-medium);
+    color: var(--vds-ink);
+  }
+
+  &__hint {
+    @include type.step(micro);
+    margin: 0;
+    color: var(--vds-ink-subtle);
+    line-height: var(--vds-leading-snug);
+  }
+
+  &__chev {
+    flex-shrink: 0;
+    color: var(--vds-ink-subtle);
+    transition: transform var(--vds-dur-base) var(--vds-ease-out);
+    &--open {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+// ---- pills -----------------------------------------------------------------
+// FilterPills is an alias of ToggleChipGroup — its styles live in ToggleChip.scss.
+
+// ---- check list (facets) ----------------------------------------------------
+.vds-filter-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vds-space-2);
+
+  &__all {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--vds-space-2);
+  }
+
+  &__picked {
+    @include type.step(micro);
+    color: var(--vds-ink-subtle);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__scroll {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    // Negative inset + matching padding so a row's hover fill runs to the
+    // group's edge while the text stays aligned with everything above it.
+    margin: 0 calc(-1 * var(--vds-space-2));
+    padding: 0 var(--vds-space-2);
+  }
+
+  &__empty {
+    // Text owns the type + tone; this only gives it a box to sit in.
+    margin: 0;
+    padding: var(--vds-space-4) var(--vds-space-2);
+    text-align: center;
+  }
+}
+
+.vds-filter-row {
+  display: flex;
+  align-items: center;
+  gap: var(--vds-space-2-5);
+  padding: var(--vds-space-1-5) var(--vds-space-2);
+  border-radius: var(--vds-radius-sm);
+  cursor: pointer;
+  transition: background-color var(--vds-dur-fast) var(--vds-ease-out);
+
+  &:hover {
+    background: var(--vds-surface-sunken);
+  }
+
+  &--off {
+    cursor: default;
+    opacity: 0.5;
+    &:hover { background: transparent; }
+  }
+
+  &__label {
+    @include type.step(detail);
+    color: var(--vds-ink);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  // Facet count — pushed to the far edge so the numbers form a scannable column.
+  &__count {
+    @include type.step(micro);
+    margin-left: auto;
+    color: var(--vds-ink-subtle);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+// ---- applied chips (live above the table) -----------------------------------
+.vds-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vds-space-1-5);
+}
+
+.vds-filter-chip__key {
+  // Tag paints the chip; this only dims the field name inside it, so the value
+  // reads as the content and the field as context.
+  opacity: 0.75;
+  &::after { content: ':'; }
+}
+
+// ---- numeric comparator ------------------------------------------------------
+// The operator set is a SegmentedControl and the number is a NumberInput, so this
+// only lays them out in a row.
+.vds-filter-compare {
+  display: flex;
+  align-items: center;
+  gap: var(--vds-space-2);
+
+  &__field {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__unit {
+    flex-shrink: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vds-filter-group__chev,
+  .vds-filter-row {
+    transition: none;
+  }
+}

@@ -1,0 +1,18 @@
+// ============================================================================
+// Sankey — flow diagram host. The chart itself is painted on a <canvas> by
+// ECharts, themed from --vds-* tokens in JS (canvas can't read CSS variables),
+// so this file only owns the container: sizing, surface, and the rounded frame.
+// ============================================================================
+.vds-sankey {
+  position: relative;
+  width: 100%;
+  min-height: 200px;
+  border-radius: var(--vds-radius-md);
+  background: var(--vds-surface);
+  color: var(--vds-ink);
+
+  &__canvas {
+    position: absolute;
+    inset: 0;
+  }
+}

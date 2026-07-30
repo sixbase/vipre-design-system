@@ -36,17 +36,33 @@ function labelOf(col) {
   return typeof header === 'string' || typeof header === 'number' ? String(header) : String(col.key)
 }
 
-/* The sort glyph — a self-contained caret pair (DS ships no icons). The active
-   direction is conveyed by the `--asc`/`--desc` modifier (CSS dims the other). */
+/* The sort glyph — ONE arrow (DS ships no icons), drawn pointing up and rotated 180°
+   for `desc` by the `--desc` modifier. One arrow, not a pair: a pair has to say "this
+   one is on, that one is off" through opacity, which at 8px is a difference of a few
+   grey pixels. A single arrow states the direction by pointing, which survives the size.
+   Unsorted columns show it dimmed — the affordance stays visible, so you can tell a
+   sortable column from a fixed one before you touch it.
+
+   An arrow rather than a bare caret: the tail is what says which way the rows will MOVE. */
 function SortGlyph({ direction }) {
   return (
     <span
       className={cx('vds-table__sort', direction && `vds-table__sort--${direction}`)}
       aria-hidden="true"
     >
-      <svg width="8" height="12" viewBox="0 0 8 12" fill="none">
-        <path className="vds-table__sort-up" d="M4 0L7 4H1L4 0Z" fill="currentColor" />
-        <path className="vds-table__sort-down" d="M4 12L1 8H7L4 12Z" fill="currentColor" />
+      {/* Height is the HEADER'S CAP HEIGHT, not a generic icon box: the header is 11px
+          Rubik, whose caps measure 7.7px, so the arrow spans 8px and sits level with the
+          letters beside it. WIDTH is not tied to that — the head is 6 wide against a 3-tall
+          rise, because a head narrower than about twice its rise stops reading as a head at
+          this size and turns back into a tick. Stroke is 1.5: at 1 the arrow disappeared
+          into the header rule next to 11px text. Round caps match the app's icon family. */}
+      <svg width="9" height="8" viewBox="0 0 9 8" fill="none" stroke="currentColor"
+        strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        {/* Drawn SYMMETRICALLY about the box's centre (tip at y .75, tail at 7.25, so the
+            ink centres on y 4 exactly, matching the box). The desc state is this same path
+            rotated 180°, so any offset between the two centres would shift the arrow
+            between states instead of simply turning it over. */}
+        <path d="M4.5 7.25V0.75M1.5 3.75L4.5 0.75L7.5 3.75" />
       </svg>
     </span>
   )

@@ -346,7 +346,7 @@ export function SideNavPage() {
           name: 'ProductTile',
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
-            [{ code: 'glyph' }, { code: 'string' }, '—', 'An SVG path drawn on the 32×32 grid'],
+            [{ code: 'glyph' }, { code: 'string' }, '—', 'An SVG path drawn on the 32×32 grid — the tile centers it for you'],
             [{ code: 'children' }, { code: 'node' }, '—', 'Custom SVG content instead of glyph'],
             [{ code: 'muted' }, { code: 'boolean' }, { code: 'false' }, 'The flat navy "not subscribed" look'],
             [{ code: 'size' }, { code: 'number' }, { code: '32' }, 'Rendered size in px'],

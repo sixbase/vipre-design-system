@@ -20,6 +20,7 @@ import { CardPage } from './pages/CardPage.jsx'
 import { StatTilePage } from './pages/StatTilePage.jsx'
 import { MetricCardPage } from './pages/MetricCardPage.jsx'
 import { SparklinePage } from './pages/SparklinePage.jsx'
+import { SankeyPage } from './pages/SankeyPage.jsx'
 import { TablePage } from './pages/TablePage.jsx'
 import { SideNavPage } from './pages/SideNavPage.jsx'
 import { CurrentLeftNavPage } from './pages/CurrentLeftNavPage.jsx'
@@ -32,6 +33,8 @@ import { ResponsivenessPage } from './pages/ResponsivenessPage.jsx'
 import { RadioPage } from './pages/RadioPage.jsx'
 import { SliderPage } from './pages/SliderPage.jsx'
 import { SegmentedControlPage } from './pages/SegmentedControlPage.jsx'
+import { FilterPage } from './pages/FilterPage.jsx'
+import { ToggleChipPage } from './pages/ToggleChipPage.jsx'
 import { SearchInputPage } from './pages/SearchInputPage.jsx'
 import { ComboboxPage } from './pages/ComboboxPage.jsx'
 import { VisuallyHiddenPage } from './pages/VisuallyHiddenPage.jsx'
@@ -123,6 +126,8 @@ export const NAV = [
       { path: '/primitives/switch', name: 'Switch', Page: SwitchPage },
       { path: '/primitives/slider', name: 'Slider', Page: SliderPage },
       { path: '/primitives/segmented-control', name: 'Segmented Control', Page: SegmentedControlPage },
+      { path: '/primitives/toggle-chip', name: 'Toggle Chip', Page: ToggleChipPage },
+      { path: '/primitives/filter', name: 'Filter', Page: FilterPage },
       { path: '/primitives/search-input', name: 'Search Input', Page: SearchInputPage },
       { path: '/primitives/password-input', name: 'Password Input', Page: PasswordInputPage },
       { path: '/primitives/number-input', name: 'Number Input', Page: NumberInputPage },
@@ -149,6 +154,7 @@ export const NAV = [
       { path: '/components/tag', name: 'Tag', Page: TagPage },
       { path: '/components/card', name: 'Card', Page: CardPage },
       { path: '/components/table', name: 'Table', Page: TablePage },
+      { path: '/components/sankey', name: 'Sankey', Page: SankeyPage },
       { path: '/components/description-list', name: 'Description List', Page: DescriptionListPage },
       { path: '/components/sparkline', name: 'Sparkline', Page: SparklinePage },
       { path: '/metrics/stat-tile', name: 'Stat Tile', Page: StatTilePage },
