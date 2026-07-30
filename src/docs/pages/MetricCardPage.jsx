@@ -2,7 +2,7 @@ import { DollarSign, Users, ShieldCheck, TrendingDown } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, Code, IC } from '../primitives.jsx'
-import { MetricCard, Grid } from '../../components/index.js'
+import { MetricCard, MetricRow, Grid } from '../../components/index.js'
 
 const ONE = { width: '100%', maxWidth: 380 }
 
@@ -17,10 +17,11 @@ export function MetricCardPage() {
     <ComponentPage
       colors={COMPONENT_COLORS.MetricCard}
       title="Metric Card"
-      description="A big, detailed number card — the fancy cousin of Stat Tile. Top to bottom it has a header (an icon chip, a title, and a time period), one big number with a badge showing how much it went up or down, an optional bar showing progress toward a goal, and an optional list of extra numbers. Use it when one number is the star of the panel and needs some backstory; use Stat Tile for quick one-line numbers. Built from Surface + Icon + Badge + Divider."
-      installCode={`import { MetricCard } from 'vipre-design-system'`}
+      description="A big, detailed number card — the fancy cousin of Stat Tile. Top to bottom it has a header (an icon chip, a title, and a time period), one big number with a badge showing how much it went up or down, an optional bar showing progress toward a goal, and an optional list of extra numbers. Use it when one number is the star of the panel and needs some backstory; use Stat Tile for quick one-line numbers. Built from Surface + Icon + Badge + Divider. Ships with MetricRow — the KPI strip that keeps a whole row of these numbers on one line."
+      installCode={`import { MetricCard, MetricRow } from 'vipre-design-system'`}
       props={[
         {
+          name: 'MetricCard',
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
             [{ code: 'icon' }, { code: 'icon component' }, '—', 'The icon shown in a soft chip'],
@@ -37,6 +38,17 @@ export function MetricCardPage() {
             [{ code: 'breakdown' }, { code: '{ label, value }[]' }, '—', 'A list of extra numbers at the bottom'],
             [{ code: 'onClick' }, { code: '() => void' }, '—', 'Turns the whole card into a button (lifts on hover, shows a focus ring)'],
             [{ code: 'interactive' }, { code: 'boolean' }, { code: 'false' }, 'Adds the hover lift even without onClick'],
+          ],
+        },
+        {
+          name: 'MetricRow',
+          headers: ['Prop', 'Type', 'Default', 'Description'],
+          rows: [
+            [{ code: 'min' }, { code: 'string' }, { code: "'220px'" }, 'How narrow a card may get before the row drops to fewer columns'],
+            [{ code: 'titleLines' }, { code: 'number' }, { code: '2' }, 'Lines of title every card reserves, so all the big numbers stay on one line. 1 turns it off'],
+            [{ code: 'gap' }, { code: 'string | number' }, { code: '--vds-space-4' }, 'Space between the cards'],
+            [{ code: 'as' }, { code: 'elementType' }, { code: "'div'" }, 'The element to render'],
+            [{ code: 'className' }, { code: 'string' }, '—', 'Your own class — override grid-template-columns here when you need exact columns at exact widths; the alignment still works'],
           ],
         },
       ]}
@@ -201,10 +213,73 @@ export function MetricCardPage() {
       </Section>
 
       <Section
+        title="KPI row"
+        note={
+          <>
+            The strip of numbers a dashboard opens with. Use <IC>MetricRow</IC> instead of a plain{' '}
+            <IC>Grid</IC> and every big number lands on the same line — even when one title is long
+            enough to wrap. Drag the page narrower and watch: the row reflows on its own width, and
+            the numbers stay in line the whole way down. One caveat: it reserves room for the
+            TITLE, so keep the small line under it ("Licensed", "Last 24h") to one line —
+            a period that wraps pushes its own number down again.
+          </>
+        }
+      >
+        <Preview
+          canvas={
+            <MetricRow>
+              <MetricCard icon={Users} iconTone="primary" title="Customers" period="All accounts" value={324} delta="+6" deltaCaption="vs last month" />
+              <MetricCard icon={Users} iconTone="azure" title="Seats" period="Licensed" value={50848} delta="+3%" deltaCaption="vs last month" />
+              <MetricCard icon={ShieldCheck} iconTone="emerald" title="Package Adoption" period="Across products" value={47} suffix="%" delta="+4%" deltaCaption="vs last quarter" />
+            </MetricRow>
+          }
+          code={`<MetricRow>
+  <MetricCard title="Customers"        period="All accounts"    value={324} … />
+  <MetricCard title="Seats"            period="Licensed"        value={50848} … />
+  {/* two-line title — its number still lines up with the others */}
+  <MetricCard title="Package Adoption" period="Across products" value={47} suffix="%" … />
+</MetricRow>`}
+        />
+      </Section>
+
+      <Section
+        title="Why the row exists"
+        note="Left: a plain grid. The two-line title pushes its number a line lower than its neighbours, and because titles wrap at different widths, the numbers appear to jump around as the window changes size. Right: the same three cards in a MetricRow, which reserves the same amount of title space on every card. Nothing else is different."
+      >
+        <Preview
+          canvas={
+            <div style={{ display: 'grid', gap: '1.5rem', width: '100%', maxWidth: 640 }}>
+              <Grid min="180px" gap={4}>
+                <MetricCard icon={Users} iconTone="primary" title="Customers" period="All accounts" value={324} />
+                <MetricCard icon={ShieldCheck} iconTone="emerald" title="Package Adoption" period="Across products" value={47} suffix="%" />
+                <MetricCard icon={TrendingDown} iconTone="danger" title="Alerts" period="Live" value={71} />
+              </Grid>
+              <MetricRow min="180px">
+                <MetricCard icon={Users} iconTone="primary" title="Customers" period="All accounts" value={324} />
+                <MetricCard icon={ShieldCheck} iconTone="emerald" title="Package Adoption" period="Across products" value={47} suffix="%" />
+                <MetricCard icon={TrendingDown} iconTone="danger" title="Alerts" period="Live" value={71} />
+              </MetricRow>
+            </div>
+          }
+          code={`{/* numbers drift out of line whenever a title wraps */}
+<Grid min="180px" gap={4}>…</Grid>
+
+{/* numbers hold one line at every width */}
+<MetricRow min="180px">…</MetricRow>`}
+        />
+      </Section>
+
+      <Section
         title="Markup"
         note="The rendered HTML with the vds- classes, for teams not using React. The look is pure CSS; the count-up numbers and the growing bar are JS (the React component animates them when the card scrolls into view — in plain HTML the values just sit there, which is fine). Interactive cards render as a <button>."
       >
-        <Code>{`<!-- icon chip tones: vds-metric--icon-{primary|success|warning|danger|azure|harbor|emerald|amber|rose|orchid|clay} -->
+        <Code>{`<!-- A KPI row. --vds-metric-title-lines is what holds every number on one line:
+     it inherits into each card and reserves that many lines of title. -->
+<div class="vds-metric-row" style="--vds-metric-row-min: 200px; --vds-metric-title-lines: 2">
+  … cards …
+</div>
+
+<!-- icon chip tones: vds-metric--icon-{primary|success|warning|danger|azure|harbor|emerald|amber|rose|orchid|clay} -->
 <div class="vds-surface vds-surface--radius-lg vds-surface--bordered vds-surface--elev-resting
             vds-metric vds-metric--icon-orchid">
   <div class="vds-metric__in">

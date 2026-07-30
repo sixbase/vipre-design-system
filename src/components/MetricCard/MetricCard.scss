@@ -4,8 +4,15 @@
 // list. Rests at level 1 (surface + line + whisper shadow-xs), matching Card /
 // StatTile; interactive cards lift to raised on hover.
 // ============================================================================
+@use 'sass:list';
+@use 'sass:map';
 @use '../../styles/typography' as type;
 @use '../../styles/mixins' as mix;
+
+// Read straight off the typescale so the header reservation below can't drift
+// out of sync with the steps the header actually renders at.
+$title-lh: list.nth(map.get(type.$scale, subheading), 2);
+$period-lh: list.nth(map.get(type.$scale, detail), 2);
 
 .vds-metric {
   width: 100%;
@@ -62,11 +69,32 @@
     flex-direction: column;
     gap: 1px;
     min-width: 0;
+    /* A row of KPI cards only reads as a row if every hero value sits on the
+       SAME line. It can't when the header is purely content-sized: a title that
+       wraps to two lines ("Package Adoption") pushes its value a line below its
+       single-line neighbours — and because the wrap point moves with the
+       container width, the row's numbers appear to jump around from breakpoint
+       to breakpoint. Fixed at the cause: reserve room for a set number of title
+       lines, so the header block is the same height whether a title wraps or not.
+
+       Reserved on the HEADING, not on the title: a min-height on the title
+       itself opens a gap between the title and its period line, which reads as
+       a mistake on every card that didn't need it. Here the slack falls below
+       the period instead, where it's simply air above the number.
+
+       Default 0 = no reservation, so a card standing on its own is untouched.
+       MetricRow sets 2 for every card it holds. */
+    min-block-size: calc(
+      var(--vds-metric-title-lines, 0) * #{$title-lh} + #{$period-lh} + 1px
+    );
   }
   &__title {
     @include type.step(subheading);
     color: var(--vds-ink);
     margin: 0;
+    // Prefer an even two-line split ("Package / Adoption") over a long line and
+    // an orphan, now that two lines are what the row reserves for anyway.
+    text-wrap: balance;
   }
   &__period {
     @include type.step(detail);
@@ -181,4 +209,43 @@
       --vds-metric-soft: var(--vds-accent-#{$fam}-soft);
     }
   }
+}
+
+// ============================================================================
+// MetricRow — the KPI strip a dashboard opens with.
+//
+// Two jobs, and the second is the reason it exists:
+//   1. Reflow the cards intrinsically, on the ROW's own width — auto-fit with a
+//      floor, so N-across steps down to fewer and finally to one without a
+//      single media query, and without a card ever being crushed.
+//   2. Hold every hero value on ONE line. It publishes the title-line
+//      reservation that MetricCard's __title reads (see above), so a card whose
+//      title wraps keeps the same header height as one whose title doesn't.
+//      Because that rides on a custom property rather than on the grid itself,
+//      a consumer can replace grid-template-columns wholesale (bespoke track
+//      counts at bespoke breakpoints) and still inherit the alignment.
+// ============================================================================
+.vds-metric-row {
+  // The alignment guarantee (read by .vds-metric__heading). Declared HERE, not
+  // inline from the component, so a consumer can still dial it per breakpoint
+  // from their own stylesheet — a row that goes label-left/value-right on a
+  // phone wants 1, not 2.
+  --vds-metric-title-lines: 2;
+
+  display: grid;
+  // NOT optional, and not cosmetic: the min() below contains a percentage, so in
+  // any shrink-to-fit context (a flex row, a table cell, an inline-block) the
+  // row's width would depend on a track that depends on the row's width. The
+  // browser breaks that cycle by resolving the percentage against zero and the
+  // whole row collapses to ~2px. An explicit width gives the percentage
+  // something to measure. Same reason .vds-grid carries one.
+  width: 100%;
+  // min() so the floor can never exceed the row itself — otherwise a container
+  // narrower than the floor overflows instead of going single-column.
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--vds-metric-row-min, 220px), 100%), 1fr));
+  // Equal rows: when the row wraps, the second row of cards matches the first
+  // rather than shrinking to its own content.
+  grid-auto-rows: 1fr;
+  gap: var(--vds-metric-row-gap, var(--vds-space-4));
+  min-width: 0;
 }

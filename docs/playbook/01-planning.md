@@ -39,7 +39,7 @@ All ✅ = built, token-bound, documented (with a framework-agnostic Markup secti
 
 **Feedback & display:** Badge · Tag · ToggleChip (+ ToggleChipGroup) · Avatar (+ AvatarGroup) · Alert · Progress · Skeleton · EmptyState · DescriptionList · VisuallyHidden
 
-**Data & metrics:** Table (sortable, selectable, sticky, opt-in `responsive` stacked-card mode) · StatTile · MetricCard · Sparkline · Sankey (Apache ECharts, token-themed — the system's first charting dependency)
+**Data & metrics:** Table (sortable, selectable, sticky, opt-in `responsive` stacked-card mode) · StatTile · MetricCard (+ MetricRow, the aligned KPI strip) · Sparkline · Sankey (Apache ECharts, token-themed — the system's first charting dependency)
 
 **App chrome:** AppShell (+ AppShellNavTrigger) · TopBar · SideNav (the MSP v2 navy rail, + ProductTile — caught up to the prototype 2026-07-16 except the account switcher, which waits on right-side `Popover` placement) · CurrentLeftNav (legacy shipped nav, frozen) · PageHeader · ScopeNavigator · TimeframeSelect
 

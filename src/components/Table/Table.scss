@@ -27,6 +27,11 @@
   // per-density cell padding (set by the density modifiers below)
   --vds-table-pad-y: var(--vds-space-2-5);
   --vds-table-pad-x: 0.875rem;
+  // The header runs one space step taller than a body row. Its label is the smallest type
+  // in the table, so at the body's pad-y the head read as just another row rather than as
+  // the thing the rows hang off; the extra step gives the column titles their own band.
+  // Its own token (not pad-y + a literal) so each density can set it from the scale.
+  --vds-table-head-pad-y: var(--vds-space-3);
 
   // Expand-caret box. The detail row indents by this same measure to align its
   // content under the caret, so the two must move together.
@@ -109,9 +114,25 @@
 
   &__th {
     @include type.step(eyebrow);
-    text-transform: uppercase;
+    // Sentence case, default tracking, and a step lighter than the eyebrow step ships.
+    // All three follow from dropping ALL-CAPS: the +0.04em exists to open up caps runs and
+    // only loosens mixed-case words; 600 exists to hold up small caps and reads heavy once
+    // the letters have ascenders and descenders to carry them. Overridden here rather than
+    // in the shared step, since other surfaces still use `eyebrow` for real caps labels.
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: var(--vds-weight-medium);
     color: var(--vds-ink-subtle);
-    padding: var(--vds-table-pad-y) var(--vds-table-pad-x);
+    // Symmetric padding. An asymmetric nudge used to live here to correct ALL-CAPS text,
+    // whose ink sits high in the line box because caps carry no descender. Mixed case
+    // fills the box normally — Type / Packages / Billing all have descenders — so the
+    // browser's own line-box centring is correct, and a nudge would tip the label low.
+    // OPTICALLY centred in the header bar, which is why the two pads differ by a hair:
+    // the bar's ink runs from the table's top edge down to and including the 1px bottom
+    // rule, so its visual middle sits half a pixel below the middle of the padding box.
+    // Splitting that 1px between the pads drops the label onto the bar's real centre.
+    padding: calc(var(--vds-table-head-pad-y) + 0.5px) var(--vds-table-pad-x)
+             calc(var(--vds-table-head-pad-y) - 0.5px);
     border-bottom: 1px solid var(--vds-line);
     white-space: nowrap;
     vertical-align: middle;
@@ -229,10 +250,12 @@
   &--comfortable {
     --vds-table-pad-y: var(--vds-space-2-5);
     --vds-table-pad-x: 0.875rem;
+    --vds-table-head-pad-y: var(--vds-space-3);
   }
   &--compact {
     --vds-table-pad-y: var(--vds-space-1-5);
     --vds-table-pad-x: var(--vds-space-2-5);
+    --vds-table-head-pad-y: var(--vds-space-2);
 
     .vds-table__td { @include type.step(caption); }
   }
@@ -253,7 +276,11 @@
     align-items: center;
     gap: var(--vds-space-1-5);
     width: 100%;
-    padding: var(--vds-table-pad-y) var(--vds-table-pad-x);
+    // Sortable headers zero the th's padding and carry it here, so this must stay in step
+    // with the th's padding above — otherwise a sortable column's label would sit at a
+    // different height from a plain one in the same row.
+    padding: calc(var(--vds-table-head-pad-y) + 0.5px) var(--vds-table-pad-x)
+             calc(var(--vds-table-head-pad-y) - 0.5px);
     border: 0;
     background: none;
     font: inherit;
@@ -270,29 +297,74 @@
     }
   }
   // right-aligned sortable columns flip the button content to the right
-  &__cell--right &__sort-btn { justify-content: flex-end; }
+  // Right-aligned columns put the sort glyph on the LEADING side, so the label's right edge
+  // lands on the column's right padding — the exact line the cells' digits end on. With the
+  // glyph trailing (the natural DOM order) it wedged between the label and the edge, leaving
+  // the header ~15px short of its own data and reading as though it were floating.
+  // row-reverse + flex-start packs to the right; flex-end would pack to the left.
+  &__cell--right &__sort-btn {
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+  }
   &__cell--center &__sort-btn { justify-content: center; }
 
   &__th--active { color: var(--vds-ink); }
 
-  // sort glyph — both carets dim by default; the active direction lights up
+  // sort glyph — ONE arrow, and only on the column that IS sorted. An arrow parked in every
+  // header is five claims that something is sorted when only one thing is, and the eye has
+  // to compare tones across the row to find the live one. Hidden, the sorted column's arrow
+  // is the only mark in the header band, so it's found instantly. Hovering (or tabbing to)
+  // any other header fades its arrow in, which is where the "you can sort this" answer
+  // belongs — at the moment you reach for it.
+  // Hidden with OPACITY, never display/visibility: the glyph keeps its 9px of the header
+  // either way, so sorting a column can't shove its label sideways.
   &__sort {
     display: inline-flex;
     flex-shrink: 0;
-    color: var(--vds-line-strong);
+    color: var(--vds-ink-subtle);
+    opacity: 0;
+    // Optical nudge: `align-items: center` lines the glyph's BOX up with the label's line
+    // box, but a line box carries room for descenders the label mostly doesn't use, so its
+    // ink sits half a pixel above the box's middle. The arrow follows the ink, not the box.
+    // Margin, never transform — transform belongs to the desc flip, and a nudge folded into
+    // that would invert with it and push the arrow the wrong way when sorted descending.
+    // EQUAL AND OPPOSITE, because `align-items: center` centres the MARGIN box: a lone
+    // negative top margin shrinks that box and the centring gives back half the nudge.
+    // A matched pair leaves the box the same size and moves it whole.
+    margin-top: -0.5px;
+    margin-bottom: 0.5px;
+    // The flip SNAPS — only the tone fades. A 7x8 arrow spun through 180deg re-rasterises
+    // its 1px stroke on every frame, and at that size the antialiasing churn reads as a
+    // shake, not as motion. There's nothing to follow in the in-between frames anyway: the
+    // arrow is either up or down, and both ends are legible. Tone still animates, since
+    // grey -> primary is a real fade with no geometry to jitter.
+    transition:
+      color var(--vds-dur-fast) var(--vds-ease-out),
+      opacity var(--vds-dur-fast) var(--vds-ease-out);
+    // No optical nudge: the glyph rides the same line box as its label. It used to be
+    // lifted 0.35px onto the CAP BAND, which was right while headers were ALL-CAPS (caps
+    // were the whole of the ink). Now that they're mixed case the label sits line-box
+    // centred, so lifting only the glyph would put the two 0.35px out of step.
   }
-  &__sort-up,
-  &__sort-down { opacity: 0.55; }
+  // NO hover reveal. Fading an arrow in under the pointer made one appear in each header
+  // the mouse crossed and vanish behind it — from the user's seat the arrow looked like it
+  // was chasing the cursor around the header row. "This column is sortable" is already
+  // carried by the pointer cursor and the label lifting to ink-muted; neither of those
+  // moves. Keyboard focus still shows it, since focus lands on one header at a time and
+  // there's no ambient pointer sweeping past.
+  &__sort-btn:focus-visible &__sort {
+    color: var(--vds-ink-muted);
+    opacity: 0.7;
+  }
 
-  &__sort--asc {
-    color: var(--vds-primary);
-    .vds-table__sort-down { opacity: 0.25; }
-    .vds-table__sort-up { opacity: 1; }
-  }
+  &__sort--asc,
   &__sort--desc {
     color: var(--vds-primary);
-    .vds-table__sort-up { opacity: 0.25; }
-    .vds-table__sort-down { opacity: 1; }
+    opacity: 1;
+  }
+  &__sort--desc { transform: rotate(180deg); }
+  @media (prefers-reduced-motion: reduce) {
+    &__sort { transition: none; }
   }
 
   // ---- empty state ----

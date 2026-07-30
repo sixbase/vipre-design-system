@@ -5,7 +5,7 @@
 export { Surface } from './Surface/index.js'
 export { Card } from './Card/index.js'
 export { StatTile } from './StatTile/index.js'
-export { MetricCard } from './MetricCard/index.js'
+export { MetricCard, MetricRow } from './MetricCard/index.js'
 export { Sparkline } from './Sparkline/index.js'
 export { Sankey } from './Sankey/index.js'
 export { Table } from './Table/index.js'

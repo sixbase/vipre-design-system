@@ -34,6 +34,12 @@ function mergeRefs(...refs) {
  * - loading:      spinner replaces the search icon
  * - shortcutHint: e.g. "⌘K" — chip shown while empty and unfocused
  * - size:         'sm' | 'md' | 'lg'   (default 'md')
+ * - capped:       cap the width at --vds-search-input-max-w (20rem) instead of
+ *                 filling its container. USE THIS in table/list toolbars: a field
+ *                 stretched across a wide monitor runs 1000px+ and reads as "write a
+ *                 paragraph", when the longest realistic query is a name of ~25
+ *                 characters. A field's width should hint at its expected input.
+ *                 Off by default so a field inside a form still fills its column.
  * - placeholder:  default 'Search…'
  * - all other native <input> attributes
  *
@@ -55,6 +61,7 @@ export const SearchInput = forwardRef(function SearchInput(
     loading = false,
     shortcutHint,
     size = 'md',
+    capped = false,
     placeholder = 'Search…',
     'aria-label': ariaLabel = 'Search',
     className,
@@ -113,7 +120,7 @@ export const SearchInput = forwardRef(function SearchInput(
     <Input
       ref={mergeRefs(ref, innerRef)}
       type="search"
-      className={cx('vds-search-input', className)}
+      className={cx('vds-search-input', capped && 'vds-search-input--capped', className)}
       size={size}
       placeholder={placeholder}
       aria-label={ariaLabel}
