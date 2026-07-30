@@ -39,14 +39,14 @@
     height: var(--vds-badge-dot-size);
     border-radius: var(--vds-radius-full);
     background-color: currentColor;
-    // Optical centering. `align-items: center` centers the dot on the LINE
-    // BOX, but the text's ink isn't centered in that box — the font's
-    // ascent/descent are asymmetric (Rubik 11/14: baseline sits 10.5px down,
-    // so cap-center lands ~6.65px and x-height-center ~7.64px from the top,
-    // straddling the 7px geometric center). The dot's visual home is the
-    // lowercase body, so we nudge it down a touch toward the x-height center.
-    // Small + em-based so it tracks font size.
-    transform: translateY(0.03em);
+    // Optical centering, measured rather than reasoned: `align-items: center`
+    // centers the dot on the LINE BOX, but the text's INK center sits above that
+    // box center (Rubik's ascent/descent are asymmetric). Measuring the rendered
+    // ink (canvas actualBoundingBox* against the line box) put a box-centered dot
+    // ~0.9px low at 11px, and the previous +0.03em nudge toward the x-height made
+    // it ~1.3px low — visibly so beside a large title. This offset lands the dot's
+    // center ON the text's ink center. em-based so it tracks font size.
+    transform: translateY(-0.085em);
   }
 
   &--neutral { background-color: var(--vds-canvas);       color: var(--vds-ink-muted); border-color: var(--vds-line); }

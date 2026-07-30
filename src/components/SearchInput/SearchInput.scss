@@ -8,6 +8,18 @@
 @use '../../styles/breakpoints' as bp;
 
 .vds-search-input {
+  // Toolbar cap (opt-in via `capped`). A search field's width should hint at the length
+  // of what you'd type: the realistic worst case in these lists is a ~25-character name,
+  // and 20rem holds ~44. Left to fill, the same field runs 1000px+ on a wide monitor and
+  // reads as an essay box. Kept as a max-width (not a width) so it still shrinks on narrow
+  // screens, and as a token so a product can retune it in one place.
+  --vds-search-input-max-w: 20rem;
+
+  &--capped {
+    width: 100%;
+    max-width: var(--vds-search-input-max-w);
+  }
+
   // our clear button replaces the browser's
   .vds-input__field::-webkit-search-cancel-button,
   .vds-input__field::-webkit-search-decoration {

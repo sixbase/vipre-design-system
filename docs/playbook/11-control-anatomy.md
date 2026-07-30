@@ -225,6 +225,90 @@ control or shell that animates a collapse/expand, an enter/exit, or a reveal sho
 shape — see the SideNav collapse choreography for a full worked example (rail width 220ms
 emphatic, labels fade out fast and in late, icon column never moves).
 
+### Optical centering — align INK, not boxes (D6)
+
+`align-items: center` centers **boxes**. It does not center what the eye sees. Rubik's
+ascent/descent are asymmetric, so a text run's visible ink sits **above** its line-box
+center — measurably, and by a consistent amount per type step. At 11px Rubik the gap is
+**0.85px**. That is small enough to look like nothing in code review and obvious enough on
+screen that people keep filing it.
+
+This has been re-fixed several times (Badge dot, Tag label, Filter's trigger count, a
+PageHeader title's entity tile). Treat it as part of building a control, not a polish pass.
+
+**The rule:** when a small element sits beside text — a dot, a numeral in a pill, an icon, a
+tile, a chip in a table cell — align it to the text's **cap band**, not to the line box.
+
+**Measure it, don't reason about it.** The ergonomic trap is per-string measurement: a label
+with a descender ("Managed") measures differently from one without ("Distributor"), so
+centering each string on its own ink makes sibling chips disagree with each other. Use
+**font metrics**, which are string-independent:
+
+```js
+const c = document.createElement('canvas').getContext('2d')
+c.font = `${weight} ${size} ${family}`
+const H = c.measureText('H')
+const capHeight = H.actualBoundingBoxAscent            // cap band, string-independent
+const baseline  = lineBoxTop
+  + (lineBoxHeight - (H.fontBoundingBoxAscent + H.fontBoundingBoxDescent)) / 2
+  + H.fontBoundingBoxAscent
+const capCentre = baseline - capHeight / 2             // ← align to THIS
+```
+
+Compare `capCentre` against the container's box center and correct the difference. Numerals
+are the easy case: digits carry no descender, so a numeral's ink *is* the cap band.
+
+**How to correct it**
+
+- Express the offset in `em` so it tracks the type step (`translateY(0.077em)` ≈ 0.85px at
+  11px), or set `line-height: 1` + a `padding-top` in `em` when the element is a flex box
+  whose height must not change.
+- Give the small element a fixed-size box with `display: grid; place-items: center` rather
+  than letting it size itself off the line box.
+- Prefer a fixed-height row plus fixed-size icon slots over content-driven heights — that
+  also stops the row shifting when a different-sized glyph renders.
+- **Always leave the measurement in a comment.** Every one of these looks like an arbitrary
+  magic number, and the next person deletes it. Say what was measured and at what size.
+
+**Verify in the browser by comparing centers, never by eyeballing the markup.** "The boxes
+are both centered" is exactly the state that reads wrong.
+
+### Reserve space for conditional affordances (D7)
+
+A control that appears only in *some* states must have its space reserved in *all* states.
+Otherwise the container resizes the moment you interact with it — and the jump always lands
+on the first interaction, which is the worst possible moment.
+
+Two real cases in `Filter`, both found by a user rather than in review:
+
+| Element | Appears when | Grew | Effect |
+|---|---|---|---|
+| Panel head's "Clear all" | `activeCount > 0` | 45 → 53px | Whole popover 8px taller on first pick |
+| `FilterGroup` head's count Badge | `count > 0` | 16 → 20px | Whole popover 4px taller on first pick |
+
+Both are the same mistake: a row sized by its *current* contents, where the contents are
+conditional. The fix is not to keep the element mounted-but-hidden (that costs a11y clarity
+and still needs care) — it is to give the row a `min-height` equal to its **tallest** state:
+
+```scss
+.vds-filter__head   { min-height: var(--vds-control-h-xs); }  // holds an xs Button
+.vds-filter-group__head { min-height: var(--vds-space-5); }   // holds a Badge
+```
+
+Reserve against the token of the thing that lands there (`--vds-control-h-xs` for a button
+row, `--vds-space-5` for a badge row), not a magic pixel value — then the reservation tracks
+the component it's holding space for.
+
+**How to check:** open the panel, measure the container, interact once, measure again. Equal
+or it's wrong. Do this per *group*, not just the panel — a group whose head grows will push
+the panel even when the panel's own chrome is fine. And measure the FIRST interaction
+specifically: later picks usually don't grow anything, so a second-click test passes while
+the bug is still there.
+
+**Where else this applies:** any header with a conditional action (a card's "Edit" on hover,
+a section's count), an empty-state that swaps for content of a different height, a validation
+message under a field (reserve the line, or the whole form shifts on the first error).
+
 ---
 
 ## 7 · How to add a new control

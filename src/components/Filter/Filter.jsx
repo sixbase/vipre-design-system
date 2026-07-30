@@ -48,7 +48,11 @@ const FilterCtx = createContext({ close: () => {} })
  * - size:         trigger button size, 'xs'|'sm'|'md'|'lg'|'xl'  (default 'md').
  *                 Match it to the other controls in the toolbar — a filter next to
  *                 an `sm` SearchInput needs `sm`, or the two sit at different heights.
- * - width:        panel width, any CSS length         (default 20rem)
+ * - width:        panel width, any CSS length         (default 22rem). The default is
+ *                 sized off the FOOTER, not the filter controls: "Showing 1,539 of 1,539"
+ *                 plus Reset and the primary button is the widest fixed row in the panel,
+ *                 and it must not wrap — a count that reflows to two lines changes the
+ *                 panel's height as you filter. Override only to go WIDER.
  * - placement:    Popover placement                   (default 'bottom-start')
  * - trigger:      replace the built-in trigger button entirely
  * - open / defaultOpen / onOpenChange: controlled / uncontrolled panel state
@@ -74,7 +78,7 @@ export const Filter = forwardRef(function Filter(
     applyLabel = 'Apply',
     resetLabel = 'Reset',
     size = 'md',
-    width = '20rem',
+    width = '22rem',
     placement = 'bottom-start',
     trigger,
     footer,
@@ -88,7 +92,15 @@ export const Filter = forwardRef(function Filter(
   const showFooter = footer !== null && (hasCount || onApply || onReset || onClearAll)
 
   const defaultTrigger = (
-    <Button variant="outline" tone="neutral" size={size} leading={<Icon as={FilterIcon} size="sm" />}>
+    <Button
+      variant="outline"
+      tone="neutral"
+      size={size}
+      // --counted lets the SCSS tighten the trailing pad only when the chip is there, so a
+      // countless trigger keeps the Button's normal text padding.
+      className={cx('vds-filter__trigger', activeCount > 0 && 'vds-filter__trigger--counted')}
+      leading={<Icon as={FilterIcon} size="sm" />}
+    >
       {label}
       {activeCount > 0 && (
         <Badge tone="primary" className="vds-filter__count">

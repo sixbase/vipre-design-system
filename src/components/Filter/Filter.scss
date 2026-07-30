@@ -33,15 +33,49 @@
     border-bottom: var(--vds-border-w) solid var(--vds-line);
   }
 
+  // The head must not change height when "Clear all" appears — a panel that grows 8px
+  // the moment you pick something makes the whole popover jump. The title reserves the
+  // xs-button height so the row measures the same with or without the button (and the
+  // flex centring keeps the label optically centred in that reserved space).
   &__title {
     @include type.step(body);
     font-weight: var(--vds-weight-medium);
     color: var(--vds-ink);
+    display: flex;
+    align-items: center;
+    min-height: var(--vds-control-h-xs);
   }
 
-  // Badge paints the trigger's count; this only spaces it off the label.
+  // Badge paints the trigger's count, but a Badge is sized for WORDS ("Active"): its 8px
+  // side padding made a single digit 23px wide, and its own margin stacked on top of the
+  // Button's 8px gap for 14px on the right against 8px on the left — the label ended up
+  // floating between two unequal gaps.
+  //
+  // So: drop the margin (the Button's gap already spaces the slot) and trade the word
+  // padding for a min-width, which is what a COUNTER wants — one digit reads as a round
+  // 20px pill, two digits grow symmetrically instead of starting over-wide.
   &__count {
-    margin-left: var(--vds-space-1-5);
+    // MATCHES the leading icon's gap (--vds-space-2) so the label sits between two equal
+    // gaps. The Button's own gap doesn't reach this slot — the label box absorbs it — so
+    // dropping the margin entirely put the badge flush against the "r". Measured: 8px
+    // icon-to-text, 8px text-to-badge.
+    margin-left: var(--vds-space-2);
+    min-width: var(--vds-space-5);
+    padding-inline: var(--vds-space-1);
+    justify-content: center;
+  }
+
+  // ---- trigger -------------------------------------------------------------
+  // With a count chip, the trigger's trailing pad is DERIVED from the chip's own vertical
+  // inset so the space above, right of, and below the chip is identical. That inset is just
+  // the leftover half-height, (control height - chip height) / 2, minus the border the
+  // measurement includes. The Button's default trailing pad is tuned for TEXT — a letter
+  // carries whitespace inside its glyph box, a filled chip's ink does not — so left as-is
+  // it reads as a hole after the chip. Per size, because the control height is per size.
+  &__trigger--counted {
+    &.vds-button--sm { padding-inline-end: calc((var(--vds-control-h-sm) - var(--vds-space-5)) / 2 - var(--vds-border-w)); }
+    &.vds-button--md { padding-inline-end: calc((var(--vds-control-h-md) - var(--vds-space-5)) / 2 - var(--vds-border-w)); }
+    &.vds-button--lg { padding-inline-end: calc((var(--vds-control-h-lg) - var(--vds-space-5)) / 2 - var(--vds-border-w)); }
   }
 
   // ---- body ----------------------------------------------------------------
@@ -67,9 +101,15 @@
     border-top: var(--vds-border-w) solid var(--vds-line);
   }
 
+  // The count NEVER wraps. It's the panel's one live readout, and reflowing it to a second
+  // line changes the footer's height — so the panel would grow and shrink under the cursor
+  // as the numbers change while you filter. The panel's default width is set to hold this
+  // row (see Filter.jsx); nowrap here is what makes that guarantee hold if a consumer's
+  // counts run longer than the ones we sized for.
   &__result {
     @include type.step(detail);
     color: var(--vds-ink-muted);
+    white-space: nowrap;
     b {
       color: var(--vds-ink);
       font-weight: var(--vds-weight-medium);
@@ -82,6 +122,7 @@
     align-items: center;
     gap: var(--vds-space-2);
     margin-left: auto;
+    flex-shrink: 0;   // the buttons hold their size; the count band gives way first
   }
 }
 
@@ -96,6 +137,11 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--vds-space-2);
+    // Reserve the count Badge's height. The head is 16px on a bare label and 20px once a
+    // Badge lands in it, so the FIRST pick in a group grew the whole panel by 4px — the
+    // panel jumping the moment you use it. Same rule as the panel head's "Clear all":
+    // anything that appears conditionally gets its space reserved up front.
+    min-height: var(--vds-space-5);
 
     &--button {
       width: 100%;

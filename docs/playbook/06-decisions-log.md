@@ -1141,3 +1141,90 @@ uses — if a third consumer wants it, extract a shared scaffold rather than wri
 **Verified in the docs site:** 9 ToggleChips + 4 Tag-based chips + 1 SegmentedControl + 1 NumberInput
 render inside Filter; zero `.vds-filter-pill` / `.vds-filter-chip__x` / `.vds-filter-compare__input`
 left; chip dismiss reads "Remove Type Reseller"; both pages error-free.
+
+---
+
+## D6 — Optical centering: align ink, not boxes
+
+**Decision:** any small element sitting beside text (status dot, numeral in a count pill, icon,
+entity tile, chip in a table cell) is aligned to the text's **cap-band centre**, not to its line
+box. `align-items: center` is not sufficient and is not the finished state.
+
+**Why:** Rubik's ascent/descent are asymmetric, so a text run's visible ink sits above its
+line-box centre — 0.85px at 11px. Small enough to pass code review, obvious enough on screen
+that it was reported and re-fixed four separate times (Badge dot, Tag label, Filter trigger
+count, PageHeader entity tile).
+
+**Method (and the trap):** measure with canvas font metrics (`measureText('H')`), not per-string
+ink. A label with a descender ("Managed") measures differently from one without ("Distributor"),
+so per-string centring makes sibling chips disagree with each other. Font metrics are
+string-independent. Numerals are the easy case — digits carry no descender, so their ink *is*
+the cap band.
+
+**Applied:** `Badge__dot` was nudged +0.03em toward the x-height on a reasoned (unmeasured)
+argument, which put it ~1.3px low; corrected to −0.085em, measured onto the text's ink centre.
+`Tag__label` and `Filter__count` both take +0.077em (≈0.85px at 11px). Each carries the
+measurement in a comment, because these read as magic numbers and get deleted otherwise.
+
+**Rule of thumb:** verify by comparing rendered centres in the browser. "Both boxes are
+centred" is precisely the state that looks wrong. Full method in
+`11-control-anatomy.md` §6 (D6).
+
+---
+
+## D7 — Reserve space for conditional affordances
+
+**Decision:** a row that can hold a conditional control carries a `min-height` equal to its
+tallest state, reserved against the token of whatever lands there. `align-items: center` on a
+content-sized row is not enough.
+
+**Why:** `Filter` grew twice on first interaction — the panel head by 8px when "Clear all"
+appeared (`activeCount > 0`), and each `FilterGroup` head by 4px when its count Badge appeared
+(`count > 0`). Both made the popover jump the moment you used it, which is exactly when a user
+is looking at it. Both were reported from use, not caught in review, because a static
+screenshot of either state looks correct.
+
+**Applied:** `.vds-filter__head { min-height: var(--vds-control-h-xs) }` (holds an xs Button)
+and `.vds-filter-group__head { min-height: var(--vds-space-5) }` (holds a Badge). Reserved
+against the token of the held component, so the reservation tracks it.
+
+**Testing note that matters:** measure the FIRST interaction. Later picks don't grow anything
+once the conditional element exists, so a second-click test passes while the bug is live — which
+is why three earlier attempts to reproduce this came back clean. Measure per group as well as
+per panel: a group head that grows pushes the panel even when the panel's own chrome is fine.
+
+Full method in `11-control-anatomy.md` §6 (D7).
+
+---
+
+## D8 — A row of numbers is one component, not N cards in a grid
+
+**Decision:** KPI strips use `MetricRow`, not `Grid`. The row publishes
+`--vds-metric-title-lines: 2`, which every `MetricCard.__title` inside it reads as a
+`min-block-size` — so a card whose title wraps to two lines has the same header height as one
+whose title doesn't, and every hero value sits on the same line.
+
+**Why:** a card is content-sized, so in a plain grid a two-line title ("Package Adoption")
+pushes its number a line below its neighbours. That alone would be a static blemish; what makes
+it a defect is that the **wrap point moves with the container width**, so the same row reads
+correctly at 1440, breaks at tablet, and re-forms on a phone. The numbers appear to jump around
+as you resize, and the row stops reading as one set of figures.
+
+**Why not the alternatives:**
+- *Bottom-anchor the figure in equal-height cards* — aligns card bottoms, not values. A card
+  with a delta Badge and one with a plain caption have different footer heights, so the numbers
+  still disagree.
+- *Subgrid* — aligns every band exactly and costs no dead space, but the padding lives on
+  `__in` and the card's internal gap would have to become the grid's `row-gap`, coupling a
+  card's insides to the row that holds it. Too clever to hand to a consuming team.
+- *Truncate or shorten titles* — pushes the fix onto every consumer, forever, and loses words.
+
+**Cost, stated plainly:** a row whose titles all fit one line carries ~24px of reserved space it
+doesn't visibly use. That's the price of the guarantee, and it's opt-in — a card standing alone
+defaults to `1` and stays content-sized.
+
+**Applied:** `MetricCard/MetricRow.jsx`, `.vds-metric-row` in `MetricCard.scss`, documented on
+the Metric Card page (§KPI row, §Why the row exists). First consumer: the MSP v2 dashboard.
+
+**Rule of thumb:** when a layout only breaks at *some* widths, fix the thing that varies with
+width — don't tune the one breakpoint you happened to screenshot.
