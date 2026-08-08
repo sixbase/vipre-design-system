@@ -45,6 +45,7 @@ export function RadioPage() {
           headers: ['Prop', 'Type', 'Default', 'Description'],
           rows: [
             [{ code: 'value' }, { code: 'string' }, '—', 'This option’s value (matched against the group’s value)'],
+            [{ code: 'tone' }, { code: "'primary' | 'success'" }, { code: "'primary'" }, 'Colour of the SELECTED fill — mirrors Checkbox; see its “Tone” section for when'],
             [{ code: 'children' }, { code: 'ReactNode' }, '—', 'The label text (optional)'],
             [{ code: '…props' }, { code: 'InputHTMLAttributes' }, '—', 'name, checked, onChange, disabled… for standalone use'],
           ],
@@ -129,6 +130,23 @@ export function RadioPage() {
           code={`<Radio value="b" disabled>Not on this plan</Radio>
 
 <RadioGroup label="Whole group off" defaultValue="x" disabled>…</RadioGroup>`}
+        />
+      </Section>
+
+      <Section
+        title="Tone"
+        note="Mirrors Checkbox — tone changes the SELECTED fill and nothing else. Use success where a pick means the thing is in a set the user is assembling (a one-of-N product picker), and primary everywhere else. The reasoning, and the cases it is wrong for, are on the Checkbox page; don’t split a surface between the two."
+      >
+        <Preview
+          canvas={
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <Radio name="tone-demo-a" defaultChecked>Primary — the default</Radio>
+              <Radio name="tone-demo-b" tone="success" defaultChecked>Success</Radio>
+            </div>
+          }
+          code={`<Radio tone="success" value="tep" checked={pick === 'tep'} onChange={setPick}>
+  Total Email Protection
+</Radio>`}
         />
       </Section>
 

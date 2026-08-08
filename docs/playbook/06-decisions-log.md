@@ -1228,3 +1228,81 @@ the Metric Card page (§KPI row, §Why the row exists). First consumer: the MSP 
 
 **Rule of thumb:** when a layout only breaks at *some* widths, fix the thing that varies with
 width — don't tune the one breakpoint you happened to screenshot.
+
+## D9 — A stepper for two steps is a status line, not a track
+
+**Decision:** `Stepper` gains `variant="compact"` — the position stated in words
+("Step 1 of 2 · Details"), a muted "Next: …" hint, and a segmented rail. The named
+track stays the default. Guidance in the JSDoc and on the docs page: track when the
+step NAMES are information the user needs up front (3+ steps, room to breathe);
+compact when the stepper is a status line rather than a map (two- and three-step
+flows, and anything living in a dialog, drawer or panel header).
+
+**Why:** the MSP provisioning flow put a two-step track across a full-screen dialog.
+The component does what it's told — steps are `flex: 1`, the connector fills the gap —
+so two dots landed at opposite edges of an 880px measure with ~600px of flat rule
+between them. The largest, highest-contrast element on the form was an empty line, and
+it sat above the first question the form actually asks. The track isn't wrong; it was
+being asked to describe a distance it doesn't have.
+
+**Why not the alternatives:**
+- *Cap the track's width in the consumer* — a magic number per surface, and it re-opens
+  every time a flow gains a step.
+- *Leave it and let consumers restyle* — that's the state we were fixing. See below.
+- *Make the track shrink-to-fit by default* — changes every existing consumer to solve a
+  two-step problem, and a 4-step runbook genuinely wants the width.
+
+**The second half of this, and the real lesson:** the prototype had already "solved" it
+with six scoped overrides — label stacked under the circle, a green completed state, and
+four flex/connector corrections to hold that layout up. Every one of them was a private
+fork of a shared component. The green was the telling one: it invented a second hue for a
+single progression, so a completed step (green) fed a connector (green) into the current
+step (blue), and the line had to pick a side. Green is the OUTCOME colour; clearing step 1
+of 2 is not an outcome. Progress is one accent, distinguished by check-versus-ring — now
+stated in the JSDoc and demonstrated on the docs page with the wrong version spelled out.
+
+**Applied:** `Stepper/Stepper.jsx`, `Stepper/Stepper.scss`, `docs/pages/StepperPage.jsx`
+(§Compact, §Track or compact, §One accent, not two). First consumer: the MSP add-account
+flow, whose six overrides are deleted — `.prov-stepper` is now margin only.
+
+**Rule of thumb:** when a consumer accumulates overrides on a shared component, read them
+as a spec for a missing variant. Six of them means the component is missing a shape, not
+that the consumer is unusual.
+
+## D10 — `tone="success"` on Checkbox and Radio, and the rule for when green is allowed
+
+**Decision:** `Checkbox` and `Radio` gain `tone: 'primary' | 'success'`. It changes the
+CHECKED fill and nothing else — the resting box stays neutral in both tones, because an
+unchecked box shouldn't advertise what colour it would become. Implemented as two custom
+properties (`--vds-checkbox-on` / `--vds-checkbox-on-ink`) so the modifier is two
+declarations rather than a restatement of every checked rule.
+
+**Why, and this is two separate reasons that happen to point the same way:**
+
+1. **Semantic.** A tick that means "this is IN — added to a set I'm assembling and kept
+   until I remove it" is an outcome, and green is the outcome colour. A product picker or
+   a cart is that. A filter, a preference, or a table's row selection is not: nothing is
+   being acquired, so green over-claims and reads as "correct" or "passing".
+2. **Compositional, and the reason it actually came up.** The MSP catalogue surface is
+   brand-blue end to end — blue product artwork, blue selected cards, blue count badge,
+   blue primary button. A blue tick on it adds nothing: everything is emphasised, so
+   nothing is. Green was the only mark left that reads as a state rather than as more
+   chrome.
+
+**The constraint that comes with it:** if you take the tone, take the whole control set on
+that surface — the tick, the selected card's border and tint, the count badge. One green
+control among blue ones looks like a bug rather than a decision.
+
+**How this squares with D9,** which forbade a green completed step on `Stepper`: it
+doesn't contradict it, it's the other half of the same rule. Green marks an OUTCOME.
+Adding a product to an order is one. Clearing step 1 of 2 is not — a finished step is a
+position, not an achievement, and colouring it green also left the connector between a
+green step and a blue one with no honest colour to be. Selection can be green; progress
+stays one accent.
+
+**Applied:** `Checkbox/Checkbox.{jsx,scss}`, `Radio/Radio.{jsx,scss}`, documented on the
+Checkbox page (§Tone, §When to use tone="success", §The other reason) with a pointer from
+the Radio page. First consumer: the MSP provisioning catalogue.
+
+**Rule of thumb:** before adding a colour, check whether the surface has any colour left to
+spend. A palette where everything is the brand accent has no accent.

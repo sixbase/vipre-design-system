@@ -234,3 +234,25 @@ already carried `width: 100%` for this reason; `MetricRow` didn't, and its very 
 inside the docs `Preview` canvas, which is `display: flex` — collapsed. If a new component uses
 that track recipe, give it `width: 100%` in the same declaration block, and test it once inside
 a flex parent before shipping.
+
+## Consumer overrides are a spec for a missing variant — read them as one
+
+The MSP add-account flow carried six scoped rules against `Stepper`: a stacked label, a
+green completed state, and four flex/connector corrections holding that layout together.
+Read one at a time each looked like a reasonable local tweak. Read together they described
+a shape the component didn't have — a stepper for a short flow in a narrow, fixed surface —
+and the corrections existed only to make the wrong shape survive the right context.
+
+Two things to take from it:
+
+**Count the overrides before you write the seventh.** One or two are a consumer being
+specific. Six means the component is missing a variant, and every one of them is now a
+place the shared component can change underneath you. When `Stepper` gained `compact` all
+six deleted; `.prov-stepper` is a margin.
+
+**Watch for an override that invents a semantic colour.** The green completed state was
+the load-bearing mistake, not the flex tweaks. Green is the outcome colour in this system,
+so recolouring a passed step said "this succeeded" about clearing step 1 of 2 — and it left
+the connector between a green step and a blue one with no honest colour to be. If a scoped
+rule reaches for `--vds-success`, `--vds-danger` or `--vds-warning` on a component that
+wasn't using them, the disagreement is about meaning, and it belongs upstream.

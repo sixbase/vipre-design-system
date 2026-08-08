@@ -29,7 +29,7 @@ import { RadioGroupContext } from '../RadioGroup/RadioGroupContext.js'
  * </RadioGroup>
  */
 export const Radio = forwardRef(function Radio(
-  { value, name, checked, onChange, disabled, className, children, ...props },
+  { value, name, checked, onChange, tone = 'primary', disabled, className, children, ...props },
   ref,
 ) {
   const group = useContext(RadioGroupContext)
@@ -48,7 +48,14 @@ export const Radio = forwardRef(function Radio(
     : { name, checked, onChange }
 
   return (
-    <label className={cx('vds-radio', isDisabled && 'vds-radio--disabled', className)}>
+    <label
+      className={cx(
+        'vds-radio',
+        tone !== 'primary' && `vds-radio--${tone}`,
+        isDisabled && 'vds-radio--disabled',
+        className,
+      )}
+    >
       <input
         ref={ref}
         type="radio"
