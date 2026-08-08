@@ -9,8 +9,9 @@
 @use '../../styles/typography' as type;
 @use '../../styles/breakpoints' as bp;
 
-$indicator: 1.75rem; // circle diameter (rem so it scales with root font size)
-$connector: 2px;     // connector line thickness — px so it stays a crisp rule at any root size
+$indicator: 1.75rem;        // circle diameter (rem so it scales with root font size)
+$indicator-inline: 1.5rem;  // smaller: inline rides in a header next to text, not a row of its own
+$connector: 2px;            // connector line thickness — px so it stays a crisp rule at any root size
 
 // ---- shared (axis-independent) ---------------------------------------------
 .vds-stepper {
@@ -133,6 +134,193 @@ $connector: 2px;     // connector line thickness — px so it stays a crisp rule
   }
 }
 
+// ---- inline variant --------------------------------------------------------
+// Track's shape, sized to its content. The whole difference is that nothing
+// here stretches: steps are `flex: 0 1 auto` and the separator is a fixed
+// chevron, so the row ends where the words end instead of spanning whatever
+// container it lands in. That's what lets it share a header with a title and a
+// button — which is the one thing track cannot do at any width.
+//
+// Wraps instead of flipping vertical below `sm`. A vertical stepper is a block
+// element, and the surfaces inline is for (headers, toolbars, card tops) have
+// no room for a block — so the row folds onto a second line and stays a row.
+.vds-stepper--inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  // Row gap only matters once it wraps; the column gap is the space either side
+  // of a chevron, so it's half the step's own internal gap — the separator has
+  // to bind two steps loosely, not read as a third thing between them.
+  gap: var(--vds-space-2) var(--vds-space-1);
+
+  .vds-stepper__step {
+    display: flex;
+    align-items: center;
+    flex: 0 1 auto; // content-width, shrinkable — never grows to fill
+    min-width: 0;
+  }
+
+  .vds-stepper__content {
+    align-items: center; // one line, so centre rather than track's flex-start
+    gap: var(--vds-space-2);
+    min-width: 0;
+  }
+
+  // Sits at the END of its step (see the JSDoc), so its own margin holds it off
+  // the label it follows and the list's column-gap holds it off the step it
+  // points at — 4px either side, centred between the two.
+  .vds-stepper__sep {
+    display: inline-flex;
+    flex-shrink: 0;
+    margin-left: var(--vds-space-1);
+    color: var(--vds-ink-subtle);
+  }
+
+  .vds-stepper__indicator {
+    width: $indicator-inline;
+    height: $indicator-inline;
+  }
+
+  .vds-stepper__text {
+    padding-top: 0; // track nudges the label down to meet a taller circle; here they're centred
+  }
+
+  .vds-stepper__label {
+    @include type.step(detail);
+    font-weight: var(--vds-weight-medium);
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  // ---- states ----
+  // No ring on the current step: at 24px, with a chevron 4px away on each side,
+  // a 4px ring closes the gap between steps and the row reads as one blob. The
+  // weight goes into the FILL instead — a completed step steps back to the soft
+  // tint, the current step keeps the solid one. Still one hue (see the JSDoc);
+  // only the depth of it changes.
+  .vds-stepper__step--complete .vds-stepper__indicator {
+    background: var(--vds-primary-soft);
+    border-color: transparent;
+    color: var(--vds-primary);
+  }
+
+  .vds-stepper__step--current {
+    .vds-stepper__indicator {
+      box-shadow: none;
+    }
+    // The other half of "you are here" — the only bold label in the row.
+    .vds-stepper__label {
+      font-weight: var(--vds-weight-semibold);
+      color: var(--vds-ink);
+    }
+  }
+
+  .vds-stepper__step--upcoming .vds-stepper__label {
+    color: var(--vds-ink-subtle);
+  }
+}
+
+// ---- compact variant -------------------------------------------------------
+// A status LINE, not a map. Two things, stacked: the position stated in words,
+// and a segmented rail under it. Nothing here scales with the container except
+// the rail, so a two-step flow in a 900px dialog reads the same as in a 400px
+// drawer — which is the failure the track variant has at that width, where most
+// of the ink ends up in an empty connector between two stranded dots.
+//
+// The rail is one segment per step rather than one continuous bar: a bar says
+// "42% done", which a wizard doesn't know, and segments say "2 of 4", which it
+// does.
+.vds-stepper--compact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vds-space-2);
+
+  .vds-stepper__status {
+    display: flex;
+    align-items: baseline;
+    gap: var(--vds-space-2);
+    min-width: 0;
+    margin: 0;
+  }
+
+  .vds-stepper__count {
+    @include type.step(detail);
+    flex-shrink: 0;
+    font-weight: var(--vds-weight-medium);
+    font-variant-numeric: tabular-nums;
+    color: var(--vds-primary);
+  }
+
+  .vds-stepper__current {
+    @include type.step(detail);
+    min-width: 0;
+    overflow: hidden;
+    font-weight: var(--vds-weight-medium);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--vds-ink);
+
+    // Separator lives on the label so it can't strand itself when there's no
+    // label to separate from.
+    &::before {
+      content: '·';
+      margin-right: var(--vds-space-2);
+      color: var(--vds-ink-subtle);
+    }
+  }
+
+  // Pushed to the far end: it's the least urgent thing on the line, and the eye
+  // should reach the current step's name first.
+  .vds-stepper__next {
+    @include type.step(detail);
+    flex-shrink: 0;
+    margin-left: auto;
+    padding-left: var(--vds-space-3);
+    color: var(--vds-ink-subtle);
+  }
+
+  .vds-stepper__rail {
+    display: flex;
+    gap: var(--vds-space-1);
+  }
+
+  .vds-stepper__seg {
+    flex: 1;
+    height: 3px;
+    border-radius: var(--vds-radius-sm);
+    background: var(--vds-line);
+    transition: background-color var(--vds-dur-base) var(--vds-ease-out);
+  }
+
+  // One accent for progress — see the JSDoc. Complete and current fill the same
+  // way; which one you're ON is what the text above is for.
+  .vds-stepper__seg--complete,
+  .vds-stepper__seg--current {
+    background: var(--vds-primary);
+  }
+  .vds-stepper__seg--error {
+    background: var(--vds-danger);
+  }
+}
+
+// A failed current step colours the words, not just the rail.
+.vds-stepper--compact-error {
+  .vds-stepper__count,
+  .vds-stepper__current {
+    color: var(--vds-danger);
+  }
+}
+
+// Below sm the line has room for the position or the hint, not both. The hint
+// goes: it describes a step you haven't reached yet.
+@include bp.down(sm) {
+  .vds-stepper--compact .vds-stepper__next {
+    display: none;
+  }
+}
+
 // ---- axis layouts (mixins so horizontal can fall back to vertical) ---------
 @mixin stepper-horizontal {
   display: flex;
@@ -221,7 +409,8 @@ $connector: 2px;     // connector line thickness — px so it stays a crisp rule
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .vds-stepper__indicator {
+  .vds-stepper__indicator,
+  .vds-stepper__seg {
     transition: none;
   }
 }
