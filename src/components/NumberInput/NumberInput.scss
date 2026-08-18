@@ -1,23 +1,34 @@
 // ============================================================================
-// NumberInput — an Input "dressed up" with a vertical stepper. The shell IS an
-// Input, so every field metric (height, pad, border, fill, focus ring) comes
-// from the reused --vds-input-* tokens. NumberInput-scoped tokens only cover
-// the right-alignment and the two stepper buttons in Input's trailing slot.
+// NumberInput — an Input whose prefix / suffix ADD-ON segments are the Decrement
+// and Increment buttons. The shell IS an Input, so every field metric (height,
+// pad, border, fill, focus ring) comes from the reused --vds-input-* tokens,
+// and the add-on anatomy (full height, hairline against the field, corners
+// nested inside the shell radius) comes free from Input's own __addon rules.
+// NumberInput-scoped tokens only cover the value's alignment and the two
+// buttons' ink / fill.
+//
+// The buttons flank the value rather than stacking in the trailing slot: as a
+// stack they were two ~10px glyphs sharing one corner — below the tap target,
+// too quiet to read as controls, and overlapping the value once a number grew
+// wide. See the component's JSDoc for the full reasoning.
 // ============================================================================
+@use '../../styles/breakpoints' as bp;
 
 .vds-number {
   // ---- public tokens (bind to these to retheme/re-align) ----
   // --vds-number-align holds a CSS keyword (a layout choice, not a design-scale
   // value), so it stays literal by design — see control-anatomy §1's exception.
-  --vds-number-align: right;                           // numbers read better flush-right
-  --vds-number-step-ink: var(--vds-input-muted);       // resting +/- glyphs
+  --vds-number-align: center;                          // a lane between the two buttons
+  --vds-number-step-ink: var(--vds-input-addon-ink);   // resting +/- glyphs, matching add-on chrome
   --vds-number-step-ink-hover: var(--vds-ink);         // hover / focus glyphs
-  --vds-number-step-radius: var(--vds-radius-sm);      // focus-ring corner
+  // Hover deepens the add-on's own tint rather than introducing a second fill —
+  // same 4% recipe applied twice, so the segment darkens by one consistent notch.
+  --vds-number-step-fill-hover: color-mix(in oklab, var(--vds-input-addon-bg), var(--vds-ink) 4%);
   --vds-number-step-dur: var(--vds-dur-fast);
   --vds-number-step-ease: var(--vds-ease-out);
 
-  // Right-align the value, and hide the browser's native spinners (we ship our
-  // own stepper affordance in the trailing slot).
+  // Centre the value, and hide the browser's native spinners (we ship our own
+  // stepper affordance in the add-on slots).
   .vds-input__field {
     text-align: var(--vds-number-align);
 
@@ -32,34 +43,38 @@
     -moz-appearance: textfield;
   }
 
-  &__stepper {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  // The button IS the segment, so the wrapper gives up its own padding and the
+  // button takes it below — otherwise the hit area stops short of the hairline
+  // and the segment has a dead border of unclickable chrome.
+  .vds-input__addon {
+    padding: 0;
+    overflow: hidden;      // keeps the hover fill inside the nested corner radius
   }
 
   &__step {
+    align-self: stretch;   // full field height — this is the hit target
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border: 0;
     margin: 0;
-    padding: 0;
     background: transparent;
     color: var(--vds-number-step-ink);
     cursor: pointer;
-    border-radius: var(--vds-number-step-radius);
-    transition: color var(--vds-number-step-dur) var(--vds-number-step-ease);
+    transition:
+      color var(--vds-number-step-dur) var(--vds-number-step-ease),
+      background-color var(--vds-number-step-dur) var(--vds-number-step-ease);
 
     &:hover:not(:disabled) {
+      background-color: var(--vds-number-step-fill-hover);
       color: var(--vds-number-step-ink-hover);
     }
 
-    // Action control → HARD OUTLINE ring (control-anatomy §3).
+    // Action control → HARD OUTLINE ring (control-anatomy §3). Inset, because an
+    // offset ring on a segment flush inside the field would be clipped by it.
     &:focus-visible {
       outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
-      outline-offset: var(--vds-control-ring-offset);
+      outline-offset: calc(var(--vds-control-ring-offset) * -1);
       color: var(--vds-number-step-ink-hover);
     }
 
@@ -72,6 +87,25 @@
     @media (prefers-reduced-motion: reduce) {
       transition: none;
     }
+  }
+
+  // Per-size button padding == the field's own pad-x, so a segment is exactly as
+  // wide as the gutter it replaces and the control keeps its rhythm. Mirrors the
+  // loop Input uses for add-ons; the size class sits on this same element.
+  @each $size, $pad in (
+    'xs': '--vds-input-pad-x-xs',
+    'sm': '--vds-input-pad-x-sm',
+    'md': '--vds-input-pad-x-md',
+    'lg': '--vds-input-pad-x-lg',
+    'xl': '--vds-input-pad-x-xl'
+  ) {
+    &.vds-input--#{$size} .vds-number__step { padding-inline: var(#{$pad}); }
+  }
+
+  @include bp.coarse {
+    // Already ≥44px wide at md and up; xs/sm segments get there on touch without
+    // changing the control's height or the layout around it.
+    &__step { min-width: var(--vds-tap-target); }
   }
 }
 // No .dark override — every var resolves through a semantic token that already
