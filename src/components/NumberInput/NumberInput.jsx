@@ -20,10 +20,18 @@ function mergeRefs(...refs) {
  *
  * A numeric field composed on Input (type="number"). The native input is the
  * source of truth — Enter, ArrowUp / ArrowDown, and typing all work natively;
- * the trailing slot adds a vertical stepper (Increment / Decrement) as a
- * pointer affordance that clamps to `min` / `max` and moves by `step`. Each
- * stepper button disables itself at its bound. Text is flush-right by default
- * (--vds-number-align) because numbers read better right-aligned.
+ * Decrement and Increment ride in Input's prefix / suffix ADD-ON slots, so each
+ * is a full-height segment of the field with a hairline against the editable
+ * area, and clamps to `min` / `max` while moving by `step`. Each button
+ * disables itself at its bound.
+ *
+ * WHY THE BUTTONS FLANK rather than stack in the trailing slot: stacked they
+ * were two ~10px glyphs sharing one corner — under the tap target, ambiguous as
+ * controls, and sat on top of the value a long seat count grew into. One button
+ * per end makes each hit area the full height of the control, puts a hairline
+ * between chrome and content, and leaves the value a lane of its own. The value
+ * is therefore CENTRED (--vds-number-align): flush-right only made sense when
+ * the right edge was free.
  *
  * Controlled (`value` + `onChange`) or uncontrolled (`defaultValue`).
  * `onChange` receives a NUMBER, or '' when the field is cleared — never the event.
@@ -43,6 +51,8 @@ function mergeRefs(...refs) {
  * - Stepper buttons are real <button type="button">s with aria-labels
  *   "Increment" / "Decrement"; they sit OUT of the tab order (tabIndex -1)
  *   because the native input already offers ArrowUp / ArrowDown to keyboards.
+ *   Reading order is Decrement → field → Increment, which matches what a screen
+ *   reader's user sees on screen.
  * - Pair with a <label> (or aria-label) like any Input; `invalid` sets aria-invalid.
  *
  * @example
@@ -109,29 +119,17 @@ export const NumberInput = forwardRef(function NumberInput(
   const atMax = hasMax && numeric !== null && numeric >= Number(max)
   const atMin = hasMin && numeric !== null && numeric <= Number(min)
 
-  const stepper = (
-    <span className="vds-number__stepper">
-      <button
-        type="button"
-        className="vds-number__step vds-number__step--up"
-        aria-label="Increment"
-        tabIndex={-1}
-        disabled={disabled || atMax}
-        onClick={() => stepBy(1)}
-      >
-        <Icon as={Plus} size="xs" />
-      </button>
-      <button
-        type="button"
-        className="vds-number__step vds-number__step--down"
-        aria-label="Decrement"
-        tabIndex={-1}
-        disabled={disabled || atMin}
-        onClick={() => stepBy(-1)}
-      >
-        <Icon as={Minus} size="xs" />
-      </button>
-    </span>
+  const stepButton = (dir) => (
+    <button
+      type="button"
+      className={cx('vds-number__step', `vds-number__step--${dir > 0 ? 'up' : 'down'}`)}
+      aria-label={dir > 0 ? 'Increment' : 'Decrement'}
+      tabIndex={-1}
+      disabled={disabled || (dir > 0 ? atMax : atMin)}
+      onClick={() => stepBy(dir)}
+    >
+      <Icon as={dir > 0 ? Plus : Minus} size="sm" />
+    </button>
   )
 
   return (
@@ -148,7 +146,8 @@ export const NumberInput = forwardRef(function NumberInput(
       min={hasMin ? min : undefined}
       max={hasMax ? max : undefined}
       step={step}
-      trailing={stepper}
+      prefix={stepButton(-1)}
+      suffix={stepButton(1)}
       {...props}
     />
   )

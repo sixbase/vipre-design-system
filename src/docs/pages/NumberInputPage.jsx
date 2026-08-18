@@ -45,7 +45,7 @@ function Playground() {
           </Stack>
         </Surface>
         <Text as="span" variant="detail" tone="muted">
-          Clamped to 0–10. Type, press ArrowUp / ArrowDown, or use the stepper — the buttons disable themselves at each edge. Value: <IC>{String(value)}</IC>
+          Clamped to 0–10. Type, press ArrowUp / ArrowDown, or use − / + — the buttons disable themselves at each edge. Value: <IC>{String(value)}</IC>
         </Text>
       </Stack>
 
@@ -81,15 +81,15 @@ const NUMBERINPUT_TOKEN_GROUPS = [
   {
     label: 'Alignment',
     tokens: [
-      { token: '--vds-number-align', bound: 'right', controls: 'Text alignment — numbers read better flush-right (a CSS keyword, so it stays literal)' },
+      { token: '--vds-number-align', bound: 'center', controls: 'Text alignment — the value sits in its own lane between the two buttons (a CSS keyword, so it stays literal)' },
     ],
   },
   {
     label: 'Stepper buttons',
     tokens: [
-      { token: '--vds-number-step-ink', bound: 'var(--vds-input-muted)', controls: 'Resting +/- glyph color' },
+      { token: '--vds-number-step-ink', bound: 'var(--vds-input-addon-ink)', controls: 'Resting +/- glyph color — matches Input’s add-on chrome' },
       { token: '--vds-number-step-ink-hover', bound: 'var(--vds-ink)', controls: '+/- glyph color on hover / focus' },
-      { token: '--vds-number-step-radius', bound: 'var(--vds-radius-sm)', controls: 'Corner of a stepper button’s focus ring' },
+      { token: '--vds-number-step-fill-hover', bound: 'add-on tint + 4% ink', controls: 'Segment fill on hover — the add-on tint deepened one notch' },
     ],
   },
   {
@@ -109,7 +109,7 @@ export function NumberInputPage() {
   return (
     <ComponentPage
       title="Number Input"
-      description="A box for one number, with a little up/down stepper on the right. It's an Input set to numbers — the same sizes, red-when-wrong, and turned-off looks — plus + and − buttons that add or subtract by step and stop at your min and max. The real input is in charge, so typing and the keyboard's own up/down arrows work too. Numbers sit flush-right so columns of them line up."
+      description="A box for one number, with a − button on one end and a + button on the other. It's an Input set to numbers — the same sizes, red-when-wrong, and turned-off looks — plus buttons that add or subtract by step and stop at your min and max. Each button is a full-height slice of the field, so it's easy to hit and never sits on top of the number. The real input is in charge, so typing and the keyboard's own up/down arrows work too."
       installCode={`<!-- Tokens-only: link the CSS variables, build your own field against them. -->
 <link rel="stylesheet" href="vipre-tokens.css">`}
       props={[
@@ -137,7 +137,7 @@ export function NumberInputPage() {
     >
       <Section
         title="Playground"
-        note="Turn the knobs. Type a number, press the keyboard up/down arrows, or click the stepper — everything stays clamped to 0–10, and the buttons grey out at each end."
+        note="Turn the knobs. Type a number, press the keyboard up/down arrows, or click − / + — everything stays clamped to 0–10, and the buttons grey out at each end."
       >
         <Playground />
       </Section>
@@ -165,7 +165,7 @@ export function NumberInputPage() {
 
       <Section
         title="Sizes"
-        note="Five sizes, exactly like Input. The stepper stays neatly stacked in the trailing slot at every height."
+        note="Five sizes, exactly like Input. The buttons are segments of the field, so they grow with it and stay flush at every height."
       >
         <Preview
           canvas={
@@ -198,7 +198,7 @@ export function NumberInputPage() {
 
       <Section
         title="Tokens"
-        note="The shell IS an Input, so it reuses every --vds-input-* token for height, padding, border, fill, and the focus ring. The only Number-specific tokens are the right-alignment keyword and the stepper glyphs — all bound to foundation tokens, so light/dark comes free."
+        note="The shell IS an Input, so it reuses every --vds-input-* token for height, padding, border, fill, the focus ring, and the add-on segment anatomy. The only Number-specific tokens are the alignment keyword and the stepper ink/fill — all bound to foundation tokens, so light/dark comes free."
       >
         <TokenSpecTable scope="vds-number" prefix="--vds-number-" groups={NUMBERINPUT_TOKEN_GROUPS} />
       </Section>
