@@ -256,3 +256,31 @@ so recolouring a passed step said "this succeeded" about clearing step 1 of 2 �
 the connector between a green step and a blue one with no honest colour to be. If a scoped
 rule reaches for `--vds-success`, `--vds-danger` or `--vds-warning` on a component that
 wasn't using them, the disagreement is about meaning, and it belongs upstream.
+
+---
+
+## A documented token doesn't stop the bug it documents
+
+`--vds-warning` is amber-400: a **fill** colour, for dots, meters and chart marks. It is
+not readable as text — on `--vds-warning-soft` (amber-50) it measures **2.29:1**, under
+half the 4.5:1 small text needs. `--vds-on-warning-soft` is the step meant for that job,
+and lands at **4.79:1**.
+
+All of which was already written down. It's on the token's own line in `_tokens.scss`,
+with both numbers. A consumer had re-derived it in a comment of its own. And `Badge`
+has always paired `--vds-warning-soft` with `--vds-on-warning-soft` correctly.
+
+A "Trial" chip still shipped at 2.29:1 — because it was built as a hand-rolled `<span>`
+with Tailwind's `bg-warning-soft text-warning`, which never touched any of that. The
+token comment can't be read by someone who isn't looking at tokens.
+
+**The lesson isn't "document the contrast pair harder."** It's that a status chip must be
+`Badge`, and the reason to reach for the component over two utility classes has nothing to
+do with saving markup — the component is where the pairing, the `role="status"`, and the
+dark-mode step already live. Two classes that *look* like the semantic tokens will compile,
+render, and be wrong.
+
+**Smell to watch for:** a `bg-*-soft` and a `text-*` from the same family, applied by hand.
+The soft background is the tell that a status tone was wanted; if the ink beside it isn't
+`on-*-soft`, it is almost certainly a fill colour being read as text. In this system that
+pairing only comes out right by accident.
