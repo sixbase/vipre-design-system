@@ -18,6 +18,14 @@ const STATUS_TONES = new Set(['success', 'warning', 'danger'])
  * - dot:  boolean — show a leading status dot  (default false)
  * - all native span attributes
  *
+ * Use this rather than hand-rolling a tinted <span>. Each tone pairs a soft
+ * background with the *ink* step meant to be read on it — for warning that is
+ * --vds-on-warning-soft (amber-600), NOT --vds-warning (amber-400), which is a
+ * fill colour for dots and marks and measures 2.29:1 as text on amber-50 against
+ * the 4.5:1 small text requires. Both steps flip correctly in dark mode. A chip
+ * built by hand from `bg-*-soft` + `text-*` utilities gets none of that, compiles
+ * fine, and ships unreadable.
+ *
  * Accessibility:
  * - Status tones (success/warning/danger) auto-apply role="status" so changes
  *   are announced; pass an explicit `role` to override.
