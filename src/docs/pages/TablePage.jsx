@@ -336,6 +336,35 @@ const GLYPHS = {
   edr: 'M5.38475 24.2307V22.7307H26.6152V24.2307H5.38475ZM8.30775 21.7307C7.80258 21.7307 7.375 21.5557 7.025 21.2057C6.675 20.8557 6.5 20.4282 6.5 19.923V9.5385C6.5 9.03333 6.675 8.60575 7.025 8.25575C7.375 7.90575 7.80258 7.73075 8.30775 7.73075H23.6922C24.1974 7.73075 24.625 7.90575 24.975 8.25575C25.325 8.60575 25.5 9.03333 25.5 9.5385V19.923C25.5 20.4282 25.325 20.8557 24.975 21.2057C24.625 21.5557 24.1974 21.7307 23.6922 21.7307H8.30775ZM8.30775 20.2308H23.6922C23.7692 20.2308 23.8398 20.1988 23.9038 20.1348C23.9679 20.0706 24 20 24 19.923V9.5385C24 9.4615 23.9679 9.391 23.9038 9.327C23.8398 9.26283 23.7692 9.23075 23.6922 9.23075H8.30775C8.23075 9.23075 8.16025 9.26283 8.09625 9.327C8.03208 9.391 8 9.4615 8 9.5385V19.923C8 20 8.03208 20.0706 8.09625 20.1348C8.16025 20.1988 8.23075 20.2308 8.30775 20.2308Z',
 }
 
+/* ---- grouped rows ------------------------------------------------------------------
+   ONE FLAT ARRAY, TAGGED, not a table per group. Three tables would size their columns
+   independently, so the figures stop lining up the moment one group holds a five-digit
+   number and another does not — they look identical until the data makes them disagree.
+
+   The aggregate sits OUTSIDE the groups. "All packages" is a total, not a sibling of
+   Bundles: every bundle is already counted in it, so as a third section it would double
+   count. It also never sorts with the rest — sorted by customers it would sit at the top
+   pretending to be the best-selling row. */
+const GROUPED = [
+  { rowKey: 'all', isAll: true, name: 'All packages', customers: 324, trials: 112 },
+
+  { rowKey: 'grp-bundles', isGroup: true, group: 'Bundles' },
+  { rowKey: 'email-cloud', name: 'Email Cloud', glyph: GLYPHS.ies, customers: 58, trials: 6 },
+  { rowKey: 'atp', name: 'Advanced Threat Protection', glyph: GLYPHS.ies, customers: 57, trials: 10 },
+  { rowKey: 'ep-email', name: 'Endpoint+Email', glyph: GLYPHS.edr, customers: 55, trials: 3 },
+  { rowKey: 'total-email', name: 'Total Email Protection', glyph: GLYPHS.ies, customers: 49, trials: 3 },
+
+  { rowKey: 'grp-packages', isGroup: true, group: 'Packages' },
+  { rowKey: 'ies', name: 'IES', glyph: GLYPHS.ies, customers: 51, trials: 8 },
+  { rowKey: 'safesend-ai', name: 'SafeSend + AI', glyph: GLYPHS.safesend, customers: 48, trials: 5 },
+  { rowKey: 'safesend', name: 'SafeSend', glyph: GLYPHS.safesend, customers: 46, trials: 7 },
+]
+
+/* A heading row prints in the FIRST column only — every other column renders null on it.
+   No colspan, so the columns stay exactly where the rest of the table put them. */
+const groupedCell = (render) => (r) => (r.isGroup ? null : render(r))
+
+
 const PRODUCTS = [
   { id: 'p1', name: 'Endpoint+Email', category: 'Endpoint security', glyph: GLYPHS.edr, seats: 1284, status: 'Active', tone: 'success' },
   { id: 'p2', name: 'Email Cloud', category: 'Email protection', glyph: GLYPHS.ies, seats: 642, status: 'Active', tone: 'success' },
@@ -1160,6 +1189,86 @@ const columns = [
 
 <SortableTable columns={columns} data={products} />`}
         />
+      </Section>
+
+      <Section
+        title="Grouped rows"
+        note="One set of columns, rows banded into labelled sections, and a total pinned above them. density=&quot;compact&quot; because a grouped list is longer than the list it replaces — the headings cost rows, so the rows have to cost less."
+      >
+        <Preview
+          canvas={
+            <Table
+              density="compact"
+              style={{ maxWidth: '34rem' }}
+              data={GROUPED}
+              getRowKey={(r) => r.rowKey}
+              columns={[
+                {
+                  key: 'name',
+                  header: 'Package',
+                  render: (r) =>
+                    r.isGroup ? (
+                      <Text as="span" variant="eyebrow" tone="subtle">{r.group}</Text>
+                    ) : (
+                      <Inline gap={3} align="center">
+                        {r.glyph
+                          ? <ProductTile glyph={r.glyph} tonal size={20} />
+                          : <span style={{ width: 20, flex: 'none' }} />}
+                        <Text as="span" variant={r.isAll ? 'body' : 'caption'}>{r.name}</Text>
+                      </Inline>
+                    ),
+                },
+                {
+                  key: 'customers',
+                  header: 'Customers',
+                  align: 'right',
+                  width: '96px',
+                  render: groupedCell((r) => r.customers.toLocaleString()),
+                },
+                {
+                  key: 'trials',
+                  header: 'Trials',
+                  align: 'right',
+                  width: '72px',
+                  render: groupedCell((r) => r.trials.toLocaleString()),
+                },
+              ]}
+            />
+          }
+          code={`// One flat array, tagged — not a table per group.
+const rows = [
+  { rowKey: 'all', isAll: true, name: 'All packages', customers: 324, trials: 112 },
+  { rowKey: 'grp-bundles', isGroup: true, group: 'Bundles' },
+  …bundles,
+  { rowKey: 'grp-packages', isGroup: true, group: 'Packages' },
+  …packages,
+]
+
+// A heading row prints in the first column only.
+const cell = (render) => (r) => (r.isGroup ? null : render(r))
+
+<Table density="compact" data={rows} getRowKey={(r) => r.rowKey} columns={[
+  { key: 'name', header: 'Package', render: (r) => r.isGroup ? <Text variant="eyebrow">{r.group}</Text> : … },
+  { key: 'customers', header: 'Customers', align: 'right', render: cell((r) => r.customers) },
+]} />`}
+        />
+        <p>
+          <strong>One table, not one per group.</strong> Three tables would size their columns
+          independently, so the figures stop lining up the moment one group holds a five-digit number
+          and another does not — they look identical until the data makes them disagree.
+        </p>
+        <p>
+          <strong>The heading is a row, not a line inside the first cell.</strong> Put it in the cell
+          and it inherits that row&rsquo;s state: the first row of the first group is usually the
+          selected one, so the caption ends up painted inside a selected pill — a group heading
+          wearing the state of one of its members. A row of its own cannot be selected or hovered.
+        </p>
+        <p>
+          <strong>A total is not a group.</strong> &ldquo;All packages&rdquo; sits above the sections
+          rather than beside them, because every bundle is already counted in it — as a third band it
+          would double count. It is also the one row that must not sort with the others: ordered by
+          customers it would sit at the top pretending to be the best-selling package.
+        </p>
       </Section>
 
       <Section
