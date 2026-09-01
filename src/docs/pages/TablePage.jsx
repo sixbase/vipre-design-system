@@ -402,7 +402,7 @@ function ResponsiveDemo() {
           columns={[
             { key: 'name', header: 'Device' },
             { key: 'owner', header: 'Owner' },
-            { key: 'status', header: 'Status', render: (r) => <Badge tone={r.tone} dot>{r.status}</Badge> },
+            { key: 'status', header: 'Status', width: '110px', render: (r) => <Badge tone={r.tone} dot>{r.status}</Badge> },
             { key: 'seen', header: 'Last seen' },
             { key: 'risk', header: 'Risk', align: 'right', render: (r) => `${r.risk}%` },
           ]}
@@ -449,8 +449,7 @@ function SortableDemo() {
   return (
     <Table
       columns={[
-        { key: 'name', header: 'Device',
-                  width: '100%', sortable: true },
+        { key: 'name', header: 'Device', sortable: true },
         { key: 'owner', header: 'Owner', sortable: true },
         STATUS_COL,
         // No align set — `risk` is numeric, so the column auto-aligns right.
@@ -672,8 +671,7 @@ function UserManagementDemo() {
   const [selected, setSelected] = useState([])
   const count = selected.length
   const columns = [
-    { key: 'name', header: 'User',
-                  width: '100%', render: (r) => <UserCell name={r.name} email={r.email} /> },
+    { key: 'name', header: 'User', render: (r) => <UserCell name={r.name} email={r.email} /> },
     { key: 'emails', header: 'Emails', align: 'right', render: (r) => <Text as="span" variant="detail" tone="muted" style={{ fontVariantNumeric: 'tabular-nums' }}>{r.emails.toLocaleString()}</Text> },
     { key: 'attachments', header: 'Attachments', align: 'right', render: (r) => <Text as="span" variant="detail" tone="muted" style={{ fontVariantNumeric: 'tabular-nums' }}>{r.attachments.toLocaleString()}</Text> },
     { key: 'policy', header: 'Top policy', render: (r) => <Tag size="sm" tone={POLICY_TONE[r.policy]}>{r.policy}</Tag> },
@@ -884,17 +882,21 @@ export function TablePage() {
                 {
                   key: 'name',
                   header: 'Product',
-                  width: '100%',
                   render: (r) => <ProductCell glyph={r.glyph} name={r.name} category={r.category} />,
                 },
-                { key: 'seats', header: 'Seats', align: 'right', render: (r) => r.seats.toLocaleString() },
+                { key: 'seats', header: 'Seats', align: 'right', width: '80px', render: (r) => r.seats.toLocaleString() },
                 {
                   key: 'status',
                   header: 'Status',
+                  width: '110px',
                   render: (r) => <Badge tone={r.tone} dot>{r.status}</Badge>,
                 },
               ]}
               data={PRODUCTS}
+              /* Capped, and the cap is the point: three short columns cannot fill 997px,
+                 and no column rule fixes that — sizing Seats and Status correctly just
+                 moves the surplus into the name. A table is as wide as its data. */
+              style={{ maxWidth: '39rem' }}
               verticalAlign="top"
             />
           }
@@ -935,17 +937,21 @@ const columns = [
                 {
                   key: 'name',
                   header: 'Product',
-                  width: '100%',
                   render: (r) => <ProductCellCompact glyph={r.glyph} name={r.name} />,
                 },
-                { key: 'seats', header: 'Seats', align: 'right', render: (r) => r.seats.toLocaleString() },
+                { key: 'seats', header: 'Seats', align: 'right', width: '80px', render: (r) => r.seats.toLocaleString() },
                 {
                   key: 'status',
                   header: 'Status',
+                  width: '110px',
                   render: (r) => <Badge tone={r.tone} dot>{r.status}</Badge>,
                 },
               ]}
               data={PRODUCTS}
+              /* Capped, and the cap is the point: three short columns cannot fill 997px,
+                 and no column rule fixes that — sizing Seats and Status correctly just
+                 moves the surplus into the name. A table is as wide as its data. */
+              style={{ maxWidth: '39rem' }}
             />
           }
           code={`<Table
@@ -981,15 +987,18 @@ const columns = [
                 {
                   key: 'name',
                   header: 'Product',
-                  width: '100%',
                   render: (r) => (
                     <ProductCellCompactTwoLine glyph={r.glyph} name={r.name} detail={r.category} />
                   ),
                 },
-                { key: 'seats', header: 'Seats', align: 'right', render: (r) => r.seats.toLocaleString() },
-                { key: 'status', header: 'Status', render: (r) => <Badge tone={r.tone} dot>{r.status}</Badge> },
+                { key: 'seats', header: 'Seats', align: 'right', width: '80px', render: (r) => r.seats.toLocaleString() },
+                { key: 'status', header: 'Status', width: '110px', render: (r) => <Badge tone={r.tone} dot>{r.status}</Badge> },
               ]}
               data={PRODUCTS}
+              /* Capped, and the cap is the point: three short columns cannot fill 997px,
+                 and no column rule fixes that — sizing Seats and Status correctly just
+                 moves the surplus into the name. A table is as wide as its data. */
+              style={{ maxWidth: '39rem' }}
             />
           }
           code={`<Table
@@ -1075,10 +1084,9 @@ const columns = [
                 {
                   key: 'name',
                   header: 'Product',
-                  width: '100%',
                   render: (r) => <ProductCell glyph={r.glyph} name={r.name} category={r.category} />,
                 },
-                { key: 'seats', header: 'Seats', align: 'right', render: (r) => r.seats.toLocaleString() },
+                { key: 'seats', header: 'Seats', align: 'right', width: '80px', render: (r) => r.seats.toLocaleString() },
                 {
                   key: 'actions',
                   header: '',
@@ -1088,6 +1096,10 @@ const columns = [
                 },
               ]}
               data={PRODUCTS}
+              /* Capped, and the cap is the point: three short columns cannot fill 997px,
+                 and no column rule fixes that — sizing Seats and Status correctly just
+                 moves the surplus into the name. A table is as wide as its data. */
+              style={{ maxWidth: '39rem' }}
             />
           }
           code={`import { Eye, Pencil, Trash2 } from '@icons'
@@ -1131,10 +1143,9 @@ const columns = [
                 {
                   key: 'name',
                   header: 'Product',
-                  width: '100%',
                   render: (r) => <ProductCell glyph={r.glyph} name={r.name} category={r.category} />,
                 },
-                { key: 'seats', header: 'Seats', align: 'right', render: (r) => r.seats.toLocaleString() },
+                { key: 'seats', header: 'Seats', align: 'right', width: '80px', render: (r) => r.seats.toLocaleString() },
                 {
                   key: 'actions',
                   header: '',
@@ -1144,6 +1155,10 @@ const columns = [
                 },
               ]}
               data={PRODUCTS}
+              /* Capped, and the cap is the point: three short columns cannot fill 997px,
+                 and no column rule fixes that — sizing Seats and Status correctly just
+                 moves the surplus into the name. A table is as wide as its data. */
+              style={{ maxWidth: '39rem' }}
             />
           }
           code={`import { Eye, Pencil, Copy, Trash2, MoreHorizontal } from '@icons'

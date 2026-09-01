@@ -25,7 +25,17 @@
   // change and the em keeps it tracking the font size. The dot's own nudge is unchanged
   // and still relative to the text; this moves the pair as one.
   padding: calc(0.125rem + 0.085em) var(--vds-space-2) calc(0.125rem - 0.085em);
-  border: 1px solid transparent;
+  // A TONE-MATCHED HAIRLINE, not a transparent one. The soft fills sit within about
+  // 1.07 of white, which is enough to read a chip on a white row and nothing at all on
+  // a hovered one: measured, every tone drops to 1.01 against --vds-canvas, and neutral
+  // drops to 1.00 because its fill IS --vds-canvas — the chip does not fade on hover,
+  // it disappears.
+  //
+  // A fill can only be legible against one ground, and a row has at least two. An edge
+  // works on both: currentColor is the tone's own ink, so this is the chip's own colour
+  // at a strength that stays quiet on white and still holds a shape on canvas, in
+  // selection, and on zebra. It costs nothing in layout — the border box was already 1px.
+  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
   border-radius: var(--vds-radius-sm);
   white-space: nowrap;
   vertical-align: middle; // optical: chips ride the text middle, not the baseline (table cells sat ~1.5px low)
