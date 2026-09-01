@@ -64,6 +64,7 @@ export function ProductTilePage() {
             [{ code: 'glyph' }, { code: 'string' }, '—', 'An SVG path drawn on the 32×32 grid — the tile optically centers it for you'],
             [{ code: 'children' }, { code: 'node' }, '—', 'Custom SVG content instead of a glyph (center it yourself)'],
             [{ code: 'muted' }, { code: 'boolean' }, { code: 'false' }, 'The flat navy “not subscribed” treatment'],
+            [{ code: 'tonal' }, { code: 'boolean' }, { code: 'false' }, 'The light-surface treatment — a 15% wash of the accent, glyph in that accent. Use on any white ground'],
             [{ code: 'size' }, { code: 'number' }, { code: '32' }, 'Rendered size in px — 20, 24, 32 or 40'],
             [{ code: 'label' }, { code: 'string' }, '—', 'Accessible name; without it the tile is decorative'],
           ],
@@ -75,7 +76,7 @@ export function ProductTilePage() {
       ]}
     >
       <Section
-        title="Two treatments"
+        title="Three treatments"
         note="One glyph drives both. The gradient says the account has this product; the flat navy says it does not."
       >
         <Preview
@@ -93,6 +94,31 @@ export function ProductTilePage() {
           <IC>muted</IC> is midnight-900, so on a white card the muted tile reads as a hole rather
           than as a product the account has not bought. On light surfaces, prefer the gradient tile
           or leave the product unmarked.
+        </p>
+      </Section>
+
+      <Section
+        title="On a light surface"
+        note="The two treatments above are drawn for the navy rail — the gradient runs accent to midnight-1000, and muted IS midnight-900. On a white table row either one reads as a heavy block. This is the third, and every table, card, drawer and modal in the product wants it."
+      >
+        <Preview
+          canvas={
+            <div style={{ ...ROW, background: 'var(--vds-surface)', padding: 'var(--vds-space-4)', borderRadius: 'var(--vds-radius-md)', border: '1px solid var(--vds-line)' }}>
+              <ProductTile glyph={GLYPHS.ies} tonal size={20} />
+              <ProductTile glyph={GLYPHS.safesend} tonal size={24} />
+              <ProductTile glyph={GLYPHS.edr} tonal size={32} />
+              <ProductTile glyph={GLYPHS.ies} tonal size={40} />
+            </div>
+          }
+          code={'<ProductTile glyph={IES} tonal size={20} />   // a table row\n<ProductTile glyph={IES} tonal size={24} />   // a denser card\n<ProductTile glyph={IES} tonal />             // 32, the default\n<ProductTile glyph={IES} tonal size={40} />   // a hero'}
+        />
+        <p>
+          <strong>One tone, not a palette.</strong> The face is a 15% wash of the accent and the glyph
+          is that same accent at full strength, so the tile reads as one object tinted once rather than
+          a mark inside a coloured box. Per-product hues are deliberately not here: twenty SKUs share
+          five glyphs, so colour would be the only thing separating four of them — and a palette that
+          carries meaning has to survive colour blindness, dark mode and a reseller re-brand. One blue
+          survives all three. It moves with <IC>--vds-tile-tonal</IC> if a brand needs it to.
         </p>
       </Section>
 

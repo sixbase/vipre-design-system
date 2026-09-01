@@ -46,6 +46,7 @@ function CenteredGlyph({ glyph, fill, style }) {
  * re-brand re-tints the tiles along with the rest of the chrome —
  *   --vds-tile-accent (defaults to --vds-nav-accent) — gradient top + edge base
  *   --vds-tile-edge   (defaults to --vds-azure-400)  — the bright border highlight
+ *   --vds-tile-tonal  (defaults to --vds-accent-cobalt) — the tonal wash + glyph
  * The tile bottoms out on the fixed midnight ramp, matching the navy rail.
  *
  * Props:
@@ -57,6 +58,12 @@ function CenteredGlyph({ glyph, fill, style }) {
  *             32×32 grid instead of `glyph`. Muted tint is NOT applied to
  *             children — style them yourself.
  * - muted:    boolean — the locked / not-subscribed treatment (default false)
+ * - tonal:    boolean — the LIGHT-SURFACE treatment: a 15% wash of the accent with
+ *             the glyph in that accent at full strength. Use it on any white or
+ *             near-white ground — a table row, a card, a drawer, a modal. The other
+ *             two treatments are drawn for the navy rail and read as a heavy block
+ *             on a light surface. One tone, not a per-product palette; see the note
+ *             on the branch below. (default false)
  * - size:     number — rendered px size (default 32)
  * - label:    accessible name; without it the tile is decorative (aria-hidden)
  * - all native SVG attributes
@@ -65,14 +72,57 @@ function CenteredGlyph({ glyph, fill, style }) {
  * <ProductTile glyph={IES_GLYPH} />
  * <ProductTile glyph={SAT_GLYPH} muted />   // locked product
  * <ProductTile glyph={IES_GLYPH} size={24} />
+ * <ProductTile glyph={IES_GLYPH} tonal size={20} />  // in a table row
  */
 export const ProductTile = forwardRef(function ProductTile(
-  { glyph, muted = false, size = 32, label, className, children, style, ...props },
+  { glyph, muted = false, tonal = false, size = 32, label, className, children, style, ...props },
   ref,
 ) {
   // Gradient defs need document-unique ids — useId keeps repeated tiles apart.
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '')
   const a11y = label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': true }
+
+  /* TONAL — the light-surface treatment, and the only one of the three that is not
+     built for the navy rail.
+
+     The other two assume a dark ground and say so in their values: the gradient runs
+     accent → midnight-1000, and `muted` IS midnight-900. Put either on a white table
+     row and you get a heavy block in every row — measured on this docs site before
+     this variant existed, sixteen cobalt-to-near-black squares on a #ffffff table.
+
+     ONE TONE, NOT A PALETTE. The face is a 15% wash of the accent and the glyph is
+     that same accent at full strength, so the tile reads as one object tinted once
+     rather than as a mark inside a coloured box. Per-product hues were considered and
+     are not here: twenty SKUs share five glyphs, so colour would be the only thing
+     telling four of them apart, and a palette that carries meaning has to survive
+     colour blindness, dark mode and a reseller re-brand. One blue survives all three.
+
+     The 15% is the same in both grounds. Against white it is a wash you can read a
+     glyph out of; against the dark surface the accent role has already stepped to
+     cobalt-400, so the mix lands brighter on its own without a second number. */
+  if (tonal) {
+    return (
+      <svg
+        ref={ref}
+        width={size}
+        height={size}
+        viewBox="0 0 32 32"
+        fill="none"
+        className={cx('vds-product-tile', 'vds-product-tile--tonal', className)}
+        style={{ display: 'block', ...style }}
+        {...a11y}
+        {...props}
+      >
+        <rect
+          width="32" height="32" rx="8"
+          style={{ fill: 'color-mix(in srgb, var(--vds-tile-tonal, var(--vds-accent-cobalt)) 15%, transparent)' }}
+        />
+        {children ?? (glyph && (
+          <CenteredGlyph glyph={glyph} style={{ fill: 'var(--vds-tile-tonal, var(--vds-accent-cobalt))' }} />
+        ))}
+      </svg>
+    )
+  }
 
   if (muted) {
     return (
