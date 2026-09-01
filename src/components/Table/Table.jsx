@@ -225,6 +225,10 @@ export const Table = forwardRef(function Table(
      Set it false on a table that is clickable but should not advertise it — a row whose
      real actions live in its own buttons, where a whole-row target would swallow them. */
   const rowsInteractive = interactiveRows && typeof onRowClick === 'function'
+  /* The shell's right-edge shadow is pinned to the scrollport's right edge. With a pinned
+     column that edge IS the column, so the shadow would be cast ON the controls rather
+     than beside them. The pinned cell draws its own fade instead — see the SCSS. */
+  const hasPinned = columns.some((c) => c.pinned)
   const expandable = typeof renderDetail === 'function'
   const totalCols = columns.length + (selectable ? 1 : 0) + (expandable ? 1 : 0)
 
@@ -286,6 +290,7 @@ export const Table = forwardRef(function Table(
         aria-sort={col.sortable ? (active ? (dir === 'asc' ? 'ascending' : 'descending') : 'none') : undefined}
         className={cx(
           'vds-table__th',
+          col.pinned && 'vds-table__cell--pinned',
           `vds-table__cell--${alignOf(col, data)}`,
           col.sortable && 'vds-table__th--sortable',
           active && 'vds-table__th--active',
@@ -405,7 +410,7 @@ export const Table = forwardRef(function Table(
               <td
                 key={col.key}
                 data-label={responsive ? labelOf(col) : undefined}
-                className={cx('vds-table__td', `vds-table__cell--${alignOf(col, data)}`, col.className)}
+                className={cx('vds-table__td', `vds-table__cell--${alignOf(col, data)}`, col.pinned && 'vds-table__cell--pinned', col.className)}
               >
                 {cellOf(col, row, i)}
               </td>
@@ -438,6 +443,7 @@ export const Table = forwardRef(function Table(
         stickyHeader && 'vds-table--sticky',
         responsive && 'vds-table--responsive',
         rowsInteractive && 'vds-table--row-interactive',
+        hasPinned && 'vds-table--has-pinned',
         className,
       )}
       {...props}

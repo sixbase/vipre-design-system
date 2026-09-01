@@ -88,6 +88,82 @@
     }
   }
 
+  // ---- a pinned column ----
+  // Row actions are off screen exactly when a long row makes you want them, and
+  // scrolling sideways to reach them loses the row you were aiming at. A pinned column
+  // holds the right edge while everything else passes under it.
+  //
+  // ONE VARIABLE BEHIND THE FILL AND THE FADE, so the two can never disagree: the fade
+  // is by definition the colour of the ground it dissolves into, and that ground changes
+  // on hover and on selection. Set --_pin-bg once and both follow.
+  &__cell--pinned {
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    --_pin-bg: var(--vds-surface);
+    background-color: var(--_pin-bg);
+  }
+  &__row--interactive:hover > &__cell--pinned {
+    --_pin-bg: color-mix(in srgb, var(--vds-ink) 4%, var(--vds-surface));
+  }
+  &__row--selected > &__cell--pinned { --_pin-bg: var(--vds-primary-soft); }
+  &--zebra &__body tr:nth-child(even) &__cell--pinned { --_pin-bg: var(--vds-table-zebra); }
+
+  // The corner is sticky in BOTH axes once the header is sticky, so it needs a step up
+  // to clear the header's own lift and the pinned body cells beneath it.
+  thead &__cell--pinned {
+    z-index: 2;
+    --_pin-bg: var(--vds-canvas);
+  }
+
+  // The fade that says the columns continue underneath. Drawn by the pinned cells at
+  // right:100%, so it hugs the column's left edge whatever width that column resolves to
+  // — no constant shared between here and the caller. One per cell; rows are contiguous,
+  // so they stack into one unbroken band from the header to the last row.
+  //
+  // THE GROUND FADING OUT, NOT A SHADOW CAST ON IT. An ink tint reads as a grey smear
+  // over white rows: a shadow says "something is on top of this", and nothing is — the
+  // columns simply stop being legible as they pass under. Reading --_pin-bg means it is
+  // white on white, the hover tint on a hovered row, the stripe on a stripe, and the dark
+  // surface in dark mode, with no second set of rules for any of them.
+  //
+  // Opacity rides the same scroll-timeline as the shell's edge shadows: visible while
+  // there is more to the right, gone once you reach the end, absent entirely when the
+  // table does not scroll. No JavaScript.
+  @supports (animation-timeline: scroll()) {
+    &__cell--pinned::before {
+      content: '';
+      position: absolute;
+      right: 100%;
+      top: 0;
+      bottom: 0;
+      width: var(--vds-space-6);
+      pointer-events: none;
+      background: linear-gradient(to left, var(--_pin-bg), transparent);
+      opacity: 0;
+      animation: vds-table-fade-end linear both;
+      animation-timeline: --vds-table-scroll-x;
+    }
+  }
+
+  // STICKY CELLS NEED `separate`. Under border-collapse: collapse a sticky cell resolves
+  // its position against a border box the collapse algorithm is still deciding, and the
+  // two land a frame apart — on screen the column shivers a pixel back and forth as you
+  // scroll, and in measurement it simply fails to hold, drifting with the content.
+  //
+  // Visually identical here because the row separator is a BOTTOM border on each cell
+  // with nothing beneath it to merge with — there is no doubled hairline for `collapse`
+  // to remove. border-spacing must be zeroed explicitly: `separate` reinstates the 2px
+  // default. Scoped to tables that actually pin, so nothing else changes.
+  &--has-pinned &__el {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  // The shell's right-edge shadow stands down: that edge is now the pinned column, so it
+  // would be cast ON the controls instead of beside them.
+  &--has-pinned::after { display: none; }
+
   &__el {
     width: 100%;
     border-collapse: collapse;

@@ -1163,6 +1163,59 @@ const columns = [
       </Section>
 
       <Section
+        title="Pinned actions"
+        note="Set pinned on the last column and it holds the table's right edge while everything else scrolls under it. Scroll this one sideways: the actions stay put, and the columns fade out as they pass beneath rather than being cut off."
+      >
+        <Preview
+          canvas={
+            <SortableTable
+              minWidth="72rem"
+              columns={[
+                { key: 'name', header: 'Device' },
+                { key: 'owner', header: 'Owner' },
+                { key: 'os', header: 'OS' },
+                { key: 'ip', header: 'IP address' },
+                STATUS_COL,
+                { key: 'seen', header: 'Last seen' },
+                { key: 'risk', header: 'Risk' },
+                {
+                  key: 'actions',
+                  header: '',
+                  align: 'right',
+                  width: '104px',
+                  pinned: true,
+                  render: (r) => (
+                    <RowActions
+                      label={r.name}
+                      onView={() => {}}
+                      onEdit={() => {}}
+                      onDelete={() => {}}
+                    />
+                  ),
+                },
+              ]}
+              data={FLEET}
+            />
+          }
+          code={`{
+  key: 'actions',
+  header: '',
+  align: 'right',
+  width: '104px',
+  pinned: true,          // holds the right edge; the rest scrolls under it
+  render: (row) => <RowActions … />,
+}`}
+        />
+        <p>
+          Only one column should take it, and it should be the last one. The fade is the
+          table&rsquo;s own ground dissolving, not a shadow — nothing is on top of those columns,
+          they simply stop being legible as they pass under. It rides the same scroll timeline as
+          the edge shadows, so it disappears once you reach the end and never appears at all on a
+          table that fits.
+        </p>
+      </Section>
+
+      <Section
         title="Row menu"
         note="Once a row has more than a couple of actions, collapse them into a kebab menu instead of a row of buttons. The trigger is one icon Button; Menu handles the popover, keyboard, and focus."
       >
