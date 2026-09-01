@@ -153,6 +153,13 @@ function ExpandGlyph() {
  * - loading:     show skeleton rows                 (default false)
  * - skeletonRows: how many while loading            (default 5)
  * - empty:       node shown when data is empty      (default 'No data')
+ * - footer:      a bar rendered INSIDE the table's own card, under a hairline. This
+ *                is where a pager belongs and it is not a detail: a pager placed after
+ *                the table, outside its border, reads as a separate control that
+ *                happens to sit nearby, and the table below it looks unfinished. Inside
+ *                the card, under the rule, it is part of the same object — which is how
+ *                every paged table in the product is built. Anything can go here; a
+ *                pager is simply the usual thing.
  * - caption:     accessible <caption> (visually hidden) describing the table
  * - all Surface props pass through (radius, elevation, bordered, raised, as…)
  *
@@ -194,6 +201,7 @@ export const Table = forwardRef(function Table(
     skeletonRows = 5,
     empty = 'No data',
     caption,
+    footer,
     radius,
     className,
     ...props
@@ -453,6 +461,7 @@ export const Table = forwardRef(function Table(
           <tbody className="vds-table__body">{bodyRows()}</tbody>
         </table>
       </div>
+      {footer && <div className="vds-table__footer">{footer}</div>}
     </Surface>
   )
 })

@@ -642,16 +642,26 @@ function PaginationDemo() {
     render: (r, i) => (r.filler ? ' ' : col.render ? col.render(r, i) : r[col.key]),
   }))
 
+  /* The pager goes in the table's own footer, not after it. The range used to be
+     printed here as a separate <Text> beside the pager; Pagination renders it from
+     `total` + `pageSize` now, so printing it here too said it twice. */
   return (
-    <Stack gap={4} style={{ width: '100%' }}>
-      <SortableTable columns={columns} data={padded} />
-      <Inline justify="between" gap={3} style={{ flexWrap: 'wrap' }}>
-        <Text variant="caption" tone="muted" style={{ fontVariantNumeric: 'tabular-nums' }}>
-          {start + 1}–{Math.min(page * pageSize, FLEET.length)} of {FLEET.length}
-        </Text>
-        <Pagination page={page} pageCount={pageCount} onPageChange={setPage} size="sm" total={FLEET.length} pageSize={pageSize} />
-      </Inline>
-    </Stack>
+    <SortableTable
+      columns={columns}
+      data={padded}
+      footer={
+        <Pagination
+          page={page}
+          pageCount={pageCount}
+          onPageChange={setPage}
+          size="sm"
+          total={FLEET.length}
+          pageSize={pageSize}
+          compact
+          style={{ width: '100%' }}
+        />
+      }
+    />
   )
 }
 

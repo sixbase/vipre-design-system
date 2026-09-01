@@ -147,6 +147,19 @@
     vertical-align: middle;
   }
 
+  // ---- the footer bar ----
+  // Inside the card, under a hairline, at the body's own horizontal padding so whatever
+  // sits here lines up with the first column above it. Vertically tighter than a row:
+  // this is chrome, not data, and matching the row height would make it read as one more
+  // record.
+  &__footer {
+    display: flex;
+    align-items: center;
+    gap: var(--vds-space-4);
+    padding: var(--vds-space-2-5) var(--vds-table-pad-x);
+    border-top: 1px solid var(--vds-line);
+  }
+
   // ---- verticalAlign="top" ----
   // Middle is right until one cell is two lines tall. At that point the row grows to
   // fit it and every OTHER cell centres against a height it did not ask for, dropping
