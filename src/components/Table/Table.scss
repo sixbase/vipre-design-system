@@ -89,6 +89,38 @@
     opacity: var(--vds-table-fade-end, 0);
   }
 
+  // ---- rows that are not records ----
+  // A group heading and a totals line sit in the body but are not data, and giving them
+  // a record's chrome is what made them read as empty rows: same rule beneath, same
+  // padding, nothing saying which is which.
+  //
+  // THE HEADING LOSES ITS RULE AND GAINS SPACE ABOVE. A rule under a label draws a line
+  // between the label and the group it belongs to, which is the one place a line must not
+  // go. The space above separates it from the group that ended; the tight space below
+  // binds it to the group it opens. Asymmetric on purpose — that asymmetry IS the
+  // grouping, and it is what a reader follows down the column.
+  &__row--heading > .vds-table__td {
+    border-bottom: 0;
+    padding-top: var(--vds-space-5);
+    padding-bottom: var(--vds-space-1);
+  }
+  // …except the first, which needs no separation from a group that has not happened yet.
+  &__body tr:first-child > .vds-table__td,
+  &__row--heading:first-child > .vds-table__td {
+    padding-top: var(--vds-table-pad-y);
+  }
+
+  // A TOTAL IS CLOSED OFF, not just listed first. The heavier rule is the whole of the
+  // separation: above it a figure that every row below is counted into, beneath it the
+  // rows themselves. Without it the total is simply the first row, which is the one thing
+  // it is not.
+  // Weight is NOT set here. A cell's content is usually a Text, which carries its own
+  // weight and wins — a font-weight on the td looks like it does something and does not.
+  // The caller sets the weight on what it renders; the rule is this component's job.
+  &__row--total > .vds-table__td {
+    border-bottom: 2px solid var(--vds-line-strong);
+  }
+
   // ---- a pinned column ----
   // Row actions are off screen exactly when a long row makes you want them, and
   // scrolling sideways to reach them loses the row you were aiming at. A pinned column

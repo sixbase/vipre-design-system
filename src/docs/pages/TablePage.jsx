@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { ShieldCheck, Mail, Globe, Database, Eye, Pencil, Trash2, Copy, MoreHorizontal, Download, ShieldAlert, Search, Send, Lock, Shield, TriangleAlert, Paperclip, Clock, CircleCheck, X, Check, Calendar, FileText, Users } from '@icons'
+import { ShieldCheck, Mail, Globe, Database, Eye, Pencil, Trash2, Copy, MoreHorizontal, Download, ShieldAlert, Search, Send, Lock, Shield, TriangleAlert, Paperclip, Clock, CircleCheck, X, Check, Calendar, FileText, Users , Stacks} from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, Code, IC } from '../primitives.jsx'
@@ -363,6 +363,91 @@ const GROUPED = [
 /* A heading row prints in the FIRST column only — every other column renders null on it.
    No colspan, so the columns stay exactly where the rest of the table put them. */
 const groupedCell = (render) => (r) => (r.isGroup ? null : render(r))
+
+/* Sorting a grouped table sorts WITHIN each group. A plain column sort reorders every
+   row it is handed, which scatters the headings and the total through the list — the
+   grouping is structure, not an ordering, so the sort has to respect it.
+
+   The total never sorts at all. Ordered by customers it would sit at the top pretending
+   to be the best-selling package; it is a figure every row below is counted into, and it
+   holds the first slot whatever the sort does. */
+function GroupedDemo() {
+  const [sort, setSort] = useState({ key: 'customers', direction: 'desc' })
+  const [activeId, setActiveId] = useState('email-cloud')
+
+  const rows = useMemo(() => {
+    const out = []
+    let bucket = []
+    const flush = () => {
+      bucket.sort((a, b) => {
+        const av = a[sort.key]
+        const bv = b[sort.key]
+        const cmp = typeof av === 'number' && typeof bv === 'number'
+          ? av - bv
+          : String(av ?? '').localeCompare(String(bv ?? ''))
+        return sort.direction === 'asc' ? cmp : -cmp
+      })
+      out.push(...bucket)
+      bucket = []
+    }
+    for (const row of GROUPED) {
+      if (row.isAll) { out.push(row); continue }
+      if (row.isGroup) { flush(); out.push(row); continue }
+      bucket.push(row)
+    }
+    flush()
+    return out
+  }, [sort])
+
+  return (
+    <Table
+      density="compact"
+      style={{ maxWidth: '34rem' }}
+      data={rows}
+      getRowKey={(r) => r.rowKey}
+      sort={sort}
+      onSortChange={setSort}
+      selectedKeys={[activeId]}
+      onRowClick={(r) => { if (!r.isGroup) setActiveId(r.rowKey) }}
+      rowClassName={(r) =>
+        r.isGroup ? 'vds-table__row--heading' : r.isAll ? 'vds-table__row--total' : undefined}
+      columns={[
+        {
+          key: 'name',
+          header: 'Package',
+          sortable: true,
+          render: (r) =>
+            r.isGroup ? (
+              <Text as="span" variant="eyebrow" tone="subtle">{r.group}</Text>
+            ) : (
+              <Inline gap={3} align="center">
+                {/* The total gets a mark, but NOT a ProductTile — it is not a product, and
+                    a product's tile on it would say it is one. Material Symbols' `stacks`:
+                    an aggregate standing for the things underneath it. Sized and slotted
+                    like the tiles so the column of marks stays a column. */}
+                {r.isAll
+                  ? <span style={{ width: 20, display: 'grid', placeItems: 'center', flex: 'none' }}>
+                      <Icon as={Stacks} size="sm" tone="muted" />
+                    </span>
+                  : <ProductTile glyph={r.glyph} tonal size={20} />}
+                {/* Same size as every other row. The total is set apart by its rule and its
+                    weight, not by being bigger — a larger face would make it a heading. */}
+                <Text as="span" variant="caption"
+                  style={r.isAll ? { fontWeight: 'var(--vds-weight-medium)' } : undefined}>
+                  {r.name}
+                </Text>
+              </Inline>
+            ),
+        },
+        { key: 'customers', header: 'Customers', align: 'right', width: '96px', sortable: true,
+          render: groupedCell((r) => r.customers.toLocaleString()) },
+        { key: 'trials', header: 'Trials', align: 'right', width: '72px', sortable: true,
+          render: groupedCell((r) => r.trials.toLocaleString()) },
+      ]}
+    />
+  )
+}
+
 
 
 const PRODUCTS = [
@@ -1196,45 +1281,7 @@ const columns = [
         note="One set of columns, rows banded into labelled sections, and a total pinned above them. density=&quot;compact&quot; because a grouped list is longer than the list it replaces — the headings cost rows, so the rows have to cost less."
       >
         <Preview
-          canvas={
-            <Table
-              density="compact"
-              style={{ maxWidth: '34rem' }}
-              data={GROUPED}
-              getRowKey={(r) => r.rowKey}
-              columns={[
-                {
-                  key: 'name',
-                  header: 'Package',
-                  render: (r) =>
-                    r.isGroup ? (
-                      <Text as="span" variant="eyebrow" tone="subtle">{r.group}</Text>
-                    ) : (
-                      <Inline gap={3} align="center">
-                        {r.glyph
-                          ? <ProductTile glyph={r.glyph} tonal size={20} />
-                          : <span style={{ width: 20, flex: 'none' }} />}
-                        <Text as="span" variant={r.isAll ? 'body' : 'caption'}>{r.name}</Text>
-                      </Inline>
-                    ),
-                },
-                {
-                  key: 'customers',
-                  header: 'Customers',
-                  align: 'right',
-                  width: '96px',
-                  render: groupedCell((r) => r.customers.toLocaleString()),
-                },
-                {
-                  key: 'trials',
-                  header: 'Trials',
-                  align: 'right',
-                  width: '72px',
-                  render: groupedCell((r) => r.trials.toLocaleString()),
-                },
-              ]}
-            />
-          }
+          canvas={<GroupedDemo />}
           code={`// One flat array, tagged — not a table per group.
 const rows = [
   { rowKey: 'all', isAll: true, name: 'All packages', customers: 324, trials: 112 },

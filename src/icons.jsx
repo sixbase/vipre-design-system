@@ -9,6 +9,7 @@ import _ArrowUpDown from '~icons/material-symbols/swap-vert-rounded'
 import _ArrowUpRight from '~icons/material-symbols/arrow-outward-rounded'
 import _Bell from '~icons/material-symbols/notifications-outline-rounded'
 import _Boxes from '~icons/material-symbols/widgets-outline-rounded'
+import _Stacks from '~icons/material-symbols/stacks-outline-rounded'
 import _Briefcase from '~icons/material-symbols/business-center-outline-rounded'
 import _Calendar from '~icons/material-symbols/calendar-month-outline-rounded'
 import _Check from '~icons/material-symbols/check-rounded'
@@ -87,6 +88,9 @@ export const ArrowUpDown = a(_ArrowUpDown)
 export const ArrowUpRight = a(_ArrowUpRight)
 export const Bell = a(_Bell)
 export const Boxes = a(_Boxes)
+/* Not a lucide name — Material Symbols' own `stacks`, for an aggregate that stands for
+   the things beneath it. Added by hand; the generator does not know about it. */
+export const Stacks = a(_Stacks)
 export const Briefcase = a(_Briefcase)
 export const Building2 = a(_Domain)
 export const Calendar = a(_Calendar)

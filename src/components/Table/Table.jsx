@@ -114,6 +114,9 @@ function ExpandGlyph() {
  * - columns:     column[]  (required)
  * - data:        row[]     (required)
  * - getRowKey:   (row, i) => key   — defaults to row.id, then the index
+ * - rowClassName: (row, i) => string — a class on the <tr>. For rows that are not
+ *                records: a group heading, a totals line. The component has no opinion
+ *                about what those are, so it hands you the hook rather than a taxonomy.
  * - density:     'comfortable' (default) | 'compact'
  * - verticalAlign: 'middle' (default) | 'top'
  *                Where a cell's content sits when the row is taller than one line.
@@ -230,6 +233,7 @@ export const Table = forwardRef(function Table(
     columns = [],
     data = [],
     getRowKey,
+    rowClassName,
     density = 'comfortable',
     verticalAlign = 'middle',
     zebra = false,
@@ -414,6 +418,7 @@ export const Table = forwardRef(function Table(
               rowsInteractive && 'vds-table__row--interactive',
               isSelected && 'vds-table__row--selected',
               isExpanded && 'vds-table__row--expanded',
+              rowClassName?.(row, i),
             )}
             aria-selected={selectable ? isSelected : undefined}
             onClick={rowsInteractive ? () => onRowClick(row, i) : undefined}
