@@ -305,7 +305,7 @@ function AuditLogDemo() {
   ]
   return (
     <div style={{ width: '100%' }}>
-      <Table
+      <SortableTable
         density="compact"
         columns={columns}
         data={AUDIT_LOG}
@@ -397,7 +397,7 @@ function ResponsiveDemo() {
           borderRadius: 8,
         }}
       >
-        <Table
+        <SortableTable
           minWidth={640}
           columns={[
             { key: 'name', header: 'Device' },
@@ -462,6 +462,51 @@ function SortableDemo() {
   )
 }
 
+/* ---- SortableTable — the docs harness, not a component ----------------------------
+   Sorting is not a feature you switch on for one example. It is what a table looks like
+   the rest of the time: a leading arrow on the sorted column, that column's label at
+   full ink, and every other arrow hidden until you reach for it. Demonstrated once, in
+   a section called "Sortable", it reads as an optional extra — so every example on this
+   page renders through here instead.
+
+   It adds three things a live demo needs and a consumer writes themselves: local sort
+   state, `sortable: true` on any column that names a field, and an actual comparator so
+   clicking a header really reorders the rows. Columns with no `key`, or whose key is an
+   actions/selection slot, are left alone — there is nothing to sort them by.
+
+   The `code=` samples beside each canvas still show plain <SortableTable> with sort/onSortChange,
+   which is what a consumer writes. This is the harness that saves the page from
+   declaring the same three lines twenty-three times. */
+const NOT_SORTABLE = new Set(['actions', 'menu', 'select', 'expand', ''])
+
+function SortableTable({ columns, data, defaultSort, ...rest }) {
+  const first = columns.find((c) => c.key && !NOT_SORTABLE.has(c.key))
+  const [sort, setSort] = useState(defaultSort ?? { key: first?.key, direction: 'desc' })
+
+  const cols = useMemo(
+    () => columns.map((c) => (c.key && !NOT_SORTABLE.has(c.key) ? { ...c, sortable: true } : c)),
+    [columns],
+  )
+
+  const rows = useMemo(() => {
+    if (!sort?.key) return data
+    const out = [...data]
+    out.sort((a, b) => {
+      const av = a[sort.key]
+      const bv = b[sort.key]
+      // Numbers compare as numbers; everything else as text, so "At risk" and "Threat"
+      // order the way a reader expects rather than by character code.
+      const cmp = typeof av === 'number' && typeof bv === 'number'
+        ? av - bv
+        : String(av ?? '').localeCompare(String(bv ?? ''))
+      return sort.direction === 'asc' ? cmp : -cmp
+    })
+    return out
+  }, [data, sort])
+
+  return <Table columns={cols} data={rows} sort={sort} onSortChange={setSort} {...rest} />
+}
+
 /* ---- live selection demo (controlled selectedKeys) ---- */
 function SelectableDemo() {
   const [selected, setSelected] = useState(['d2'])
@@ -477,7 +522,7 @@ function SelectableDemo() {
           Clear
         </Button>
       </div>
-      <Table
+      <SortableTable
         selectable
         selectedKeys={selected}
         onSelectionChange={setSelected}
@@ -533,7 +578,7 @@ function BulkActionsDemo() {
           <Text variant="caption" tone="subtle">Pick rows to act on them.</Text>
         )}
       </div>
-      <Table
+      <SortableTable
         selectable
         selectedKeys={selected}
         onSelectionChange={setSelected}
@@ -582,7 +627,7 @@ function PaginationDemo() {
 
   return (
     <Stack gap={4} style={{ width: '100%' }}>
-      <Table columns={columns} data={padded} />
+      <SortableTable columns={columns} data={padded} />
       <Inline justify="between" gap={3} style={{ flexWrap: 'wrap' }}>
         <Text variant="caption" tone="muted" style={{ fontVariantNumeric: 'tabular-nums' }}>
           {start + 1}–{Math.min(page * pageSize, FLEET.length)} of {FLEET.length}
@@ -651,7 +696,7 @@ function UserManagementDemo() {
           </>
         )}
       </div>
-      <Table
+      <SortableTable
         caption="Workspace members"
         selectable
         selectedKeys={selected}
@@ -729,7 +774,7 @@ export function TablePage() {
       <Section title="Basic" note="List your columns and hand over your data. A column's render() lets you draw your own cell content.">
         <Preview
           canvas={
-            <Table
+            <SortableTable
               columns={[
                 { key: 'name', header: 'Device' },
                 { key: 'owner', header: 'Owner' },
@@ -777,7 +822,7 @@ export function TablePage() {
       >
         <Preview
           canvas={
-            <Table
+            <SortableTable
               stickyHeader
               maxHeight={260}
               columns={[
@@ -805,7 +850,7 @@ export function TablePage() {
       >
         <Preview
           canvas={
-            <Table
+            <SortableTable
               columns={[
                 {
                   key: 'name',
@@ -854,7 +899,7 @@ const columns = [
       >
         <Preview
           canvas={
-            <Table
+            <SortableTable
               density="compact"
               columns={[
                 {
@@ -898,7 +943,7 @@ const columns = [
       >
         <Preview
           canvas={
-            <Table
+            <SortableTable
               columns={[
                 { key: 'name', header: 'Device' },
                 { key: 'owner', header: 'Owner', render: (r) => <OwnerCell name={r.owner} /> },
@@ -936,7 +981,7 @@ const columns = [
   },
 ]
 
-<Table columns={columns} data={devices} />`}
+<SortableTable columns={columns} data={devices} />`}
         />
       </Section>
 
@@ -946,7 +991,7 @@ const columns = [
       >
         <Preview
           canvas={
-            <Table
+            <SortableTable
               columns={[
                 {
                   key: 'name',
@@ -991,7 +1036,7 @@ const columns = [
   },
 ]
 
-<Table columns={columns} data={products} />`}
+<SortableTable columns={columns} data={products} />`}
         />
       </Section>
 
@@ -1001,7 +1046,7 @@ const columns = [
       >
         <Preview
           canvas={
-            <Table
+            <SortableTable
               columns={[
                 {
                   key: 'name',
@@ -1046,7 +1091,7 @@ const columns = [
   },
 ]
 
-<Table columns={columns} data={products} />`}
+<SortableTable columns={columns} data={products} />`}
         />
       </Section>
 
@@ -1134,7 +1179,7 @@ const cols = columns.map((col) => ({
       <Section title="Compact + zebra" note="Tighter rows for log-style data, with striped rows so they're easy to scan.">
         <Preview
           canvas={
-            <Table
+            <SortableTable
               density="compact"
               zebra
               columns={[
@@ -1153,7 +1198,7 @@ const cols = columns.map((col) => ({
       <Section title="Interactive rows" note="Pass onRowClick to make each row clickable so you can open it.">
         <Preview
           canvas={
-            <Table
+            <SortableTable
               onRowClick={(r) => window.alert(`Opening ${r.name}`)}
               columns={[
                 { key: 'name', header: 'Device' },
@@ -1310,7 +1355,7 @@ const columns = [
 
 const [selected, setSelected] = useState([])
 
-<Table
+<SortableTable
   caption="Workspace members"
   selectable
   selectedKeys={selected}
