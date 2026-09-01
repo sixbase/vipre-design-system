@@ -346,8 +346,14 @@
     // EQUAL AND OPPOSITE, because `align-items: center` centres the MARGIN box: a lone
     // negative top margin shrinks that box and the centring gives back half the nudge.
     // A matched pair leaves the box the same size and moves it whole.
-    margin-top: -0.5px;
-    margin-bottom: 0.5px;
+    // 0.085em, and it is the SAME CONSTANT the Badge dot uses to reach the text's ink
+    // centre — not a coincidence but the same fact twice: Rubik's ink sits high in its
+    // line box, so anything `align-items: center` puts beside a label reads low against
+    // the letters. Measured here at 11px: the previous flat -0.5px left the arrow still
+    // 0.44px under the label's ink, and 0.5 + 0.44 = 0.94px = 0.0855em. Stated in em so
+    // it tracks the header's size rather than being right at one of them.
+    margin-top: -0.085em;
+    margin-bottom: 0.085em;
     // The flip SNAPS — only the tone fades. A 7x8 arrow spun through 180deg re-rasterises
     // its 1px stroke on every frame, and at that size the antialiasing churn reads as a
     // shake, not as motion. There's nothing to follow in the in-between frames anyway: the
