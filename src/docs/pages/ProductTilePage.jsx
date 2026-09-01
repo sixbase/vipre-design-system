@@ -1,5 +1,5 @@
 import { ComponentPage } from '../ComponentPage.jsx'
-import { Section, Preview, IC } from '../primitives.jsx'
+import { Section, Preview, RefTable, IC } from '../primitives.jsx'
 import { ProductTile } from '../../components/SideNav/index.js'
 
 /* Product glyphs — SVG path strings drawn on the tile's 32×32 grid, the same three
@@ -14,10 +14,18 @@ const GLYPHS = {
    the number already says what it means, and four names would be four more things to
    remember about a 32px square. */
 const SIZES = [
-  { size: 20, use: 'Inside a row', detail: 'A table cell, a cart line, an add-on list. The tile identifies the product; the name beside it does the talking.' },
-  { size: 24, use: 'A denser card', detail: 'Review lines, a seats-by-product breakdown, a selection cart.' },
-  { size: 32, use: 'The default', detail: 'A card header, a catalogue row, the nav rail. Reach for this one unless the context argues otherwise.' },
-  { size: 40, use: 'A hero', detail: 'A detail header, a manage drawer, the tile you pick off a shelf.' },
+  { size: 20, use: 'Inside a row',
+    detail: 'The tile identifies; the name beside it does the talking. Small enough that a row of them does not become a column of colour.',
+    where: 'Table cells, cart lines, add-on lists' },
+  { size: 24, use: 'A denser card',
+    detail: 'A row that carries more than a name — a figure, a status — and needs the mark to hold its own without leading.',
+    where: 'Review lines, seats-by-product, a selection cart' },
+  { size: 32, use: 'The default',
+    detail: 'Reach for this one unless the context argues otherwise. It is the size the glyphs were drawn at, so it is the one that needs no scaling.',
+    where: 'Card headers, catalogue rows, the nav rail' },
+  { size: 40, use: 'A hero',
+    detail: 'The product is the subject of the surface rather than an item on it. One per view — a second 40 competing with the first is how a page loses its subject.',
+    where: 'Detail headers, manage drawers, the tile you pick off a shelf' },
 ]
 
 const ROW = { display: 'flex', alignItems: 'center', gap: 'var(--vds-space-4)' }
@@ -75,7 +83,7 @@ export function ProductTilePage() {
 
       <Section
         title="Four sizes"
-        note="Not a named scale — pass the number. These four cover every use; anything between them is drift."
+        note="Not a named scale — pass the number. These four cover every use; anything between them is drift. The corner column is not a prop: it is what the fixed rx renders to once the tile is scaled."
       >
         <Preview
           canvas={
@@ -87,14 +95,16 @@ export function ProductTilePage() {
           }
           code={'<ProductTile glyph={IES} size={20} />   // inside a row\n<ProductTile glyph={IES} size={24} />   // a denser card\n<ProductTile glyph={IES} />             // 32, the default\n<ProductTile glyph={IES} size={40} />   // a hero'}
         />
-        <dl>
-          {SIZES.map(({ size, use, detail }) => (
-            <div key={size}>
-              <dt><IC>{String(size)}</IC> — {use}</dt>
-              <dd>{detail}</dd>
-            </div>
-          ))}
-        </dl>
+        <RefTable
+          headers={['', 'Size', 'Corner', 'What it is for', 'Where it appears']}
+          rows={SIZES.map(({ size, use, detail, where }) => [
+            <ProductTile glyph={GLYPHS.ies} size={size} />,
+            <IC>{String(size)}</IC>,
+            <span style={{ whiteSpace: 'nowrap' }}>{size / 4}px</span>,
+            <><strong>{use}</strong><br />{detail}</>,
+            where,
+          ])}
+        />
       </Section>
 
       <Section
