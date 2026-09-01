@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { ShieldCheck, Mail, Globe, Database, Eye, Pencil, Trash2, Copy, MoreHorizontal, Download, ShieldAlert, Search, Send, Lock, Shield, TriangleAlert, Paperclip, Clock, CircleCheck, X, Check, Calendar, FileText, Users , Stacks} from '@icons'
+import { ShieldCheck, Mail, Globe, Database, Eye, Pencil, Trash2, Copy, MoreHorizontal, Download, ShieldAlert, Search, Send, Lock, Shield, TriangleAlert, Paperclip, Clock, CircleCheck, X, Check, Calendar, FileText, Users } from '@icons'
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, Code, IC } from '../primitives.jsx'
@@ -331,6 +331,11 @@ function AuditLogDemo() {
 /* The product marks, drawn on the tile's 32x32 grid — the same three the Product Tile
    and Side Nav pages demonstrate with, so a reader meets one SafeSend mark, not three. */
 const GLYPHS = {
+  /* Material Symbols stacks-outline-rounded, on its native 24 grid. ProductTile
+     measures the ink and centres it, so a 24-grid symbol lands at the same optical
+     size as the 32-grid product marks beside it — both are the same Material
+     Symbols optical size underneath. */
+  stacks: 'M11.513 13.663q-.238-.063-.463-.188l-8.45-4.6q-.275-.15-.388-.375T2.1 8t.113-.5t.387-.375l8.45-4.6q.225-.125.463-.188T12 2.275t.488.063t.462.187l8.45 4.6q.275.15.388.375t.112.5t-.112.5t-.388.375l-8.45 4.6q-.225.125-.462.188t-.488.062t-.488-.062M12 11.725L18.825 8L12 4.275L5.175 8zm0 4l7.85-4.275q.05-.025.475-.125q.425 0 .713.288t.287.712q0 .275-.125.5t-.4.375l-7.85 4.275q-.225.125-.462.188t-.488.062t-.488-.062t-.462-.188L3.2 13.2q-.275-.15-.4-.375t-.125-.5q0-.425.288-.712t.712-.288q.125 0 .238.038t.237.087zm0 4l7.85-4.275q.05-.025.475-.125q.425 0 .713.288t.287.712q0 .275-.125.5t-.4.375l-7.85 4.275q-.225.125-.462.188t-.488.062t-.488-.062t-.462-.188L3.2 17.2q-.275-.15-.4-.375t-.125-.5q0-.425.288-.712t.712-.288q.125 0 .238.038t.237.087z',
   ies: 'M8.30775 23.5C7.80258 23.5 7.375 23.325 7.025 22.975C6.675 22.625 6.5 22.1974 6.5 21.6923V10.3077C6.5 9.80258 6.675 9.375 7.025 9.025C7.375 8.675 7.80258 8.5 8.30775 8.5H23.6923C24.1974 8.5 24.625 8.675 24.975 9.025C25.325 9.375 25.5 9.80258 25.5 10.3077V21.6923C25.5 22.1974 25.325 22.625 24.975 22.975C24.625 23.325 24.1974 23.5 23.6923 23.5H8.30775ZM16 16.5578L8 11.4423V21.6923C8 21.7821 8.02883 21.8558 8.0865 21.9135C8.14417 21.9712 8.21792 22 8.30775 22H23.6923C23.7821 22 23.8558 21.9712 23.9135 21.9135C23.9712 21.8558 24 21.7821 24 21.6923V11.4423L16 16.5578ZM16 15L23.8462 10H8.15375L16 15ZM8 11.4423V10V21.6923C8 21.7821 8.02883 21.8558 8.0865 21.9135C8.14417 21.9712 8.21792 22 8.30775 22H8V11.4423Z',
   safesend: 'M24.1838 6.6214C24.8147 6.25031 25.6311 6.76984 25.4826 7.51203L22.8108 23.5433C22.7366 24.137 22.1057 24.471 21.5862 24.2484L16.9846 22.2816L14.6096 25.1761C14.0901 25.8069 13.051 25.473 13.051 24.5823V21.5765L21.9573 10.7034C22.1428 10.4808 21.8459 10.221 21.6604 10.4066L11.01 19.7952L7.03929 18.1253C6.37132 17.8655 6.2971 16.9007 6.96507 16.5296L24.1838 6.6214Z',
   edr: 'M5.38475 24.2307V22.7307H26.6152V24.2307H5.38475ZM8.30775 21.7307C7.80258 21.7307 7.375 21.5557 7.025 21.2057C6.675 20.8557 6.5 20.4282 6.5 19.923V9.5385C6.5 9.03333 6.675 8.60575 7.025 8.25575C7.375 7.90575 7.80258 7.73075 8.30775 7.73075H23.6922C24.1974 7.73075 24.625 7.90575 24.975 8.25575C25.325 8.60575 25.5 9.03333 25.5 9.5385V19.923C25.5 20.4282 25.325 20.8557 24.975 21.2057C24.625 21.5557 24.1974 21.7307 23.6922 21.7307H8.30775ZM8.30775 20.2308H23.6922C23.7692 20.2308 23.8398 20.1988 23.9038 20.1348C23.9679 20.0706 24 20 24 19.923V9.5385C24 9.4615 23.9679 9.391 23.9038 9.327C23.8398 9.26283 23.7692 9.23075 23.6922 9.23075H8.30775C8.23075 9.23075 8.16025 9.26283 8.09625 9.327C8.03208 9.391 8 9.4615 8 9.5385V19.923C8 20 8.03208 20.0706 8.09625 20.1348C8.16025 20.1988 8.23075 20.2308 8.30775 20.2308Z',
@@ -421,15 +426,13 @@ function GroupedDemo() {
               <Text as="span" variant="eyebrow" tone="subtle">{r.group}</Text>
             ) : (
               <Inline gap={3} align="center">
-                {/* The total gets a mark, but NOT a ProductTile — it is not a product, and
-                    a product's tile on it would say it is one. Material Symbols' `stacks`:
-                    an aggregate standing for the things underneath it. Sized and slotted
-                    like the tiles so the column of marks stays a column. */}
-                {r.isAll
-                  ? <span style={{ width: 20, display: 'grid', placeItems: 'center', flex: 'none' }}>
-                      <Icon as={Stacks} size="sm" tone="muted" />
-                    </span>
-                  : <ProductTile glyph={r.glyph} tonal size={20} />}
+                {/* THE TOTAL WEARS A TILE TOO. It was a bare Icon on the argument that the
+                    row is not a product — true, and it made the mark column stop being a
+                    column: one row with a loose glyph among nine tiles reads as a rendering
+                    fault, not as a distinction. The distinction is carried by the glyph
+                    itself — Material Symbols `stacks`, an aggregate standing for what is
+                    underneath it — and by the rule beneath the row. The frame stays common. */}
+                <ProductTile glyph={r.isAll ? GLYPHS.stacks : r.glyph} tonal size={20} />
                 {/* Same size as every other row. The total is set apart by its rule and its
                     weight, not by being bigger — a larger face would make it a heading. */}
                 <Text as="span" variant="caption"
