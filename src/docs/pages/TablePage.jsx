@@ -348,8 +348,8 @@ const PRODUCTS = [
    No bespoke markup; reuse this shape in any first column. */
 function ProductCell({ glyph, name, category }) {
   return (
-    <Inline gap={2} align="start">
-      <ProductTile glyph={glyph} tonal size={24} />
+    <Inline gap={2} align="center">
+      <ProductTile glyph={glyph} tonal size={32} />
       <Stack gap={0}>
         <Text as="span" variant="body">{name}</Text>
         <Text as="span" variant="detail" tone="subtle">{category}</Text>
@@ -478,8 +478,8 @@ function SortableDemo() {
    the two lines. */
 function ProductCellCompactTwoLine({ glyph, name, detail }) {
   return (
-    <Inline gap={2} align="start">
-      <ProductTile glyph={glyph} tonal size={20} />
+    <Inline gap={2} align="center">
+      <ProductTile glyph={glyph} tonal size={24} />
       <Stack gap={0}>
         <Text as="span" variant="caption">{name}</Text>
         <Text as="span" variant="detail" tone="subtle">{detail}</Text>
@@ -899,7 +899,7 @@ export function TablePage() {
 
       <Section
         title="Leading product cell"
-        note="A product and its name in the first column. The mark is a ProductTile, tonal — the product's own square, not a general-purpose icon, which says &quot;something about email&quot; where the tile says &quot;this product&quot;. Tonal because a table is a light surface; the rail treatments are built for navy and read as a heavy block here. 24px, because the cell carries a second line. Mark and name live in ONE cell, so there is no mark column to align and no empty header to explain. verticalAlign=&quot;top&quot; because this row is two lines: without it every single-line cell — the seats figure, the status chip — centres against a height the description created and sits below the name it belongs to."
+        note="A product and its name in the first column. The mark is a ProductTile, tonal — the product's own square, not a general-purpose icon, which says &quot;something about email&quot; where the tile says &quot;this product&quot;. Tonal because a table is a light surface; the rail treatments are built for navy and read as a heavy block here. 32px, because the cell carries a second line — a two-line row steps the mark up one place on the scale. Mark and name live in ONE cell, so there is no mark column to align and no empty header to explain. Every row here is exactly two lines, so the figure and the chip centre against the row and sit level with the pair — reach for verticalAlign=&quot;top&quot; only when rows VARY in height, where centring would put the mark beside a different line each time."
       >
         <Preview
           canvas={
@@ -923,7 +923,6 @@ export function TablePage() {
                  and no column rule fixes that — sizing Seats and Status correctly just
                  moves the surplus into the name. A table is as wide as its data. */
               style={{ maxWidth: '39rem' }}
-              verticalAlign="top"
             />
           }
           code={`import { Inline, ProductTile, Stack, Table, Text } from 'vipre-design-system'
@@ -935,8 +934,8 @@ const columns = [
     render: (r) => (
       // align="start", not centre: the row's height changes with the second
       // line, and a centred mark points at a different line on every row.
-      <Inline gap={2} align="start">
-        <ProductTile glyph={r.glyph} tonal size={24} />
+      <Inline gap={2} align="center">
+        <ProductTile glyph={r.glyph} tonal size={32} />
         <Stack gap={0}>
           <Text as="span" variant="body">{r.name}</Text>
           <Text as="span" variant="detail" tone="subtle">{r.category}</Text>
@@ -1002,13 +1001,12 @@ const columns = [
 
       <Section
         title="Compact product cell, two lines"
-        note="A dense row that still carries a second line. The tile stays at 20 — the size answers the ROW, not the cell's line count — and verticalAlign=&quot;top&quot; keeps the mark, the name, the figure and the chip on the first line together."
+        note="A dense row that still carries a second line. The tile steps up to 24 — one place on the scale, because the cell carries a second line — and everything centres on the row, because every row here is the same two lines tall."
       >
         <Preview
           canvas={
             <SortableTable
               density="compact"
-              verticalAlign="top"
               columns={[
                 {
                   key: 'name',
@@ -1029,7 +1027,6 @@ const columns = [
           }
           code={`<Table
   density="compact"
-  verticalAlign="top"        // the row is two lines — line everything up on the first
   columns={[
     {
       key: 'name',
