@@ -110,17 +110,6 @@
     padding-top: var(--vds-table-pad-y);
   }
 
-  // A TOTAL IS CLOSED OFF, not just listed first. The heavier rule is the whole of the
-  // separation: above it a figure that every row below is counted into, beneath it the
-  // rows themselves. Without it the total is simply the first row, which is the one thing
-  // it is not.
-  // Weight is NOT set here. A cell's content is usually a Text, which carries its own
-  // weight and wins — a font-weight on the td looks like it does something and does not.
-  // The caller sets the weight on what it renders; the rule is this component's job.
-  &__row--total > .vds-table__td {
-    border-bottom: 2px solid var(--vds-line-strong);
-  }
-
   // ---- a pinned column ----
   // Row actions are off screen exactly when a long row makes you want them, and
   // scrolling sideways to reach them loses the row you were aiming at. A pinned column

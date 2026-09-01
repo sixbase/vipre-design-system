@@ -146,7 +146,12 @@ function ExpandGlyph() {
  * - selectedKeys: array | Set of selected row keys
  * - onSelectionChange: (keys[]) => void
  * - onRowClick:  (row, index) => void  — what a click on a row does
- * - interactiveRows: rows look and behave clickable (default true). Needs onRowClick
+ * - interactiveRows: rows look and behave clickable (default true). Also takes a
+ *                PREDICATE, (row, i) => boolean, for a body that holds rows which are
+ *                not records — a group heading, a totals line. Those must not carry the
+ *                pointer, the hover or role="button": the styling promises a click does
+ *                something, and guarding the handler alone leaves the promise on screen
+ *                with nothing behind it. Needs onRowClick
  *                to take effect — the styling promises a click does something, and a
  *                table without a handler has nothing to promise. Set false to keep a
  *                row's click behaviour without the whole-row affordance.
@@ -274,7 +279,10 @@ export const Table = forwardRef(function Table(
 
      Set it false on a table that is clickable but should not advertise it — a row whose
      real actions live in its own buttons, where a whole-row target would swallow them. */
-  const rowsInteractive = interactiveRows && typeof onRowClick === 'function'
+  const hasRowClick = typeof onRowClick === 'function'
+  const rowsInteractive = hasRowClick && interactiveRows !== false
+  const isRowInteractive = (row, i) =>
+    hasRowClick && (typeof interactiveRows === 'function' ? interactiveRows(row, i) : interactiveRows !== false)
   /* The shell's right-edge shadow is pinned to the scrollport's right edge. With a pinned
      column that edge IS the column, so the shadow would be cast ON the controls rather
      than beside them. The pinned cell draws its own fade instead — see the SCSS. */
@@ -415,15 +423,15 @@ export const Table = forwardRef(function Table(
           <tr
             className={cx(
               'vds-table__row',
-              rowsInteractive && 'vds-table__row--interactive',
+              isRowInteractive(row, i) && 'vds-table__row--interactive',
               isSelected && 'vds-table__row--selected',
               isExpanded && 'vds-table__row--expanded',
               rowClassName?.(row, i),
             )}
             aria-selected={selectable ? isSelected : undefined}
-            onClick={rowsInteractive ? () => onRowClick(row, i) : undefined}
+            onClick={isRowInteractive(row, i) ? () => onRowClick(row, i) : undefined}
             onKeyDown={
-              rowsInteractive
+              isRowInteractive(row, i)
                 ? (e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault()
@@ -432,8 +440,8 @@ export const Table = forwardRef(function Table(
                   }
                 : undefined
             }
-            tabIndex={rowsInteractive ? 0 : undefined}
-            role={rowsInteractive ? 'button' : undefined}
+            tabIndex={isRowInteractive(row, i) ? 0 : undefined}
+            role={isRowInteractive(row, i) ? 'button' : undefined}
           >
             {expandable && (
               // Stop propagation so the caret never fires the row's onClick.

@@ -413,13 +413,15 @@ function GroupedDemo() {
       sort={sort}
       onSortChange={setSort}
       selectedKeys={[activeId]}
-      onRowClick={(r) => { if (!r.isGroup) setActiveId(r.rowKey) }}
-      rowClassName={(r) =>
-        r.isGroup ? 'vds-table__row--heading' : r.isAll ? 'vds-table__row--total' : undefined}
+      /* A heading is not a record: no pointer, no hover, no role="button". Guarding only
+         the handler would leave the row LOOKING clickable while doing nothing. */
+      interactiveRows={(r) => !r.isGroup}
+      onRowClick={(r) => setActiveId(r.rowKey)}
+      rowClassName={(r) => (r.isGroup ? 'vds-table__row--heading' : undefined)}
       columns={[
         {
           key: 'name',
-          header: 'Package',
+          header: 'Bundles and Packages',
           sortable: true,
           render: (r) =>
             r.isGroup ? (
@@ -433,12 +435,11 @@ function GroupedDemo() {
                     itself — Material Symbols `stacks`, an aggregate standing for what is
                     underneath it — and by the rule beneath the row. The frame stays common. */}
                 <ProductTile glyph={r.isAll ? GLYPHS.stacks : r.glyph} tonal size={20} />
-                {/* Same size as every other row. The total is set apart by its rule and its
-                    weight, not by being bigger — a larger face would make it a heading. */}
-                <Text as="span" variant="caption"
-                  style={r.isAll ? { fontWeight: 'var(--vds-weight-medium)' } : undefined}>
-                  {r.name}
-                </Text>
+                {/* Same size and weight as every other row. The total is set apart by its
+                    position and its glyph alone — nothing about the type. A heavier face or a
+                    rule beneath it both read as a heading introducing the rows, which is the
+                    opposite of what it is: a figure they are all counted into. */}
+                <Text as="span" variant="caption">{r.name}</Text>
               </Inline>
             ),
         },
