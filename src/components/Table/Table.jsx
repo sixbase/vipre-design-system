@@ -1,4 +1,4 @@
-import { Fragment, forwardRef, useId, useState } from 'react'
+import { Fragment, forwardRef, useCallback, useEffect, useId, useRef, useState } from 'react'
 import { cx } from '../../lib/cx.js'
 import { Surface } from '../Surface/Surface.jsx'
 import { Checkbox } from '../Checkbox/Checkbox.jsx'
@@ -179,6 +179,52 @@ function ExpandGlyph() {
  *   onSortChange={setSort}
  * />
  */
+/* ---- scroll fade — MEASURED, not animated ------------------------------------------
+   Writes two numbers, 1 or 0 per edge, onto the table's root: --vds-table-fade-start
+   and --vds-table-fade-end. The edge fades and a pinned column's own fade read them, so
+   a fade only ever appears when it MEANS something — one at an edge with nothing beyond
+   it is decoration claiming content that is not there.
+
+   This replaces a scroll-timeline. The CSS-only version was the nicer idea and it does
+   not fire: measured on a table inside a flex-column card, both edge shadows sat at
+   opacity 0 at every scroll position while their animations reported `running` against a
+   ScrollTimeline. The prototype hit the same wall and moved to measurement; this is that
+   fix, brought back.
+
+   THREE TRIGGERS, because no one of them catches every case:
+     scroll  the obvious one.
+     resize  an observer on the SCROLLER catches its own box changing; observers on its
+             CHILDREN catch content growing or shrinking under a still scroller — a
+             filter applied, a column toggled — which moves scrollWidth while the
+             scroller's box never changes.
+     window  the backstop, and not redundant: ResizeObserver does not fire on every
+             viewport-driven resize, and without this the fade sticks at whatever it was
+             when the window was last a different size.
+   All three call the same idempotent update, so firing twice costs one style write. */
+function bindScrollFade(el) {
+  const host = el.parentElement ?? el
+  const set = (k, on) => host.style.setProperty(k, on ? '1' : '0')
+  const update = () => {
+    set('--vds-table-fade-start', el.scrollLeft > 1)
+    set('--vds-table-fade-end', Math.ceil(el.scrollLeft + el.clientWidth) < el.scrollWidth - 1)
+  }
+  update()
+  el.addEventListener('scroll', update, { passive: true })
+  window.addEventListener('resize', update, { passive: true })
+  const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(update) : null
+  if (ro) {
+    ro.observe(el)
+    for (const child of el.children) ro.observe(child)
+  }
+  return () => {
+    el.removeEventListener('scroll', update)
+    window.removeEventListener('resize', update)
+    ro?.disconnect()
+    host.style.removeProperty('--vds-table-fade-start')
+    host.style.removeProperty('--vds-table-fade-end')
+  }
+}
+
 export const Table = forwardRef(function Table(
   {
     columns = [],
@@ -229,6 +275,15 @@ export const Table = forwardRef(function Table(
      column that edge IS the column, so the shadow would be cast ON the controls rather
      than beside them. The pinned cell draws its own fade instead — see the SCSS. */
   const hasPinned = columns.some((c) => c.pinned)
+
+  /* A callback ref, not an effect on a stored node: it re-binds if the scrollport is
+     replaced and cleans up when it goes, without a dependency list to keep in step. */
+  const fadeCleanup = useRef(null)
+  const scrollRef = useCallback((node) => {
+    fadeCleanup.current?.()
+    fadeCleanup.current = node ? bindScrollFade(node) : null
+  }, [])
+  useEffect(() => () => fadeCleanup.current?.(), [])
   const expandable = typeof renderDetail === 'function'
   const totalCols = columns.length + (selectable ? 1 : 0) + (expandable ? 1 : 0)
 
@@ -449,6 +504,7 @@ export const Table = forwardRef(function Table(
       {...props}
     >
       <div
+        ref={scrollRef}
         className="vds-table__scroll"
         style={maxHeight != null ? { maxHeight, overflowY: 'auto' } : undefined}
       >

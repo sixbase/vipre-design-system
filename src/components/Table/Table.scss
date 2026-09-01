@@ -54,38 +54,39 @@
   // the table fits (no overflow) the timeline is inactive, the animation never
   // applies, and the base opacity (0) hides both. Progressive enhancement:
   // browsers without scroll-timeline just show no shadows.
-  @supports (animation-timeline: scroll()) {
-    &::before,
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: var(--vds-space-4);
-      pointer-events: none;
-      z-index: var(--vds-z-raised); // above the sticky header's local lift
-      opacity: 0;
-      animation: linear both;
-      animation-timeline: --vds-table-scroll-x;
-    }
-    &::before {
-      left: 0;
-      background: linear-gradient(
-        to right,
-        color-mix(in oklab, var(--vds-ink) 12%, transparent),
-        transparent
-      );
-      animation-name: vds-table-fade-start;
-    }
-    &::after {
-      right: 0;
-      background: linear-gradient(
-        to left,
-        color-mix(in oklab, var(--vds-ink) 12%, transparent),
-        transparent
-      );
-      animation-name: vds-table-fade-end;
-    }
+  // Opacity comes from the two numbers bindScrollFade measures, not from a
+  // scroll-timeline. The timeline version read better and did not work: inside a
+  // flex-column card both of these sat at 0 at every scroll position while their
+  // animations reported `running`. See the note on bindScrollFade in Table.jsx.
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: var(--vds-space-4);
+    pointer-events: none;
+    z-index: var(--vds-z-raised); // above the sticky header's local lift
+    opacity: 0;
+    transition: opacity var(--vds-dur-fast) var(--vds-ease-out);
+  }
+  &::before {
+    left: 0;
+    background: linear-gradient(
+      to right,
+      color-mix(in oklab, var(--vds-ink) 12%, transparent),
+      transparent
+    );
+    opacity: var(--vds-table-fade-start, 0);
+  }
+  &::after {
+    right: 0;
+    background: linear-gradient(
+      to left,
+      color-mix(in oklab, var(--vds-ink) 12%, transparent),
+      transparent
+    );
+    opacity: var(--vds-table-fade-end, 0);
   }
 
   // ---- a pinned column ----
@@ -130,20 +131,17 @@
   // Opacity rides the same scroll-timeline as the shell's edge shadows: visible while
   // there is more to the right, gone once you reach the end, absent entirely when the
   // table does not scroll. No JavaScript.
-  @supports (animation-timeline: scroll()) {
-    &__cell--pinned::before {
-      content: '';
-      position: absolute;
-      right: 100%;
-      top: 0;
-      bottom: 0;
-      width: var(--vds-space-6);
-      pointer-events: none;
-      background: linear-gradient(to left, var(--_pin-bg), transparent);
-      opacity: 0;
-      animation: vds-table-fade-end linear both;
-      animation-timeline: --vds-table-scroll-x;
-    }
+  &__cell--pinned::before {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 0;
+    bottom: 0;
+    width: var(--vds-space-6);
+    pointer-events: none;
+    background: linear-gradient(to left, var(--_pin-bg), transparent);
+    opacity: var(--vds-table-fade-end, 0);
+    transition: opacity var(--vds-dur-fast) var(--vds-ease-out);
   }
 
   // STICKY CELLS NEED `separate`. Under border-collapse: collapse a sticky cell resolves
