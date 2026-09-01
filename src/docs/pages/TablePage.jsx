@@ -462,6 +462,23 @@ function SortableDemo() {
   )
 }
 
+/* Compact, but two lines. The dense row still has something to say under the name —
+   an edition, an owner, a last-seen — and the tile stays at 20 rather than stepping up
+   to 24: the size answers the ROW's density, not the cell's line count. Top-aligned
+   like every two-line cell, so the mark leads the name instead of pointing between
+   the two lines. */
+function ProductCellCompactTwoLine({ glyph, name, detail }) {
+  return (
+    <Inline gap={2} align="start">
+      <ProductTile glyph={glyph} tonal size={20} />
+      <Stack gap={0}>
+        <Text as="span" variant="caption">{name}</Text>
+        <Text as="span" variant="detail" tone="subtle">{detail}</Text>
+      </Stack>
+    </Inline>
+  )
+}
+
 /* ---- SortableTable — the docs harness, not a component ----------------------------
    Sorting is not a feature you switch on for one example. It is what a table looks like
    the rest of the time: a leading arrow on the sorted column, that column's label at
@@ -927,6 +944,53 @@ const columns = [
         <Inline gap={2}>
           <Icon as={r.icon} size="sm" tone="muted" />
           <Text as="span" variant="caption">{r.name}</Text>
+        </Inline>
+      ),
+    },
+    // …more columns
+  ]}
+  data={products}
+/>`}
+        />
+      </Section>
+
+      <Section
+        title="Compact product cell, two lines"
+        note="A dense row that still carries a second line. The tile stays at 20 — the size answers the ROW, not the cell's line count — and verticalAlign=&quot;top&quot; keeps the mark, the name, the figure and the chip on the first line together."
+      >
+        <Preview
+          canvas={
+            <SortableTable
+              density="compact"
+              verticalAlign="top"
+              columns={[
+                {
+                  key: 'name',
+                  header: 'Product',
+                  render: (r) => (
+                    <ProductCellCompactTwoLine glyph={r.glyph} name={r.name} detail={r.category} />
+                  ),
+                },
+                { key: 'seats', header: 'Seats', align: 'right', render: (r) => r.seats.toLocaleString() },
+                { key: 'status', header: 'Status', render: (r) => <Badge tone={r.tone} dot>{r.status}</Badge> },
+              ]}
+              data={PRODUCTS}
+            />
+          }
+          code={`<Table
+  density="compact"
+  verticalAlign="top"        // the row is two lines — line everything up on the first
+  columns={[
+    {
+      key: 'name',
+      header: 'Product',
+      render: (r) => (
+        <Inline gap={2} align="start">
+          <ProductTile glyph={r.glyph} tonal size={20} />
+          <Stack gap={0}>
+            <Text as="span" variant="caption">{r.name}</Text>
+            <Text as="span" variant="detail" tone="subtle">{r.category}</Text>
+          </Stack>
         </Inline>
       ),
     },
