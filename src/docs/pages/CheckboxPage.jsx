@@ -1,7 +1,7 @@
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, Code, IC } from '../primitives.jsx'
-import { Checkbox, Text } from '../../components/index.js'
+import { Checkbox, Text, Stack, Inline } from '../../components/index.js'
 
 const COL = { display: 'flex', flexDirection: 'column', gap: '0.75rem' }
 
@@ -29,6 +29,28 @@ export function CheckboxPage() {
         <><IC>indeterminate</IC> is only how it looks — in your own data it still has to end up checked or unchecked.</>,
       ]}
     >
+      <Section
+        title="Compact"
+        note={'size="sm" drops the box from 18px to 14 and steps the label down with it. For a dense table row or a toolbar, where the default is the tallest thing on the line and starts setting the row height instead of sitting in it. The tap target is unchanged on touch.'}
+      >
+        <Preview
+          canvas={
+            <Stack gap={3}>
+              <Inline gap={4} align="center">
+                <Checkbox size="sm" defaultChecked>Compact</Checkbox>
+                <Checkbox size="sm">Unchecked</Checkbox>
+                <Checkbox size="sm" indeterminate>Some</Checkbox>
+                <Checkbox size="sm" disabled>Disabled</Checkbox>
+              </Inline>
+              <Inline gap={4} align="center">
+                <Checkbox defaultChecked>Default, for comparison</Checkbox>
+              </Inline>
+            </Stack>
+          }
+          code={'<Checkbox size="sm">Compact</Checkbox>'}
+        />
+      </Section>
+
       <Section title="States">
         <Preview
           canvas={

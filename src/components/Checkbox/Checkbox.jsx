@@ -11,6 +11,7 @@ import { cx } from '../../lib/cx.js'
  * Props:
  * - indeterminate: boolean — the "some selected" dash (set imperatively on the input)
  * - tone: 'primary' | 'success'  (default 'primary') — the CHECKED fill only
+ * - size: 'md' (default) | 'sm' — the compact step, for dense rows and toolbars
  * - children: optional label content
  * - all native checkbox attributes (checked, defaultChecked, onChange, disabled…)
  *
@@ -44,7 +45,7 @@ import { cx } from '../../lib/cx.js'
  * <Checkbox tone="success" checked={inCart}>Total Email Protection</Checkbox>
  */
 export const Checkbox = forwardRef(function Checkbox(
-  { indeterminate = false, tone = 'primary', disabled, className, children, ...props },
+  { indeterminate = false, tone = 'primary', size = 'md', disabled, className, children, ...props },
   ref,
 ) {
   const innerRef = useRef(null)
@@ -66,6 +67,7 @@ export const Checkbox = forwardRef(function Checkbox(
       className={cx(
         'vds-checkbox',
         tone !== 'primary' && `vds-checkbox--${tone}`,
+        size === 'sm' && 'vds-checkbox--sm',
         disabled && 'vds-checkbox--disabled',
         className,
       )}

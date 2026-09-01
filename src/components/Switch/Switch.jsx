@@ -18,9 +18,9 @@ import { cx } from '../../lib/cx.js'
  * @example
  * <Switch defaultChecked>Email alerts</Switch>
  */
-export const Switch = forwardRef(function Switch({ disabled, className, children, ...props }, ref) {
+export const Switch = forwardRef(function Switch({ size = 'md', disabled, className, children, ...props }, ref) {
   return (
-    <label className={cx('vds-switch', disabled && 'vds-switch--disabled', className)}>
+    <label className={cx('vds-switch', size === 'sm' && 'vds-switch--sm', disabled && 'vds-switch--disabled', className)}>
       <input ref={ref} type="checkbox" role="switch" className="vds-switch__input" disabled={disabled} {...props} />
       <span className="vds-switch__track" aria-hidden="true">
         <span className="vds-switch__thumb" />
