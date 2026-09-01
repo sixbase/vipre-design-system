@@ -15,6 +15,23 @@
   // the thumb's top/bottom must match the padding or the pill sits off-centre.
   --vds-segmented-inset: calc(var(--vds-space-1) / 2);
 
+  // ---- THE TRACK'S CORNER, and why it is not the one it had --------------------------
+  // radius-sm (4px), the same corner Button and Input take at every size — because in
+  // practice this control is never alone. It sits in a toolbar beside them: a search
+  // field, a filter button and a segmented view switch, all --sm, all 32px tall, and the
+  // segmented one was the only one with an 8px corner. At that height the difference is
+  // half the corner, and a row of three controls where one is visibly rounder reads as
+  // three different kinds of thing rather than one toolbar.
+  //
+  // Exposed as a property, like --vds-button-radius and --vds-input-radius, so a consumer
+  // that genuinely wants a pill track can say so in one line instead of overriding a
+  // hardcoded value.
+  --vds-segmented-radius: var(--vds-radius-sm);
+  // The inner corner follows the outer one: a rounded box inside a rounded box has to sit
+  // one inset tighter or its corner cuts across the track's. Same construction as Input's
+  // prefix nub. Floored at 2px so it stays a corner rather than resolving to a square.
+  --vds-segmented-inner-radius: max(2px, calc(var(--vds-segmented-radius) - var(--vds-segmented-inset)));
+
   position: relative;
   display: inline-flex;
   align-items: stretch;
@@ -22,7 +39,7 @@
   max-width: 100%;
   padding: var(--vds-segmented-inset);
   border: 1px solid var(--vds-line);
-  border-radius: var(--vds-radius-md);
+  border-radius: var(--vds-segmented-radius);
   background-color: var(--vds-surface-hover); // recessed neutral track
   overflow-x: auto;   // too many segments → scroll, never wrap
   overscroll-behavior-x: contain;
@@ -46,7 +63,7 @@
     top: var(--vds-segmented-inset);
     bottom: var(--vds-segmented-inset);
     left: 0;
-    border-radius: var(--vds-radius-sm);
+    border-radius: var(--vds-segmented-inner-radius);
     background-color: var(--vds-primary);
     box-shadow: var(--vds-shadow-xs);
 
@@ -87,7 +104,7 @@
     gap: var(--vds-space-2);
     width: 100%;
     padding: 0 var(--vds-space-3);
-    border-radius: var(--vds-radius-sm);
+    border-radius: var(--vds-segmented-inner-radius);
     color: var(--vds-ink-muted);
     white-space: nowrap;
     user-select: none;

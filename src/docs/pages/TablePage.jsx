@@ -346,12 +346,12 @@ const GLYPHS = {
    independently, so the figures stop lining up the moment one group holds a five-digit
    number and another does not — they look identical until the data makes them disagree.
 
-   The aggregate sits OUTSIDE the groups. "All packages" is a total, not a sibling of
+   The aggregate sits OUTSIDE the groups. "All bundles and packages" is a total, not a sibling of
    Bundles: every bundle is already counted in it, so as a third section it would double
    count. It also never sorts with the rest — sorted by customers it would sit at the top
    pretending to be the best-selling row. */
 const GROUPED = [
-  { rowKey: 'all', isAll: true, name: 'All packages', customers: 324, trials: 112 },
+  { rowKey: 'all', isAll: true, name: 'All bundles and packages', customers: 324, trials: 112 },
 
   { rowKey: 'grp-bundles', isGroup: true, group: 'Bundles' },
   { rowKey: 'email-cloud', name: 'Email Cloud', glyph: GLYPHS.ies, customers: 58, trials: 6 },
@@ -1288,7 +1288,7 @@ const columns = [
           canvas={<GroupedDemo />}
           code={`// One flat array, tagged — not a table per group.
 const rows = [
-  { rowKey: 'all', isAll: true, name: 'All packages', customers: 324, trials: 112 },
+  { rowKey: 'all', isAll: true, name: 'All bundles and packages', customers: 324, trials: 112 },
   { rowKey: 'grp-bundles', isGroup: true, group: 'Bundles' },
   …bundles,
   { rowKey: 'grp-packages', isGroup: true, group: 'Packages' },
@@ -1315,7 +1315,7 @@ const cell = (render) => (r) => (r.isGroup ? null : render(r))
           wearing the state of one of its members. A row of its own cannot be selected or hovered.
         </p>
         <p>
-          <strong>A total is not a group.</strong> &ldquo;All packages&rdquo; sits above the sections
+          <strong>A total is not a group.</strong> &ldquo;All bundles and packages&rdquo; sits above the sections
           rather than beside them, because every bundle is already counted in it — as a third band it
           would double count. It is also the one row that must not sort with the others: ordered by
           customers it would sit at the top pretending to be the best-selling package.
