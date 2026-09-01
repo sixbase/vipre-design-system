@@ -142,7 +142,11 @@ function ExpandGlyph() {
  * - selectable:  show the selection column          (default false)
  * - selectedKeys: array | Set of selected row keys
  * - onSelectionChange: (keys[]) => void
- * - onRowClick:  (row, index) => void  — makes rows interactive (hover + keyboard)
+ * - onRowClick:  (row, index) => void  — what a click on a row does
+ * - interactiveRows: rows look and behave clickable (default true). Needs onRowClick
+ *                to take effect — the styling promises a click does something, and a
+ *                table without a handler has nothing to promise. Set false to keep a
+ *                row's click behaviour without the whole-row affordance.
  * - renderDetail: (row, index) => node — when set, every row gets a leading
  *                expand caret that reveals this node in a full-width detail row
  *                beneath it. This is how you keep dense rows compact: the row
@@ -193,6 +197,7 @@ export const Table = forwardRef(function Table(
     selectedKeys,
     onSelectionChange,
     onRowClick,
+    interactiveRows = true,
     renderDetail,
     expandedKeys,
     defaultExpandedKeys,
@@ -210,7 +215,16 @@ export const Table = forwardRef(function Table(
 ) {
   const captionId = useId()
   const detailBaseId = useId()
-  const interactiveRows = typeof onRowClick === 'function'
+  /* Rows read as clickable by default, because in this product most of them are. The
+     flag still needs a handler to take effect, and that is not a hedge: the treatment is
+     a pointer, a focus ring and role="button", which together promise that a click does
+     something. A table with no onRowClick has nothing to promise, and defaulting the
+     PROMISE on would make "this row does nothing" the thing an author has to remember to
+     say. So the default answers the common case and the handler keeps it honest.
+
+     Set it false on a table that is clickable but should not advertise it — a row whose
+     real actions live in its own buttons, where a whole-row target would swallow them. */
+  const rowsInteractive = interactiveRows && typeof onRowClick === 'function'
   const expandable = typeof renderDetail === 'function'
   const totalCols = columns.length + (selectable ? 1 : 0) + (expandable ? 1 : 0)
 
@@ -337,14 +351,14 @@ export const Table = forwardRef(function Table(
           <tr
             className={cx(
               'vds-table__row',
-              interactiveRows && 'vds-table__row--interactive',
+              rowsInteractive && 'vds-table__row--interactive',
               isSelected && 'vds-table__row--selected',
               isExpanded && 'vds-table__row--expanded',
             )}
             aria-selected={selectable ? isSelected : undefined}
-            onClick={interactiveRows ? () => onRowClick(row, i) : undefined}
+            onClick={rowsInteractive ? () => onRowClick(row, i) : undefined}
             onKeyDown={
-              interactiveRows
+              rowsInteractive
                 ? (e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault()
@@ -353,8 +367,8 @@ export const Table = forwardRef(function Table(
                   }
                 : undefined
             }
-            tabIndex={interactiveRows ? 0 : undefined}
-            role={interactiveRows ? 'button' : undefined}
+            tabIndex={rowsInteractive ? 0 : undefined}
+            role={rowsInteractive ? 'button' : undefined}
           >
             {expandable && (
               // Stop propagation so the caret never fires the row's onClick.
@@ -423,7 +437,7 @@ export const Table = forwardRef(function Table(
         zebra && 'vds-table--zebra',
         stickyHeader && 'vds-table--sticky',
         responsive && 'vds-table--responsive',
-        interactiveRows && 'vds-table--row-interactive',
+        rowsInteractive && 'vds-table--row-interactive',
         className,
       )}
       {...props}
