@@ -147,6 +147,21 @@
     vertical-align: middle;
   }
 
+  // ---- verticalAlign="top" ----
+  // Middle is right until one cell is two lines tall. At that point the row grows to
+  // fit it and every OTHER cell centres against a height it did not ask for, dropping
+  // each single-line value below the name that identifies the row — measured here at
+  // 8.2px between a status chip and the product name it described, while the tile in
+  // the same row had already been top-aligned by hand to avoid exactly that.
+  //
+  // The 1px is not decoration. A Badge is a 20px control whose ink sits inside its own
+  // box, and the text beside it starts at the cell's padding edge; without the pull the
+  // chip lands a hair below the first line rather than on it.
+  &--valign-top &__td {
+    vertical-align: top;
+    padding-top: calc(var(--vds-table-pad-y) - 1px);
+  }
+
   &__body tr:last-child .vds-table__td {
     border-bottom: none;
   }

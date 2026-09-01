@@ -115,6 +115,16 @@ function ExpandGlyph() {
  * - data:        row[]     (required)
  * - getRowKey:   (row, i) => key   — defaults to row.id, then the index
  * - density:     'comfortable' (default) | 'compact'
+ * - verticalAlign: 'middle' (default) | 'top'
+ *                Where a cell's content sits when the row is taller than one line.
+ *                Middle is right while every cell is one line. The moment ONE column
+ *                wraps — a name over a category, a package over its add-ons — the row
+ *                grows to fit it and every OTHER cell centres against that new height,
+ *                dropping each single-line value below the name that identifies its
+ *                row. Measured on the docs page before this existed: a status chip sat
+ *                8px under the product name it described, while the ProductTile beside
+ *                it was already top-aligned by hand. Set 'top' whenever a column can
+ *                render two lines, and the row lines up on the first one.
  * - zebra:       striped rows                    (default false)
  * - stickyHeader: header stays put while the body scrolls (pair with `maxHeight`)
  * - maxHeight:   CSS max-height for the scroll body (enables vertical scroll)
@@ -164,6 +174,7 @@ export const Table = forwardRef(function Table(
     data = [],
     getRowKey,
     density = 'comfortable',
+    verticalAlign = 'middle',
     zebra = false,
     stickyHeader = false,
     maxHeight,
@@ -400,6 +411,7 @@ export const Table = forwardRef(function Table(
       className={cx(
         'vds-table',
         `vds-table--${density}`,
+        verticalAlign === 'top' && 'vds-table--valign-top',
         zebra && 'vds-table--zebra',
         stickyHeader && 'vds-table--sticky',
         responsive && 'vds-table--responsive',

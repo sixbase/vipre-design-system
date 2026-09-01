@@ -684,6 +684,7 @@ export function TablePage() {
             [{ code: 'stickyHeader' }, { code: 'boolean' }, { code: 'false' }, 'Keeps the header in place while the rows scroll'],
             [{ code: 'maxHeight' }, { code: 'string | number' }, '—', 'Caps the height so the rows scroll (use with stickyHeader)'],
             [{ code: 'sort' }, { code: '{ key, direction }' }, '—', 'Which column is sorted, and which way'],
+            [{ code: 'verticalAlign' }, { code: "'middle' | 'top'" }, { code: "'middle'" }, 'Use top when any column can wrap to two lines, so every cell lines up on the first one'],
             [{ code: 'onSortChange' }, { code: '(next) => void' }, '—', 'Runs when someone clicks a sortable header'],
             [{ code: 'selectable' }, { code: 'boolean' }, { code: 'false' }, 'Adds a checkbox column'],
             [{ code: 'selectedKeys' }, { code: 'array | Set' }, '—', 'Which rows are checked'],
@@ -800,7 +801,7 @@ export function TablePage() {
 
       <Section
         title="Leading product cell"
-        note="A product and its name in the first column. The mark is a ProductTile, tonal — the product's own square, not a general-purpose icon, which says &quot;something about email&quot; where the tile says &quot;this product&quot;. Tonal because a table is a light surface; the rail treatments are built for navy and read as a heavy block here. 24px, because the cell carries a second line. Mark and name live in ONE cell, so there is no mark column to align and no empty header to explain."
+        note="A product and its name in the first column. The mark is a ProductTile, tonal — the product's own square, not a general-purpose icon, which says &quot;something about email&quot; where the tile says &quot;this product&quot;. Tonal because a table is a light surface; the rail treatments are built for navy and read as a heavy block here. 24px, because the cell carries a second line. Mark and name live in ONE cell, so there is no mark column to align and no empty header to explain. verticalAlign=&quot;top&quot; because this row is two lines: without it every single-line cell — the seats figure, the status chip — centres against a height the description created and sits below the name it belongs to."
       >
         <Preview
           canvas={
@@ -819,6 +820,7 @@ export function TablePage() {
                 },
               ]}
               data={PRODUCTS}
+              verticalAlign="top"
             />
           }
           code={`import { Inline, ProductTile, Stack, Table, Text } from 'vipre-design-system'
@@ -842,7 +844,7 @@ const columns = [
   // …more columns
 ]
 
-<Table columns={columns} data={products} />`}
+<Table columns={columns} data={products} verticalAlign="top" />`}
         />
       </Section>
 
