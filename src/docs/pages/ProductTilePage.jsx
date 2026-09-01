@@ -36,6 +36,21 @@ const NAVY = {
 }
 const LIST = { display: 'flex', flexDirection: 'column', gap: 'var(--vds-space-3)', width: '100%', maxWidth: 340 }
 
+/* A table row, built the way the guidance below describes: a fixed track for the mark,
+   a flexible one for the name, the figures sized by their headings. The 12px gap is the
+   table's; the name cell pulls 4px back so the mark reads as belonging to it. */
+const TROW = {
+  display: 'grid', gridTemplateColumns: '20px minmax(0, 1fr) 88px',
+  alignItems: 'center', gap: 12, padding: '7px 12px',
+}
+const TNAME = { marginLeft: -4, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }
+const TNUM = { textAlign: 'right', fontVariantNumeric: 'tabular-nums', color: 'var(--vds-ink-muted)' }
+const THEAD = {
+  ...TROW, fontSize: 11, letterSpacing: '.04em', textTransform: 'uppercase',
+  color: 'var(--vds-ink-subtle)', borderBottom: '1px solid var(--vds-line)',
+}
+const TWRAP = { width: '100%', maxWidth: 360, fontSize: 13, color: 'var(--vds-ink)' }
+
 export function ProductTilePage() {
   return (
     <ComponentPage
@@ -158,6 +173,62 @@ export function ProductTilePage() {
           should not have to re-learn the SafeSend name in a table. Use the tile wherever a product is
           named — and use it rather than a general-purpose icon, which says “something about email”
           where the tile says “this product”.
+        </p>
+      </Section>
+
+      <Section
+        title="In a table"
+        note="The most common place this component appears, and the only one with mechanics worth stating."
+      >
+        <Preview
+          canvas={
+            <div style={TWRAP}>
+              <div style={THEAD}>
+                <span />
+                <span style={TNAME}>Package</span>
+                <span style={TNUM}>Customers</span>
+              </div>
+              {[['Email Cloud', 58, GLYPHS.ies], ['SafeSend + AI', 48, GLYPHS.safesend], ['Endpoint+Email', 55, GLYPHS.edr]].map(([name, n, g]) => (
+                <div key={name} style={TROW}>
+                  <ProductTile glyph={g} size={20} />
+                  <span style={TNAME}>{name}</span>
+                  <span style={TNUM}>{n}</span>
+                </div>
+              ))}
+              <div style={TROW}>
+                <span />
+                <span style={TNAME}>All packages</span>
+                <span style={TNUM}>324</span>
+              </div>
+            </div>
+          }
+          code={'<div className="row">          {/* 20px  minmax(0,1fr)  88px */}\n  <ProductTile glyph={glyphFor(pkg)} size={20} />\n  <span className="name">{pkg.name}</span>\n  <span className="num">{pkg.customers}</span>\n</div>'}
+        />
+        <RefTable
+          headers={['Rule', 'Value', 'Why']}
+          rows={[
+            ['Tile size', <IC>20</IC>,
+              'Big enough to tell two products apart at a glance, small enough that a column of them does not become a stripe of colour down the page.'],
+            ['The mark column heading', 'None',
+              'There is nothing to sort it by and nothing to call it. It still needs its cell — without one, every heading sits a mark-width left of the column it names.'],
+            ['Its track', 'Fixed at the tile size',
+              <>Never <IC>auto</IC> or a fraction. The mark must not shrink when a long product name squeezes the row.</>],
+            ['Mark to name', <span style={{ whiteSpace: 'nowrap' }}>8px</span>,
+              'Tighter than the table\u2019s other gaps, because a mark belongs to the name beside it. An even gap all the way across leaves it adrift between two columns.'],
+            ['Every other gap', <span style={{ whiteSpace: 'nowrap' }}>12px</span>,
+              <>One grid cannot vary its column gap, so the row runs at 12 and the name cell pulls back the difference with <IC>margin-left: -4px</IC>.</>],
+            ['A row with no product', 'Keep the slot, leave it empty',
+              'A totals or “all” row is not a product, and inventing a mark for it says that it is. Drop the cell instead and its name lands a mark-width left of every other name in the column.'],
+            ['Vertical alignment', 'Optically centred',
+              'The tile\u2019s ink fills its box; text sits high in its line box. Centring the two boxes leaves the name looking low.'],
+          ]}
+        />
+        <p>
+          One thing to check before adding the column at all: <strong>a tile only identifies a product
+          if the products have different glyphs.</strong> A set that falls back to one shared mark for
+          most of its rows produces a column that repeats the same square down the page — which reads
+          as decoration, costs a column of width, and tells the reader nothing the name did not.
+          Draw the marks first, or leave the column out.
         </p>
       </Section>
     </ComponentPage>
