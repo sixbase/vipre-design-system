@@ -109,6 +109,44 @@
     }
   }
 
+  // ---- the range, and the typeable page field ----
+  // The range sits FIRST and is pushed away from the controls by the gap, matching the
+  // pager in the product: where you are in the data on one side, the means of moving on
+  // the other. It is quiet — it is context, not a control.
+  &__range {
+    margin-right: auto;
+    color: var(--vds-ink-muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  // The page field reads as text until you reach for it: no resting border, so the
+  // readout stays a sentence rather than becoming a form. The border and ring arrive on
+  // hover and focus, which is where "you can change this" belongs.
+  &__jump {
+    height: var(--vds-space-5);
+    padding: 0 var(--vds-space-1);
+    border: 1px solid transparent;
+    border-radius: var(--vds-radius-sm);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    outline: none;
+    transition: border-color 120ms ease, background-color 120ms ease;
+
+    &:hover { border-color: var(--vds-line); }
+
+    &:focus-visible {
+      border-color: var(--vds-focus-ring);
+      background: var(--vds-surface);
+      box-shadow: 0 0 0 var(--vds-control-ring-w) color-mix(in srgb, var(--vds-focus-ring) 35%, transparent);
+    }
+  }
+
+  &__count { font-variant-numeric: tabular-nums; }
+
   // ---- compact form (forced) ----
   &--compact {
     .vds-pagination__pages {

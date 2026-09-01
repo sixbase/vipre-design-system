@@ -632,7 +632,7 @@ function PaginationDemo() {
         <Text variant="caption" tone="muted" style={{ fontVariantNumeric: 'tabular-nums' }}>
           {start + 1}–{Math.min(page * pageSize, FLEET.length)} of {FLEET.length}
         </Text>
-        <Pagination page={page} pageCount={pageCount} onPageChange={setPage} size="sm" />
+        <Pagination page={page} pageCount={pageCount} onPageChange={setPage} size="sm" total={FLEET.length} pageSize={pageSize} />
       </Inline>
     </Stack>
   )
@@ -1173,7 +1173,7 @@ const cols = columns.map((col) => ({
 }))
 
 <Table columns={cols} data={padded} />
-<Pagination page={page} pageCount={pageCount} onPageChange={setPage} size="sm" />`} />
+<Pagination page={page} pageCount={pageCount} onPageChange={setPage} size="sm"\n  total={rows.length} pageSize={pageSize} />`} />
       </Section>
 
       <Section title="Compact + zebra" note="Tighter rows for log-style data, with striped rows so they're easy to scan.">

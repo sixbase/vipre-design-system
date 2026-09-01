@@ -36,6 +36,30 @@ export function PaginationPage() {
         <>Focus rings use <IC>--vds-focus-ring</IC>; transitions stop under <IC>prefers-reduced-motion</IC>.</>,
       ]}
     >
+      <Section
+        title="Beside a table"
+        note="What a pager looks like under a list of data: the range it covers on the left, the controls on the right, and the page number typeable so you can jump instead of stepping. This is the form the product's Accounts and Devices tables use."
+      >
+        <Preview
+          canvas={<LiveExample start={1} pageCount={129} total={1539} pageSize={12} compact />}
+          code={`<Pagination
+  page={page}
+  pageCount={129}
+  onPageChange={setPage}
+  total={1539}      // rows in the whole list
+  pageSize={12}     // rows on a page
+  compact
+/>`}
+        />
+        <p>
+          <IC>total</IC> and <IC>pageSize</IC> give you the range — <strong>1&ndash;12 of 1,539</strong>.
+          A page number says where you are in the <em>pager</em>; the range says where you are in the{' '}
+          <em>data</em>, which is what someone paging a list is actually asking. And the page number is
+          an input at every width: the compact form exists because the numbered buttons do not fit, so
+          without a field the only way to reach page 40 of 129 is to press Next thirty-nine times.
+        </p>
+      </Section>
+
       <Section title="Basic" note="Try it — the page state lives in the demo. '…' appears where numbers are skipped.">
         <Preview
           canvas={<LiveExample pageCount={12} />}
