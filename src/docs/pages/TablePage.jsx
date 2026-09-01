@@ -505,7 +505,15 @@ function ProductCellCompactTwoLine({ glyph, name, detail }) {
    declaring the same three lines twenty-three times. */
 const NOT_SORTABLE = new Set(['actions', 'menu', 'select', 'expand', ''])
 
-function SortableTable({ columns, data, defaultSort, ...rest }) {
+/* Rows are interactive unless an example says otherwise. Nearly every table in the
+   product opens something when you click a row, so a page of tables that do not is a
+   page showing the exception. Pass onRowClick to give a demo real behaviour, or
+   onRowClick={null} to show a table that genuinely has nowhere to go — a read-only log,
+   a totals list. The default handler does nothing: in a docs demo the point is the
+   affordance — the pointer, the hover, the keyboard focus — not the destination. */
+const DEMO_ROW_CLICK = () => {}
+
+function SortableTable({ columns, data, defaultSort, onRowClick, ...rest }) {
   const first = columns.find((c) => c.key && !NOT_SORTABLE.has(c.key))
   const [sort, setSort] = useState(defaultSort ?? { key: first?.key, direction: 'desc' })
 
@@ -530,7 +538,16 @@ function SortableTable({ columns, data, defaultSort, ...rest }) {
     return out
   }, [data, sort])
 
-  return <Table columns={cols} data={rows} sort={sort} onSortChange={setSort} {...rest} />
+  return (
+    <Table
+      columns={cols}
+      data={rows}
+      sort={sort}
+      onSortChange={setSort}
+      onRowClick={onRowClick === null ? undefined : (onRowClick ?? DEMO_ROW_CLICK)}
+      {...rest}
+    />
+  )
 }
 
 /* ---- live selection demo (controlled selectedKeys) ---- */
