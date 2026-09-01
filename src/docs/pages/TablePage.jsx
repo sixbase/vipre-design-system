@@ -348,7 +348,7 @@ const PRODUCTS = [
    No bespoke markup; reuse this shape in any first column. */
 function ProductCell({ glyph, name, category }) {
   return (
-    <Inline gap={2} align="center">
+    <Inline gap={3} align="center">
       <ProductTile glyph={glyph} tonal size={32} />
       <Stack gap={0}>
         <Text as="span" variant="body">{name}</Text>
@@ -362,7 +362,7 @@ function ProductCell({ glyph, name, category }) {
    with the table's density="compact" for log-dense screens. */
 function ProductCellCompact({ glyph, name }) {
   return (
-    <Inline gap={2}>
+    <Inline gap={3}>
       <ProductTile glyph={glyph} tonal size={20} />
       <Text as="span" variant="caption">{name}</Text>
     </Inline>
@@ -485,8 +485,8 @@ function SortableDemo() {
    the two lines. */
 function ProductCellCompactTwoLine({ glyph, name, detail }) {
   return (
-    <Inline gap={2} align="center">
-      <ProductTile glyph={glyph} tonal size={24} />
+    <Inline gap={3} align="center">
+      <ProductTile glyph={glyph} tonal size={20} />
       <Stack gap={0}>
         <Text as="span" variant="caption">{name}</Text>
         <Text as="span" variant="detail" tone="subtle">{detail}</Text>
@@ -941,7 +941,7 @@ const columns = [
     render: (r) => (
       // align="start", not centre: the row's height changes with the second
       // line, and a centred mark points at a different line on every row.
-      <Inline gap={2} align="center">
+      <Inline gap={3} align="center">
         <ProductTile glyph={r.glyph} tonal size={32} />
         <Stack gap={0}>
           <Text as="span" variant="body">{r.name}</Text>
@@ -1039,7 +1039,7 @@ const columns = [
       key: 'name',
       header: 'Product',
       render: (r) => (
-        <Inline gap={2} align="start">
+        <Inline gap={3} align="start">
           <ProductTile glyph={r.glyph} tonal size={20} />
           <Stack gap={0}>
             <Text as="span" variant="caption">{r.name}</Text>
