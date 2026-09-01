@@ -119,6 +119,23 @@ export const ProductTile = forwardRef(function ProductTile(
           width="32" height="32" rx="8"
           style={{ fill: 'color-mix(in srgb, var(--vds-tile-tonal, var(--vds-accent-cobalt)) 15%, transparent)' }}
         />
+        {/* THE RIM, which the gradient variant has always had and this one was missing.
+            Inset half a pixel on the 32-grid so the 1px stroke sits INSIDE the tile's
+            edge rather than straddling it — the same geometry the gradient tile uses, and
+            why its radius is 7.5 against the fill's 8.
+
+            It is not decoration. A 15% wash is within about 1.07 of white, so on a
+            hovered row, a selected row or a zebra stripe the tile loses its shape exactly
+            the way the Badge and Tag chips did before they took an edge. This is the same
+            fix a third time: a fill answers one ground, an edge answers all of them.
+
+            30%, not the gradient variant's 0.25 stroke opacity — that rim is a bright
+            highlight on a saturated block and only has to catch the light. This one is
+            the only thing holding the shape. */}
+        <rect
+          x="0.5" y="0.5" width="31" height="31" rx="7.5"
+          style={{ stroke: 'color-mix(in srgb, var(--vds-tile-tonal, var(--vds-accent-cobalt)) 30%, transparent)' }}
+        />
         {/* THE MARK RUNS MIDNIGHT, THE TILE KEEPS THE PRODUCT'S COLOUR. Drawn in the
             product's own accent, a shelf of these was twenty differently-coloured glyphs
             whose only shared trait was the shape of the box. One ink makes them read as a
