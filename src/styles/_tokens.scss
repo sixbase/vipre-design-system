@@ -388,6 +388,15 @@ $magenta: ( // accent — hot pink (hue 348)
   --vds-accent-azure:        var(--vds-azure-600);
   --vds-accent-azure-soft:   var(--vds-azure-50);
   --vds-accent-cobalt:       var(--vds-cobalt-600);
+
+  /* Product-tile glyph ramp (the `tonal` treatment). The mark runs midnight rather than
+     the product's own colour, so a shelf of tiles reads as one set — the product's colour
+     stays on the tile behind it. Both grounds converge on midnight-400 from the far end of
+     the ramp that ground allows: on white it starts at 900 and lightens, and on the dark
+     surface it starts at 200, because midnight-900 IS --vds-surface there and half the
+     glyph would be drawn in the background colour. */
+  --vds-tile-glyph-from:     var(--vds-midnight-900);
+  --vds-tile-glyph-to:       var(--vds-midnight-400);
   --vds-accent-cobalt-soft:  var(--vds-cobalt-50);
   --vds-accent-purple:       var(--vds-purple-600);
   --vds-accent-purple-soft:  var(--vds-purple-50);
@@ -488,6 +497,8 @@ $magenta: ( // accent — hot pink (hue 348)
   --vds-accent-azure:        var(--vds-azure-400);
   --vds-accent-azure-soft:   color-mix(in oklab, var(--vds-azure-400) 16%, transparent);
   --vds-accent-cobalt:       var(--vds-cobalt-400);
+  --vds-tile-glyph-from:     var(--vds-midnight-200);
+  --vds-tile-glyph-to:       var(--vds-midnight-400);
   --vds-accent-cobalt-soft:  color-mix(in oklab, var(--vds-cobalt-400) 16%, transparent);
   --vds-accent-purple:       var(--vds-purple-400);
   --vds-accent-purple-soft:  color-mix(in oklab, var(--vds-purple-400) 16%, transparent);

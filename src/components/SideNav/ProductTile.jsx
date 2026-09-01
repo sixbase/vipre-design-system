@@ -100,6 +100,8 @@ export const ProductTile = forwardRef(function ProductTile(
      The 15% is the same in both grounds. Against white it is a wash you can read a
      glyph out of; against the dark surface the accent role has already stepped to
      cobalt-400, so the mix lands brighter on its own without a second number. */
+  const tonalGl = `vds-pttg-${uid}`
+
   if (tonal) {
     return (
       <svg
@@ -117,9 +119,24 @@ export const ProductTile = forwardRef(function ProductTile(
           width="32" height="32" rx="8"
           style={{ fill: 'color-mix(in srgb, var(--vds-tile-tonal, var(--vds-accent-cobalt)) 15%, transparent)' }}
         />
+        {/* THE MARK RUNS MIDNIGHT, THE TILE KEEPS THE PRODUCT'S COLOUR. Drawn in the
+            product's own accent, a shelf of these was twenty differently-coloured glyphs
+            whose only shared trait was the shape of the box. One ink makes them read as a
+            set, and the tile behind still carries the identity.
+
+            Both grounds converge on midnight-400 from the far end of the ramp that ground
+            allows — see --vds-tile-glyph-from. On the dark surface it starts at 200 rather
+            than 900 because midnight-900 IS that surface, and half the glyph would be
+            drawn in the background colour. */}
         {children ?? (glyph && (
-          <CenteredGlyph glyph={glyph} style={{ fill: 'var(--vds-tile-tonal, var(--vds-accent-cobalt))' }} />
+          <CenteredGlyph glyph={glyph} fill={`url(#${tonalGl})`} />
         ))}
+        <defs>
+          <linearGradient id={tonalGl} x1="16" y1="0" x2="16" y2="32" gradientUnits="userSpaceOnUse">
+            <stop stopColor="var(--vds-tile-glyph-from, var(--vds-midnight-900))" />
+            <stop offset="1" stopColor="var(--vds-tile-glyph-to, var(--vds-midnight-400))" />
+          </linearGradient>
+        </defs>
       </svg>
     )
   }
