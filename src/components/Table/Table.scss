@@ -254,7 +254,13 @@
     cursor: pointer;
     transition: background-color var(--vds-dur-fast) var(--vds-ease-out);
 
-    &:hover { background-color: var(--vds-canvas); }
+    // A TINT OF INK, NOT A SURFACE STEP. --vds-canvas and --vds-table-zebra are the
+    // same colour, so hovering a striped row changed nothing at all — measured at
+    // 1.000, while a white row gave 1.063. A hover has to say the same thing on every
+    // row it can land on, and an absolute fill can only be right on one of them. 4% of
+    // ink lands within a whisker of the old value on white and does the same work on a
+    // stripe, on a selected row, and on anything else a row can be.
+    &:hover { background-color: color-mix(in srgb, var(--vds-ink) 4%, transparent); }
     &:focus-visible {
       outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
       outline-offset: var(--vds-control-ring-offset-inset);

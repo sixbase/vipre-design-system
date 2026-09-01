@@ -64,10 +64,10 @@
       color: var(--vds-on-primary);
     }
 
-    // Mirror the chevron for "previous" (the icon set only ships right-facing).
-    &--prev .vds-icon {
-      transform: scaleX(-1);
-    }
+    // No mirror. This flipped a right-facing chevron because the icon set was said to
+    // ship only one; @icons exports ChevronLeft, the component uses it now, and the
+    // leftover scaleX(-1) was turning a left arrow back into a right one — both buttons
+    // pointed the same way.
   }
 
   &__gap {

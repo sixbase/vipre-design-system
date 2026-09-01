@@ -68,7 +68,7 @@ function RowMenu({ label }) {
     <Menu
       aria-label={`${label} actions`}
       trigger={
-        <Button variant="ghost" size="sm" iconOnly aria-label={`${label} actions`}>
+        <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={`${label} actions`}>
           <Icon as={MoreHorizontal} size="sm" />
         </Button>
       }
@@ -120,7 +120,7 @@ function UserRowMenu({ user }) {
       <Menu
         aria-label={`Actions for ${user.name}`}
         trigger={
-          <Button variant="ghost" size="sm" iconOnly aria-label={`Actions for ${user.name}`}>
+          <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={`Actions for ${user.name}`}>
             <Icon as={MoreHorizontal} size="sm" />
           </Button>
         }
@@ -428,13 +428,20 @@ function ResponsiveDemo() {
 function RowActions({ label, onView, onEdit, onDelete }) {
   return (
     <Inline gap={1} justify="end">
-      <Button variant="ghost" size="sm" iconOnly aria-label={`View ${label}`} onClick={onView}>
+      {/* tone="neutral", not the Button's primary default. A row's actions are chrome —
+          three of them on every row, on every row of the table. In primary they are a
+          column of brand colour running down the page, competing with the one control
+          that should be carrying it, and they say "this is the thing to do here" about
+          nine rows at once. Neutral until you reach for them; the tone arrives on hover.
+          Delete keeps neutral too: the confirmation is where danger belongs, not the
+          icon that opens it. */}
+      <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={`View ${label}`} onClick={onView}>
         <Icon as={Eye} size="sm" />
       </Button>
-      <Button variant="ghost" size="sm" iconOnly aria-label={`Edit ${label}`} onClick={onEdit}>
+      <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={`Edit ${label}`} onClick={onEdit}>
         <Icon as={Pencil} size="sm" />
       </Button>
-      <Button variant="ghost" size="sm" iconOnly aria-label={`Delete ${label}`} onClick={onDelete}>
+      <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={`Delete ${label}`} onClick={onDelete}>
         <Icon as={Trash2} size="sm" />
       </Button>
     </Inline>
@@ -1137,13 +1144,13 @@ const columns = [
     width: '1%',          // shrink-to-fit so the controls hug the row edge
     render: (r) => (
       <Inline gap={1} justify="end">
-        <Button variant="ghost" size="sm" iconOnly aria-label={\`View \${r.name}\`}>
+        <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={\`View \${r.name}\`}>
           <Icon as={Eye} size="sm" />
         </Button>
-        <Button variant="ghost" size="sm" iconOnly aria-label={\`Edit \${r.name}\`}>
+        <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={\`Edit \${r.name}\`}>
           <Icon as={Pencil} size="sm" />
         </Button>
-        <Button variant="ghost" size="sm" iconOnly aria-label={\`Delete \${r.name}\`}>
+        <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={\`Delete \${r.name}\`}>
           <Icon as={Trash2} size="sm" />
         </Button>
       </Inline>
@@ -1195,7 +1202,7 @@ const columns = [
       <Menu
         aria-label={\`\${r.name} actions\`}
         trigger={
-          <Button variant="ghost" size="sm" iconOnly aria-label={\`\${r.name} actions\`}>
+          <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={\`\${r.name} actions\`}>
             <Icon as={MoreHorizontal} size="sm" />
           </Button>
         }
@@ -1506,7 +1513,7 @@ const columns = [
         <Menu
           aria-label={\`Actions for \${u.name}\`}
           trigger={
-            <Button variant="ghost" size="sm" iconOnly aria-label={\`Actions for \${u.name}\`}>
+            <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={\`Actions for \${u.name}\`}>
               <Icon as={MoreHorizontal} size="sm" />
             </Button>
           }
