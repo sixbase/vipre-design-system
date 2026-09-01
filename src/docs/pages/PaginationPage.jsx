@@ -41,11 +41,12 @@ export function PaginationPage() {
         note="What a pager looks like under a list of data: the range it covers on the left, the controls on the right, and the page number typeable so you can jump instead of stepping. This is the form the product's Accounts and Devices tables use."
       >
         <Preview
-          canvas={<LiveExample start={1} pageCount={129} total={1539} pageSize={12} compact />}
+          canvas={<LiveExample start={1} pageCount={129} total={1539} pageSize={12} size="sm" compact />}
           code={`<Pagination
   page={page}
   pageCount={129}
   onPageChange={setPage}
+  size="sm"
   total={1539}      // rows in the whole list
   pageSize={12}     // rows on a page
   compact

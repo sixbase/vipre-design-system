@@ -1,6 +1,7 @@
 import { forwardRef, useEffect, useState } from 'react'
-import { ChevronRight } from '@icons'
+import { ChevronLeft, ChevronRight } from '@icons'
 import { cx } from '../../lib/cx.js'
+import { Button } from '../Button/Button.jsx'
 import { Icon } from '../Icon/index.js'
 
 const range = (start, end) => Array.from({ length: end - start + 1 }, (_, i) => start + i)
@@ -126,15 +127,19 @@ export const Pagination = forwardRef(function Pagination(
         </span>
       )}
 
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        tone="neutral"
+        size="xs"
+        iconOnly
         className="vds-pagination__btn vds-pagination__btn--prev"
         aria-label="Previous page"
+        title="Previous page"
         disabled={page <= 1}
         onClick={() => go(page - 1)}
       >
-        <Icon as={ChevronRight} size="sm" />
-      </button>
+        <Icon as={ChevronLeft} size="sm" />
+      </Button>
 
       <ul className="vds-pagination__pages">
         {items.map((item, i) =>
@@ -189,15 +194,19 @@ export const Pagination = forwardRef(function Pagination(
         of <span className="vds-pagination__count">{pageCount}</span>
       </span>
 
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        tone="neutral"
+        size="xs"
+        iconOnly
         className="vds-pagination__btn vds-pagination__btn--next"
         aria-label="Next page"
+        title="Next page"
         disabled={page >= pageCount}
         onClick={() => go(page + 1)}
       >
         <Icon as={ChevronRight} size="sm" />
-      </button>
+      </Button>
     </nav>
   )
 })
