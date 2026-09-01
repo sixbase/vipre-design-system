@@ -449,7 +449,8 @@ function SortableDemo() {
   return (
     <Table
       columns={[
-        { key: 'name', header: 'Device', sortable: true },
+        { key: 'name', header: 'Device',
+                  width: '100%', sortable: true },
         { key: 'owner', header: 'Owner', sortable: true },
         STATUS_COL,
         // No align set — `risk` is numeric, so the column auto-aligns right.
@@ -671,7 +672,8 @@ function UserManagementDemo() {
   const [selected, setSelected] = useState([])
   const count = selected.length
   const columns = [
-    { key: 'name', header: 'User', render: (r) => <UserCell name={r.name} email={r.email} /> },
+    { key: 'name', header: 'User',
+                  width: '100%', render: (r) => <UserCell name={r.name} email={r.email} /> },
     { key: 'emails', header: 'Emails', align: 'right', render: (r) => <Text as="span" variant="detail" tone="muted" style={{ fontVariantNumeric: 'tabular-nums' }}>{r.emails.toLocaleString()}</Text> },
     { key: 'attachments', header: 'Attachments', align: 'right', render: (r) => <Text as="span" variant="detail" tone="muted" style={{ fontVariantNumeric: 'tabular-nums' }}>{r.attachments.toLocaleString()}</Text> },
     { key: 'policy', header: 'Top policy', render: (r) => <Tag size="sm" tone={POLICY_TONE[r.policy]}>{r.policy}</Tag> },
@@ -882,6 +884,7 @@ export function TablePage() {
                 {
                   key: 'name',
                   header: 'Product',
+                  width: '100%',
                   render: (r) => <ProductCell glyph={r.glyph} name={r.name} category={r.category} />,
                 },
                 { key: 'seats', header: 'Seats', align: 'right', render: (r) => r.seats.toLocaleString() },
@@ -932,6 +935,7 @@ const columns = [
                 {
                   key: 'name',
                   header: 'Product',
+                  width: '100%',
                   render: (r) => <ProductCellCompact glyph={r.glyph} name={r.name} />,
                 },
                 { key: 'seats', header: 'Seats', align: 'right', render: (r) => r.seats.toLocaleString() },
@@ -977,6 +981,7 @@ const columns = [
                 {
                   key: 'name',
                   header: 'Product',
+                  width: '100%',
                   render: (r) => (
                     <ProductCellCompactTwoLine glyph={r.glyph} name={r.name} detail={r.category} />
                   ),
@@ -1070,6 +1075,7 @@ const columns = [
                 {
                   key: 'name',
                   header: 'Product',
+                  width: '100%',
                   render: (r) => <ProductCell glyph={r.glyph} name={r.name} category={r.category} />,
                 },
                 { key: 'seats', header: 'Seats', align: 'right', render: (r) => r.seats.toLocaleString() },
@@ -1125,6 +1131,7 @@ const columns = [
                 {
                   key: 'name',
                   header: 'Product',
+                  width: '100%',
                   render: (r) => <ProductCell glyph={r.glyph} name={r.name} category={r.category} />,
                 },
                 { key: 'seats', header: 'Seats', align: 'right', render: (r) => r.seats.toLocaleString() },
