@@ -46,6 +46,7 @@ function CenteredGlyph({ glyph, fill, style }) {
  * re-brand re-tints the tiles along with the rest of the chrome —
  *   --vds-tile-accent (defaults to --vds-nav-accent) — gradient top + edge base
  *   --vds-tile-edge   (defaults to --vds-azure-400)  — the bright border highlight
+ *   --vds-tile-tonal  (defaults to --vds-accent-cobalt) — the tonal wash + glyph
  * The tile bottoms out on the fixed midnight ramp, matching the navy rail.
  *
  * Props:
@@ -57,6 +58,12 @@ function CenteredGlyph({ glyph, fill, style }) {
  *             32×32 grid instead of `glyph`. Muted tint is NOT applied to
  *             children — style them yourself.
  * - muted:    boolean — the locked / not-subscribed treatment (default false)
+ * - tonal:    boolean — the LIGHT-SURFACE treatment: a 15% wash of the accent with
+ *             the glyph in that accent at full strength. Use it on any white or
+ *             near-white ground — a table row, a card, a drawer, a modal. The other
+ *             two treatments are drawn for the navy rail and read as a heavy block
+ *             on a light surface. One tone, not a per-product palette; see the note
+ *             on the branch below. (default false)
  * - size:     number — rendered px size (default 32)
  * - label:    accessible name; without it the tile is decorative (aria-hidden)
  * - all native SVG attributes
@@ -65,14 +72,95 @@ function CenteredGlyph({ glyph, fill, style }) {
  * <ProductTile glyph={IES_GLYPH} />
  * <ProductTile glyph={SAT_GLYPH} muted />   // locked product
  * <ProductTile glyph={IES_GLYPH} size={24} />
+ * <ProductTile glyph={IES_GLYPH} tonal size={20} />  // in a table row
  */
 export const ProductTile = forwardRef(function ProductTile(
-  { glyph, muted = false, size = 32, label, className, children, style, ...props },
+  { glyph, muted = false, tonal = false, size = 32, label, className, children, style, ...props },
   ref,
 ) {
   // Gradient defs need document-unique ids — useId keeps repeated tiles apart.
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '')
   const a11y = label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': true }
+
+  /* TONAL — the light-surface treatment, and the only one of the three that is not
+     built for the navy rail.
+
+     The other two assume a dark ground and say so in their values: the gradient runs
+     accent → midnight-1000, and `muted` IS midnight-900. Put either on a white table
+     row and you get a heavy block in every row — measured on this docs site before
+     this variant existed, sixteen cobalt-to-near-black squares on a #ffffff table.
+
+     ONE TONE, NOT A PALETTE. The face is a 15% wash of the accent and the glyph is
+     that same accent at full strength, so the tile reads as one object tinted once
+     rather than as a mark inside a coloured box. Per-product hues were considered and
+     are not here: twenty SKUs share five glyphs, so colour would be the only thing
+     telling four of them apart, and a palette that carries meaning has to survive
+     colour blindness, dark mode and a reseller re-brand. One blue survives all three.
+
+     The 15% is the same in both grounds. Against white it is a wash you can read a
+     glyph out of; against the dark surface the accent role has already stepped to
+     cobalt-400, so the mix lands brighter on its own without a second number. */
+  const tonalGl = `vds-pttg-${uid}`
+  const tonalRim = `vds-pttr-${uid}`
+
+  if (tonal) {
+    return (
+      <svg
+        ref={ref}
+        width={size}
+        height={size}
+        viewBox="0 0 32 32"
+        fill="none"
+        className={cx('vds-product-tile', 'vds-product-tile--tonal', className)}
+        style={{ display: 'block', ...style }}
+        {...a11y}
+        {...props}
+      >
+        {/* A FLAT FAINT STEP, not a mix of an accent — the construction the Gradient
+            Explorer settled on. The tile is the quiet ground the mark is drawn on. */}
+        <rect width="32" height="32" rx="8" style={{ fill: 'var(--vds-tile-tonal-face, var(--vds-graphite-50))' }} />
+        {/* THE RIM, which the gradient variant has always had and this one was missing.
+            Inset half a pixel on the 32-grid so the 1px stroke sits INSIDE the tile's
+            edge rather than straddling it — the same geometry the gradient tile uses, and
+            why its radius is 7.5 against the fill's 8.
+
+            It is not decoration. A 15% wash is within about 1.07 of white, so on a
+            hovered row, a selected row or a zebra stripe the tile loses its shape exactly
+            the way the Badge and Tag chips did before they took an edge. This is the same
+            fix a third time: a fill answers one ground, an edge answers all of them.
+
+            30%, not the gradient variant's 0.25 stroke opacity — that rim is a bright
+            highlight on a saturated block and only has to catch the light. This one is
+            the only thing holding the shape. */}
+        <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke={`url(#${tonalRim})`} strokeOpacity="0.25" />
+        {/* THE MARK RUNS MIDNIGHT, THE TILE KEEPS THE PRODUCT'S COLOUR. Drawn in the
+            product's own accent, a shelf of these was twenty differently-coloured glyphs
+            whose only shared trait was the shape of the box. One ink makes them read as a
+            set, and the tile behind still carries the identity.
+
+            Both grounds converge on midnight-400 from the far end of the ramp that ground
+            allows — see --vds-tile-glyph-from. On the dark surface it starts at 200 rather
+            than 900 because midnight-900 IS that surface, and half the glyph would be
+            drawn in the background colour. */}
+        {children ?? (glyph && (
+          <CenteredGlyph glyph={glyph} fill={`url(#${tonalGl})`} />
+        ))}
+        <defs>
+          {/* The rim runs the ramp the other way — lighter at the top fading into the
+              mark's own darkest step — at the same 0.25 the gradient tile's rim uses.
+              It catches the top edge rather than outlining the box. */}
+          <linearGradient id={tonalRim} x1="16" y1="0" x2="16" y2="32" gradientUnits="userSpaceOnUse">
+            <stop stopColor="var(--vds-tile-glyph-to, var(--vds-graphite-400))" />
+            <stop offset="1" stopColor="var(--vds-tile-glyph-from, var(--vds-graphite-900))" />
+          </linearGradient>
+          <linearGradient id={tonalGl} x1="16" y1="0" x2="16" y2="32" gradientUnits="userSpaceOnUse">
+            <stop stopColor="var(--vds-tile-glyph-from, var(--vds-midnight-900))" />
+            <stop offset="1" stopColor="var(--vds-tile-glyph-to, var(--vds-midnight-400))" />
+          </linearGradient>
+        </defs>
+      </svg>
+    )
+  }
 
   if (muted) {
     return (

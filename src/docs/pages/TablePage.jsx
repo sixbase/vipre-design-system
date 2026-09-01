@@ -3,7 +3,7 @@ import { ShieldCheck, Mail, Globe, Database, Eye, Pencil, Trash2, Copy, MoreHori
 import { ComponentPage } from '../ComponentPage.jsx'
 import { COMPONENT_COLORS } from "../colorUsage.js"
 import { Section, Preview, Code, IC } from '../primitives.jsx'
-import { Table, Badge, Button, Text, Icon, Inline, Stack, Avatar, Progress, Pagination, EmptyState, Menu, MenuItem, MenuSeparator, Divider, Tag } from '../../components/index.js'
+import { Table, Badge, Button, Text, Icon, Inline, Stack, Avatar, Progress, Pagination, EmptyState, Menu, MenuItem, MenuSeparator, Divider, Tag, ProductTile } from '../../components/index.js'
 
 /* Sample fleet rows — mirrors the kind of data Vipre tables actually carry. */
 const DEVICES = [
@@ -68,7 +68,7 @@ function RowMenu({ label }) {
     <Menu
       aria-label={`${label} actions`}
       trigger={
-        <Button variant="ghost" size="sm" iconOnly aria-label={`${label} actions`}>
+        <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={`${label} actions`}>
           <Icon as={MoreHorizontal} size="sm" />
         </Button>
       }
@@ -120,7 +120,7 @@ function UserRowMenu({ user }) {
       <Menu
         aria-label={`Actions for ${user.name}`}
         trigger={
-          <Button variant="ghost" size="sm" iconOnly aria-label={`Actions for ${user.name}`}>
+          <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={`Actions for ${user.name}`}>
             <Icon as={MoreHorizontal} size="sm" />
           </Button>
         }
@@ -216,9 +216,13 @@ const LOG_STATUS = {
   Cancelled: { tone: 'neutral', icon: X },
   'Review Required': { tone: 'warning', icon: Eye },
 }
+/* A DOT, like every other status on this page. These wore an icon each — a tick, a
+   pencil, a clock, an eye — which put a second thing to read inside a 20px chip and made
+   one table's status look like a different component from the rest. The word already says
+   which state it is; the mark only has to say THAT it is a state, and carry the tone. */
 function LogStatus({ status }) {
   const s = LOG_STATUS[status] ?? { tone: 'neutral' }
-  return <Badge tone={s.tone} icon={s.icon ? <Icon as={s.icon} /> : undefined}>{status}</Badge>
+  return <Badge tone={s.tone} dot>{status}</Badge>
 }
 
 const LOG_TYPE = { meeting: Calendar, mail: Mail, other: FileText }
@@ -243,7 +247,12 @@ function DetailField({ label, children }) {
   return (
     <Stack gap={0} style={{ minWidth: 0 }}>
       <Text as="span" variant="eyebrow" tone="subtle">{label}</Text>
-      <Text as="span" variant="detail">{children}</Text>
+      {/* overflowWrap: 'anywhere' — the values here include email addresses and message
+          IDs, which carry no space for the browser to break at. `minWidth: 0` lets the
+          grid track shrink and `white-space: normal` lets it wrap, and neither helps a
+          40-character unbroken token: it stayed one line, 230px of ink in a 191px column,
+          and ran under the field beside it. Measured, not guessed. */}
+      <Text as="span" variant="detail" style={{ overflowWrap: 'anywhere' }}>{children}</Text>
     </Stack>
   )
 }
@@ -305,7 +314,7 @@ function AuditLogDemo() {
   ]
   return (
     <div style={{ width: '100%' }}>
-      <Table
+      <SortableTable
         density="compact"
         columns={columns}
         data={AUDIT_LOG}
@@ -319,20 +328,28 @@ function AuditLogDemo() {
 }
 
 /* Sample product catalog — each row leads with a product icon. */
+/* The product marks, drawn on the tile's 32x32 grid — the same three the Product Tile
+   and Side Nav pages demonstrate with, so a reader meets one SafeSend mark, not three. */
+const GLYPHS = {
+  ies: 'M8.30775 23.5C7.80258 23.5 7.375 23.325 7.025 22.975C6.675 22.625 6.5 22.1974 6.5 21.6923V10.3077C6.5 9.80258 6.675 9.375 7.025 9.025C7.375 8.675 7.80258 8.5 8.30775 8.5H23.6923C24.1974 8.5 24.625 8.675 24.975 9.025C25.325 9.375 25.5 9.80258 25.5 10.3077V21.6923C25.5 22.1974 25.325 22.625 24.975 22.975C24.625 23.325 24.1974 23.5 23.6923 23.5H8.30775ZM16 16.5578L8 11.4423V21.6923C8 21.7821 8.02883 21.8558 8.0865 21.9135C8.14417 21.9712 8.21792 22 8.30775 22H23.6923C23.7821 22 23.8558 21.9712 23.9135 21.9135C23.9712 21.8558 24 21.7821 24 21.6923V11.4423L16 16.5578ZM16 15L23.8462 10H8.15375L16 15ZM8 11.4423V10V21.6923C8 21.7821 8.02883 21.8558 8.0865 21.9135C8.14417 21.9712 8.21792 22 8.30775 22H8V11.4423Z',
+  safesend: 'M24.1838 6.6214C24.8147 6.25031 25.6311 6.76984 25.4826 7.51203L22.8108 23.5433C22.7366 24.137 22.1057 24.471 21.5862 24.2484L16.9846 22.2816L14.6096 25.1761C14.0901 25.8069 13.051 25.473 13.051 24.5823V21.5765L21.9573 10.7034C22.1428 10.4808 21.8459 10.221 21.6604 10.4066L11.01 19.7952L7.03929 18.1253C6.37132 17.8655 6.2971 16.9007 6.96507 16.5296L24.1838 6.6214Z',
+  edr: 'M5.38475 24.2307V22.7307H26.6152V24.2307H5.38475ZM8.30775 21.7307C7.80258 21.7307 7.375 21.5557 7.025 21.2057C6.675 20.8557 6.5 20.4282 6.5 19.923V9.5385C6.5 9.03333 6.675 8.60575 7.025 8.25575C7.375 7.90575 7.80258 7.73075 8.30775 7.73075H23.6922C24.1974 7.73075 24.625 7.90575 24.975 8.25575C25.325 8.60575 25.5 9.03333 25.5 9.5385V19.923C25.5 20.4282 25.325 20.8557 24.975 21.2057C24.625 21.5557 24.1974 21.7307 23.6922 21.7307H8.30775ZM8.30775 20.2308H23.6922C23.7692 20.2308 23.8398 20.1988 23.9038 20.1348C23.9679 20.0706 24 20 24 19.923V9.5385C24 9.4615 23.9679 9.391 23.9038 9.327C23.8398 9.26283 23.7692 9.23075 23.6922 9.23075H8.30775C8.23075 9.23075 8.16025 9.26283 8.09625 9.327C8.03208 9.391 8 9.4615 8 9.5385V19.923C8 20 8.03208 20.0706 8.09625 20.1348C8.16025 20.1988 8.23075 20.2308 8.30775 20.2308Z',
+}
+
 const PRODUCTS = [
-  { id: 'p1', name: 'Endpoint Defense', category: 'Security', icon: ShieldCheck, seats: 1284, status: 'Active', tone: 'success' },
-  { id: 'p2', name: 'Mail Gateway', category: 'Email protection', icon: Mail, seats: 642, status: 'Active', tone: 'success' },
-  { id: 'p3', name: 'DNS Filter', category: 'Network', icon: Globe, seats: 311, status: 'Trial', tone: 'warning' },
-  { id: 'p4', name: 'Backup Vault', category: 'Storage', icon: Database, seats: 0, status: 'Inactive', tone: 'neutral' },
+  { id: 'p1', name: 'Endpoint+Email', category: 'Endpoint security', glyph: GLYPHS.edr, seats: 1284, status: 'Active', tone: 'success' },
+  { id: 'p2', name: 'Email Cloud', category: 'Email protection', glyph: GLYPHS.ies, seats: 642, status: 'Active', tone: 'success' },
+  { id: 'p3', name: 'SafeSend + AI', category: 'Outbound safety', glyph: GLYPHS.safesend, seats: 311, status: 'Trial', tone: 'warning' },
+  { id: 'p4', name: 'VaultCritical Suite', category: 'Archiving', glyph: GLYPHS.ies, seats: 0, status: 'Inactive', tone: 'neutral' },
 ]
 
 /* Leading product cell — composed entirely from existing DS primitives:
    Inline (row) + Icon (the product glyph) + Stack (name over category) + Text.
    No bespoke markup; reuse this shape in any first column. */
-function ProductCell({ icon, name, category }) {
+function ProductCell({ glyph, name, category }) {
   return (
-    <Inline gap={3}>
-      <Icon as={icon} size="md" tone="muted" />
+    <Inline gap={3} align="center">
+      <ProductTile glyph={glyph} tonal size={32} />
       <Stack gap={0}>
         <Text as="span" variant="body">{name}</Text>
         <Text as="span" variant="detail" tone="subtle">{category}</Text>
@@ -343,10 +360,10 @@ function ProductCell({ icon, name, category }) {
 
 /* Compact variant — one line: a smaller icon + name, no secondary text. Pairs
    with the table's density="compact" for log-dense screens. */
-function ProductCellCompact({ icon, name }) {
+function ProductCellCompact({ glyph, name }) {
   return (
-    <Inline gap={2}>
-      <Icon as={icon} size="sm" tone="muted" />
+    <Inline gap={3}>
+      <ProductTile glyph={glyph} tonal size={20} />
       <Text as="span" variant="caption">{name}</Text>
     </Inline>
   )
@@ -389,12 +406,12 @@ function ResponsiveDemo() {
           borderRadius: 8,
         }}
       >
-        <Table
+        <SortableTable
           minWidth={640}
           columns={[
             { key: 'name', header: 'Device' },
             { key: 'owner', header: 'Owner' },
-            { key: 'status', header: 'Status', render: (r) => <Badge tone={r.tone} dot>{r.status}</Badge> },
+            { key: 'status', header: 'Status', width: '110px', render: (r) => <Badge tone={r.tone} dot>{r.status}</Badge> },
             { key: 'seen', header: 'Last seen' },
             { key: 'risk', header: 'Risk', align: 'right', render: (r) => `${r.risk}%` },
           ]}
@@ -411,13 +428,20 @@ function ResponsiveDemo() {
 function RowActions({ label, onView, onEdit, onDelete }) {
   return (
     <Inline gap={1} justify="end">
-      <Button variant="ghost" size="sm" iconOnly aria-label={`View ${label}`} onClick={onView}>
+      {/* tone="neutral", not the Button's primary default. A row's actions are chrome —
+          three of them on every row, on every row of the table. In primary they are a
+          column of brand colour running down the page, competing with the one control
+          that should be carrying it, and they say "this is the thing to do here" about
+          nine rows at once. Neutral until you reach for them; the tone arrives on hover.
+          Delete keeps neutral too: the confirmation is where danger belongs, not the
+          icon that opens it. */}
+      <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={`View ${label}`} onClick={onView}>
         <Icon as={Eye} size="sm" />
       </Button>
-      <Button variant="ghost" size="sm" iconOnly aria-label={`Edit ${label}`} onClick={onEdit}>
+      <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={`Edit ${label}`} onClick={onEdit}>
         <Icon as={Pencil} size="sm" />
       </Button>
-      <Button variant="ghost" size="sm" iconOnly aria-label={`Delete ${label}`} onClick={onDelete}>
+      <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={`Delete ${label}`} onClick={onDelete}>
         <Icon as={Trash2} size="sm" />
       </Button>
     </Inline>
@@ -454,6 +478,85 @@ function SortableDemo() {
   )
 }
 
+/* Compact, but two lines. The dense row still has something to say under the name —
+   an edition, an owner, a last-seen — and the tile stays at 20 rather than stepping up
+   to 24: the size answers the ROW's density, not the cell's line count. Top-aligned
+   like every two-line cell, so the mark leads the name instead of pointing between
+   the two lines. */
+function ProductCellCompactTwoLine({ glyph, name, detail }) {
+  return (
+    <Inline gap={3} align="center">
+      <ProductTile glyph={glyph} tonal size={20} />
+      <Stack gap={0}>
+        <Text as="span" variant="caption">{name}</Text>
+        <Text as="span" variant="detail" tone="subtle">{detail}</Text>
+      </Stack>
+    </Inline>
+  )
+}
+
+/* ---- SortableTable — the docs harness, not a component ----------------------------
+   Sorting is not a feature you switch on for one example. It is what a table looks like
+   the rest of the time: a leading arrow on the sorted column, that column's label at
+   full ink, and every other arrow hidden until you reach for it. Demonstrated once, in
+   a section called "Sortable", it reads as an optional extra — so every example on this
+   page renders through here instead.
+
+   It adds three things a live demo needs and a consumer writes themselves: local sort
+   state, `sortable: true` on any column that names a field, and an actual comparator so
+   clicking a header really reorders the rows. Columns with no `key`, or whose key is an
+   actions/selection slot, are left alone — there is nothing to sort them by.
+
+   The `code=` samples beside each canvas still show plain <SortableTable> with sort/onSortChange,
+   which is what a consumer writes. This is the harness that saves the page from
+   declaring the same three lines twenty-three times. */
+const NOT_SORTABLE = new Set(['actions', 'menu', 'select', 'expand', ''])
+
+/* Rows are interactive unless an example says otherwise. Nearly every table in the
+   product opens something when you click a row, so a page of tables that do not is a
+   page showing the exception. Pass onRowClick to give a demo real behaviour, or
+   onRowClick={null} to show a table that genuinely has nowhere to go — a read-only log,
+   a totals list. The default handler does nothing: in a docs demo the point is the
+   affordance — the pointer, the hover, the keyboard focus — not the destination. */
+const DEMO_ROW_CLICK = () => {}
+
+function SortableTable({ columns, data, defaultSort, onRowClick, ...rest }) {
+  const first = columns.find((c) => c.key && !NOT_SORTABLE.has(c.key))
+  const [sort, setSort] = useState(defaultSort ?? { key: first?.key, direction: 'desc' })
+
+  const cols = useMemo(
+    () => columns.map((c) => (c.key && !NOT_SORTABLE.has(c.key) ? { ...c, sortable: true } : c)),
+    [columns],
+  )
+
+  const rows = useMemo(() => {
+    if (!sort?.key) return data
+    const out = [...data]
+    out.sort((a, b) => {
+      const av = a[sort.key]
+      const bv = b[sort.key]
+      // Numbers compare as numbers; everything else as text, so "At risk" and "Threat"
+      // order the way a reader expects rather than by character code.
+      const cmp = typeof av === 'number' && typeof bv === 'number'
+        ? av - bv
+        : String(av ?? '').localeCompare(String(bv ?? ''))
+      return sort.direction === 'asc' ? cmp : -cmp
+    })
+    return out
+  }, [data, sort])
+
+  return (
+    <Table
+      columns={cols}
+      data={rows}
+      sort={sort}
+      onSortChange={setSort}
+      onRowClick={onRowClick === null ? undefined : (onRowClick ?? DEMO_ROW_CLICK)}
+      {...rest}
+    />
+  )
+}
+
 /* ---- live selection demo (controlled selectedKeys) ---- */
 function SelectableDemo() {
   const [selected, setSelected] = useState(['d2'])
@@ -469,7 +572,7 @@ function SelectableDemo() {
           Clear
         </Button>
       </div>
-      <Table
+      <SortableTable
         selectable
         selectedKeys={selected}
         onSelectionChange={setSelected}
@@ -525,7 +628,7 @@ function BulkActionsDemo() {
           <Text variant="caption" tone="subtle">Pick rows to act on them.</Text>
         )}
       </div>
-      <Table
+      <SortableTable
         selectable
         selectedKeys={selected}
         onSelectionChange={setSelected}
@@ -572,16 +675,26 @@ function PaginationDemo() {
     render: (r, i) => (r.filler ? ' ' : col.render ? col.render(r, i) : r[col.key]),
   }))
 
+  /* The pager goes in the table's own footer, not after it. The range used to be
+     printed here as a separate <Text> beside the pager; Pagination renders it from
+     `total` + `pageSize` now, so printing it here too said it twice. */
   return (
-    <Stack gap={4} style={{ width: '100%' }}>
-      <Table columns={columns} data={padded} />
-      <Inline justify="between" gap={3} style={{ flexWrap: 'wrap' }}>
-        <Text variant="caption" tone="muted" style={{ fontVariantNumeric: 'tabular-nums' }}>
-          {start + 1}–{Math.min(page * pageSize, FLEET.length)} of {FLEET.length}
-        </Text>
-        <Pagination page={page} pageCount={pageCount} onPageChange={setPage} size="sm" />
-      </Inline>
-    </Stack>
+    <SortableTable
+      columns={columns}
+      data={padded}
+      footer={
+        <Pagination
+          page={page}
+          pageCount={pageCount}
+          onPageChange={setPage}
+          size="sm"
+          total={FLEET.length}
+          pageSize={pageSize}
+          compact
+          style={{ width: '100%' }}
+        />
+      }
+    />
   )
 }
 
@@ -643,7 +756,7 @@ function UserManagementDemo() {
           </>
         )}
       </div>
-      <Table
+      <SortableTable
         caption="Workspace members"
         selectable
         selectedKeys={selected}
@@ -676,6 +789,7 @@ export function TablePage() {
             [{ code: 'stickyHeader' }, { code: 'boolean' }, { code: 'false' }, 'Keeps the header in place while the rows scroll'],
             [{ code: 'maxHeight' }, { code: 'string | number' }, '—', 'Caps the height so the rows scroll (use with stickyHeader)'],
             [{ code: 'sort' }, { code: '{ key, direction }' }, '—', 'Which column is sorted, and which way'],
+            [{ code: 'verticalAlign' }, { code: "'middle' | 'top'" }, { code: "'middle'" }, 'Use top when any column can wrap to two lines, so every cell lines up on the first one'],
             [{ code: 'onSortChange' }, { code: '(next) => void' }, '—', 'Runs when someone clicks a sortable header'],
             [{ code: 'selectable' }, { code: 'boolean' }, { code: 'false' }, 'Adds a checkbox column'],
             [{ code: 'selectedKeys' }, { code: 'array | Set' }, '—', 'Which rows are checked'],
@@ -720,7 +834,7 @@ export function TablePage() {
       <Section title="Basic" note="List your columns and hand over your data. A column's render() lets you draw your own cell content.">
         <Preview
           canvas={
-            <Table
+            <SortableTable
               columns={[
                 { key: 'name', header: 'Device' },
                 { key: 'owner', header: 'Owner' },
@@ -768,7 +882,7 @@ export function TablePage() {
       >
         <Preview
           canvas={
-            <Table
+            <SortableTable
               stickyHeader
               maxHeight={260}
               columns={[
@@ -792,37 +906,43 @@ export function TablePage() {
 
       <Section
         title="Leading product cell"
-        note="A common first-column look: a product icon and name, with an optional second line under it. Build it in a column's render() from parts you already have — Inline, Icon, Stack, Text — no custom markup."
+        note="A product and its name in the first column. The mark is a ProductTile, tonal — the product's own square, not a general-purpose icon, which says &quot;something about email&quot; where the tile says &quot;this product&quot;. Tonal because a table is a light surface; the rail treatments are built for navy and read as a heavy block here. 32px, because the cell carries a second line — a two-line row steps the mark up one place on the scale. Mark and name live in ONE cell, so there is no mark column to align and no empty header to explain. Every row here is exactly two lines, so the figure and the chip centre against the row and sit level with the pair — reach for verticalAlign=&quot;top&quot; only when rows VARY in height, where centring would put the mark beside a different line each time."
       >
         <Preview
           canvas={
-            <Table
+            <SortableTable
               columns={[
                 {
                   key: 'name',
                   header: 'Product',
-                  render: (r) => <ProductCell icon={r.icon} name={r.name} category={r.category} />,
+                  render: (r) => <ProductCell glyph={r.glyph} name={r.name} category={r.category} />,
                 },
-                { key: 'seats', header: 'Seats', align: 'right', render: (r) => r.seats.toLocaleString() },
+                { key: 'seats', header: 'Seats', align: 'right', width: '80px', render: (r) => r.seats.toLocaleString() },
                 {
                   key: 'status',
                   header: 'Status',
+                  width: '110px',
                   render: (r) => <Badge tone={r.tone} dot>{r.status}</Badge>,
                 },
               ]}
               data={PRODUCTS}
+              /* Capped, and the cap is the point: three short columns cannot fill 997px,
+                 and no column rule fixes that — sizing Seats and Status correctly just
+                 moves the surplus into the name. A table is as wide as its data. */
+              style={{ maxWidth: '39rem' }}
             />
           }
-          code={`import { ShieldCheck } from '@icons'
-import { Icon, Inline, Stack, Text } from 'vipre-design-system'
+          code={`import { Inline, ProductTile, Stack, Table, Text } from 'vipre-design-system'
 
 const columns = [
   {
     key: 'name',
     header: 'Product',
     render: (r) => (
-      <Inline gap={3}>
-        <Icon as={r.icon} size="md" tone="muted" />
+      // align="start", not centre: the row's height changes with the second
+      // line, and a centred mark points at a different line on every row.
+      <Inline gap={3} align="center">
+        <ProductTile glyph={r.glyph} tonal size={32} />
         <Stack gap={0}>
           <Text as="span" variant="body">{r.name}</Text>
           <Text as="span" variant="detail" tone="subtle">{r.category}</Text>
@@ -833,32 +953,37 @@ const columns = [
   // …more columns
 ]
 
-<Table columns={columns} data={products} />`}
+<Table columns={columns} data={products} verticalAlign="top" />`}
         />
       </Section>
 
       <Section
         title="Compact product cell"
-        note="For packed screens: use density=&quot;compact&quot; with a one-line cell — a smaller Icon and a small name, no second line."
+        note="For packed screens: density=&quot;compact&quot; with a one-line cell. The tile steps down to 20 — the size for a row that is only a name and its figures."
       >
         <Preview
           canvas={
-            <Table
+            <SortableTable
               density="compact"
               columns={[
                 {
                   key: 'name',
                   header: 'Product',
-                  render: (r) => <ProductCellCompact icon={r.icon} name={r.name} />,
+                  render: (r) => <ProductCellCompact glyph={r.glyph} name={r.name} />,
                 },
-                { key: 'seats', header: 'Seats', align: 'right', render: (r) => r.seats.toLocaleString() },
+                { key: 'seats', header: 'Seats', align: 'right', width: '80px', render: (r) => r.seats.toLocaleString() },
                 {
                   key: 'status',
                   header: 'Status',
+                  width: '110px',
                   render: (r) => <Badge tone={r.tone} dot>{r.status}</Badge>,
                 },
               ]}
               data={PRODUCTS}
+              /* Capped, and the cap is the point: three short columns cannot fill 997px,
+                 and no column rule fixes that — sizing Seats and Status correctly just
+                 moves the surplus into the name. A table is as wide as its data. */
+              style={{ maxWidth: '39rem' }}
             />
           }
           code={`<Table
@@ -882,12 +1007,61 @@ const columns = [
       </Section>
 
       <Section
+        title="Compact product cell, two lines"
+        note="A dense row that still carries a second line. The tile steps up to 24 — one place on the scale, because the cell carries a second line — and everything centres on the row, because every row here is the same two lines tall."
+      >
+        <Preview
+          canvas={
+            <SortableTable
+              density="compact"
+              columns={[
+                {
+                  key: 'name',
+                  header: 'Product',
+                  render: (r) => (
+                    <ProductCellCompactTwoLine glyph={r.glyph} name={r.name} detail={r.category} />
+                  ),
+                },
+                { key: 'seats', header: 'Seats', align: 'right', width: '80px', render: (r) => r.seats.toLocaleString() },
+                { key: 'status', header: 'Status', width: '110px', render: (r) => <Badge tone={r.tone} dot>{r.status}</Badge> },
+              ]}
+              data={PRODUCTS}
+              /* Capped, and the cap is the point: three short columns cannot fill 997px,
+                 and no column rule fixes that — sizing Seats and Status correctly just
+                 moves the surplus into the name. A table is as wide as its data. */
+              style={{ maxWidth: '39rem' }}
+            />
+          }
+          code={`<Table
+  density="compact"
+  columns={[
+    {
+      key: 'name',
+      header: 'Product',
+      render: (r) => (
+        <Inline gap={3} align="start">
+          <ProductTile glyph={r.glyph} tonal size={20} />
+          <Stack gap={0}>
+            <Text as="span" variant="caption">{r.name}</Text>
+            <Text as="span" variant="detail" tone="subtle">{r.category}</Text>
+          </Stack>
+        </Inline>
+      ),
+    },
+    // …more columns
+  ]}
+  data={products}
+/>`}
+        />
+      </Section>
+
+      <Section
         title="Rich cells"
         note="Cells can hold any component. Here the owner is an Avatar with its name, and risk is a Progress bar whose color tracks the score. Both are built in a column's render() from primitives — Avatar and Progress — nothing table-specific."
       >
         <Preview
           canvas={
-            <Table
+            <SortableTable
               columns={[
                 { key: 'name', header: 'Device' },
                 { key: 'owner', header: 'Owner', render: (r) => <OwnerCell name={r.owner} /> },
@@ -925,7 +1099,7 @@ const columns = [
   },
 ]
 
-<Table columns={columns} data={devices} />`}
+<SortableTable columns={columns} data={devices} />`}
         />
       </Section>
 
@@ -935,14 +1109,14 @@ const columns = [
       >
         <Preview
           canvas={
-            <Table
+            <SortableTable
               columns={[
                 {
                   key: 'name',
                   header: 'Product',
-                  render: (r) => <ProductCell icon={r.icon} name={r.name} category={r.category} />,
+                  render: (r) => <ProductCell glyph={r.glyph} name={r.name} category={r.category} />,
                 },
-                { key: 'seats', header: 'Seats', align: 'right', render: (r) => r.seats.toLocaleString() },
+                { key: 'seats', header: 'Seats', align: 'right', width: '80px', render: (r) => r.seats.toLocaleString() },
                 {
                   key: 'actions',
                   header: '',
@@ -952,6 +1126,10 @@ const columns = [
                 },
               ]}
               data={PRODUCTS}
+              /* Capped, and the cap is the point: three short columns cannot fill 997px,
+                 and no column rule fixes that — sizing Seats and Status correctly just
+                 moves the surplus into the name. A table is as wide as its data. */
+              style={{ maxWidth: '39rem' }}
             />
           }
           code={`import { Eye, Pencil, Trash2 } from '@icons'
@@ -966,13 +1144,13 @@ const columns = [
     width: '1%',          // shrink-to-fit so the controls hug the row edge
     render: (r) => (
       <Inline gap={1} justify="end">
-        <Button variant="ghost" size="sm" iconOnly aria-label={\`View \${r.name}\`}>
+        <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={\`View \${r.name}\`}>
           <Icon as={Eye} size="sm" />
         </Button>
-        <Button variant="ghost" size="sm" iconOnly aria-label={\`Edit \${r.name}\`}>
+        <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={\`Edit \${r.name}\`}>
           <Icon as={Pencil} size="sm" />
         </Button>
-        <Button variant="ghost" size="sm" iconOnly aria-label={\`Delete \${r.name}\`}>
+        <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={\`Delete \${r.name}\`}>
           <Icon as={Trash2} size="sm" />
         </Button>
       </Inline>
@@ -980,8 +1158,61 @@ const columns = [
   },
 ]
 
-<Table columns={columns} data={products} />`}
+<SortableTable columns={columns} data={products} />`}
         />
+      </Section>
+
+      <Section
+        title="Pinned actions"
+        note="Set pinned on the last column and it holds the table's right edge while everything else scrolls under it. Scroll this one sideways: the actions stay put, and the columns fade out as they pass beneath rather than being cut off."
+      >
+        <Preview
+          canvas={
+            <SortableTable
+              minWidth="72rem"
+              columns={[
+                { key: 'name', header: 'Device' },
+                { key: 'owner', header: 'Owner' },
+                { key: 'os', header: 'OS' },
+                { key: 'ip', header: 'IP address' },
+                STATUS_COL,
+                { key: 'seen', header: 'Last seen' },
+                { key: 'risk', header: 'Risk' },
+                {
+                  key: 'actions',
+                  header: '',
+                  align: 'right',
+                  width: '104px',
+                  pinned: true,
+                  render: (r) => (
+                    <RowActions
+                      label={r.name}
+                      onView={() => {}}
+                      onEdit={() => {}}
+                      onDelete={() => {}}
+                    />
+                  ),
+                },
+              ]}
+              data={FLEET}
+            />
+          }
+          code={`{
+  key: 'actions',
+  header: '',
+  align: 'right',
+  width: '104px',
+  pinned: true,          // holds the right edge; the rest scrolls under it
+  render: (row) => <RowActions … />,
+}`}
+        />
+        <p>
+          Only one column should take it, and it should be the last one. The fade is the
+          table&rsquo;s own ground dissolving, not a shadow — nothing is on top of those columns,
+          they simply stop being legible as they pass under. It rides the same scroll timeline as
+          the edge shadows, so it disappears once you reach the end and never appears at all on a
+          table that fits.
+        </p>
       </Section>
 
       <Section
@@ -990,14 +1221,14 @@ const columns = [
       >
         <Preview
           canvas={
-            <Table
+            <SortableTable
               columns={[
                 {
                   key: 'name',
                   header: 'Product',
-                  render: (r) => <ProductCell icon={r.icon} name={r.name} category={r.category} />,
+                  render: (r) => <ProductCell glyph={r.glyph} name={r.name} category={r.category} />,
                 },
-                { key: 'seats', header: 'Seats', align: 'right', render: (r) => r.seats.toLocaleString() },
+                { key: 'seats', header: 'Seats', align: 'right', width: '80px', render: (r) => r.seats.toLocaleString() },
                 {
                   key: 'actions',
                   header: '',
@@ -1007,6 +1238,10 @@ const columns = [
                 },
               ]}
               data={PRODUCTS}
+              /* Capped, and the cap is the point: three short columns cannot fill 997px,
+                 and no column rule fixes that — sizing Seats and Status correctly just
+                 moves the surplus into the name. A table is as wide as its data. */
+              style={{ maxWidth: '39rem' }}
             />
           }
           code={`import { Eye, Pencil, Copy, Trash2, MoreHorizontal } from '@icons'
@@ -1020,7 +1255,7 @@ const columns = [
       <Menu
         aria-label={\`\${r.name} actions\`}
         trigger={
-          <Button variant="ghost" size="sm" iconOnly aria-label={\`\${r.name} actions\`}>
+          <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={\`\${r.name} actions\`}>
             <Icon as={MoreHorizontal} size="sm" />
           </Button>
         }
@@ -1035,7 +1270,7 @@ const columns = [
   },
 ]
 
-<Table columns={columns} data={products} />`}
+<SortableTable columns={columns} data={products} />`}
         />
       </Section>
 
@@ -1117,13 +1352,13 @@ const cols = columns.map((col) => ({
 }))
 
 <Table columns={cols} data={padded} />
-<Pagination page={page} pageCount={pageCount} onPageChange={setPage} size="sm" />`} />
+<Pagination page={page} pageCount={pageCount} onPageChange={setPage} size="sm"\n  total={rows.length} pageSize={pageSize} />`} />
       </Section>
 
       <Section title="Compact + zebra" note="Tighter rows for log-style data, with striped rows so they're easy to scan.">
         <Preview
           canvas={
-            <Table
+            <SortableTable
               density="compact"
               zebra
               columns={[
@@ -1139,20 +1374,71 @@ const cols = columns.map((col) => ({
         />
       </Section>
 
-      <Section title="Interactive rows" note="Pass onRowClick to make each row clickable so you can open it.">
+      <Section
+        title="Interactive rows"
+        note="Pass onRowClick to make each row clickable so you can open it. Row actions live in a trailing column, and they stopPropagation — a click on Delete must not also open the row behind it."
+      >
         <Preview
           canvas={
-            <Table
+            <SortableTable
               onRowClick={(r) => window.alert(`Opening ${r.name}`)}
               columns={[
                 { key: 'name', header: 'Device' },
                 { key: 'owner', header: 'Owner' },
                 STATUS_COL,
+                {
+                  key: 'actions',
+                  header: '',
+                  align: 'right',
+                  width: '96px',
+                  render: (r) => (
+                    <Inline gap={1} style={{ justifyContent: 'flex-end' }}>
+                      <Button
+                        variant="ghost" tone="neutral" size="xs" iconOnly
+                        aria-label={`Edit ${r.name}`} title="Edit"
+                        onClick={(e) => { e.stopPropagation(); window.alert(`Editing ${r.name}`) }}
+                      >
+                        <Icon as={Pencil} size="sm" />
+                      </Button>
+                      <Button
+                        variant="ghost" tone="danger" size="xs" iconOnly
+                        aria-label={`Delete ${r.name}`} title="Delete"
+                        onClick={(e) => { e.stopPropagation(); window.alert(`Deleting ${r.name}`) }}
+                      >
+                        <Icon as={Trash2} size="sm" />
+                      </Button>
+                    </Inline>
+                  ),
+                },
               ]}
               data={DEVICES}
             />
           }
-          code={`<Table onRowClick={(row) => open(row)} columns={columns} data={devices} />`}
+          code={`const columns = [
+  // …data columns
+  {
+    key: 'actions',
+    header: '',
+    align: 'right',
+    width: '96px',
+    render: (row) => (
+      <Inline gap={1} style={{ justifyContent: 'flex-end' }}>
+        <Button variant="ghost" tone="neutral" size="xs" iconOnly
+          aria-label={\`Edit \${row.name}\`}
+          onClick={(e) => { e.stopPropagation(); edit(row) }}>
+          <Icon as={Pencil} size="sm" />
+        </Button>
+        <Button variant="ghost" tone="danger" size="xs" iconOnly
+          aria-label={\`Delete \${row.name}\`}
+          onClick={(e) => { e.stopPropagation(); remove(row) }}>
+          <Icon as={Trash2} size="sm" />
+        </Button>
+      </Inline>
+    ),
+  },
+]
+
+<Table onRowClick={(row) => open(row)} columns={columns} data={devices} />`}
         />
       </Section>
 
@@ -1280,7 +1566,7 @@ const columns = [
         <Menu
           aria-label={\`Actions for \${u.name}\`}
           trigger={
-            <Button variant="ghost" size="sm" iconOnly aria-label={\`Actions for \${u.name}\`}>
+            <Button variant="ghost" tone="neutral" size="sm" iconOnly aria-label={\`Actions for \${u.name}\`}>
               <Icon as={MoreHorizontal} size="sm" />
             </Button>
           }
@@ -1299,7 +1585,7 @@ const columns = [
 
 const [selected, setSelected] = useState([])
 
-<Table
+<SortableTable
   caption="Workspace members"
   selectable
   selectedKeys={selected}

@@ -11,7 +11,16 @@
   display: inline-flex;
   align-items: center;
   gap: var(--vds-space-1);
-  border: 1px solid transparent;
+  // A TONE-MATCHED HAIRLINE ON EVERY TONE, the same rule the Badge follows. The comment
+  // below used to give this to `neutral` alone, "because its fill matches the canvas" —
+  // which was the right observation and the wrong scope. Every soft tint here sits within
+  // about 1.07 of white, so on a hovered row (--vds-canvas) they all collapse the way
+  // neutral does; neutral was simply the one that collapsed on a RESTING row too, so it
+  // was the only one anybody caught.
+  //
+  // --_tag-ink is the tone's own ink, so this is the chip's colour at a strength that
+  // stays quiet on white and still holds a shape on canvas, in selection and on zebra.
+  border: 1px solid color-mix(in srgb, var(--_tag-ink) 22%, transparent);
   border-radius: var(--vds-radius-sm);
   font-family: var(--vds-font-sans);
   white-space: nowrap;
@@ -42,9 +51,6 @@
     text-overflow: ellipsis;
     transform: translateY(0.077em);
   }
-
-  // ---- neutral keeps a visible hairline (its fill matches the canvas) ----
-  &--neutral { border-color: var(--vds-line); }
 
   // ---- accent families — soft tint + matching ink ----
   @each $fam in rose, clay, amber, "lime", emerald, harbor, "azure", "purple", "orchid", "magenta" {

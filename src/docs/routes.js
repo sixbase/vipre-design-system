@@ -18,6 +18,7 @@ import { ButtonPage } from './pages/ButtonPage.jsx'
 import { BadgePage } from './pages/BadgePage.jsx'
 import { CardPage } from './pages/CardPage.jsx'
 import { StatTilePage } from './pages/StatTilePage.jsx'
+import { ProductTilePage } from './pages/ProductTilePage.jsx'
 import { MetricCardPage } from './pages/MetricCardPage.jsx'
 import { SparklinePage } from './pages/SparklinePage.jsx'
 import { SankeyPage } from './pages/SankeyPage.jsx'
@@ -205,6 +206,7 @@ export const NAV = [
       { path: '/components/app-shell', name: 'App Shell', Page: AppShellPage },
       { path: '/components/top-bar', name: 'Top Bar', Page: TopBarPage },
       { path: '/components/side-nav', name: 'Side Nav', Page: SideNavPage },
+      { path: '/components/product-tile', name: 'Product Tile', Page: ProductTilePage },
       { path: '/components/current-left-nav', name: 'Current Left Nav', Page: CurrentLeftNavPage },
       { path: '/components/page-header', name: 'Page Header', Page: PageHeaderPage },
       { path: '/components/scope-navigator', name: 'Scope Navigator', Page: ScopeNavigatorPage },

@@ -1,6 +1,7 @@
-import { forwardRef } from 'react'
-import { ChevronRight } from '@icons'
+import { forwardRef, useEffect, useState } from 'react'
+import { ChevronLeft, ChevronRight } from '@icons'
 import { cx } from '../../lib/cx.js'
+import { Button } from '../Button/Button.jsx'
 import { Icon } from '../Icon/index.js'
 
 const range = (start, end) => Array.from({ length: end - start + 1 }, (_, i) => start + i)
@@ -48,6 +49,11 @@ function paginationRange(page, pageCount, siblingCount, showEdges) {
  * - size:         'sm' | 'md'   (default 'md')
  * - showEdges:    keep page 1 and the last page always visible (default true)
  * - compact:      force the compact "Page 3 of 12" form at every width
+ * - total:        total row count. With `pageSize`, renders the range this page covers
+ *                 ("1–10 of 21") ahead of the controls. A page number alone says where
+ *                 you are in the pager; the range says where you are in the DATA, which
+ *                 is the question someone paging through a list is actually asking.
+ * - pageSize:     rows per page — only used to work the range out.
  *                 (default false)
  * - all native <nav> attributes
  *
@@ -72,6 +78,8 @@ export const Pagination = forwardRef(function Pagination(
     size = 'md',
     showEdges = true,
     compact = false,
+    total,
+    pageSize,
     className,
     ...props
   },
@@ -81,6 +89,25 @@ export const Pagination = forwardRef(function Pagination(
   const go = (p) => {
     if (p >= 1 && p <= pageCount && p !== page) onPageChange?.(p)
   }
+
+  /* Local draft, so the field can be empty mid-edit without the list jumping on every
+     keystroke, and re-syncs whenever the page moves from outside — Prev/Next, a filter
+     reset, a sort. Junk or out-of-range input snaps back to the current page rather than
+     erroring: there is no wrong page to be on, only one that does not exist. */
+  const [draft, setDraft] = useState(String(page))
+  useEffect(() => { setDraft(String(page)) }, [page])
+  const commitJump = () => {
+    const n = parseInt(draft, 10)
+    if (!Number.isFinite(n)) { setDraft(String(page)); return }
+    const clamped = Math.min(pageCount, Math.max(1, n))
+    setDraft(String(clamped))
+    go(clamped)
+  }
+
+  /* The range this page covers. Clamped at the top because the last page is usually short. */
+  const hasRange = Number.isFinite(total) && Number.isFinite(pageSize) && total > 0
+  const from = hasRange ? (page - 1) * pageSize + 1 : null
+  const to = hasRange ? Math.min(total, page * pageSize) : null
 
   return (
     <nav
@@ -94,15 +121,25 @@ export const Pagination = forwardRef(function Pagination(
       )}
       {...props}
     >
-      <button
-        type="button"
+      {hasRange && (
+        <span className="vds-pagination__range">
+          {from.toLocaleString()}&ndash;{to.toLocaleString()} of {total.toLocaleString()}
+        </span>
+      )}
+
+      <Button
+        variant="ghost"
+        tone="neutral"
+        size="xs"
+        iconOnly
         className="vds-pagination__btn vds-pagination__btn--prev"
         aria-label="Previous page"
+        title="Previous page"
         disabled={page <= 1}
         onClick={() => go(page - 1)}
       >
-        <Icon as={ChevronRight} size="sm" />
-      </button>
+        <Icon as={ChevronLeft} size="sm" />
+      </Button>
 
       <ul className="vds-pagination__pages">
         {items.map((item, i) =>
@@ -128,22 +165,48 @@ export const Pagination = forwardRef(function Pagination(
         )}
       </ul>
 
-      {/* Compact readout — swapped in for the numbers below `sm` (or always
-          with the `compact` prop). aria-hidden: the buttons' labels already
-          tell AT where it is. */}
-      <span className="vds-pagination__status" aria-hidden="true">
-        Page {page} of {pageCount}
+      {/* Compact readout — swapped in for the numbers below `sm` (or always with the
+          `compact` prop), and TYPEABLE. This form exists because the numbered buttons do
+          not fit; without a field the only way to reach page 40 of 129 is to press Next
+          thirty-nine times, which is the exact situation the compact form creates.
+
+          Not aria-hidden any more. It used to be, on the grounds that the prev/next
+          labels already announce position — true of static text, wrong for a focusable
+          input, which would have been reachable by keyboard and invisible to a screen
+          reader. It carries its own label instead. */}
+      <span className="vds-pagination__status">
+        Page{' '}
+        <input
+          type="text"
+          inputMode="numeric"
+          className="vds-pagination__jump"
+          value={draft}
+          aria-label={`Page number, 1 to ${pageCount}`}
+          onChange={(e) => setDraft(e.target.value.replace(/[^0-9]/g, ''))}
+          onBlur={commitJump}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') { e.preventDefault(); commitJump(); e.currentTarget.blur() }
+            if (e.key === 'Escape') { setDraft(String(page)); e.currentTarget.blur() }
+          }}
+          /* Scales with the largest page number so a 3-digit count does not clip. */
+          style={{ width: `${Math.max(2, String(pageCount).length) + 1}ch` }}
+        />{' '}
+        of <span className="vds-pagination__count">{pageCount}</span>
       </span>
 
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        tone="neutral"
+        size="xs"
+        iconOnly
         className="vds-pagination__btn vds-pagination__btn--next"
         aria-label="Next page"
+        title="Next page"
         disabled={page >= pageCount}
         onClick={() => go(page + 1)}
       >
         <Icon as={ChevronRight} size="sm" />
-      </button>
+      </Button>
     </nav>
   )
 })

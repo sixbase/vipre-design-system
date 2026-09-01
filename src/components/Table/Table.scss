@@ -54,39 +54,113 @@
   // the table fits (no overflow) the timeline is inactive, the animation never
   // applies, and the base opacity (0) hides both. Progressive enhancement:
   // browsers without scroll-timeline just show no shadows.
-  @supports (animation-timeline: scroll()) {
-    &::before,
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: var(--vds-space-4);
-      pointer-events: none;
-      z-index: var(--vds-z-raised); // above the sticky header's local lift
-      opacity: 0;
-      animation: linear both;
-      animation-timeline: --vds-table-scroll-x;
-    }
-    &::before {
-      left: 0;
-      background: linear-gradient(
-        to right,
-        color-mix(in oklab, var(--vds-ink) 12%, transparent),
-        transparent
-      );
-      animation-name: vds-table-fade-start;
-    }
-    &::after {
-      right: 0;
-      background: linear-gradient(
-        to left,
-        color-mix(in oklab, var(--vds-ink) 12%, transparent),
-        transparent
-      );
-      animation-name: vds-table-fade-end;
-    }
+  // Opacity comes from the two numbers bindScrollFade measures, not from a
+  // scroll-timeline. The timeline version read better and did not work: inside a
+  // flex-column card both of these sat at 0 at every scroll position while their
+  // animations reported `running`. See the note on bindScrollFade in Table.jsx.
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: var(--vds-space-4);
+    pointer-events: none;
+    z-index: var(--vds-z-raised); // above the sticky header's local lift
+    opacity: 0;
+    transition: opacity var(--vds-dur-fast) var(--vds-ease-out);
   }
+  &::before {
+    left: 0;
+    background: linear-gradient(
+      to right,
+      color-mix(in oklab, var(--vds-ink) 12%, transparent),
+      transparent
+    );
+    opacity: var(--vds-table-fade-start, 0);
+  }
+  &::after {
+    right: 0;
+    background: linear-gradient(
+      to left,
+      color-mix(in oklab, var(--vds-ink) 12%, transparent),
+      transparent
+    );
+    opacity: var(--vds-table-fade-end, 0);
+  }
+
+  // ---- a pinned column ----
+  // Row actions are off screen exactly when a long row makes you want them, and
+  // scrolling sideways to reach them loses the row you were aiming at. A pinned column
+  // holds the right edge while everything else passes under it.
+  //
+  // ONE VARIABLE BEHIND THE FILL AND THE FADE, so the two can never disagree: the fade
+  // is by definition the colour of the ground it dissolves into, and that ground changes
+  // on hover and on selection. Set --_pin-bg once and both follow.
+  &__cell--pinned {
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    --_pin-bg: var(--vds-surface);
+    background-color: var(--_pin-bg);
+  }
+  &__row--interactive:hover > &__cell--pinned {
+    --_pin-bg: color-mix(in srgb, var(--vds-ink) 4%, var(--vds-surface));
+  }
+  &__row--selected > &__cell--pinned { --_pin-bg: var(--vds-primary-soft); }
+  &--zebra &__body tr:nth-child(even) &__cell--pinned { --_pin-bg: var(--vds-table-zebra); }
+
+  // The corner is sticky in BOTH axes once the header is sticky, so it needs a step up
+  // to clear the header's own lift and the pinned body cells beneath it.
+  thead &__cell--pinned {
+    z-index: 2;
+    --_pin-bg: var(--vds-canvas);
+  }
+
+  // The fade that says the columns continue underneath. Drawn by the pinned cells at
+  // right:100%, so it hugs the column's left edge whatever width that column resolves to
+  // — no constant shared between here and the caller. One per cell; rows are contiguous,
+  // so they stack into one unbroken band from the header to the last row.
+  //
+  // THE GROUND FADING OUT, NOT A SHADOW CAST ON IT. An ink tint reads as a grey smear
+  // over white rows: a shadow says "something is on top of this", and nothing is — the
+  // columns simply stop being legible as they pass under. Reading --_pin-bg means it is
+  // white on white, the hover tint on a hovered row, the stripe on a stripe, and the dark
+  // surface in dark mode, with no second set of rules for any of them.
+  //
+  // Opacity rides the same scroll-timeline as the shell's edge shadows: visible while
+  // there is more to the right, gone once you reach the end, absent entirely when the
+  // table does not scroll. No JavaScript.
+  &__cell--pinned::before {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 0;
+    bottom: 0;
+    width: var(--vds-space-6);
+    pointer-events: none;
+    background: linear-gradient(to left, var(--_pin-bg), transparent);
+    opacity: var(--vds-table-fade-end, 0);
+    transition: opacity var(--vds-dur-fast) var(--vds-ease-out);
+  }
+
+  // STICKY CELLS NEED `separate`. Under border-collapse: collapse a sticky cell resolves
+  // its position against a border box the collapse algorithm is still deciding, and the
+  // two land a frame apart — on screen the column shivers a pixel back and forth as you
+  // scroll, and in measurement it simply fails to hold, drifting with the content.
+  //
+  // Visually identical here because the row separator is a BOTTOM border on each cell
+  // with nothing beneath it to merge with — there is no doubled hairline for `collapse`
+  // to remove. border-spacing must be zeroed explicitly: `separate` reinstates the 2px
+  // default. Scoped to tables that actually pin, so nothing else changes.
+  &--has-pinned &__el {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  // The shell's right-edge shadow stands down: that edge is now the pinned column, so it
+  // would be cast ON the controls instead of beside them.
+  &--has-pinned::after { display: none; }
 
   &__el {
     width: 100%;
@@ -145,6 +219,34 @@
     padding: var(--vds-table-pad-y) var(--vds-table-pad-x);
     border-bottom: 1px solid var(--vds-line);
     vertical-align: middle;
+  }
+
+  // ---- the footer bar ----
+  // Inside the card, under a hairline, at the body's own horizontal padding so whatever
+  // sits here lines up with the first column above it. Vertically tighter than a row:
+  // this is chrome, not data, and matching the row height would make it read as one more
+  // record.
+  &__footer {
+    display: flex;
+    align-items: center;
+    gap: var(--vds-space-4);
+    padding: var(--vds-space-2-5) var(--vds-table-pad-x);
+    border-top: 1px solid var(--vds-line);
+  }
+
+  // ---- verticalAlign="top" ----
+  // Middle is right until one cell is two lines tall. At that point the row grows to
+  // fit it and every OTHER cell centres against a height it did not ask for, dropping
+  // each single-line value below the name that identifies the row — measured here at
+  // 8.2px between a status chip and the product name it described, while the tile in
+  // the same row had already been top-aligned by hand to avoid exactly that.
+  //
+  // The 1px is not decoration. A Badge is a 20px control whose ink sits inside its own
+  // box, and the text beside it starts at the cell's padding edge; without the pull the
+  // chip lands a hair below the first line rather than on it.
+  &--valign-top &__td {
+    vertical-align: top;
+    padding-top: calc(var(--vds-table-pad-y) - 1px);
   }
 
   &__body tr:last-child .vds-table__td {
@@ -226,7 +328,13 @@
     cursor: pointer;
     transition: background-color var(--vds-dur-fast) var(--vds-ease-out);
 
-    &:hover { background-color: var(--vds-canvas); }
+    // A TINT OF INK, NOT A SURFACE STEP. --vds-canvas and --vds-table-zebra are the
+    // same colour, so hovering a striped row changed nothing at all — measured at
+    // 1.000, while a white row gave 1.063. A hover has to say the same thing on every
+    // row it can land on, and an absolute fill can only be right on one of them. 4% of
+    // ink lands within a whisker of the old value on white and does the same work on a
+    // stripe, on a selected row, and on anything else a row can be.
+    &:hover { background-color: color-mix(in srgb, var(--vds-ink) 4%, transparent); }
     &:focus-visible {
       outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
       outline-offset: var(--vds-control-ring-offset-inset);
@@ -331,8 +439,14 @@
     // EQUAL AND OPPOSITE, because `align-items: center` centres the MARGIN box: a lone
     // negative top margin shrinks that box and the centring gives back half the nudge.
     // A matched pair leaves the box the same size and moves it whole.
-    margin-top: -0.5px;
-    margin-bottom: 0.5px;
+    // 0.085em, and it is the SAME CONSTANT the Badge dot uses to reach the text's ink
+    // centre — not a coincidence but the same fact twice: Rubik's ink sits high in its
+    // line box, so anything `align-items: center` puts beside a label reads low against
+    // the letters. Measured here at 11px: the previous flat -0.5px left the arrow still
+    // 0.44px under the label's ink, and 0.5 + 0.44 = 0.94px = 0.0855em. Stated in em so
+    // it tracks the header's size rather than being right at one of them.
+    margin-top: -0.085em;
+    margin-bottom: 0.085em;
     // The flip SNAPS — only the tone fades. A 7x8 arrow spun through 180deg re-rasterises
     // its 1px stroke on every frame, and at that size the antialiasing churn reads as a
     // shake, not as motion. There's nothing to follow in the in-between frames anyway: the

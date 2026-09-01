@@ -9,8 +9,33 @@
   display: inline-flex;
   align-items: center;
   gap: var(--vds-space-1);
-  padding: 0.125rem var(--vds-space-2);
-  border: 1px solid transparent;
+  // ---- vertical padding is ASYMMETRIC, and it has to be ------------------------
+  // Symmetric padding centres the LINE BOX, and a line box carries descender room the
+  // label mostly does not use — "Active", "Trial", "Inactive", "Protected" have no
+  // descender at all. So the ink sits high in the box, and centring the box leaves the
+  // whole content — dot and word together — riding above the pill's middle.
+  //
+  // Measured on the docs page before this: ink centre and dot centre both 0.94px above
+  // the chip's centre, on every dot badge on the page. Small, and visible: it is a 1px
+  // lift on a 5px dot inside a 20px tinted pill, which is what makes a chip look like it
+  // is using a different dot from the chip above it.
+  //
+  // The correction is the same 0.085em the dot already uses to reach the ink centre, in
+  // the other direction and split across the two pads, so the pill's height does not
+  // change and the em keeps it tracking the font size. The dot's own nudge is unchanged
+  // and still relative to the text; this moves the pair as one.
+  padding: calc(0.125rem + 0.085em) var(--vds-space-2) calc(0.125rem - 0.085em);
+  // A TONE-MATCHED HAIRLINE, not a transparent one. The soft fills sit within about
+  // 1.07 of white, which is enough to read a chip on a white row and nothing at all on
+  // a hovered one: measured, every tone drops to 1.01 against --vds-canvas, and neutral
+  // drops to 1.00 because its fill IS --vds-canvas — the chip does not fade on hover,
+  // it disappears.
+  //
+  // A fill can only be legible against one ground, and a row has at least two. An edge
+  // works on both: currentColor is the tone's own ink, so this is the chip's own colour
+  // at a strength that stays quiet on white and still holds a shape on canvas, in
+  // selection, and on zebra. It costs nothing in layout — the border box was already 1px.
+  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
   border-radius: var(--vds-radius-sm);
   white-space: nowrap;
   vertical-align: middle; // optical: chips ride the text middle, not the baseline (table cells sat ~1.5px low)

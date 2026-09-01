@@ -253,13 +253,25 @@
   }
 
   // Quiet at rest (muted ink), reveals the tone on hover.
+  //
+  // ITS HOVER IS A TINT OF ITS OWN INK, NOT A SURFACE STEP, and that is the whole point.
+  // These used to be --_btn-soft, which for neutral resolves to --vds-canvas — the exact
+  // colour a hovered table row paints. So hovering an action button inside an active row
+  // produced a measured contrast of 1.00: not "subtle", identical. Danger was 1.01, for
+  // the same reason one step over.
+  //
+  // A surface step can only be right against one ground, and these buttons sit on several
+  // — a resting row, a hovered row, a selected row, a zebra stripe, a toolbar. A
+  // translucent mix of the tone's own ink is the same amount darker than WHATEVER is
+  // under it, so the control's hover no longer depends on what its container is doing.
+  // Same reasoning as the Badge's tone-matched edge.
   &--ghost {
     background-color: transparent;
     color: var(--vds-ink-muted);
     &:hover {
-      background-color: var(--_btn-soft);
+      background-color: color-mix(in srgb, var(--_btn-text) 10%, transparent);
       color: var(--_btn-text);
     }
-    &:active { background-color: var(--_btn-soft-hover); }
+    &:active { background-color: color-mix(in srgb, var(--_btn-text) 18%, transparent); }
   }
 }

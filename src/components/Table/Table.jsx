@@ -1,4 +1,4 @@
-import { Fragment, forwardRef, useId, useState } from 'react'
+import { Fragment, forwardRef, useCallback, useEffect, useId, useRef, useState } from 'react'
 import { cx } from '../../lib/cx.js'
 import { Surface } from '../Surface/Surface.jsx'
 import { Checkbox } from '../Checkbox/Checkbox.jsx'
@@ -115,6 +115,16 @@ function ExpandGlyph() {
  * - data:        row[]     (required)
  * - getRowKey:   (row, i) => key   — defaults to row.id, then the index
  * - density:     'comfortable' (default) | 'compact'
+ * - verticalAlign: 'middle' (default) | 'top'
+ *                Where a cell's content sits when the row is taller than one line.
+ *                Middle is right while every cell is one line. The moment ONE column
+ *                wraps — a name over a category, a package over its add-ons — the row
+ *                grows to fit it and every OTHER cell centres against that new height,
+ *                dropping each single-line value below the name that identifies its
+ *                row. Measured on the docs page before this existed: a status chip sat
+ *                8px under the product name it described, while the ProductTile beside
+ *                it was already top-aligned by hand. Set 'top' whenever a column can
+ *                render two lines, and the row lines up on the first one.
  * - zebra:       striped rows                    (default false)
  * - stickyHeader: header stays put while the body scrolls (pair with `maxHeight`)
  * - maxHeight:   CSS max-height for the scroll body (enables vertical scroll)
@@ -132,7 +142,11 @@ function ExpandGlyph() {
  * - selectable:  show the selection column          (default false)
  * - selectedKeys: array | Set of selected row keys
  * - onSelectionChange: (keys[]) => void
- * - onRowClick:  (row, index) => void  — makes rows interactive (hover + keyboard)
+ * - onRowClick:  (row, index) => void  — what a click on a row does
+ * - interactiveRows: rows look and behave clickable (default true). Needs onRowClick
+ *                to take effect — the styling promises a click does something, and a
+ *                table without a handler has nothing to promise. Set false to keep a
+ *                row's click behaviour without the whole-row affordance.
  * - renderDetail: (row, index) => node — when set, every row gets a leading
  *                expand caret that reveals this node in a full-width detail row
  *                beneath it. This is how you keep dense rows compact: the row
@@ -143,6 +157,13 @@ function ExpandGlyph() {
  * - loading:     show skeleton rows                 (default false)
  * - skeletonRows: how many while loading            (default 5)
  * - empty:       node shown when data is empty      (default 'No data')
+ * - footer:      a bar rendered INSIDE the table's own card, under a hairline. This
+ *                is where a pager belongs and it is not a detail: a pager placed after
+ *                the table, outside its border, reads as a separate control that
+ *                happens to sit nearby, and the table below it looks unfinished. Inside
+ *                the card, under the rule, it is part of the same object — which is how
+ *                every paged table in the product is built. Anything can go here; a
+ *                pager is simply the usual thing.
  * - caption:     accessible <caption> (visually hidden) describing the table
  * - all Surface props pass through (radius, elevation, bordered, raised, as…)
  *
@@ -158,12 +179,59 @@ function ExpandGlyph() {
  *   onSortChange={setSort}
  * />
  */
+/* ---- scroll fade — MEASURED, not animated ------------------------------------------
+   Writes two numbers, 1 or 0 per edge, onto the table's root: --vds-table-fade-start
+   and --vds-table-fade-end. The edge fades and a pinned column's own fade read them, so
+   a fade only ever appears when it MEANS something — one at an edge with nothing beyond
+   it is decoration claiming content that is not there.
+
+   This replaces a scroll-timeline. The CSS-only version was the nicer idea and it does
+   not fire: measured on a table inside a flex-column card, both edge shadows sat at
+   opacity 0 at every scroll position while their animations reported `running` against a
+   ScrollTimeline. The prototype hit the same wall and moved to measurement; this is that
+   fix, brought back.
+
+   THREE TRIGGERS, because no one of them catches every case:
+     scroll  the obvious one.
+     resize  an observer on the SCROLLER catches its own box changing; observers on its
+             CHILDREN catch content growing or shrinking under a still scroller — a
+             filter applied, a column toggled — which moves scrollWidth while the
+             scroller's box never changes.
+     window  the backstop, and not redundant: ResizeObserver does not fire on every
+             viewport-driven resize, and without this the fade sticks at whatever it was
+             when the window was last a different size.
+   All three call the same idempotent update, so firing twice costs one style write. */
+function bindScrollFade(el) {
+  const host = el.parentElement ?? el
+  const set = (k, on) => host.style.setProperty(k, on ? '1' : '0')
+  const update = () => {
+    set('--vds-table-fade-start', el.scrollLeft > 1)
+    set('--vds-table-fade-end', Math.ceil(el.scrollLeft + el.clientWidth) < el.scrollWidth - 1)
+  }
+  update()
+  el.addEventListener('scroll', update, { passive: true })
+  window.addEventListener('resize', update, { passive: true })
+  const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(update) : null
+  if (ro) {
+    ro.observe(el)
+    for (const child of el.children) ro.observe(child)
+  }
+  return () => {
+    el.removeEventListener('scroll', update)
+    window.removeEventListener('resize', update)
+    ro?.disconnect()
+    host.style.removeProperty('--vds-table-fade-start')
+    host.style.removeProperty('--vds-table-fade-end')
+  }
+}
+
 export const Table = forwardRef(function Table(
   {
     columns = [],
     data = [],
     getRowKey,
     density = 'comfortable',
+    verticalAlign = 'middle',
     zebra = false,
     stickyHeader = false,
     maxHeight,
@@ -175,6 +243,7 @@ export const Table = forwardRef(function Table(
     selectedKeys,
     onSelectionChange,
     onRowClick,
+    interactiveRows = true,
     renderDetail,
     expandedKeys,
     defaultExpandedKeys,
@@ -183,6 +252,7 @@ export const Table = forwardRef(function Table(
     skeletonRows = 5,
     empty = 'No data',
     caption,
+    footer,
     radius,
     className,
     ...props
@@ -191,7 +261,29 @@ export const Table = forwardRef(function Table(
 ) {
   const captionId = useId()
   const detailBaseId = useId()
-  const interactiveRows = typeof onRowClick === 'function'
+  /* Rows read as clickable by default, because in this product most of them are. The
+     flag still needs a handler to take effect, and that is not a hedge: the treatment is
+     a pointer, a focus ring and role="button", which together promise that a click does
+     something. A table with no onRowClick has nothing to promise, and defaulting the
+     PROMISE on would make "this row does nothing" the thing an author has to remember to
+     say. So the default answers the common case and the handler keeps it honest.
+
+     Set it false on a table that is clickable but should not advertise it — a row whose
+     real actions live in its own buttons, where a whole-row target would swallow them. */
+  const rowsInteractive = interactiveRows && typeof onRowClick === 'function'
+  /* The shell's right-edge shadow is pinned to the scrollport's right edge. With a pinned
+     column that edge IS the column, so the shadow would be cast ON the controls rather
+     than beside them. The pinned cell draws its own fade instead — see the SCSS. */
+  const hasPinned = columns.some((c) => c.pinned)
+
+  /* A callback ref, not an effect on a stored node: it re-binds if the scrollport is
+     replaced and cleans up when it goes, without a dependency list to keep in step. */
+  const fadeCleanup = useRef(null)
+  const scrollRef = useCallback((node) => {
+    fadeCleanup.current?.()
+    fadeCleanup.current = node ? bindScrollFade(node) : null
+  }, [])
+  useEffect(() => () => fadeCleanup.current?.(), [])
   const expandable = typeof renderDetail === 'function'
   const totalCols = columns.length + (selectable ? 1 : 0) + (expandable ? 1 : 0)
 
@@ -253,6 +345,7 @@ export const Table = forwardRef(function Table(
         aria-sort={col.sortable ? (active ? (dir === 'asc' ? 'ascending' : 'descending') : 'none') : undefined}
         className={cx(
           'vds-table__th',
+          col.pinned && 'vds-table__cell--pinned',
           `vds-table__cell--${alignOf(col, data)}`,
           col.sortable && 'vds-table__th--sortable',
           active && 'vds-table__th--active',
@@ -318,14 +411,14 @@ export const Table = forwardRef(function Table(
           <tr
             className={cx(
               'vds-table__row',
-              interactiveRows && 'vds-table__row--interactive',
+              rowsInteractive && 'vds-table__row--interactive',
               isSelected && 'vds-table__row--selected',
               isExpanded && 'vds-table__row--expanded',
             )}
             aria-selected={selectable ? isSelected : undefined}
-            onClick={interactiveRows ? () => onRowClick(row, i) : undefined}
+            onClick={rowsInteractive ? () => onRowClick(row, i) : undefined}
             onKeyDown={
-              interactiveRows
+              rowsInteractive
                 ? (e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault()
@@ -334,8 +427,8 @@ export const Table = forwardRef(function Table(
                   }
                 : undefined
             }
-            tabIndex={interactiveRows ? 0 : undefined}
-            role={interactiveRows ? 'button' : undefined}
+            tabIndex={rowsInteractive ? 0 : undefined}
+            role={rowsInteractive ? 'button' : undefined}
           >
             {expandable && (
               // Stop propagation so the caret never fires the row's onClick.
@@ -372,7 +465,7 @@ export const Table = forwardRef(function Table(
               <td
                 key={col.key}
                 data-label={responsive ? labelOf(col) : undefined}
-                className={cx('vds-table__td', `vds-table__cell--${alignOf(col, data)}`, col.className)}
+                className={cx('vds-table__td', `vds-table__cell--${alignOf(col, data)}`, col.pinned && 'vds-table__cell--pinned', col.className)}
               >
                 {cellOf(col, row, i)}
               </td>
@@ -400,15 +493,18 @@ export const Table = forwardRef(function Table(
       className={cx(
         'vds-table',
         `vds-table--${density}`,
+        verticalAlign === 'top' && 'vds-table--valign-top',
         zebra && 'vds-table--zebra',
         stickyHeader && 'vds-table--sticky',
         responsive && 'vds-table--responsive',
-        interactiveRows && 'vds-table--row-interactive',
+        rowsInteractive && 'vds-table--row-interactive',
+        hasPinned && 'vds-table--has-pinned',
         className,
       )}
       {...props}
     >
       <div
+        ref={scrollRef}
         className="vds-table__scroll"
         style={maxHeight != null ? { maxHeight, overflowY: 'auto' } : undefined}
       >
@@ -441,6 +537,7 @@ export const Table = forwardRef(function Table(
           <tbody className="vds-table__body">{bodyRows()}</tbody>
         </table>
       </div>
+      {footer && <div className="vds-table__footer">{footer}</div>}
     </Surface>
   )
 })
