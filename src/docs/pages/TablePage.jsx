@@ -216,9 +216,13 @@ const LOG_STATUS = {
   Cancelled: { tone: 'neutral', icon: X },
   'Review Required': { tone: 'warning', icon: Eye },
 }
+/* A DOT, like every other status on this page. These wore an icon each — a tick, a
+   pencil, a clock, an eye — which put a second thing to read inside a 20px chip and made
+   one table's status look like a different component from the rest. The word already says
+   which state it is; the mark only has to say THAT it is a state, and carry the tone. */
 function LogStatus({ status }) {
   const s = LOG_STATUS[status] ?? { tone: 'neutral' }
-  return <Badge tone={s.tone} icon={s.icon ? <Icon as={s.icon} /> : undefined}>{status}</Badge>
+  return <Badge tone={s.tone} dot>{status}</Badge>
 }
 
 const LOG_TYPE = { meeting: Calendar, mail: Mail, other: FileText }
@@ -243,7 +247,12 @@ function DetailField({ label, children }) {
   return (
     <Stack gap={0} style={{ minWidth: 0 }}>
       <Text as="span" variant="eyebrow" tone="subtle">{label}</Text>
-      <Text as="span" variant="detail">{children}</Text>
+      {/* overflowWrap: 'anywhere' — the values here include email addresses and message
+          IDs, which carry no space for the browser to break at. `minWidth: 0` lets the
+          grid track shrink and `white-space: normal` lets it wrap, and neither helps a
+          40-character unbroken token: it stayed one line, 230px of ink in a 191px column,
+          and ran under the field beside it. Measured, not guessed. */}
+      <Text as="span" variant="detail" style={{ overflowWrap: 'anywhere' }}>{children}</Text>
     </Stack>
   )
 }
@@ -1291,7 +1300,10 @@ const cols = columns.map((col) => ({
         />
       </Section>
 
-      <Section title="Interactive rows" note="Pass onRowClick to make each row clickable so you can open it.">
+      <Section
+        title="Interactive rows"
+        note="Pass onRowClick to make each row clickable so you can open it. Row actions live in a trailing column, and they stopPropagation — a click on Delete must not also open the row behind it."
+      >
         <Preview
           canvas={
             <SortableTable
@@ -1300,11 +1312,59 @@ const cols = columns.map((col) => ({
                 { key: 'name', header: 'Device' },
                 { key: 'owner', header: 'Owner' },
                 STATUS_COL,
+                {
+                  key: 'actions',
+                  header: '',
+                  align: 'right',
+                  width: '96px',
+                  render: (r) => (
+                    <Inline gap={1} style={{ justifyContent: 'flex-end' }}>
+                      <Button
+                        variant="ghost" tone="neutral" size="xs" iconOnly
+                        aria-label={`Edit ${r.name}`} title="Edit"
+                        onClick={(e) => { e.stopPropagation(); window.alert(`Editing ${r.name}`) }}
+                      >
+                        <Icon as={Pencil} size="sm" />
+                      </Button>
+                      <Button
+                        variant="ghost" tone="danger" size="xs" iconOnly
+                        aria-label={`Delete ${r.name}`} title="Delete"
+                        onClick={(e) => { e.stopPropagation(); window.alert(`Deleting ${r.name}`) }}
+                      >
+                        <Icon as={Trash2} size="sm" />
+                      </Button>
+                    </Inline>
+                  ),
+                },
               ]}
               data={DEVICES}
             />
           }
-          code={`<Table onRowClick={(row) => open(row)} columns={columns} data={devices} />`}
+          code={`const columns = [
+  // …data columns
+  {
+    key: 'actions',
+    header: '',
+    align: 'right',
+    width: '96px',
+    render: (row) => (
+      <Inline gap={1} style={{ justifyContent: 'flex-end' }}>
+        <Button variant="ghost" tone="neutral" size="xs" iconOnly
+          aria-label={\`Edit \${row.name}\`}
+          onClick={(e) => { e.stopPropagation(); edit(row) }}>
+          <Icon as={Pencil} size="sm" />
+        </Button>
+        <Button variant="ghost" tone="danger" size="xs" iconOnly
+          aria-label={\`Delete \${row.name}\`}
+          onClick={(e) => { e.stopPropagation(); remove(row) }}>
+          <Icon as={Trash2} size="sm" />
+        </Button>
+      </Inline>
+    ),
+  },
+]
+
+<Table onRowClick={(row) => open(row)} columns={columns} data={devices} />`}
         />
       </Section>
 
