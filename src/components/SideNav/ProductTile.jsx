@@ -101,6 +101,7 @@ export const ProductTile = forwardRef(function ProductTile(
      glyph out of; against the dark surface the accent role has already stepped to
      cobalt-400, so the mix lands brighter on its own without a second number. */
   const tonalGl = `vds-pttg-${uid}`
+  const tonalRim = `vds-pttr-${uid}`
 
   if (tonal) {
     return (
@@ -115,10 +116,9 @@ export const ProductTile = forwardRef(function ProductTile(
         {...a11y}
         {...props}
       >
-        <rect
-          width="32" height="32" rx="8"
-          style={{ fill: 'color-mix(in srgb, var(--vds-tile-tonal, var(--vds-accent-cobalt)) 15%, transparent)' }}
-        />
+        {/* A FLAT FAINT STEP, not a mix of an accent — the construction the Gradient
+            Explorer settled on. The tile is the quiet ground the mark is drawn on. */}
+        <rect width="32" height="32" rx="8" style={{ fill: 'var(--vds-tile-tonal-face, var(--vds-graphite-50))' }} />
         {/* THE RIM, which the gradient variant has always had and this one was missing.
             Inset half a pixel on the 32-grid so the 1px stroke sits INSIDE the tile's
             edge rather than straddling it — the same geometry the gradient tile uses, and
@@ -132,10 +132,7 @@ export const ProductTile = forwardRef(function ProductTile(
             30%, not the gradient variant's 0.25 stroke opacity — that rim is a bright
             highlight on a saturated block and only has to catch the light. This one is
             the only thing holding the shape. */}
-        <rect
-          x="0.5" y="0.5" width="31" height="31" rx="7.5"
-          style={{ stroke: 'color-mix(in srgb, var(--vds-tile-tonal, var(--vds-accent-cobalt)) 30%, transparent)' }}
-        />
+        <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke={`url(#${tonalRim})`} strokeOpacity="0.25" />
         {/* THE MARK RUNS MIDNIGHT, THE TILE KEEPS THE PRODUCT'S COLOUR. Drawn in the
             product's own accent, a shelf of these was twenty differently-coloured glyphs
             whose only shared trait was the shape of the box. One ink makes them read as a
@@ -149,6 +146,13 @@ export const ProductTile = forwardRef(function ProductTile(
           <CenteredGlyph glyph={glyph} fill={`url(#${tonalGl})`} />
         ))}
         <defs>
+          {/* The rim runs the ramp the other way — lighter at the top fading into the
+              mark's own darkest step — at the same 0.25 the gradient tile's rim uses.
+              It catches the top edge rather than outlining the box. */}
+          <linearGradient id={tonalRim} x1="16" y1="0" x2="16" y2="32" gradientUnits="userSpaceOnUse">
+            <stop stopColor="var(--vds-tile-glyph-to, var(--vds-graphite-400))" />
+            <stop offset="1" stopColor="var(--vds-tile-glyph-from, var(--vds-graphite-900))" />
+          </linearGradient>
           <linearGradient id={tonalGl} x1="16" y1="0" x2="16" y2="32" gradientUnits="userSpaceOnUse">
             <stop stopColor="var(--vds-tile-glyph-from, var(--vds-midnight-900))" />
             <stop offset="1" stopColor="var(--vds-tile-glyph-to, var(--vds-midnight-400))" />

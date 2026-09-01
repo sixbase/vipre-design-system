@@ -60,18 +60,8 @@ function GradientTile({ family, light, dark, direction, glyph, mode, offset, id 
   const edge = lighten(top, EDGE_DISTANCE) // outline rim: 2 steps lighter than the fill's top
   const gradId = `grad-${id}`
   const edgeId = `edge-${id}`
-  const glyphGradId = `glyphgrad-${id}`
-  /* GLYPH MODE DRAWS THE GLYPH IN MIDNIGHT, not in the family. The family stays on the
-     tile as its faint -50 wash, so the product still carries its own colour — but the
-     mark itself runs the midnight ramp, 900 to 400, dark to light. One ink for every
-     product means a row of tiles reads as a set rather than as twenty different marks,
-     and midnight is the ramp the rest of the chrome is already built on.
-     `direction` still flips it, because this is an explorer and a control that silently
-     does nothing in one mode is worse than no control. */
-  const glyphTop = direction === 'light-dark' ? 400 : 900
-  const glyphBottom = direction === 'light-dark' ? 900 : 400
   const tileFill = mode === 'tile' ? `url(#${gradId})` : `var(--vds-${family}-50)`
-  const glyphFill = mode === 'glyph' ? `url(#${glyphGradId})` : '#fff'
+  const glyphFill = mode === 'glyph' ? `url(#${gradId})` : '#fff'
   return (
     <svg width="64" height="64" viewBox="0 0 32 32" fill="none" style={{ display: 'block' }} aria-hidden="true">
       <rect width="32" height="32" rx="8" fill={tileFill} />
@@ -82,10 +72,6 @@ function GradientTile({ family, light, dark, direction, glyph, mode, offset, id 
         <linearGradient id={gradId} x1="16" y1="0" x2="16" y2="32" gradientUnits="userSpaceOnUse">
           <stop stopColor={`var(--vds-${family}-${top})`} />
           <stop offset="1" stopColor={`var(--vds-${family}-${bottom})`} />
-        </linearGradient>
-        <linearGradient id={glyphGradId} x1="16" y1="0" x2="16" y2="32" gradientUnits="userSpaceOnUse">
-          <stop stopColor={`var(--vds-midnight-${glyphTop})`} />
-          <stop offset="1" stopColor={`var(--vds-midnight-${glyphBottom})`} />
         </linearGradient>
         <linearGradient id={edgeId} x1="16" y1="0" x2="16" y2="32" gradientUnits="userSpaceOnUse">
           <stop stopColor={`var(--vds-${family}-${edge})`} />
@@ -160,7 +146,7 @@ export function GradientExplorerPage() {
         </div>
         <Text variant="caption" tone="muted" style={{ marginTop: 'var(--vds-space-3)', display: 'block' }}>
           <strong>Tile</strong> paints the gradient behind a white glyph (the real product-tile look);{' '}
-          <strong>Glyph</strong> fills the glyph with the midnight ramp — <IC>900</IC> to <IC>400</IC>, dark to light — over a faint <IC>--vds-{'{family}'}-50</IC> tile. The family tints the tile; the mark stays one ink across every product.
+          <strong>Glyph</strong> fills the glyph itself over a faint <IC>--vds-{'{family}'}-50</IC> tile.
         </Text>
       </Section>
 
