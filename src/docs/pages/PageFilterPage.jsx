@@ -30,6 +30,14 @@ const OPTIONS = [
   { key: 'ies', name: 'IES', glyph: GLYPHS.ies, customers: 51, trials: 8 },
   { key: 'safesend-ai', name: 'SafeSend + AI', glyph: GLYPHS.safesend, customers: 48, trials: 5 },
   { key: 'safesend', name: 'SafeSend', glyph: GLYPHS.safesend, customers: 46, trials: 7 },
+  /* Enough options to overflow the column on purpose: the pattern's whole claim is that
+     each side scrolls on its own, and a list that fits never demonstrates it. */
+  { key: 'ies-beta', name: 'IES BETA', glyph: GLYPHS.ies, customers: 47, trials: 4 },
+  { key: 'safesend-beta', name: 'SafeSend Beta', glyph: GLYPHS.safesend, customers: 43, trials: 5 },
+  { key: 'edge-defense', name: 'Edge Defense', glyph: GLYPHS.edr, customers: 40, trials: 5 },
+  { key: 'edge-nordics', name: 'Edge Defense Nordics', glyph: GLYPHS.edr, customers: 45, trials: 3 },
+  { key: 'vault', name: 'VaultCritical Suite', glyph: GLYPHS.ies, customers: 47, trials: 10 },
+  { key: 'essentials', name: 'Essentials', glyph: GLYPHS.ies, customers: 47, trials: 12 },
 ]
 
 /* The accounts behind each option. A page filter is only legible once you can see what
@@ -52,6 +60,12 @@ const ACCOUNTS = {
   ies: [['Eastgate Financial Corp', 364, '83%'], ['Peregrine Mining Ltd', 348, '78%'], ['Jade Healthcare Corp', 329, '102%']],
   'safesend-ai': [['Quantum Consulting Ltd', 330, '81%'], ['Ivory Resources Partners', 323, '102%']],
   safesend: [['Lighthouse Legal Ltd', 280, '89%'], ['Sunbelt Mining Services', 373, '102%']],
+  'ies-beta': [['Copperfield Shipping Corp', 347, '102%']],
+  'safesend-beta': [['Velocity Environmental Corp', 343, '98%']],
+  'edge-defense': [['Summit Logistics Corp', 348, '81%'], ['Canyon Seafood Co', 393, '101%']],
+  'edge-nordics': [['Golden Realty Co', 385, '97%']],
+  vault: [['Prism Logistics Partners', 983, '61%'], ['Oakmont Architecture Co', 964, '56%']],
+  essentials: [['Heritage Transit Co', 1045, '86%'], ['Pinnacle Optics Inc', 1009, '94%']],
 }
 
 const cell = (render) => (r) => (r.isGroup ? null : render(r))
@@ -91,10 +105,24 @@ function PageFilterDemo() {
   const current = OPTIONS.find((o) => o.key === picked) ?? OPTIONS[0]
 
   return (
+    /* A fixed height so "full height" is demonstrable in a docs page. In an app this is
+       the shell's own height — the filter runs from the header to the bottom of the
+       window, and neither side ever scrolls the other. */
+    <div style={{ height: 560, width: '100%' }}>
+    <div className="vds-page-filter-page">
+      {/* THE PAGE TITLE SPANS BOTH COLUMNS, at the very top. The filter is part of this
+          page, not a peer of it — a title sitting only above the right-hand column would
+          say the rail belongs to something else, and the reader would be left asking what
+          the filter is for before they had been told what the page is. */}
+      <header className="vds-page-filter-page__head">
+        <Text as="h2" variant="title-sm">Package Insights</Text>
+      </header>
     <div className="vds-page-filter">
       <div className="vds-page-filter__rail">
         <Table
           density="compact"
+          stickyHeader
+          maxHeight="100%"
           data={rows}
           getRowKey={(r) => r.key}
           sort={sort}
@@ -163,6 +191,8 @@ function PageFilterDemo() {
         </Stack>
       </div>
     </div>
+    </div>
+    </div>
   )
 }
 
@@ -174,7 +204,7 @@ export function PageFilterPage() {
     >
       <Section
         title="Anatomy"
-        note="Pick a row. The panel follows it. One row is always current, including the aggregate at the top, which is what “no filter” looks like when it still has to be a choice."
+        note="Pick a row. The panel follows it. The filter is a full-height column and the page butts straight against it — each side scrolls on its own, so a long option list never pushes the page down and a long page never drags the filter out of reach. One row is always current, including the aggregate at the top, which is what “no filter” looks like when it still has to be a choice."
       >
         <Preview
           canvas={<PageFilterDemo />}

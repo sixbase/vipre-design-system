@@ -1055,35 +1055,103 @@ section:first-of-type > .vds-section-h {
   }
 }
 
-/* ---- page filter -------------------------------------------------------------------
-   Both halves are CARDS, and what has to line up is their two top edges — the one place
-   on the page where the eye checks whether two things start together. So neither carries
-   padding above its own border, and the grid aligns to `start` rather than stretching.
-
-   27rem is measured, not chosen: it is the width that holds the longest option — "Advanced
-   Threat Protection" — beside the two figure columns without the name wrapping or the
-   table overflowing. 21rem is where it stops being worth two columns and stacks.
-
-   minmax(0, 1fr) on the panel rather than 1fr, so a long value inside it cannot push the
-   rail wider. A filter that resizes when you pick something is one you stop trusting. */
-.vds-page-filter {
-  display: grid;
-  grid-template-columns: minmax(21rem, 27rem) minmax(0, 1fr);
-  gap: var(--vds-space-5);
-  align-items: start;
-  width: 100%;
-}
-.vds-page-filter__panel {
-  padding: var(--vds-space-5);
+/* The page: its title at the very top, spanning the filter and the content beneath it,
+   then the two columns taking the height that is left. The frame's border lives out here
+   so the title sits inside it — a title above the frame would read as a caption for a
+   component rather than as the name of the page it belongs to. */
+.vds-page-filter-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
   border: 1px solid var(--vds-line);
   border-radius: var(--vds-radius-md);
   background: var(--vds-surface);
+  overflow: hidden;
 }
-/* Below the point where two columns still earn their keep, the rail sits above the
-   panel rather than beside it. */
+.vds-page-filter-page__head {
+  flex: none;
+  padding: var(--vds-space-4) var(--vds-space-5);
+  border-bottom: 1px solid var(--vds-line);
+}
+.vds-page-filter-page .vds-page-filter {
+  flex: 1;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+/* ---- page filter -------------------------------------------------------------------
+   A FULL-HEIGHT COLUMN, not a card in the content flow. It was two cards side by side
+   with a gap between them, and that reads as two things placed near each other; a filter
+   that drives a page is part of the shell, so it runs floor to ceiling and the page butts
+   straight against it. The divider is a border, not a gap — a gap says "two objects", a
+   1px line says "one surface, two jobs".
+
+   Each side scrolls on its own. A long option list must not push the page down, and a
+   long page must not drag the filter out of reach — which is the whole reason the filter
+   is full height rather than a block at the top.
+
+   27rem is measured: the width that holds the longest option — "Advanced Threat
+   Protection" — beside its two figure columns without the name wrapping. */
+.vds-page-filter {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  min-height: 0;
+  border: 1px solid var(--vds-line);
+  border-radius: var(--vds-radius-md);
+  background: var(--vds-surface);
+  overflow: hidden;              // clips both scrollers to the frame's corners
+}
+
+/* The RAIL does not scroll — the table inside it does. Scrolling the wrapper takes the
+   column header with it, and the header is what says which figure each column holds; on
+   a list long enough to scroll that is exactly when you need it. Giving the scroll to the
+   table lets stickyHeader hold it, so the flex chain here exists to hand the table a
+   definite height for its own max-height to resolve against. */
+.vds-page-filter__rail {
+  flex: none;
+  width: 27rem;
+  min-width: 0;
+  display: flex;
+  overflow: hidden;
+  border-right: 1px solid var(--vds-line);
+}
+.vds-page-filter__rail .vds-table {
+  flex: 1;
+  min-height: 0;
+}
+
+/* The rail's table is the column, not a card inside it — its own border and corners
+   would draw a second frame a pixel inside the one already there. */
+.vds-page-filter__rail .vds-table {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.vds-page-filter__panel {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding: var(--vds-space-5);
+}
+
+/* Below the point where two columns still earn their keep, the filter stops being a
+   column and becomes a block above the page — still scrolling on its own, but no longer
+   competing for width it does not have. */
 @media (max-width: 60rem) {
-  .vds-page-filter { grid-template-columns: minmax(0, 1fr); }
+  .vds-page-filter { flex-direction: column; height: auto; }
+  .vds-page-filter__rail {
+    width: 100%;
+    max-height: 18rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--vds-line);
+  }
 }
+
 .vds-sidebar__search {
   padding: 0 var(--vds-space-4) var(--vds-space-3);
 }

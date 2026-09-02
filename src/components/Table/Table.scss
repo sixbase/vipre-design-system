@@ -174,7 +174,13 @@
   // with nothing beneath it to merge with — there is no doubled hairline for `collapse`
   // to remove. border-spacing must be zeroed explicitly: `separate` reinstates the 2px
   // default. Scoped to tables that actually pin, so nothing else changes.
-  &--has-pinned &__el {
+  //
+  // STICKY HEADERS NEED IT TOO, and did not have it: `stickyHeader` sets position:sticky
+  // and top:0 on every th, and under `collapse` the browser ignores both — measured, the
+  // header scrolled away by exactly the scroll distance. The rule was written for pinned
+  // columns and the header had the same requirement all along, so it never worked.
+  &--has-pinned &__el,
+  &--sticky &__el {
     border-collapse: separate;
     border-spacing: 0;
   }
