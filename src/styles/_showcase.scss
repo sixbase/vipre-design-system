@@ -1075,3 +1075,11 @@ section:first-of-type > .vds-section-h {
 @media (max-width: 60rem) {
   .vds-page-filter { grid-template-columns: minmax(0, 1fr); }
 }
+.vds-sidebar__search {
+  padding: 0 var(--vds-space-4) var(--vds-space-3);
+}
+.vds-sidebar__no-matches {
+  display: block;
+  padding: var(--vds-space-2) var(--vds-space-4);
+}
+
