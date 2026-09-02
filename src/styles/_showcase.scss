@@ -190,8 +190,36 @@
     transition: background-color var(--vds-dur-fast) var(--vds-ease-out),
       color var(--vds-dur-fast) var(--vds-ease-out);
 
-    &:hover { background-color: var(--vds-canvas); color: var(--vds-ink); }
-    &.is-active { background-color: var(--vds-primary-soft); color: var(--vds-primary); }
+    /* HOVER WAS --vds-canvas, which is #f7f8fa against the sidebar's #ffffff — a
+       two-per-cent step, so the row barely acknowledged the pointer. A translucent
+       mix of the ink is the same amount darker than whatever is under it, which is
+       the technique the table rows and ghost buttons already use. */
+    &:hover { background-color: #{'color-mix(in srgb, var(--vds-ink) 5%, transparent)'}; color: var(--vds-ink); }
+
+    /* ---- THE CURRENT PAGE, AT FULL BRAND STRENGTH -----------------------------
+       Was a --vds-primary-soft tint with cobalt text. Three things were working
+       against it: the tint is cobalt-50, nearly white on a white sidebar; the row
+       kept the same weight as the sixty around it; and the hover sat close enough
+       in strength that a pointer moving down the list produced something almost as
+       loud as the thing it was meant to be distinguished from.
+
+       Same reasoning as the page filter's current row, and the same treatment, so
+       the two read as one idea: exactly one item is ever current, it is the entire
+       state of the page beside it, and it has to be findable in a list long enough
+       to scroll. A tint is right where selection REPEATS and has to stay quiet.
+       Here it never repeats. */
+    &.is-active {
+      background-color: var(--vds-primary);
+      color: var(--vds-on-primary);
+      /* The one weight change in the column. On a solid fill this is nearly free,
+         and it keeps the row legible if the fill ever loses contrast. */
+      font-weight: 500;
+    }
+
+    /* Hover must not undo the current row — the base hover is a later rule at the
+       same specificity, so without this, pointing at the active item washes the
+       cobalt back out to a grey tint. One step along the brand ramp instead. */
+    &.is-active:hover { background-color: var(--vds-primary-hover); color: var(--vds-on-primary); }
   }
 }
 
