@@ -1363,6 +1363,16 @@ section:first-of-type > .vds-section-h {
 /* No mark and no trailing cell on the lists that don't carry them — the columns
    collapse rather than leaving a hole where a glyph would have been. */
 .vds-biz-row--plain { grid-template-columns: minmax(0, 1.8fr) minmax(44px, 1fr) 74px 58px; }
+/* Six columns: the ranked figure, its reach, and the ratio between them. The METER
+   gives up the width — it is a proportion and says the same thing narrower, whereas a
+   figure column that shrinks stops being a column. */
+.vds-biz-row--wide { grid-template-columns: auto minmax(0, 1.8fr) minmax(36px, 0.7fr) 74px 58px 62px; }
+.vds-biz-row__per {
+  font-size: 12px;
+  color: var(--vds-ink-subtle);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
 .vds-biz-row--tight { grid-template-columns: minmax(0, 1.8fr) minmax(44px, 1fr) 74px; }
 
 /* Below this the BAR goes first, not the name. A 30px track can't show a
@@ -1372,6 +1382,7 @@ section:first-of-type > .vds-section-h {
   .vds-biz-row__track { display: none; }
   .vds-biz-row { grid-template-columns: auto minmax(0, 1fr) 74px 58px; }
   .vds-biz-row--plain { grid-template-columns: minmax(0, 1fr) 74px 58px; }
+  .vds-biz-row--wide { grid-template-columns: auto minmax(0, 1fr) 74px 58px 62px; }
   .vds-biz-row--tight { grid-template-columns: minmax(0, 1fr) 74px; }
 }
 

@@ -42,10 +42,11 @@ function DashHead({ title, sub, action }) {
    OF THE TOP ROW, not of the total — a share of the total flattens six rows into
    six identical stubs. `flag` is the optional right-hand alarm cell (days to
    renewal, invoice state) and takes the place of `sub` when present. */
-function BizRow({ mark, name, share, value, sub, flag, flagTone, onClick, title, current }) {
+function BizRow({ mark, name, share, value, sub, per, flag, flagTone, onClick, title, current }) {
   const cls = [
     'vds-biz-row',
     mark ? '' : (sub || flag ? 'vds-biz-row--plain' : 'vds-biz-row--tight'),
+    per != null ? 'vds-biz-row--wide' : '',
     onClick ? 'vds-biz-row--btn' : '',
     current ? 'vds-biz-row--current' : '',
   ].filter(Boolean).join(' ')
@@ -62,6 +63,16 @@ function BizRow({ mark, name, share, value, sub, flag, flagTone, onClick, title,
       {flag != null
         ? <span className={`vds-biz-row__flag${flagTone ? ` vds-biz-row__flag--${flagTone}` : ''}`}>{flag}</span>
         : sub != null && <span className="vds-biz-row__sub">{sub}</span>}
+      {/* THE RATIO BETWEEN THE TWO COLUMNS BESIDE IT, and the reason this row has a
+          sixth cell at all. Seats-order and accounts-order are two true rankings of
+          the same rows; a product with few accounts and many seats each is sold to
+          big customers, one with many accounts and few seats each is sold everywhere
+          in small blocks, and that difference IS this number. It was the one figure
+          the card made the reader work out in their head, six times.
+
+          Self-labelled, because these lists carry no header row and an unlabelled
+          number in a sixth column is a number nobody can read. */}
+      {per != null && <span className="vds-biz-row__per">{per}</span>}
     </>
   )
   return onClick
@@ -97,12 +108,12 @@ function FootLink({ label, value, onClick }) {
 
 /* ---- the real rows off "Seats by product", figures included ---------------- */
 const PRODUCTS = [
-  { id: 'email-cloud', name: 'Email Cloud', glyph: GLYPHS.ies, seats: 3525, accounts: 53 },
-  { id: 'edge-nordics', name: 'Edge Defense Nordics', glyph: GLYPHS.ies, seats: 3317, accounts: 42 },
-  { id: 'atp', name: 'Advanced Threat Protection', glyph: GLYPHS.ies, seats: 3139, accounts: 47 },
-  { id: 'exchange', name: 'ExchangeSMART Suite', glyph: GLYPHS.ies, seats: 3073, accounts: 45 },
-  { id: 'ep-email', name: 'Endpoint+Email', glyph: GLYPHS.edr, seats: 2791, accounts: 52 },
-  { id: 'edge', name: 'Edge Defense', glyph: GLYPHS.safesend, seats: 2784, accounts: 35 },
+  { id: 'edge-nordics', name: 'Edge Defense Nordics', glyph: GLYPHS.edr, seats: 4444, accounts: 42 },
+  { id: 'exchange-suite', name: 'ExchangeSMART Suite', glyph: GLYPHS.ies, seats: 3559, accounts: 44 },
+  { id: 'complete-nordics', name: 'Complete Defense Nordics', glyph: GLYPHS.ies, seats: 3410, accounts: 45 },
+  { id: 'essentials-in', name: 'Essentials Inbound Only', glyph: GLYPHS.ies, seats: 3181, accounts: 39 },
+  { id: 'edge', name: 'Edge Defense', glyph: GLYPHS.edr, seats: 3070, accounts: 34 },
+  { id: 'exchange', name: 'ExchangeSMART', glyph: GLYPHS.safesend, seats: 3054, accounts: 45 },
 ]
 
 function SeatsByProductDemo() {
@@ -121,13 +132,14 @@ function SeatsByProductDemo() {
             share={p.seats / top}
             value={p.seats.toLocaleString()}
             sub={`${p.accounts} accts`}
+            per={`${Math.round(p.seats / p.accounts)}/acct`}
             current={picked === p.id}
             onClick={() => setPicked(picked === p.id ? null : p.id)}
             title={`${p.name} — ${p.seats.toLocaleString()} seats across ${p.accounts} accounts`}
           />
         ))}
       </div>
-      <FootLink label="14 other products" value="32.2K" onClick={() => {}} />
+      <FootLink label="14 other products" value="29.5K" onClick={() => {}} />
     </div>
     </div>
   )
@@ -516,7 +528,7 @@ export function TileRowsPage() {
     >
       <Section
         title="Anatomy"
-        note="A head that names the cut, six rows at most, and a remainder line that names what the six left out. Pick a row — the current one takes the same solid fill the page filter's current row takes, because it is the same claim: this is the one you are reading."
+        note="A head that names the cut, six rows at most, and a remainder line that names what the six left out. Six columns here rather than five: the ranked figure, its reach, and the ratio between them — see below for why the ratio earns a column of its own. Pick a row; the current one takes the same solid fill the page filter's current row takes, because it is the same claim: this is the one you are reading."
       >
         <Preview
           canvas={<SeatsByProductDemo />}
@@ -531,6 +543,7 @@ export function TileRowsPage() {
       share={p.seats / top}      // share of the TOP ROW, never of the total
       value={p.seats.toLocaleString()}
       sub={\`\${p.accounts} accts\`}
+      per={\`\${Math.round(p.seats / p.accounts)}/acct\`}   // adds the 6th column
       onClick={…}
     />
   </div>
@@ -629,9 +642,40 @@ export function TileRowsPage() {
             ['Current row', '--vds-primary, solid', 'Same as the page filter. One row at a time, and it has to be findable without hunting.'],
             ['Meter', 'share of the TOP ROW', 'A share of the total flattens six rows into six identical stubs. Floored at 2% so the smallest still draws.'],
             ['Figures', 'tabular-nums, right, fixed track', 'A ranked list is read down the numbers. Proportional digits and an elastic column both stop it being a column.'],
+            ['The ratio column', 'self-labelled', 'A sixth cell for the figure divided by its reach. It carries no header — these lists have none — so it labels itself: “106/acct”, not “106”.'],
             ['Rows', 'six at most', 'Past six the tile stops showing a shape and starts being a table in a card — at which point use Table, on a page.'],
           ]}
         />
+      </Section>
+
+      <Section
+        title="Rank by the number that has shape"
+        note="Seats by product ranked six products whose totals differ by 1.45x, and put the figure that differs by 1.56x in the muted grey qualifier. The sixth column is that ratio, promoted."
+      >
+        <Stack gap={3}>
+          <Text variant="body">
+            The tile exists to be read against Package Insights: that one ranks by how many
+            ACCOUNTS hold a package, this one by how many SEATS ride on it. A package sold to
+            a handful of large accounts outranks one sold everywhere in small blocks, and the
+            gap between the two orderings is the sales conversation. <strong>That gap is
+            seats-per-account</strong>, and until now it was the one figure on the card the
+            reader had to compute — six times, in their head.
+          </Text>
+          <Text variant="body">
+            <IC>Edge Defense</IC> reaches 34 accounts at 90 seats each; <IC>ExchangeSMART</IC>{' '}
+            reaches 45 at 68. Same card, opposite motions — one is a big-account product, the
+            other a volume product — and neither the bar nor the seat total says so.
+          </Text>
+          <Text variant="body">
+            <strong>The general rule this is an instance of:</strong> when a ranked list comes
+            out flat, the ranking dimension is the wrong one. It is worth checking before
+            reaching for the data. This card was flat under a uniform seat generator AND it
+            stayed flat after that generator was given a realistic heavy tail — because a
+            product&rsquo;s total sums ~40 accounts, and summing averages the skew away. The
+            accounts tile went from a 3% top-five share to 20% on the same change; this one
+            moved from 1.27x to 1.45x. The data was never this tile&rsquo;s problem.
+          </Text>
+        </Stack>
       </Section>
 
       <Section
