@@ -2861,13 +2861,20 @@ section:first-of-type > .vds-section-h {
    not mistaken for part of the figure. */
 .vds-pkg-aud__seg--solo .vds-pkg-aud__figure {
   display: flex;
-  /* BASELINE, not centre. The note directly above this rule argues for baseline —
-     "a 26px figure and 12px text share a baseline the way a number and its unit
-     do" — and then the rule centred them, which floats the share in the middle of
-     the digits' height where nothing else sits. Measured 7px off its own baseline
-     before this; the two heads that copied the SHAPE from this tile were aligned
-     and this one was not. The comment was right. */
-  align-items: baseline;
+  /* CENTRE, and the note above it arguing for baseline is wrong — I moved this to
+     baseline on the strength of that note and made it worse.
+
+     Baseline is the right default for a number and its unit, and it is wrong for
+     THIS pair, because digits have no descenders. Set "58" and "18% of all
+     accounts" on one baseline and the qualifier's visible mass lands 3.8px BELOW
+     the digits' — measured — so it reads as hanging off the bottom of the number
+     rather than sitting beside it. Centred, the two blocks of ink agree to within
+     1px and the baselines are the thing that differs, which nobody can see.
+
+     Box alignment is not ink alignment. Here the boxes happen to be the ones that
+     land the ink right; on a checkbox beside its label it was the other way round
+     (see --vds-control-optical-shift). Neither rule wins by default — measure. */
+  align-items: center;
   gap: var(--vds-space-2);
   min-width: 0;
 }
@@ -2959,9 +2966,10 @@ section:first-of-type > .vds-section-h {
      the supporting text is 400: it is the tile's subject, and the figure above
      it is only a quantity until the label says what of.
 
-   Baseline-aligned, never centred — a 26px figure and 12px text share a
-   baseline the way a number and its unit do. Centring floats the small text in
-   the middle of the digits' height, where nothing else sits.
+   Centred on the ink, not baseline-aligned. Baseline is the right default for a
+   number and its unit and the wrong one here, because digits carry no
+   descenders: on a shared baseline the qualifier's visible mass sits 3.8px below
+   the digits' and reads as hanging off the number. Measured both ways.
    =========================================================================== */
 .vds-pkg-aud__val,
 .vds-status-lead__value,
@@ -2992,12 +3000,13 @@ section:first-of-type > .vds-section-h {
   color: var(--vds-ink-muted);
 }
 
-/* The figure and its supporting text share a line and a baseline. */
+/* The figure and its supporting text share a line, centred on their ink — see the
+   measurement note on .vds-pkg-aud__seg--solo. */
 .vds-pkg-aud__figure,
 .vds-status-lead__figs,
 .vds-sell-hero__figs {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   flex-wrap: wrap;
   gap: var(--vds-space-2);
   min-width: 0;
