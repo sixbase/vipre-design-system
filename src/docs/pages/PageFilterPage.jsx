@@ -40,34 +40,6 @@ const OPTIONS = [
   { key: 'essentials', name: 'Essentials', glyph: GLYPHS.ies, customers: 47, trials: 12 },
 ]
 
-/* The accounts behind each option. A page filter is only legible once you can see what
-   it filters: with a headline figure and a sentence the panel was 159px of card beside a
-   380px rail, and the pair read as two cards rather than as a rail and the page it drives.
-   This is the same shape the product's own Package Insights panel carries. */
-const ACCOUNTS = {
-  all: [
-    ['Hawkeye Catering Inc', 472, '98%'], ['Timberline Aerospace Ltd', 463, '103%'],
-    ['Ridgeline Agriculture Ltd', 407, '101%'], ['Riverstone Hospitality', 402, '88%'],
-    ['Lakeside Marine Ltd', 396, '81%'],
-  ],
-  'email-cloud': [
-    ['Hawkeye Catering Inc', 472, '98%'], ['Willow Financial Inc', 391, '103%'],
-    ['Atlas Financial Co', 384, '83%'], ['Falcon Academy Inc', 364, '96%'],
-  ],
-  atp: [['Summit Legal Corp', 499, '101%'], ['Zenith Aviation Partners', 476, '97%'], ['Coastal Consulting Inc', 461, '104%']],
-  'ep-email': [['Driftwood Seafood Services', 341, '92%'], ['Granite Source', 288, '74%']],
-  'total-email': [['Pinnacle Optics Inc', 268, '86%'], ['Crestview Engineering', 244, '90%']],
-  ies: [['Eastgate Financial Corp', 364, '83%'], ['Peregrine Mining Ltd', 348, '78%'], ['Jade Healthcare Corp', 329, '102%']],
-  'safesend-ai': [['Quantum Consulting Ltd', 330, '81%'], ['Ivory Resources Partners', 323, '102%']],
-  safesend: [['Lighthouse Legal Ltd', 280, '89%'], ['Sunbelt Mining Services', 373, '102%']],
-  'ies-beta': [['Copperfield Shipping Corp', 347, '102%']],
-  'safesend-beta': [['Velocity Environmental Corp', 343, '98%']],
-  'edge-defense': [['Summit Logistics Corp', 348, '81%'], ['Canyon Seafood Co', 393, '101%']],
-  'edge-nordics': [['Golden Realty Co', 385, '97%']],
-  vault: [['Prism Logistics Partners', 983, '61%'], ['Oakmont Architecture Co', 964, '56%']],
-  essentials: [['Heritage Transit Co', 1045, '86%'], ['Pinnacle Optics Inc', 1009, '94%']],
-}
-
 const cell = (render) => (r) => (r.isGroup ? null : render(r))
 
 function PageFilterDemo() {
@@ -101,8 +73,6 @@ function PageFilterDemo() {
     flush()
     return out
   }, [sort])
-
-  const current = OPTIONS.find((o) => o.key === picked) ?? OPTIONS[0]
 
   return (
     /* A fixed height so "full height" is demonstrable in a docs page. In an app this is
@@ -149,44 +119,16 @@ function PageFilterDemo() {
 
       {/* The page. It reads the selection and nothing else — the filter does not route,
           does not reload, and does not move: the answer appears beside the question. */}
+      {/* A PLACEHOLDER, deliberately. What goes here is the product's page — a title, a
+          panel, a dashboard, whatever the filter is filtering — and the docs have nothing
+          useful to say about it. Standing in a real page here teaches the reader the page
+          rather than the pattern, and every reader then has to work out which half is the
+          part being documented. The pattern is the rail, the seam and the two independent
+          scrolls; the right-hand side only has to hold its ground. */}
       <div className="vds-page-filter__panel">
-        <Stack gap={4}>
-          {/* THE PAGE TITLE LIVES HERE, not above both columns. The filter runs to the
-              frame's top edge because it is chrome — it is the same list whatever the page
-              is showing — and the title belongs to the thing that changes, which is the
-              content beside it. Put it across the top and the rail loses its top edge to a
-              bar that never has anything to say about it. */}
-          <Text as="h2" variant="title-sm">Package Insights</Text>
-          <Inline gap={3} align="center">
-            <ProductTile glyph={current.isAll ? GLYPHS.stacks : current.glyph} tonal size={32} />
-            <Text as="h3" variant="title-sm">{current.name}</Text>
-          </Inline>
-          <Inline gap={6}>
-            <Stack gap={0}>
-              <Text as="span" variant="eyebrow" tone="subtle">Accounts</Text>
-              <Text as="span" variant="display-sm">{current.customers.toLocaleString()}</Text>
-            </Stack>
-            <Stack gap={0}>
-              <Text as="span" variant="eyebrow" tone="subtle">On trial</Text>
-              <Text as="span" variant="display-sm">{current.trials.toLocaleString()}</Text>
-            </Stack>
-          </Inline>
-          <Text variant="body" tone="muted">
-            {current.isAll
-              ? 'Every bundle and package in this scope, as one book. Biggest accounts first.'
-              : `Accounts holding ${current.name}. Biggest first.`}
-          </Text>
-          <Table
-            density="compact"
-            data={ACCOUNTS[current.key] ?? []}
-            getRowKey={(r) => r[0]}
-            columns={[
-              { key: '0', header: 'Customer', render: (r) => r[0] },
-              { key: '1', header: 'Seats', align: 'right', width: '72px', render: (r) => r[1].toLocaleString() },
-              { key: '2', header: 'Used', align: 'right', width: '64px', render: (r) => r[2] },
-            ]}
-          />
-        </Stack>
+        <div className="vds-page-filter__placeholder">
+          <Text as="span" variant="caption" tone="subtle">Page content</Text>
+        </div>
       </div>
     </div>
     </div>
@@ -201,7 +143,7 @@ export function PageFilterPage() {
     >
       <Section
         title="Anatomy"
-        note="Pick a row. The panel follows it. The filter is a full-height column and the page butts straight against it — each side scrolls on its own, so a long option list never pushes the page down and a long page never drags the filter out of reach. One row is always current, including the aggregate at the top, which is what “no filter” looks like when it still has to be a choice."
+        note="The filter is a full-height column and the page butts straight against it — each side scrolls on its own, so a long option list never pushes the page down and a long page never drags the filter out of reach. The rail runs to the top edge, because it is the same list whatever the page is showing; the title belongs to the half that changes. One row is always current, including the aggregate at the top, which is what “no filter” looks like when it still has to be a choice."
       >
         <Preview
           canvas={<PageFilterDemo />}

@@ -1111,6 +1111,21 @@ section:first-of-type > .vds-section-h {
   min-width: 0;
   overflow-y: auto;
   padding: var(--vds-space-5);
+  /* A column, so the placeholder can take the height the panel has rather than the
+     height its own content asks for. */
+  display: flex;
+}
+
+/* The stand-in for the product's page. Fills the panel so the seam and the two column
+   widths stay honest, and says nothing else — a placeholder that decorated itself would
+   start competing with the rail for the reader's attention. */
+.vds-page-filter__placeholder {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--vds-line);
+  border-radius: var(--vds-radius-md);
+  background: var(--vds-surface-sunken);
 }
 
 /* Below the point where two columns still earn their keep, the filter stops being a
