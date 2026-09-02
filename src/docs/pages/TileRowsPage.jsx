@@ -110,7 +110,19 @@ function Rows({ cols, columns, data, getKey, sort, onSort, current, onPick, inte
       </button>
     ) : c.header
     return (
-      <span key={c.key} className={c.cellClass} style={span > 1 ? { gridColumn: `span ${span}` } : undefined}
+      /* THE SORTED COLUMN'S LABEL GOES TO FULL INK. Only its arrow changed before, so
+         the one column carrying the ordering looked exactly like the four that were
+         not — a 9px mark doing all the work. .vds-table__th--active is the Table's own
+         rule for this (--vds-ink-subtle to --vds-ink, colour only, no weight change),
+         reused rather than restated so the two headers keep saying it the same way. */
+      /* The header cell does NOT take the body cell's class. Doing so dragged
+         .vds-rowlist__sub's 12px and its colour into the header, which then needed a
+         reset rule to undo — and that reset set `color: inherit` at a specificity
+         that beat the Table's --active, so the sorted heading could never darken.
+         Alignment is all a header cell needs, and it says so itself. */
+      <span key={c.key}
+        className={[c.align === 'right' && 'is-right', active && 'vds-table__th--active'].filter(Boolean).join(' ')}
+        style={span > 1 ? { gridColumn: `span ${span}` } : undefined}
         aria-sort={c.sortable ? (active ? (sort.direction === 'asc' ? 'ascending' : 'descending') : 'none') : undefined}>
         {cell}
       </span>
@@ -256,8 +268,18 @@ function ConcentrationDemo() {
       >
         <FootLink label="The other 319 accounts" value="40.2K" />
       </Rows>
+      {/* THE CAVEAT, SAID PLAINLY. It read "Weighted by seats. Two accounts of the
+          same size count the same here, whatever each pays for them." — which takes
+          three clauses and a double negative to reach one fact, and gets there by a
+          route the reader has to retrace. "Weighted" is also wrong: nothing is
+          weighted, the tile simply counts seats.
+
+          The fact is that this is a seats view and not a money view, and the thing
+          that follows from it — a big cheap account outranking a small expensive one
+          — is the reason anyone needs telling. Both, in that order, in two short
+          sentences. */}
       <span className="vds-biz-note">
-        Weighted by seats. Two accounts of the same size count the same here, whatever each pays for them.
+        Ranked by seats, not revenue. A large low-margin account outranks a small premium one.
       </span>
     </div>
     </div>

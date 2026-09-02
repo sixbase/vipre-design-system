@@ -2691,9 +2691,15 @@ section:first-of-type > .vds-section-h {
   font-weight: var(--vds-weight-medium);
   letter-spacing: normal;
   text-transform: none;
-  color: var(--vds-ink-subtle);
   cursor: default;
 }
+/* THE HEAD'S COLOUR AT ZERO SPECIFICITY, so .vds-table__th--active can beat it. The
+   Table darkens the sorted column's label from --vds-ink-subtle to --vds-ink, and
+   reusing that rule is the point — but `.vds-rowlist > .is-head` is 0,2,0 against its
+   0,1,0, so my resting colour was quietly winning and the sorted heading looked
+   exactly like the four that were not. :where() drops this to 0,0,0 and the Table's
+   rule applies on its own terms, with nothing restated here. */
+:where(.vds-rowlist) > :where(.is-head) { color: var(--vds-ink-subtle); }
 .vds-rowlist > .is-head:hover { background: none; }
 .vds-rowlist > .is-head > * { white-space: nowrap; }
 
@@ -2743,10 +2749,10 @@ section:first-of-type > .vds-section-h {
 /* On the cobalt fill the meter has to survive too — --vds-line is invisible there. */
 .vds-rowlist > .is-current .vds-rowlist__track { background: #{'color-mix(in srgb, var(--vds-on-primary) 25%, transparent)'}; }
 .vds-rowlist > .is-current .vds-rowlist__fill { background: var(--vds-on-primary); }
-/* The header's own cells inherit its type; the figure columns keep their alignment. */
-.vds-rowlist > .is-head .vds-rowlist__val,
-.vds-rowlist > .is-head .vds-rowlist__sub,
-.vds-rowlist > .is-head .vds-rowlist__name { font-size: inherit; font-weight: inherit; color: inherit; }
+/* A header cell needs alignment and nothing else — its type comes from the head row
+   and its colour is either the resting subtle or, on the sorted column, the Table's
+   own --active. No reset, so nothing here can out-specify that. */
+.vds-rowlist > .is-head .is-right { text-align: right; }
 /* The footer sits inside the list now, so it spans the grid rather than a column. */
 .vds-rowlist > .vds-biz-foot { grid-column: 1 / -1; display: flex; }
 .vds-rowlist > .vds-biz-foot::before { display: none; }
