@@ -181,7 +181,27 @@
   &__link {
     display: block;
     padding: 0.25rem 0.5rem;
-    border-radius: var(--vds-radius-md);
+    /* ---- THE PROTOTYPE'S ROW PILL, 6 -------------------------------------------
+       Was --vds-radius-md (8). The MSP shell's nav rows are 6, and this column is
+       the same object — a list of places you can go, one of them current.
+
+       Written as sm + 2 rather than as `6px`, because 6 is not a step on the radius
+       scale (4 / 8 / 12) and a bare literal here is the thing the audit just told
+       everyone to stop doing. The +2 is the concentric nesting gap both nav systems
+       are built on: an inner shape and the pill around it share a corner centre when
+       the outer radius is the inner one plus the padding between them. The SideNav
+       component spells the same sum at its own scale.
+
+       WORTH KNOWING, because the two systems disagree. The prototype runs tile 4 →
+       pill 6 → card 8; the DS's SideNav component runs tile 8 → pill 10 → card 12.
+       The prototype's chain is anchored on a ProductTile rendering at radius 4, and
+       it only does that because MspShellV2 passes `radius={R_TILE}` where `radius`
+       is in VIEWBOX units — the bug ProductTile's own header says was removed from
+       seventeen callers. Fix that and the prototype's tile becomes 8, which is where
+       the DS already is. This row has no tile nested in it, so it can take the 6
+       without inheriting the argument; the SideNav component is deliberately left
+       alone until someone decides which anchor is right. */
+    border-radius: #{'calc(var(--vds-radius-sm) + 2px)'};
     color: var(--vds-ink-subtle);
     text-decoration: none;
     font-family: var(--vds-font-sans);
@@ -1216,6 +1236,11 @@ section:first-of-type > .vds-section-h {
    agreed and the ink missed by two, which is the more visible of the two errors. */
 .vds-sidebar__search .vds-input.vds-input--sm {
   padding-inline: var(--vds-space-2);
+  /* 6, matching the rows below it. The --sm Input is radius-sm (4), which is right
+     for a field standing on its own; this one is stacked directly on top of sixty
+     rows at 6, in the same column and at the same width, where two corner radii a
+     row apart read as a misalignment rather than as two components. */
+  border-radius: #{'calc(var(--vds-radius-sm) + 2px)'};
 }
 
 .vds-sidebar__no-matches {
