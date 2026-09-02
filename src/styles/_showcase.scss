@@ -3328,3 +3328,17 @@ section:first-of-type > .vds-section-h {
   transform: translateY(var(--vds-control-optical-shift));
 }
 .vds-rowlist__mark + * { margin-left: -4px; }
+
+/* ---- column rhythm -------------------------------------------------------
+   THE SLACK BELONGS TO THE METER. The name held it (1.8fr against the meter's
+   0.7) on the reasoning that a squeezed name stops identifying its row — true on
+   a quarter-width dashboard cell, and the opposite of what happens at 700px,
+   where the name takes what it needs and the surplus shows as a hole between the
+   last word and the bar. `auto` gives the name its content and a 7rem floor keeps
+   it honest when the card is narrow; the meter takes the rest, which costs
+   nothing because a proportion says the same thing at any length. */
+.vds-rowlist__name { min-width: 0; }
+
+/* A right-aligned heading sits flush with its column, directly over the figures.
+   The arrow turns inward rather than pushing the label off that edge. */
+.vds-rowsort--right { flex-direction: row; justify-content: flex-end; }

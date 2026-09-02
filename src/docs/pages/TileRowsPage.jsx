@@ -90,8 +90,14 @@ function Rows({ cols, columns, data, getKey, sort, onSort, current, onPick, chil
               className={`vds-rowsort${c.align === 'right' ? ' vds-rowsort--right' : ''}`}
               onClick={() => onSort({ key: c.key, direction: active && sort.direction === 'desc' ? 'asc' : 'desc' })}
               aria-label={`Sort by ${c.header}`}>
+              {/* THE ARROW LEADS ON A RIGHT-ALIGNED COLUMN, and trails on a left-aligned
+                  one — either way it sits on the INSIDE and the label keeps the column's
+                  own edge. Trailing it on the right pushed every figure heading left by
+                  the arrow's width, so "Seats" no longer sat over 4,444: the one thing a
+                  column heading has to do. */}
+              {c.align === 'right' && <SortArrow direction={active ? sort.direction : undefined} />}
               {c.header}
-              <SortArrow direction={active ? sort.direction : undefined} />
+              {c.align !== 'right' && <SortArrow direction={active ? sort.direction : undefined} />}
             </button>
           ) : c.header
           return (
@@ -152,7 +158,7 @@ function SeatsByProductDemo() {
     <div className="vds-tile">
       <DashHead title="Seats by product" sub="Under contract" action={{ label: 'Package Insights' }} />
       <Rows
-        cols="24px minmax(0, 1.8fr) minmax(36px, 0.7fr) 74px 58px 62px"
+        cols="24px minmax(7rem, auto) minmax(56px, 1fr) 76px 68px 68px"
         data={rows} getKey={(p) => p.id}
         sort={sort} onSort={setSort}
         current={picked} onPick={(k) => setPicked(picked === k ? null : k)}
@@ -164,7 +170,7 @@ function SeatsByProductDemo() {
           ) },
           { key: 'seats', header: 'Seats', sortable: true, align: 'right', cellClass: 'vds-rowlist__val', render: (p) => p.seats.toLocaleString() },
           { key: 'accounts', header: 'Accounts', sortable: true, align: 'right', cellClass: 'vds-rowlist__sub', render: (p) => p.accounts },
-          { key: 'per', header: 'Per acct', sortable: true, align: 'right', cellClass: 'vds-rowlist__sub', render: (p) => `${Math.round(p.seats / p.accounts)}/acct` },
+          { key: 'per', header: 'Per acct', sortable: true, align: 'right', cellClass: 'vds-rowlist__sub', render: (p) => Math.round(p.seats / p.accounts) },
         ]}
       >
         <FootLink label="14 other products" value="29.5K" onClick={() => {}} />
@@ -218,7 +224,7 @@ function ConcentrationDemo() {
         <span className="vds-status-lead__caption">Seats held by the 5 biggest accounts</span>
       </div>
       <Rows
-        cols="24px minmax(0, 1.8fr) minmax(44px, 1fr) 74px 58px"
+        cols="24px minmax(7rem, auto) minmax(56px, 1fr) 76px 68px"
         data={rows} getKey={(a) => a.name}
         sort={sort} onSort={setSort}
         columns={[
