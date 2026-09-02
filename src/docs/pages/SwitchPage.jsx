@@ -29,7 +29,7 @@ export function SwitchPage() {
     >
       <Section
         title="Compact"
-        note={'size="sm" takes the track from 36x20 to 28x16 with a 12px thumb. The padding and the travel keep the same share of the track, so the throw reads the same — it is the same switch, smaller, not a different one.'}
+        note={'size="sm" takes the track from 36x20 to 28x16 with a 12px thumb. The 2px inset is shared outright rather than scaled — pad + thumb + pad still equals the track height, and the travel stays the same fraction of the width (43% against 44%), so the throw reads the same. It is the same switch, smaller, not a different one.'}
       >
         <Preview
           canvas={

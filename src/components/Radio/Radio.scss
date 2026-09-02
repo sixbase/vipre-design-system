@@ -28,9 +28,15 @@
 
   &--sm {
     --vds-radio-size: 0.875rem;      // 14px, from 18
-    --vds-radio-dot: 0.3125rem;      // 5px, from 6 — the dot keeps its share of the box
+    // 5px, from 6. NOT the exact share (that would be 4.67): a dot this small loses
+    // more to antialiasing than the arithmetic knows about, so it is rounded UP, and
+    // 5 lands on a whole pixel where 4.67 does not.
+    --vds-radio-dot: 0.3125rem;
     gap: var(--vds-space-1-5);
-    @include type.step(detail);
+    // caption (13px), NOT detail (12). The stated use for this size is a dense table
+    // row, and a compact row's own cells are caption — a label one step below the
+    // words beside it reads as a footnote about the row rather than part of it.
+    @include type.step(caption);
   }
 
   &--disabled {

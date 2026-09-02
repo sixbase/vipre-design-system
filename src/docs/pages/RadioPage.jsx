@@ -61,7 +61,7 @@ export function RadioPage() {
     >
       <Section
         title="Compact"
-        note={'size="sm" drops the control from 18px to 14, with the dot keeping its share of the box, and steps the label down with it. Same use as the compact checkbox: dense rows and toolbars. The tap target is unchanged on touch.'}
+        note={'size="sm" drops the control from 18px to 14 and the dot from 6px to 5 — rounded up from the exact share of 4.67, because a dot this small loses more to antialiasing than the arithmetic knows about, and 5 lands on a whole pixel. The label goes to caption, matching a compact table row. Same use as the compact checkbox: dense rows and toolbars. On touch the hit area still grows to the full 44px tap target, centred on the smaller control.'}
       >
         <Preview
           canvas={

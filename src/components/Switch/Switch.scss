@@ -28,7 +28,10 @@
     --vds-switch-track-h: 1rem;      // 16px, from 20
     --vds-switch-thumb: 0.75rem;     // 12px, from 16
     gap: var(--vds-space-1-5);
-    @include type.step(detail);
+    // caption (13px), NOT detail (12). The stated use for this size is a dense table
+    // row, and a compact row's own cells are caption — a label one step below the
+    // words beside it reads as a footnote about the row rather than part of it.
+    @include type.step(caption);
   }
 
   &--disabled {

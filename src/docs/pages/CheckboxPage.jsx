@@ -31,7 +31,7 @@ export function CheckboxPage() {
     >
       <Section
         title="Compact"
-        note={'size="sm" drops the box from 18px to 14 and steps the label down with it. For a dense table row or a toolbar, where the default is the tallest thing on the line and starts setting the row height instead of sitting in it. The tap target is unchanged on touch.'}
+        note={'size="sm" drops the box from 18px to 14 and the label to caption, the same step a compact table row uses — so the label matches the words beside it instead of sitting a size under them. An 18px line rather than 20. The tick and dash scale with the box, so the mark keeps its share of it. For a dense table row or a toolbar, where the default is the tallest thing on the line and starts setting the row height instead of sitting in it. On touch the hit area still grows to the full 44px tap target, centred on the smaller box.'}
       >
         <Preview
           canvas={
