@@ -82,7 +82,6 @@ function PageFilterDemo() {
     <div className="vds-page-filter">
       <div className="vds-page-filter__rail">
         <Table
-          density="compact"
           stickyHeader
           maxHeight="100%"
           data={rows}
@@ -105,7 +104,7 @@ function PageFilterDemo() {
                 ) : (
                   <Inline gap={3} align="center">
                     <ProductTile glyph={r.isAll ? GLYPHS.stacks : r.glyph} tonal size={20} />
-                    <Text as="span" variant="caption">{r.name}</Text>
+                    <Text as="span" variant="body">{r.name}</Text>
                   </Inline>
                 ),
             },
@@ -148,7 +147,6 @@ export function PageFilterPage() {
         <Preview
           canvas={<PageFilterDemo />}
           code={`<Table
-  density="compact"
   data={rows}                        // aggregate, heading, members — one flat array
   getRowKey={(r) => r.key}
   selectedKeys={[picked]}            // the current row — no checkboxes
@@ -193,8 +191,9 @@ export function PageFilterPage() {
           row sizes its own numbers, so the column of counts stops being a column the moment one
           option reaches four digits. A Table also brings the sort, the selected row, the keyboard
           behaviour and the header band for free — all of which this pattern needs and none of which
-          is worth writing twice. The rail is dense on purpose: it is a control, and the table beside
-          it is the thing being read.
+          is worth writing twice. The rail runs at the default density, not compact: it is a list of
+          choices to be aimed at, and a filter that is hard to hit is worse than a filter that
+          shows two fewer options without scrolling.
         </Text>
       </Section>
     </DocPage>
