@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ChevronRight, ArrowRight } from 'lucide-react'
+import { ChevronRight, ArrowRight, Plus, Boxes } from 'lucide-react'
 import { DocPage } from '../DocPage.jsx'
 import { Section, Preview, RefTable, IC } from '../primitives.jsx'
 import { Button, Icon, ProductTile, Stack, Text } from '../../components/index.js'
@@ -147,12 +147,181 @@ function ConcentrationDemo() {
     <div className="vds-tile-demo">
     <div className="vds-tile">
       <DashHead title="Your biggest accounts" sub="Top 5 of 324" />
+      {/* THE HERO, AND ITS BASELINE. "3%" is alarming or trivial depending only on
+          how many accounts are in the scope: across 324 an even book already puts
+          1.5% in any five, so 3% is a mild lean; across 12 accounts an even book is
+          42% and the same 3% could not happen. The reader cannot do that division
+          at a glance, so the card does it. */}
+      <div className="vds-status-lead">
+        <span className="vds-status-lead__value">3%</span>
+        <span className="vds-status-lead__caption">
+          of seats sit with 5 accounts
+          <span className="vds-status-lead__share"> · 1.5% if the book were even</span>
+        </span>
+      </div>
       <div className="vds-biz-rows vds-biz-rows--grow">
         {ACCOUNTS.map(([name, seats]) => (
           <BizRow key={name} name={name} share={seats / top} value={seats} sub="1%" />
         ))}
       </div>
       <FootLink label="The other 319 accounts" value="49.4K" />
+      <span className="vds-biz-note">
+        Weighted by seats. Two accounts of the same size count the same here, whatever each pays for them.
+      </span>
+    </div>
+    </div>
+  )
+}
+
+/* ============================================================================
+   THE LINE CARD — "Package insights"
+   Ported from PackageLines. A wider row than BizRow: it carries three figures
+   and a two-part meter, so it takes a header row, and the key lives IN that
+   header's name column — directly beside the thing it explains, where a key band
+   of its own would have cost a line of card height to say six words.
+   ========================================================================== */
+const LC_MIN_SHARE = 0.05
+
+/* Seat utilisation on the account drawer's thresholds, so the same package reads
+   the same way in both places. */
+function utilTone(util) {
+  if (util >= 70) return 'var(--vds-success)'
+  if (util >= 40) return 'var(--vds-warning)'
+  return 'var(--vds-danger)'
+}
+
+const PACKAGES = [
+  { id: 'atp', name: 'Advanced Threat Protection', glyph: GLYPHS.ies, bought: 16835, util: 66, customers: 57 },
+  { id: 'email-cloud', name: 'Email Cloud', glyph: GLYPHS.ies, bought: 15445, util: 66, customers: 58 },
+  { id: 'exchange', name: 'ExchangeSMART', glyph: GLYPHS.ies, bought: 14353, util: 74, customers: 52 },
+  { id: 'safesend-ai', name: 'SafeSend + AI', glyph: GLYPHS.safesend, bought: 14217, util: 46, customers: 48 },
+  { id: 'complete-nordics', name: 'Complete Defense Nordics', glyph: GLYPHS.ies, bought: 14166, util: 57, customers: 51 },
+  { id: 'ies', name: 'IES', glyph: GLYPHS.ies, bought: 14052, util: 77, customers: 51 },
+  { id: 'ep-email', name: 'Endpoint+Email', glyph: GLYPHS.edr, bought: 13460, util: 85, customers: 55 },
+  { id: 'exchange-suite', name: 'ExchangeSMART Suite', glyph: GLYPHS.ies, bought: 13449, util: 45, customers: 52 },
+]
+
+function PackageLinesDemo() {
+  const ranked = [...PACKAGES].sort((a, b) => b.bought - a.bought)
+  const top = ranked[0].bought
+  return (
+    <div className="vds-tile-demo vds-tile-demo--wide">
+    <div className="vds-tile">
+      <DashHead title="Package insights" sub="across 324 accounts" action={{ label: 'All 20' }} />
+      <div className="vds-lc">
+        <div className="vds-lc-row vds-lc-row--head" aria-hidden>
+          {/* The mark column's cell. No heading — nothing to sort by, nothing to call
+              it — but the cell is not optional: without it every heading below sits a
+              mark-width left of the column it names. */}
+          <span className="vds-lc-tile" />
+          <span className="vds-lc-legend">
+            <span className="vds-lc-legend__meter"><i /></span>
+            in use, of bought
+          </span>
+          <span />
+          <span className="vds-lc-lead">Seats bought</span>
+          <span className="vds-lc-util">Seats used</span>
+          <span className="vds-lc-cust">Customers</span>
+          <span />
+        </div>
+        {ranked.map((p) => {
+          const share = Math.max(LC_MIN_SHARE, p.bought / top)
+          /* Clamped: a package whose accounts are collectively over licence reads
+             above 100, and a bar cannot be more full than full. The figure beside
+             it still says 104%. */
+          const fill = Math.min(100, p.util)
+          return (
+            <button
+              key={p.id}
+              type="button"
+              className="vds-lc-row vds-lc-row--btn"
+              title={`${p.name} — ${p.util}% of ${p.bought.toLocaleString()} seats in use, across ${p.customers} customers`}
+            >
+              <ProductTile glyph={p.glyph} tonal size={20} />
+              <span className="vds-lc-name">{p.name}</span>
+              <span className="vds-lc-meter" aria-hidden>
+                <span className={`vds-lc-meter__line${p.util > 100 ? ' is-over' : ''}`} style={{ width: `${share * 100}%` }}>
+                  <span className="vds-lc-meter__use" style={{ width: `${fill}%` }} />
+                </span>
+              </span>
+              <span className="vds-lc-num vds-lc-lead">{p.bought.toLocaleString()}</span>
+              {/* Tone, not weight. The one figure here that can be BAD, on the same
+                  thresholds as the drawer and the account tables. Never colour alone —
+                  the % is always there. */}
+              <span className="vds-lc-num vds-lc-util" style={{ color: utilTone(p.util) }}>{p.util}%</span>
+              <span className="vds-lc-num vds-lc-cust">{p.customers}</span>
+              <ChevronRight size={14} className="vds-lc-chev" aria-hidden />
+            </button>
+          )
+        })}
+      </div>
+    </div>
+    </div>
+  )
+}
+
+/* ============================================================================
+   THE PLAY LIST — "Where to sell next"
+   Ported from SellNextCard. Not a ranking: three sentences, each with ONE number
+   in it, one supporting line and one action. The card ran two section headings,
+   two row shapes and a footnote to present three items, each carrying four or
+   five figures; measured against the question it answers — "who do I call this
+   week?" — almost none of that earned its ink.
+   ========================================================================== */
+const OPP_TONE = {
+  warning: { fg: 'var(--vds-warning)', soft: 'var(--vds-warning-soft)' },
+  emerald: { fg: 'var(--vds-accent-emerald)', soft: 'var(--vds-accent-emerald-soft)' },
+  primary: { fg: 'var(--vds-primary)', soft: 'color-mix(in srgb, var(--vds-primary) 12%, transparent)' },
+}
+
+const PLAYS = [
+  { key: 'bundle', tone: 'emerald', icon: Boxes,
+    lead: <>Upgrade <strong>22</strong> customers to a package</>,
+    sub: 'They already buy the parts separately — a package is the better deal.',
+    cta: 'See who' },
+  { key: 'ies', tone: 'primary', glyph: GLYPHS.ies,
+    lead: <>Sell <strong>IES</strong> to <strong>273</strong> accounts that don&rsquo;t have it</>,
+    sub: 'Worth about 58,422 seats.', cta: 'Build call list' },
+  { key: 'edr', tone: 'primary', glyph: GLYPHS.edr,
+    lead: <>Sell <strong>Endpoint+Email</strong> to <strong>269</strong> accounts that don&rsquo;t have it</>,
+    sub: 'Worth about 56,221 seats.', cta: 'Build call list' },
+]
+
+function SellNextDemo() {
+  return (
+    <div className="vds-tile-demo vds-tile-demo--wide">
+    <div className="vds-tile">
+      <DashHead title="Where to sell next" sub="3 plays, easiest first" />
+      <div className="vds-sell-list">
+        {PLAYS.map((r) => {
+          const tone = OPP_TONE[r.tone] || OPP_TONE.primary
+          const RowIcon = r.icon || Plus
+          return (
+            <button
+              key={r.key}
+              type="button"
+              className="vds-sell-row vds-sell-row--play"
+              style={{ '--opp-fg': tone.fg, '--opp-soft': tone.soft }}
+            >
+              {r.glyph ? (
+                <span className="vds-sell-row__tile" aria-hidden>
+                  <ProductTile glyph={r.glyph} tonal size={32} />
+                </span>
+              ) : (
+                <span className="vds-sell-row__icon" aria-hidden><RowIcon size={15} strokeWidth={1.75} /></span>
+              )}
+              <span className="vds-sell-row__text">
+                <span className="vds-sell-row__label">{r.lead}</span>
+                <span className="vds-sell-row__detail">{r.sub}</span>
+              </span>
+              <span className="vds-sell-row__cta">
+                {r.cta}
+                <Icon as={ArrowRight} size="sm" aria-hidden />
+              </span>
+            </button>
+          )
+        })}
+      </div>
     </div>
     </div>
   )
@@ -200,6 +369,42 @@ export function TileRowsPage() {
 // no mark  → --plain (sub or flag present) or --tight (neither)
 // no onClick → renders a <div>, not a <button>`}
         />
+      </Section>
+
+      <Section
+        title="The line card"
+        note="A wider row, for when the tile carries three figures and a two-part meter. It earns a header, and the key lives IN that header's name column — beside the thing it explains, where a key band of its own would cost a line of card height to say six words. The meter is two lengths: the outer bar is the package's size against the biggest, the inner one is how much of it is in use."
+      >
+        <Preview canvas={<PackageLinesDemo />} code={`<div className="vds-lc">
+  <div className="vds-lc-row vds-lc-row--head" aria-hidden>
+    <span className="vds-lc-tile" />        {/* the mark column's cell, unlabelled */}
+    <span className="vds-lc-legend">…</span> {/* the key, in the name column */}
+    …
+  </div>
+  <button className="vds-lc-row vds-lc-row--btn">
+    <ProductTile glyph={p.glyph} tonal size={20} />
+    <span className="vds-lc-name">{p.name}</span>
+    <span className="vds-lc-meter"><span className="vds-lc-meter__line" style={{width: share}}>
+      <span className="vds-lc-meter__use" style={{width: Math.min(100, p.util)}} />
+    </span></span>
+    …
+  </button>
+</div>`} />
+      </Section>
+
+      <Section
+        title="The play list"
+        note="Not a ranking — three sentences, each with one number in it, one supporting line and one action. A row here is a thing to do, so it leads with a verb and ends with the control that does it. The mark is 32: this row is two lines and a choice, not an entry in a league table."
+      >
+        <Preview canvas={<SellNextDemo />} code={`<button className="vds-sell-row vds-sell-row--play"
+        style={{ '--opp-fg': tone.fg, '--opp-soft': tone.soft }}>
+  <span className="vds-sell-row__tile"><ProductTile tonal size={32} /></span>
+  <span className="vds-sell-row__text">
+    <span className="vds-sell-row__label">Sell <strong>IES</strong> to <strong>273</strong> accounts…</span>
+    <span className="vds-sell-row__detail">Worth about 58,422 seats.</span>
+  </span>
+  <span className="vds-sell-row__cta">Build call list <Icon as={ArrowRight} size="sm" /></span>
+</button>`} />
       </Section>
 
       <Section title="The rules">

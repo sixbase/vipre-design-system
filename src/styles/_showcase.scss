@@ -1268,6 +1268,10 @@ section:first-of-type > .vds-section-h {
    in its compact form). The demos get a wrapper that stands in for the grid cell,
    at roughly the width the real dashboard gives these two cards. */
 .vds-tile-demo { width: 100%; max-width: 44rem; min-width: 0; }
+/* The line card and the play list are full-bleed tiles on the dashboard — they run
+   the width of the grid rather than sharing a row, and the line card's seven columns
+   need it. */
+.vds-tile-demo--wide { max-width: none; }
 
 .vds-tile {
   display: flex;
@@ -1496,3 +1500,502 @@ section:first-of-type > .vds-section-h {
 .vds-biz-foot__go { opacity: 0; transition: opacity 120ms ease; }
 .vds-biz-foot--btn:hover .vds-biz-foot__go,
 .vds-biz-foot--btn:focus-visible .vds-biz-foot__go { opacity: 1; }
+
+/* ===========================================================================
+   MORE TILE ROWS — the line card, the play list, and the concentration hero
+   ---------------------------------------------------------------------------
+   Extracted from shell.css programmatically and rewritten `.msp-` -> `.vds-`,
+   so these are the running rules rather than a transcription of them. The three
+   shell tokens they lean on are declared here because .shell-root is not in
+   this document.
+   =========================================================================== */
+.vds-tile {
+  /* The shared row rhythm and the mark's pull-back, off .shell-root. */
+  --msp-row-gap: var(--vds-space-3);
+  --msp-row-mark-gap: var(--vds-space-2);
+  --msp-row-mark-pull: calc(var(--msp-row-mark-gap) - var(--msp-row-gap));
+  /* The shell declares --nav-accent as a raw #0068cb; it is --vds-primary. */
+  --nav-accent: var(--vds-primary);
+}
+
+/* ---- Account status: the suspended count, in context ---------------------------
+   Same figure size as the trend card's, deliberately: they share a row, and two
+   lead numbers at two sizes read as one heading and one afterthought. */
+.vds-status-lead {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  /* Pushes the meter to the card's floor so the bar lines up with the trend
+     chart's x-axis rather than floating in the middle of a taller card. */
+  margin-bottom: auto;
+}
+
+.vds-status-lead__value {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--vds-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Only when there IS something suspended — see the component. */
+.vds-status-lead__value--alert { color: var(--vds-danger); }
+
+.vds-status-lead__caption { font-size: 12px; color: var(--vds-ink-muted); }
+
+.vds-status-lead__share { color: var(--vds-ink-subtle); }
+
+/* ---- The line card ------------------------------------------------------------
+   A ranked list of meters, and the third arrangement this block has had. The history is
+   the argument, so it stays:
+
+     1. COVERAGE BARS. Each package's share of the whole book. A customer holds 2-4 SKUs
+        out of ~20, so that share has a practical ceiling near 20% — every bar a stub in
+        an 80%-empty track, and the five line-card packages landed at 18/18/17/16/16%.
+        Rescaling to the leader doesn't rescue it: 58-vs-52 accounts becomes 100%-vs-90%,
+        five near-full bars saying just as little. A chart whose values cannot differ
+        doesn't need a better scale; it needs to not be a chart.
+
+     2. A SIX-COLUMN TABLE. Correct, and unreadable: 48 figures at one weight, of which
+        a whole column ("not sold to") was the customers column subtracted from the book,
+        and a whole column (the trend sparkline) was a hashed series that plotted nothing
+        real, fitted to its own range so no two rows could be compared.
+
+     3. THIS. The quantity that actually varies across the line card is SEATS — 2-3x
+        between top and bottom, where account counts vary by a fifth — and the quantity
+        that can be BAD is how much of those seats are switched on. One mark carries both:
+        length is seats bought against the biggest line, fill is the share in use. Long
+        bar, short fill = a big line sitting idle, which is the most expensive fact on
+        this card and used to be a 12px amber percentage in the third column of four.
+
+   Bar lengths only work as a ladder if they descend, so the rows are ordered by length.
+   Removing the trend column and one figure paid for all of it: the name column is wider
+   than it has ever been and no SKU ellipses at any card width the dashboard uses. */
+.vds-lc {
+  display: flex;
+  flex-direction: column;
+}
+
+/* name · meter · seats bought · seats used · customers · chevron.
+   The meter takes a fixed track rather than a fraction: it is a comparison between rows,
+   so its scale must not change with the card's width mid-comparison, and the three
+   figure tracks are sized to hold their LABELS on one line — sized to the digits alone
+   they were ~50px and "Seats bought" wrapped while "Customers" didn't, which is what
+   made the old header stair-step. */
+.vds-lc-row {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) 120px 74px 60px 62px 16px;
+  align-items: center;
+  /* The shared row gap, 12px. This ran at 10 once and the gutters were narrower than the
+     space inside a five-digit figure, so the numbers read as one block and you had to
+     count columns back from the right to know which header owned which. It then ran at 14
+     — its own number, agreeing with nothing — and 12 is the step the other five row grids
+     had already settled on. Wide enough to keep the figures apart; no longer a local
+     decision. */
+  column-gap: var(--msp-row-gap);
+  /* 7px, which lands the twelve rows within a few pixels of the card this one shares a
+     dashboard row with. Height parity is not cosmetic here: the grid stretches both tiles
+     to the taller one, so a card that runs long leaves its neighbour holding empty space. */
+  padding: 7px 0;
+}
+
+/* The seam between the two halves of the row — what the package IS, then how it's doing.
+   A margin on the first figure rather than a sixth grid track, so the header and the rows
+   cannot drift apart. */
+.vds-lc-lead { margin-left: 6px; }
+
+/* Just off the last figure. At the shared gutter the chevron read as another column. */
+.vds-lc-chev { margin-left: 2px; }
+
+/* NO HAIRLINES BETWEEN ROWS. The old table needed them to keep the eye on one line across
+   four columns of digits; a row that carries a bar doesn't — the meters themselves rule
+   the list, and twelve more lines under twelve bars is ruled ink competing with data. The
+   header keeps its rule, because that one is a real boundary. */
+.vds-lc-row--head {
+  /* Bottom-aligned, so if a label wraps on a narrow card every label still sits on the one
+     line that matters: the one directly above the figures. */
+  align-items: end;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--vds-ink-subtle);
+  text-align: right;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--vds-line);
+}
+
+.vds-lc-row--head > span { white-space: nowrap; }
+
+/* The key. It sits in the header's name cell — empty in any header, and directly beside
+   the mark it explains — so the card explains its own visual for nothing. */
+.vds-lc-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-align: left;
+  color: var(--vds-ink-subtle);
+}
+
+.vds-lc-legend__meter {
+  position: relative;
+  flex: none;
+  width: 24px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--vds-line-strong);
+  overflow: hidden;
+}
+
+.vds-lc-legend__meter i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 62%;
+  border-radius: 4px;
+  background: var(--vds-accent-azure);
+}
+
+/* Rows are buttons (they open the package datapoint), so reset the native face and let the
+   grid own the layout. The hover fill bleeds 8px past the text on both sides so the target
+   reads as the whole row rather than stopping at the first and last glyph. */
+.vds-lc-row--btn {
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  width: calc(100% + 16px);
+  margin-inline: -8px;
+  padding-inline: 8px;
+  border-radius: 6px;
+  transition: background-color 120ms ease;
+}
+
+.vds-lc-row--btn:hover { background: var(--vds-surface-sunken); }
+
+.vds-lc-row--btn:focus-visible { outline: 2px solid var(--nav-accent); outline-offset: -2px; }
+
+/* The mark's cell — fixed at the tile's size so it never shrinks with the name, and
+   present on the header row too as an empty span. */
+.vds-lc-tile { width: 20px; height: 20px; display: block; }
+
+/* 8px between a mark and the name it belongs to, against the 14px this row runs
+   everywhere else. One grid cannot vary its column gap, so the name pulls the
+   difference back. Same rule as the package rail. */
+.vds-lc-row > :nth-child(2) { margin-left: var(--msp-row-mark-pull); }
+
+.vds-lc-name {
+  font-size: 13px;
+  color: var(--vds-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 120ms ease;
+}
+
+.vds-lc-row--btn:hover .vds-lc-name,
+.vds-lc-row--btn:focus-visible .vds-lc-name { color: var(--nav-accent); }
+
+/* ---- The meter ----------------------------------------------------------------
+   LENGTH is seats bought, against the longest line on the card. FILL is the share of
+   those seats in use — the same `util` figure the drawer and the package page print, so
+   the picture and the number beside it are one claim rather than two statistics.
+
+   No track behind it. A full-width track would draw a 100% reference the bar isn't
+   measured against (the reference is the biggest LINE, not the whole book) and would put
+   an empty rail in every row. Twelve bars sorted long-to-short are their own scale. */
+.vds-lc-meter {
+  display: block;
+  min-width: 0;
+  height: 8px;
+}
+
+.vds-lc-meter__line {
+  position: relative;
+  display: block;
+  height: 100%;
+  min-width: 4px;
+  border-radius: 4px;
+  /* The unused remainder: seats signed for and not switched on. Neutral, never a second
+     colour — it's the ABSENCE the fill is measured against, and tinting it would make
+     every row look like it carried two competing signals. */
+  background: var(--vds-line-strong);
+}
+
+/* A package whose accounts are collectively over licence fills its bar and keeps going. The
+   fill clamps — a bar can't be more full than full — so the run-over gets a mark of its own
+   just past the end: without it, 101% and 140% draw an identical solid bar and the meter
+   quietly stops being true above 100.
+
+   OUTSIDE the bar, deliberately. Anything added to the bar's own length would read as more
+   seats bought, which is the one thing the length is supposed to mean. Same azure as the
+   fill, because being over licence isn't a fault here — billing trues it up (see the note
+   on the sell-next card) — it's just more of what the fill is already showing. */
+.vds-lc-meter__line.is-over::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -6px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--vds-accent-azure);
+}
+
+.vds-lc-meter__use {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 4px;
+  background: var(--vds-accent-azure);
+  /* The fill can be a hair's width on a shelfware package; the radius would otherwise
+     round it into a dot that reads as a bullet rather than as a bar. */
+  min-width: 3px;
+  transition: width 240ms var(--vds-ease-out, ease);
+}
+
+/* Figures. Three tones, in the order the card wants them read: the size of the line, then
+   how much of it is live, then how many accounts it's spread over. */
+.vds-lc-num {
+  font-size: 12px;
+  color: var(--vds-ink);
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Seats bought is the figure the meter's length states, so it carries the row's weight —
+   and it's the only one that does. Two bold columns side by side (as this table used to
+   run) makes the right-hand end of every row shout twice and neither claim wins. */
+.vds-lc-num.vds-lc-lead { font-weight: 600; }
+
+/* Customers is context, not a claim: it's what the card's own subhead is a denominator
+   for, and it varies by a fifth across the whole list. */
+.vds-lc-cust { color: var(--vds-ink-muted); }
+
+/* The chevron is ALWAYS drawn, quiet at rest — a hover-only affordance can't advertise
+   anything, since you have to already be pointing at the row to learn it's a target. On
+   hover it goes full ink and steps 2px right, and the name takes the brand accent at the
+   same moment, so the row confirms itself at both ends. */
+.vds-lc-chev {
+  color: var(--vds-ink-subtle);
+  opacity: 0.45;
+  justify-self: end;
+  transition: opacity 120ms ease, transform 120ms ease, color 120ms ease;
+}
+
+.vds-lc-row--btn:hover .vds-lc-chev,
+.vds-lc-row--btn:focus-visible .vds-lc-chev {
+  opacity: 1;
+  color: var(--vds-ink);
+  transform: translateX(2px);
+}
+
+@container vds-tile (max-width: 440px) {
+  /* The customer count goes too. At this width three figure columns leave the name ~90px,
+     which ellipses every SKU in the book down to "Exchange…" — and a row you can't name is
+     worth less than any figure on it. Customers is the one to lose: it's breadth, where the
+     other two are size and health, and the card's own subhead already carries the book it
+     would be a share of. */
+  .vds-lc-row { grid-template-columns: minmax(0, 1fr) 68px 56px 16px; column-gap: 10px; }
+  .vds-lc-meter,
+  .vds-lc-cust,
+  .vds-lc-legend { display: none; }
+  /* With the meter gone the labels are wider than their columns, so they wrap — and the
+     header's bottom alignment is what keeps that tidy. */
+  .vds-lc-row--head > span { white-space: normal; }
+}
+
+.vds-status-lead--live {
+  border: 0; background: transparent; cursor: pointer;
+  font: inherit; text-align: left;
+  /* The negative margin cancels the padding that gives the hover state its bleed, so the
+     figure sits on the same line it would as plain text. `auto` on the BOTTOM edge, not
+     -4px: this variant is a button and its shorthand was quietly overriding the
+     `margin-bottom: auto` the base class uses to push everything below it to the card's
+     floor (see .vds-status-lead). The two tiles that lead with a live figure — Account
+     status, Billing & licences — were the only two on the dashboard whose meter floated
+     in the middle of a stretched card instead of sitting on its bottom edge. */
+  padding: 4px; margin: -4px -4px auto;
+  border-radius: 6px;
+  transition: background-color var(--vds-dur-fast, 120ms) var(--vds-ease-out, ease);
+}
+
+.vds-status-lead--live:hover { background: color-mix(in oklab, var(--vds-ink) 5%, transparent); }
+
+.vds-status-lead--live:focus-visible {
+  outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+  outline-offset: 1px;
+}
+
+/* ---- The lead figure as its tile's grower ----------------------------------------
+   For the tiles whose whole content is a figure and one block under it — Account status
+   (a figure and a meter), Room to grow (a figure and two split panels). They have nothing
+   list-shaped to hand spare height to, and on a stretched row they are the tiles most
+   likely to have spare height, because two facts is the least any tile on this page
+   carries.
+
+   So the FIGURE takes the room and centres in it. That reads as composition — a number
+   with air around it, the block it explains sitting on the card's bottom edge, level with
+   the foot rule of the list beside it. The alternative, which is what `margin-bottom: auto`
+   alone produces, stacks the figure tight under the title and puts the whole surplus in one
+   band between the two halves: a gap in the middle of a card, which is the same shape as
+   the gap between cards this whole change is for.
+
+   The negative bottom margin has to be restated for the live variant. Its shorthand cancels
+   the hover padding on all four sides, and `auto` there would swallow the free space this
+   rule is trying to centre in. */
+.vds-status-lead--grow {
+  flex: 1 1 auto;
+  min-height: 0;
+  justify-content: center;
+  margin-bottom: 0;
+}
+
+.vds-status-lead--grow.vds-status-lead--live { margin-bottom: -4px; }
+
+/* ---- A play row: mark · name over evidence · magnitude · way in -------------------
+   Four columns, and the last two are what changed. The figure column is FIXED width and
+   tabular, so every count on the card stacks into one right-aligned column you can read
+   down — that alignment is the comparison now, and it's exact where the thing it replaced
+   was approximate.
+
+   What it replaced: a 44px bar per row, scaled to the biggest count on the card. It failed
+   the same test this file already applied to the coverage bars ("a chart with no variance
+   is decoration") — the whitespace rows land within a few accounts of each other, so 273
+   and 269 drew as 100% and 98%: the same stub, twice. The only thing it ever communicated
+   was that the 22 was small, which the number said already.
+
+   The chevron is the other change. Every row here has always been a link to the Accounts
+   list and nothing said so — a row that opens something should show its door. */
+.vds-sell-row {
+  display: grid;
+  /* 32px, matching the tile inside it. It was 28 — the tile's size before the four-size
+     snap, which moved the prop and left every track that framed one behind. */
+  grid-template-columns: 32px minmax(0, 1fr) auto 14px;
+  align-items: center;
+  gap: var(--msp-row-gap);
+  width: calc(100% + 16px);
+  margin-inline: -8px;
+  padding: 8px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  font: inherit; color: inherit; text-align: left; cursor: pointer;
+  transition: background 130ms ease;
+}
+
+.vds-sell-row:hover { background: var(--vds-surface-sunken, color-mix(in srgb, var(--vds-ink) 4%, transparent)); }
+
+.vds-sell-row:focus-visible { outline: 2px solid var(--nav-accent); outline-offset: -2px; }
+
+/* The product's own tile, drawn by ProductTile at 28px. Just a box to hang it in — the
+   artwork carries its own square and radius. */
+.vds-sell-row__tile { display: flex; }
+
+/* The fallback mark, for plays that aren't a single product (a bundle upgrade spans
+   several). Sized and cornered to match the tile beside it so the column stays a column
+   — 32, not the 28 it kept when the four-size snap moved the tile and left this behind.
+   The radius is right at either size: 8 is a quarter of 32, the tile's own proportion. */
+.vds-sell-row__icon {
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  border-radius: 8px;
+  background: var(--opp-soft);
+  color: var(--opp-fg);
+}
+
+.vds-sell-row__text { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+
+.vds-sell-row__label {
+  font-size: 12.5px; font-weight: 600; line-height: 17px; color: var(--vds-ink);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.vds-sell-row__detail {
+  font-size: 11px; line-height: 15px; color: var(--vds-ink-subtle);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* Right-aligned and tabular, so the counts form a column and the seat lines under them
+   do too. Line heights match the label/detail pair opposite, which is what keeps the two
+   halves of the row on the same two baselines. */
+/* `align-self: start`, and it's the difference between a column and a scatter. The grid
+   centres its cells, and a row WITH a seat line is as tall as the text beside it — so its
+   count lands on the label — while a row without one is half the height and floated to the
+   middle of the row. Two counts on two different lines, for no reason a reader could see.
+   Pinned to the top, every count on the card sits on its own label's line. */
+.vds-sell-row__fig { display: flex; flex-direction: column; align-items: flex-end; align-self: start; }
+
+.vds-sell-row__count {
+  font-size: 14px; font-weight: 600; line-height: 17px; color: var(--vds-ink);
+  font-variant-numeric: tabular-nums; letter-spacing: -0.01em;
+}
+
+.vds-sell-row__seats {
+  font-size: 10.5px; line-height: 15px; color: var(--vds-ink-subtle);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Present at rest but nearly weightless, and it firms up under the pointer. A chevron that
+   only appears on hover is invisible to anyone deciding whether the row is worth pointing
+   at in the first place. */
+.vds-sell-row__go {
+  color: var(--vds-ink-subtle); opacity: 0.45;
+  transition: opacity 130ms ease, transform 130ms ease;
+}
+
+.vds-sell-row:hover .vds-sell-row__go { opacity: 1; transform: translateX(1px); }
+
+/* ---- The simplified card: sentences, not statistics --------------------------------
+   One row per play, and the row is a SENTENCE with its one number set bold inside it —
+   see the note in SellNextCard. The lead drops to regular weight so the embedded
+   figures are the only bold ink on the line, which is what makes "273" findable
+   without reading. Hairlines between rows, because three sentences with no fig column
+   need a seam the old count column used to provide. */
+.vds-sell-list { display: flex; flex-direction: column; }
+
+.vds-sell-list .vds-sell-row + .vds-sell-row { border-top: 1px solid var(--vds-line-subtle); border-radius: 0; }
+
+.vds-sell-list .vds-sell-row:first-child { border-radius: 9px 9px 0 0; }
+
+.vds-sell-list .vds-sell-row:last-child { border-radius: 0 0 9px 9px; }
+
+.vds-sell-row--play { grid-template-columns: 32px minmax(0, 1fr) auto; padding-block: 12px; }
+
+.vds-sell-row--play .vds-sell-row__label {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 18px;
+  color: var(--vds-ink);
+  white-space: normal;
+}
+
+.vds-sell-row--play .vds-sell-row__label strong { font-weight: 600; }
+
+.vds-sell-row--play .vds-sell-row__detail { font-size: 11.5px; line-height: 16px; white-space: normal; }
+
+/* The action, in words. A bare chevron says "clickable"; "Build call list" says what
+   happens, which is the difference between a link and a dare. Quiet until the row is
+   pointed at, same rhythm as the chevron it replaces. */
+.vds-sell-row__cta {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 500; white-space: nowrap;
+  color: var(--vds-ink-muted);
+  transition: color 130ms ease;
+}
+
+.vds-sell-row:hover .vds-sell-row__cta { color: var(--nav-accent); }
+
+@container vds-tile (max-width: 380px) {
+  .vds-sell-row__cta { display: none; }
+}
+
+/* The unit statement. Where a tile counts something the vendor can only estimate, or
+   leaves part of the book out of a split, it says so once at the foot rather than
+   hanging an asterisk off each figure. */
+.vds-biz-note {
+  font-size: 11px;
+  color: var(--vds-ink-subtle);
+  line-height: 1.45;
+}
