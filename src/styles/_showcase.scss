@@ -1272,17 +1272,6 @@ section:first-of-type > .vds-section-h {
    the width of the grid rather than sharing a row, and the line card's seven columns
    need it. */
 .vds-tile-demo--wide { max-width: none; }
-/* The audience segment draws its own padding, border and corner because in the shell
-   it sits inside a panel. Inside .vds-tile it is a box in a box: the two paddings put
-   its dividers 28px inside a border every other line reaches, and the second border
-   sits a pixel in from the first. The tile is the box. */
-.vds-tile > .vds-pkg-aud__seg {
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  box-shadow: none;
-}
 /* Trials' plot is height="100%" — it takes the slack the tile's row gives it, which on
    the dashboard is a grid row and in a docs preview is nothing, so the chart resolved
    to zero. The wrapper stands in for the grid row at the height the real card has. */
@@ -2295,7 +2284,7 @@ section:first-of-type > .vds-section-h {
   /* The figure column is FIXED, not `auto` — same reason the mark track is. Each row
      is its own grid, so an auto track sized itself to that row's content: "Accounts"
      in the header, a two-digit count in the rows, and the two disagreed by 37px. */
-  grid-template-columns: 24px minmax(0, 1.4fr) minmax(64px, 1fr) 56px;
+  grid-template-columns: 24px minmax(0, 1fr) 56px;
   align-items: center;
   gap: var(--msp-row-gap);
   padding: 4px 0;
@@ -2546,9 +2535,264 @@ section:first-of-type > .vds-section-h {
 .vds-biz-row--current::after,
 .vds-biz-row--current + .vds-biz-row::before { display: none; }
 
+/* 4px between the figure line and its label — they are one block, and the tile's
+   own gap between blocks is larger. */
+.vds-status-lead,
+.vds-trials-lead { gap: var(--vds-space-1); }
 
-/* ---- The KPI meter and its segment hero ---------------------------------
-   27 more rules out of shell.css. Aligned to the row conventions below. */
+
+/* ===========================================================================
+   COLUMN HEADERS — the Table's, not a second set
+   ---------------------------------------------------------------------------
+   These lists are read down their figures, and a column of numbers with nothing
+   naming it makes the reader infer what it is from the values. The DS Table
+   already answers what a column header looks like, so this is that answer
+   applied to a row instead of a <th>: 11px at weight 500, SENTENCE case with
+   normal tracking, --vds-ink-subtle.
+
+   Not the eyebrow step it is built from. Table.scss drops the caps, the +0.04em
+   and the 600 together and explains why: the tracking exists to open up runs of
+   capitals and only loosens mixed-case words, and 600 exists to hold small caps
+   up and reads heavy once letters have ascenders and descenders. Copying the
+   look here rather than the step keeps the two headers the same object.
+
+   NO RULE OF ITS OWN. The header is the first row in the list, so the divider
+   system already draws a line under it — the line card carried a border-bottom
+   as well and had two, 1px apart at different widths.
+
+   BOTTOM-ALIGNED, so a label that wraps on a narrow card still keeps its last
+   line directly above the figures it names.
+   =========================================================================== */
+.vds-biz-row--head,
+.vds-sell-trial--head {
+  align-items: end;
+  font-size: 0.6875rem;
+  line-height: 0.875rem;
+  font-weight: var(--vds-weight-medium);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--vds-ink-subtle);
+  padding-bottom: 9px;
+}
+.vds-biz-row--head > span,
+.vds-sell-trial--head > span { white-space: nowrap; }
+
+/* A header row is not a target: no pointer, no fill, no lift. */
+.vds-biz-row--head:hover,
+.vds-sell-trial--head:hover { background: none; cursor: default; }
+
+/* The figure columns keep their alignment in the header — a right-aligned column
+   whose label sits left stops being a column at the label. */
+.vds-biz-row--head .vds-biz-row__val,
+.vds-biz-row--head .vds-biz-row__sub,
+.vds-biz-row--head .vds-biz-row__per,
+.vds-sell-trial--head .vds-sell-trial__fig { text-align: right; font-weight: inherit; color: inherit; font-size: inherit; }
+
+
+/* ===========================================================================
+   THE ROW SYSTEM — one definition, five lists
+   ---------------------------------------------------------------------------
+   Rebuilt. Four separate bugs on this page had ONE cause: every row was its own
+   grid, so `auto` and `fr` tracks resolved against that row's own content. Rows
+   agreed with each other only because they happened to hold the same shapes, and
+   the moment one didn't — a header with an empty mark cell, a header label wider
+   than its figures — the columns came apart. Each was patched by pinning another
+   track to a fixed px.
+
+   THE LIST OWNS THE COLUMNS NOW. One grid, declared once as --cols; every row is
+   a `subgrid` spanning it. Tracks resolve for the list as a whole, so a header and
+   its rows cannot disagree, `fr` and `auto` are safe again, and the fixed-px
+   patches are gone.
+
+   The chrome — inset, hover, divider, header — is one set of rules here. A family
+   class now only says what its COLUMNS are and how its own cells look.
+   =========================================================================== */
+.vds-rowlist {
+  display: grid;
+  grid-template-columns: var(--cols);
+  column-gap: var(--vds-space-3);
+  /* Out to the card's border, so a row's fill and its dividers end where every
+     other line in the tile ends. The padding puts the text back on the card's
+     own inset, so nothing moves but the ink that is supposed to bleed. */
+  margin-inline: calc(-1 * var(--vds-space-5));
+  padding-inline: var(--vds-space-5);
+}
+
+.vds-rowlist > * {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+  align-items: center;
+  position: relative;
+  /* The fill and the lines reach the card's border; the text does not. One value
+     for both, so they cannot drift apart. */
+  margin-inline: calc(-1 * var(--vds-space-5));
+  padding: var(--vds-space-2) var(--vds-space-5);
+  border: 0;
+  background: none;
+  text-align: left;
+  /* NO `font: inherit` HERE. It was carried over from when a row was a <button> and
+     needed its type back; rows are divs now, and the shorthand was reaching past them
+     to reset the FOOTER's 12px to the tile's 14 — which is why the remainder line came
+     out looking like a heading. Anything inside that really is a button (the sort
+     heads, the footer link) asks for `font: inherit` in its own rule. */
+}
+
+/* Top line on every row, bottom line on the last: a closed block, not a stack of
+   separators. Drawn as pseudo-elements because a border on a rounded box curves at
+   its ends, and at this size that curl reads as a tab. */
+.vds-rowlist > *::before,
+.vds-rowlist > *:last-child::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--vds-line-subtle);
+  z-index: 0;
+}
+.vds-rowlist > *::before { top: 0; }
+.vds-rowlist > *:last-child::after { bottom: 0; }
+
+/* HOVER SPANS THE ROW, edge to edge, with no corner. It was an inset 6px pill
+   between two full-bleed lines, which read as a fill that had missed its own row.
+   A row bounded by lines that reach the card has one honest highlight: the band
+   between them. */
+.vds-rowlist > .is-interactive { cursor: pointer; }
+.vds-rowlist > .is-interactive:hover { background: color-mix(in srgb, var(--vds-ink) 4%, transparent); }
+.vds-rowlist > .is-interactive:focus-visible {
+  outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+  outline-offset: calc(-1 * var(--vds-control-ring-w));
+}
+
+/* The current row, at brand strength — one row is ever current and it is the whole
+   state of what the list drives. It owns both its edges so the fill reads as one
+   block. */
+.vds-rowlist > .is-current { background: var(--vds-primary); color: var(--vds-on-primary); }
+.vds-rowlist > .is-current.is-interactive:hover { background: var(--vds-primary-hover); }
+.vds-rowlist > .is-current * { color: inherit; }
+.vds-rowlist > .is-current::before,
+.vds-rowlist > .is-current::after,
+.vds-rowlist > .is-current + *::before { display: none; }
+.vds-rowlist > .is-current {
+  --vds-tile-tonal-face: #{'color-mix(in srgb, var(--vds-on-primary) 22%, transparent)'};
+  --vds-tile-glyph-from: var(--vds-on-primary);
+  --vds-tile-glyph-to: #{'color-mix(in srgb, var(--vds-on-primary) 55%, transparent)'};
+}
+
+/* ---- the header ---------------------------------------------------------
+   The DS Table's header, applied to a row: 11px at 500, sentence case, normal
+   tracking, --vds-ink-subtle. Same vertical padding as a data row — it had 9px of
+   its own against the rows' 8, which is the sort of difference that has no reason
+   and shows up as a header sitting a pixel high. */
+.vds-rowlist > .is-head {
+  font-size: 0.6875rem;
+  line-height: 0.875rem;
+  font-weight: var(--vds-weight-medium);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--vds-ink-subtle);
+  cursor: default;
+}
+.vds-rowlist > .is-head:hover { background: none; }
+.vds-rowlist > .is-head > * { white-space: nowrap; }
+
+/* A sortable heading is a button filling its cell, so the whole column head is the
+   target rather than the word. It reuses .vds-table__sort — the Table's own glyph
+   and its asc/desc/hover states — because a second sort arrow that merely agrees
+   today is the thing this page exists to complain about. */
+.vds-rowsort {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--vds-space-1-5);
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.vds-rowsort--right { justify-content: flex-end; }
+.vds-rowsort:hover { color: var(--vds-ink); }
+.vds-rowsort:hover .vds-table__sort { opacity: 0.7; }
+.vds-rowsort:focus-visible {
+  outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+
+/* ---- the cells the ranked lists use -------------------------------------- */
+.vds-rowlist__name {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vds-rowlist__track {
+  display: block;
+  height: 6px;
+  border-radius: var(--vds-radius-full);
+  background: var(--vds-line);
+  overflow: hidden;
+}
+.vds-rowlist__fill { display: block; height: 100%; border-radius: inherit; background: var(--vds-primary); }
+.vds-rowlist__val { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
+.vds-rowlist__sub { font-size: 12px; color: var(--vds-ink-subtle); font-variant-numeric: tabular-nums; text-align: right; }
+/* On the cobalt fill the meter has to survive too — --vds-line is invisible there. */
+.vds-rowlist > .is-current .vds-rowlist__track { background: #{'color-mix(in srgb, var(--vds-on-primary) 25%, transparent)'}; }
+.vds-rowlist > .is-current .vds-rowlist__fill { background: var(--vds-on-primary); }
+/* The header's own cells inherit its type; the figure columns keep their alignment. */
+.vds-rowlist > .is-head .vds-rowlist__val,
+.vds-rowlist > .is-head .vds-rowlist__sub,
+.vds-rowlist > .is-head .vds-rowlist__name { font-size: inherit; font-weight: inherit; color: inherit; }
+/* The footer sits inside the list now, so it spans the grid rather than a column. */
+.vds-rowlist > .vds-biz-foot { grid-column: 1 / -1; display: flex; }
+.vds-rowlist > .vds-biz-foot::before { display: none; }
+
+/* The mark, and the 8px that ties it to the name. The row's own rhythm is 12; a mark
+   set at the column gap reads as its own column and stops belonging to the word beside
+   it. One grid cannot vary its gap, so the NAME pulls the 4px difference back — and it
+   is the cell after the mark that pulls, so a list without a mark is unaffected. */
+.vds-rowlist__mark {
+  display: inline-flex;
+  /* Optically centred against the name's ink, not its box. */
+  font-size: 13px;
+  transform: translateY(var(--vds-control-optical-shift));
+}
+.vds-rowlist__mark + * { margin-left: -4px; }
+
+/* ---- column rhythm -------------------------------------------------------
+   THE SLACK BELONGS TO THE METER. The name held it (1.8fr against the meter's
+   0.7) on the reasoning that a squeezed name stops identifying its row — true on
+   a quarter-width dashboard cell, and the opposite of what happens at 700px,
+   where the name takes what it needs and the surplus shows as a hole between the
+   last word and the bar. `auto` gives the name its content and a 7rem floor keeps
+   it honest when the card is narrow; the meter takes the rest, which costs
+   nothing because a proportion says the same thing at any length. */
+.vds-rowlist__name { min-width: 0; }
+
+/* A right-aligned heading sits flush with its column, directly over the figures.
+   The arrow turns inward rather than pushing the label off that edge. */
+.vds-rowsort--right { flex-direction: row; justify-content: flex-end; }
+
+/* The ranked lists' meter is gone — one bar per row, one value, and six of them
+   within a few per cent of each other drew six near-identical lengths that invited
+   a comparison the data could not support. The figures beside them carry the
+   magnitude exactly. The line card keeps ITS meter: that one is two lengths, bought
+   against in-use, and says something no column on the row repeats. */
+
+
+/* ===========================================================================
+   THE SEGMENT TILE — shell.css verbatim
+   ---------------------------------------------------------------------------
+   Re-extracted whole and left alone. I had been editing this one for several
+   commits — a shared head, a demo-only padding and border reset, a tabular-nums
+   rule the prototype already had — and every edit made it a little less like the
+   thing it documents. The other two heads still follow ITS values, because it was
+   the model; it just no longer follows them back.
+   =========================================================================== */
 /* ---- KPI meter: what each hero number is made of -------------------------------
    A hairline, a proportional bar, and a two-row legend — the same block on all four
    cards (see KpiMeter). The rule and the 20px above it reproduce the DS's own
@@ -2566,16 +2810,39 @@ section:first-of-type > .vds-section-h {
    already carry the accent, and a tinted trough reads as a third, always-full
    segment. Segments are laid out by flex-grow off the raw values, so no percentage
    is computed for the geometry — the bar can't disagree with the legend beside it. */
+/* One number for the bar's thickness, because the segments' minimum reads off it — see
+   .vds-pkg-aud__seg's floor below. Hard-coded in two places they drift, and the drift shows
+   as a slice that is nearly round instead of round. */
 .vds-kpi-meter__bar {
+  --msp-meter-h: 6px;
   display: flex;
   gap: 2px;
-  height: 6px;
+  height: var(--msp-meter-h);
   border-radius: 999px;
   background: var(--vds-line);
   overflow: hidden;
 }
 
 .vds-kpi-meter__seg { min-width: 2px; border-radius: 999px; }
+
+/* ---- A SLICE TOO SMALL TO BE A BAR IS DRAWN AS A DOT ----------------------------------
+   At 1% of a 250px bar a segment is two and a half pixels wide against six tall: the
+   999px radius rounds both ends of something that has no middle, so it renders as a
+   vertical scratch. It is present in the way a rendering artefact is present.
+
+   Floored at the bar's own height it becomes a circle — the smallest mark that still reads
+   as a deliberate one, and the shape a legend swatch already uses, so "Nothing else paid"
+   is marked the same way in the bar and beside the word. The 2px default stays for
+   everything else: it exists so a non-zero slice is never invisible, which is a different
+   job from making a small one legible.
+
+   Scoped to these cards rather than to KpiMeter itself. It is a candidate for the shared
+   component — a 2px scratch is no more readable on the dashboard — but the dashboard's
+   meters divide populations that rarely produce a 1% slice, and widening every tiny
+   segment there is a change to make on purpose rather than in passing. */
+.vds-pkg-aud__seg .vds-kpi-meter__seg {
+  min-width: var(--msp-meter-h, 6px);
+}
 
 /* Three columns, so label / value / share line up down the card and — because every
    card runs the same block — across the strip. Same construction as .vds-donut__key;
@@ -2588,25 +2855,7 @@ section:first-of-type > .vds-section-h {
   margin: 0;
 }
 
-/* ---- A SUBGRID, NOT display:contents ---------------------------------------
-   This was `display: contents`, which was the right answer before subgrid: the
-   three cells had to be direct children of .__key's grid or the name, value and
-   percentage columns would not line up between the two rows.
-
-   The cost is that the row then generates NO BOX. Everything a row needs — a
-   padding, a corner, a hover fill, a divider drawn on ::before — lands on an
-   element that does not render, and getComputedStyle reports the specified values
-   back so it reads as working. The alignment pass before this one set all four on
-   this rule and not one of them painted.
-
-   `subgrid` gives the row its own box while keeping .__key's column widths, so it
-   can be a row and stay aligned. */
-.vds-kpi-meter__row {
-  display: grid;
-  grid-template-columns: subgrid;
-  grid-column: 1 / -1;
-  align-items: center;
-}
+.vds-kpi-meter__row { display: contents; }
 
 .vds-kpi-meter__name {
   display: flex;
@@ -2895,10 +3144,16 @@ section:first-of-type > .vds-section-h {
      out the way the DS lays it out.
 
    If this file starts re-styling .vds-pkg-rank again, the question to ask first is whether
-   the surface around it is the thing that should move. *//* ---- ONE TILE, SO IT TAKES THE ROW --------------------------------------------------
-   The strip auto-flows columns for the two tiles it used to hold; with the pair
-   consolidated into a total-and-split there is one, and a 1fr column of a two-column grid
-   would leave it hugging the left half. See the note where it's rendered. */
+   the surface around it is the thing that should move. *//* ---- `--solo` MEANS ONE THING: THIS CARD IS ALONE, SO IT SPANS THE ROW ---------------
+   It used to scope everything about how a card is BUILT — the figure row, the label, the
+   meter's stretch — which was fine while there was only ever one. The moment a second card
+   appeared beside it (accounts trying and paying for nothing, on the aggregate row) the
+   first lost its own layout: the meter shrank back to the width of its legend, and the
+   figure and its share ran together with no gap, because none of those rules matched any
+   more.
+
+   So the construction rules are on `.vds-pkg-aud__seg` and this modifier carries only the
+   span. A class that means "alone" should not be the thing that makes a card a card. */
 .vds-pkg-aud__seg--solo {
   grid-column: 1 / -1;
 }
@@ -2917,7 +3172,7 @@ section:first-of-type > .vds-section-h {
    The legend stretches with it, which is the point of the meter's three-column grid: the
    labels run down the left and the figures and shares line up on the right edge of the
    tile, the way they do on the dashboard's cards. */
-.vds-pkg-aud__seg--solo .vds-kpi-meter {
+.vds-pkg-aud__seg .vds-kpi-meter {
   align-self: stretch;
   /* The step that separates a reading from a statement — the bar is a different KIND of
      thing from the two lines of text over it. The DS meter's own top rule and padding come
@@ -2946,36 +3201,23 @@ section:first-of-type > .vds-section-h {
 
    The gap is space-2: close enough to read as one statement, far enough that the share is
    not mistaken for part of the figure. */
-.vds-pkg-aud__seg--solo .vds-pkg-aud__figure {
+.vds-pkg-aud__seg .vds-pkg-aud__figure {
   display: flex;
-  /* CENTRE, and the note above it arguing for baseline is wrong — I moved this to
-     baseline on the strength of that note and made it worse.
-
-     Baseline is the right default for a number and its unit, and it is wrong for
-     THIS pair, because digits have no descenders. Set "58" and "18% of all
-     accounts" on one baseline and the qualifier's visible mass lands 3.8px BELOW
-     the digits' — measured — so it reads as hanging off the bottom of the number
-     rather than sitting beside it. Centred, the two blocks of ink agree to within
-     1px and the baselines are the thing that differs, which nobody can see.
-
-     Box alignment is not ink alignment. Here the boxes happen to be the ones that
-     land the ink right; on a checkbox beside its label it was the other way round
-     (see --vds-control-optical-shift). Neither rule wins by default — measure. */
   align-items: center;
   gap: var(--vds-space-2);
   min-width: 0;
 }
 
-.vds-pkg-aud__seg--solo .vds-pkg-aud__stat {
+.vds-pkg-aud__seg .vds-pkg-aud__stat {
   position: relative;
   top: -1px;
 }
 
 /* The share never truncates — four characters, and the half of the line that answers "is
    that a lot". The label below it can, and does. */
-.vds-pkg-aud__seg--solo .vds-pkg-aud__stat { flex-shrink: 0; }
+.vds-pkg-aud__seg .vds-pkg-aud__stat { flex-shrink: 0; }
 
-.vds-pkg-aud__seg--solo .vds-pkg-aud__label {
+.vds-pkg-aud__seg .vds-pkg-aud__label {
   align-self: stretch;
   min-width: 0;
   overflow: hidden;
@@ -2990,355 +3232,30 @@ section:first-of-type > .vds-section-h {
    sum to the whole by construction, so there is no remainder to draw, and the only place
    the track ever showed was the 2px gap between the two segments, as a grey sliver that
    read as a third, tiny category. Transparent, so the gap is the card. */
-.vds-pkg-aud__seg--solo .vds-kpi-meter__bar {
+.vds-pkg-aud__seg .vds-kpi-meter__bar {
   background: transparent;
 }
 
-/* ===========================================================================
-   ALIGNING THE METER'S KEY TO THE ROWS
-   ---------------------------------------------------------------------------
-   The key under the bar is a LIST OF ROWS — a mark, a name, a figure and a
-   qualifier — which is the same object as every other row on this page, and it
-   was the last one still drawn its own way. Given the row's inset, its pill and
-   its hairline, a segment in this tile and a product in Seats by product are
-   read the same way, which is the whole point of a strip of tiles.
-   =========================================================================== */
-.vds-kpi-meter__row {
-  padding: var(--vds-space-1) var(--vds-space-2);
-  margin-inline: calc(var(--vds-space-2) * -1);
-  width: calc(100% + var(--vds-space-4));
-  border-radius: calc(var(--vds-radius-sm) + 2px);
-  position: relative;
-  /* Vertical padding is 4, not the ranked rows' 8: these are two one-line
-     entries reading a bar directly above them, and 8 would push the key far
-     enough off the bar to stop belonging to it. The INSET and the CORNER are
-     what had to agree, because those are what the hover draws. */
-}
-.vds-kpi-meter__row::before,
-.vds-kpi-meter__row:last-child::after {
-  content: '';
-  position: absolute;
-  inset: 0 calc(-1 * var(--vds-row-divider-reach)) auto calc(-1 * var(--vds-row-divider-reach));
-  height: 1px;
-  background: var(--vds-line-subtle);
-}
-.vds-kpi-meter__row:last-child::after { inset: auto calc(-1 * var(--vds-row-divider-reach)) 0 calc(-1 * var(--vds-row-divider-reach)); }
-/* Live rows are the interactive ones; they take the row hover, not their own. */
-.vds-kpi-meter__row--live:hover { background: color-mix(in srgb, var(--vds-ink) 4%, transparent); }
-.vds-kpi-meter__row--live:focus-visible {
-  outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
-  outline-offset: var(--vds-control-ring-offset-inset);
-}
-/* 8px from the dot to its label, the same distance a mark sits from a name. */
-.vds-kpi-meter__name { gap: var(--vds-space-2); }
-/* The figures line up with every other column of figures on the page. */
-.vds-kpi-meter__val,
-.vds-kpi-meter__pct { font-variant-numeric: tabular-nums; }
+/* ---- THE SEGMENTS RESIZE, AND THAT IS ALL ----------------------------------------------
+   `flex-grow` is a number, so it interpolates: when the reach toggle flips All to Direct,
+   the seam between paid and trial slides to its new position instead of jumping. 600ms on
+   ease-out cubic — `useCountUp`'s duration and curve written in CSS, so the bar and the
+   figures above it report one change and arrive together.
 
+   NO GROW-IN ON MOUNT. There was a one-shot scaleX from the left, added so a card that
+   remounts (picking a different package rebuilds the panel — it is keyed on the package)
+   would have the same entrance as the counting figures. It swept the whole bar on every
+   arrival, which is a lot of movement to say "here is a bar", and it animated the one thing
+   this transition is not about: the bar's overall length never changes, only where its
+   segments divide it. What is left animates the division and nothing else.
 
-/* ===========================================================================
-   ONE KPI HEAD, for every tile that leads with a figure
-   ---------------------------------------------------------------------------
-   Three tiles led with a big number and each one sized it differently: 26, 28
-   and 30px figures, 12 and 12.5px supporting text, and three label treatments
-   (12/500, 12/400, 11.5/400). Nothing chose those differences; they are what
-   happens when three tiles are written on three days.
-
-   THE SHAPE IS THE SEGMENT TILE'S, and it is the one worth keeping:
-
-     FIGURE, and beside it on the same baseline the SAME FACT READ ANOTHER WAY —
-     a count and its share, a share and its baseline. Beside the number it
-     qualifies, a reader takes both in one pass; a line down it becomes a second
-     caption and they have to work out which of the two it measures.
-
-     LABEL UNDERNEATH, saying what is being counted. It carries weight 500 where
-     the supporting text is 400: it is the tile's subject, and the figure above
-     it is only a quantity until the label says what of.
-
-   Centred on the ink, not baseline-aligned. Baseline is the right default for a
-   number and its unit and the wrong one here, because digits carry no
-   descenders: on a shared baseline the qualifier's visible mass sits 3.8px below
-   the digits' and reads as hanging off the number. Measured both ways.
-   =========================================================================== */
-.vds-pkg-aud__val,
-.vds-status-lead__value,
-.vds-sell-hero__count {
-  font-size: 26px;
-  font-weight: 600;
-  line-height: 1.05;
-  letter-spacing: -0.01em;
-  color: var(--vds-ink);
-  font-variant-numeric: tabular-nums;
+   The consequence, stated: on a package switch there is no previous width to interpolate
+   from, so the bar arrives at size while the numbers count up beside it. That is the cost
+   of the panel's remount, not of this rule. */
+.vds-pkg-aud__seg .vds-kpi-meter__seg {
+  transition: flex-grow 600ms cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
-.vds-pkg-aud__stat,
-.vds-status-lead__share,
-.vds-sell-hero__unit {
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 1.4;
-  color: var(--vds-ink-subtle);
+@media (prefers-reduced-motion: reduce) {
+  .vds-pkg-aud__seg .vds-kpi-meter__seg { transition: none; }
 }
-
-.vds-pkg-aud__label,
-.vds-status-lead__caption,
-.vds-sell-hero__detail {
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.4;
-  color: var(--vds-ink-muted);
-}
-
-/* The figure and its supporting text share a line, centred on their ink — see the
-   measurement note on .vds-pkg-aud__seg--solo. */
-.vds-pkg-aud__figure,
-.vds-status-lead__figs,
-.vds-sell-hero__figs {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--vds-space-2);
-  min-width: 0;
-}
-
-/* 4px between the figure line and its label — they are one block, and the tile's
-   own gap between blocks is larger. */
-.vds-status-lead,
-.vds-trials-lead { gap: var(--vds-space-1); }
-
-
-/* ===========================================================================
-   COLUMN HEADERS — the Table's, not a second set
-   ---------------------------------------------------------------------------
-   These lists are read down their figures, and a column of numbers with nothing
-   naming it makes the reader infer what it is from the values. The DS Table
-   already answers what a column header looks like, so this is that answer
-   applied to a row instead of a <th>: 11px at weight 500, SENTENCE case with
-   normal tracking, --vds-ink-subtle.
-
-   Not the eyebrow step it is built from. Table.scss drops the caps, the +0.04em
-   and the 600 together and explains why: the tracking exists to open up runs of
-   capitals and only loosens mixed-case words, and 600 exists to hold small caps
-   up and reads heavy once letters have ascenders and descenders. Copying the
-   look here rather than the step keeps the two headers the same object.
-
-   NO RULE OF ITS OWN. The header is the first row in the list, so the divider
-   system already draws a line under it — the line card carried a border-bottom
-   as well and had two, 1px apart at different widths.
-
-   BOTTOM-ALIGNED, so a label that wraps on a narrow card still keeps its last
-   line directly above the figures it names.
-   =========================================================================== */
-.vds-biz-row--head,
-.vds-sell-trial--head,
-.vds-kpi-meter__row--head {
-  align-items: end;
-  font-size: 0.6875rem;
-  line-height: 0.875rem;
-  font-weight: var(--vds-weight-medium);
-  letter-spacing: normal;
-  text-transform: none;
-  color: var(--vds-ink-subtle);
-  padding-bottom: 9px;
-}
-.vds-biz-row--head > span,
-.vds-sell-trial--head > span,
-.vds-kpi-meter__row--head > * { white-space: nowrap; }
-
-/* A header row is not a target: no pointer, no fill, no lift. */
-.vds-biz-row--head:hover,
-.vds-sell-trial--head:hover,
-.vds-kpi-meter__row--head:hover { background: none; cursor: default; }
-
-/* The figure columns keep their alignment in the header — a right-aligned column
-   whose label sits left stops being a column at the label. */
-.vds-biz-row--head .vds-biz-row__val,
-.vds-biz-row--head .vds-biz-row__sub,
-.vds-biz-row--head .vds-biz-row__per,
-.vds-sell-trial--head .vds-sell-trial__fig { text-align: right; font-weight: inherit; color: inherit; font-size: inherit; }
-
-
-/* ===========================================================================
-   THE ROW SYSTEM — one definition, five lists
-   ---------------------------------------------------------------------------
-   Rebuilt. Four separate bugs on this page had ONE cause: every row was its own
-   grid, so `auto` and `fr` tracks resolved against that row's own content. Rows
-   agreed with each other only because they happened to hold the same shapes, and
-   the moment one didn't — a header with an empty mark cell, a header label wider
-   than its figures — the columns came apart. Each was patched by pinning another
-   track to a fixed px.
-
-   THE LIST OWNS THE COLUMNS NOW. One grid, declared once as --cols; every row is
-   a `subgrid` spanning it. Tracks resolve for the list as a whole, so a header and
-   its rows cannot disagree, `fr` and `auto` are safe again, and the fixed-px
-   patches are gone.
-
-   The chrome — inset, hover, divider, header — is one set of rules here. A family
-   class now only says what its COLUMNS are and how its own cells look.
-   =========================================================================== */
-.vds-rowlist {
-  display: grid;
-  grid-template-columns: var(--cols);
-  column-gap: var(--vds-space-3);
-  /* Out to the card's border, so a row's fill and its dividers end where every
-     other line in the tile ends. The padding puts the text back on the card's
-     own inset, so nothing moves but the ink that is supposed to bleed. */
-  margin-inline: calc(-1 * var(--vds-space-5));
-  padding-inline: var(--vds-space-5);
-}
-
-.vds-rowlist > * {
-  display: grid;
-  grid-template-columns: subgrid;
-  grid-column: 1 / -1;
-  align-items: center;
-  position: relative;
-  /* The fill and the lines reach the card's border; the text does not. One value
-     for both, so they cannot drift apart. */
-  margin-inline: calc(-1 * var(--vds-space-5));
-  padding: var(--vds-space-2) var(--vds-space-5);
-  border: 0;
-  background: none;
-  font: inherit;
-  color: inherit;
-  text-align: left;
-}
-
-/* Top line on every row, bottom line on the last: a closed block, not a stack of
-   separators. Drawn as pseudo-elements because a border on a rounded box curves at
-   its ends, and at this size that curl reads as a tab. */
-.vds-rowlist > *::before,
-.vds-rowlist > *:last-child::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--vds-line-subtle);
-  z-index: 0;
-}
-.vds-rowlist > *::before { top: 0; }
-.vds-rowlist > *:last-child::after { bottom: 0; }
-
-/* HOVER SPANS THE ROW, edge to edge, with no corner. It was an inset 6px pill
-   between two full-bleed lines, which read as a fill that had missed its own row.
-   A row bounded by lines that reach the card has one honest highlight: the band
-   between them. */
-.vds-rowlist > .is-interactive { cursor: pointer; }
-.vds-rowlist > .is-interactive:hover { background: color-mix(in srgb, var(--vds-ink) 4%, transparent); }
-.vds-rowlist > .is-interactive:focus-visible {
-  outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
-  outline-offset: calc(-1 * var(--vds-control-ring-w));
-}
-
-/* The current row, at brand strength — one row is ever current and it is the whole
-   state of what the list drives. It owns both its edges so the fill reads as one
-   block. */
-.vds-rowlist > .is-current { background: var(--vds-primary); color: var(--vds-on-primary); }
-.vds-rowlist > .is-current.is-interactive:hover { background: var(--vds-primary-hover); }
-.vds-rowlist > .is-current * { color: inherit; }
-.vds-rowlist > .is-current::before,
-.vds-rowlist > .is-current::after,
-.vds-rowlist > .is-current + *::before { display: none; }
-.vds-rowlist > .is-current {
-  --vds-tile-tonal-face: #{'color-mix(in srgb, var(--vds-on-primary) 22%, transparent)'};
-  --vds-tile-glyph-from: var(--vds-on-primary);
-  --vds-tile-glyph-to: #{'color-mix(in srgb, var(--vds-on-primary) 55%, transparent)'};
-}
-
-/* ---- the header ---------------------------------------------------------
-   The DS Table's header, applied to a row: 11px at 500, sentence case, normal
-   tracking, --vds-ink-subtle. Same vertical padding as a data row — it had 9px of
-   its own against the rows' 8, which is the sort of difference that has no reason
-   and shows up as a header sitting a pixel high. */
-.vds-rowlist > .is-head {
-  font-size: 0.6875rem;
-  line-height: 0.875rem;
-  font-weight: var(--vds-weight-medium);
-  letter-spacing: normal;
-  text-transform: none;
-  color: var(--vds-ink-subtle);
-  cursor: default;
-}
-.vds-rowlist > .is-head:hover { background: none; }
-.vds-rowlist > .is-head > * { white-space: nowrap; }
-
-/* A sortable heading is a button filling its cell, so the whole column head is the
-   target rather than the word. It reuses .vds-table__sort — the Table's own glyph
-   and its asc/desc/hover states — because a second sort arrow that merely agrees
-   today is the thing this page exists to complain about. */
-.vds-rowsort {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--vds-space-1-5);
-  width: 100%;
-  padding: 0;
-  border: 0;
-  background: none;
-  font: inherit;
-  color: inherit;
-  cursor: pointer;
-}
-.vds-rowsort--right { justify-content: flex-end; }
-.vds-rowsort:hover { color: var(--vds-ink); }
-.vds-rowsort:hover .vds-table__sort { opacity: 0.7; }
-.vds-rowsort:focus-visible {
-  outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
-  outline-offset: 2px;
-  border-radius: 3px;
-}
-
-
-/* ---- the cells the ranked lists use -------------------------------------- */
-.vds-rowlist__name {
-  font-size: 13px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.vds-rowlist__track {
-  display: block;
-  height: 6px;
-  border-radius: var(--vds-radius-full);
-  background: var(--vds-line);
-  overflow: hidden;
-}
-.vds-rowlist__fill { display: block; height: 100%; border-radius: inherit; background: var(--vds-primary); }
-.vds-rowlist__val { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
-.vds-rowlist__sub { font-size: 12px; color: var(--vds-ink-subtle); font-variant-numeric: tabular-nums; text-align: right; }
-/* On the cobalt fill the meter has to survive too — --vds-line is invisible there. */
-.vds-rowlist > .is-current .vds-rowlist__track { background: #{'color-mix(in srgb, var(--vds-on-primary) 25%, transparent)'}; }
-.vds-rowlist > .is-current .vds-rowlist__fill { background: var(--vds-on-primary); }
-/* The header's own cells inherit its type; the figure columns keep their alignment. */
-.vds-rowlist > .is-head .vds-rowlist__val,
-.vds-rowlist > .is-head .vds-rowlist__sub,
-.vds-rowlist > .is-head .vds-rowlist__name { font-size: inherit; font-weight: inherit; color: inherit; }
-/* The footer sits inside the list now, so it spans the grid rather than a column. */
-.vds-rowlist > .vds-biz-foot { grid-column: 1 / -1; display: flex; }
-.vds-rowlist > .vds-biz-foot::before { display: none; }
-
-/* The mark, and the 8px that ties it to the name. The row's own rhythm is 12; a mark
-   set at the column gap reads as its own column and stops belonging to the word beside
-   it. One grid cannot vary its gap, so the NAME pulls the 4px difference back — and it
-   is the cell after the mark that pulls, so a list without a mark is unaffected. */
-.vds-rowlist__mark {
-  display: inline-flex;
-  /* Optically centred against the name's ink, not its box. */
-  font-size: 13px;
-  transform: translateY(var(--vds-control-optical-shift));
-}
-.vds-rowlist__mark + * { margin-left: -4px; }
-
-/* ---- column rhythm -------------------------------------------------------
-   THE SLACK BELONGS TO THE METER. The name held it (1.8fr against the meter's
-   0.7) on the reasoning that a squeezed name stops identifying its row — true on
-   a quarter-width dashboard cell, and the opposite of what happens at 700px,
-   where the name takes what it needs and the surplus shows as a hole between the
-   last word and the bar. `auto` gives the name its content and a 7rem floor keeps
-   it honest when the card is narrow; the meter takes the rest, which costs
-   nothing because a proportion says the same thing at any length. */
-.vds-rowlist__name { min-width: 0; }
-
-/* A right-aligned heading sits flush with its column, directly over the figures.
-   The arrow turns inward rather than pushing the label off that edge. */
-.vds-rowsort--right { flex-direction: row; justify-content: flex-end; }

@@ -79,7 +79,13 @@ function SortArrow({ direction }) {
   )
 }
 
-function Rows({ cols, columns, data, getKey, sort, onSort, current, onPick, children }) {
+/* INTERACTIVE BY DEFAULT. Nearly every row in a KPI tile goes somewhere — a product
+   to its drawer, an account to its page — and the handful that do not are the
+   exception. Defaulting the other way meant each list opted IN and one of the two
+   ranked lists had quietly not, so identical-looking rows behaved differently between
+   two cards sitting side by side. Pass interactive={false} for a list that really is
+   just a readout; the DS Table made the same call for the same reason. */
+function Rows({ cols, columns, data, getKey, sort, onSort, current, onPick, interactive = true, children }) {
   return (
     <div className="vds-rowlist" style={{ '--cols': cols }}>
       <div className="is-head" role="row">
@@ -109,13 +115,13 @@ function Rows({ cols, columns, data, getKey, sort, onSort, current, onPick, chil
       </div>
       {data.map((row, i) => {
         const key = getKey(row)
-        const interactive = !!onPick
+        const live = interactive && !!onPick
         return (
           <div key={key} role="row"
-            className={[interactive && 'is-interactive', current === key && 'is-current'].filter(Boolean).join(' ')}
-            tabIndex={interactive ? 0 : undefined}
-            onClick={interactive ? () => onPick(key) : undefined}
-            onKeyDown={interactive ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick(key) } } : undefined}>
+            className={[live && 'is-interactive', current === key && 'is-current'].filter(Boolean).join(' ')}
+            tabIndex={live ? 0 : undefined}
+            onClick={live ? () => onPick(key) : undefined}
+            onKeyDown={live ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick(key) } } : undefined}>
             {columns.map((c) => <span key={c.key} className={c.cellClass}>{c.render(row, i)}</span>)}
           </div>
         )
@@ -149,25 +155,18 @@ function SeatsByProductDemo() {
     })
     return v
   }, [sort])
-  /* The meter is a share OF THE TOP ROW, and the top row is whatever the sort put
-     there — so it stays the longest bar under every ordering. A share of the
-     maximum would leave a sort by name drawing bars in no order at all. */
-  const top = Math.max(...rows.map((p) => p.seats))
   return (
     <div className="vds-tile-demo">
     <div className="vds-tile">
       <DashHead title="Seats by product" sub="Under contract" action={{ label: 'Package Insights' }} />
       <Rows
-        cols="24px minmax(7rem, auto) minmax(56px, 1fr) 76px 68px 68px"
+        cols="24px minmax(0, 1fr) 76px 68px 68px"
         data={rows} getKey={(p) => p.id}
         sort={sort} onSort={setSort}
         current={picked} onPick={(k) => setPicked(picked === k ? null : k)}
         columns={[
           { key: 'mark', header: '', cellClass: 'vds-rowlist__mark', render: (p) => <ProductTile glyph={p.glyph} tonal size={24} /> },
           { key: 'name', header: 'Product', sortable: true, cellClass: 'vds-rowlist__name', render: (p) => p.name },
-          { key: 'meter', header: '', render: (p) => (
-            <span className="vds-rowlist__track"><span className="vds-rowlist__fill" style={{ width: `${Math.max(2, Math.round(p.seats / top * 100))}%` }} /></span>
-          ) },
           { key: 'seats', header: 'Seats', sortable: true, align: 'right', cellClass: 'vds-rowlist__val', render: (p) => p.seats.toLocaleString() },
           { key: 'accounts', header: 'Accounts', sortable: true, align: 'right', cellClass: 'vds-rowlist__sub', render: (p) => p.accounts },
           { key: 'per', header: 'Per acct', sortable: true, align: 'right', cellClass: 'vds-rowlist__sub', render: (p) => Math.round(p.seats / p.accounts) },
@@ -186,11 +185,11 @@ function SeatsByProductDemo() {
    five resellers is a different book from five direct customers at the same seat
    count. The three glyphs are the same set the Customers table tags with. */
 const ACCOUNTS = [
-  { name: 'Sunbelt Brewing Services', seats: 299, type: 'customer' },
-  { name: 'Atlas Agriculture Co', seats: 298, type: 'reseller' },
-  { name: 'Metro Environmental Group', seats: 298, type: 'customer' },
-  { name: 'Sunrise Automotive LLC', seats: 297, type: 'distributor' },
-  { name: 'Quantum Consulting Ltd', seats: 297, type: 'reseller' },
+  { name: 'Sunbelt Brewing Services', seats: 3240, type: 'customer' },
+  { name: 'Atlas Agriculture Co', seats: 1967, type: 'reseller' },
+  { name: 'Metro Environmental Group', seats: 1858, type: 'customer' },
+  { name: 'Sunrise Automotive LLC', seats: 1563, type: 'distributor' },
+  { name: 'Quantum Consulting Ltd', seats: 1259, type: 'reseller' },
 ]
 
 /* THE TWO VOCABULARIES DO NOT AGREE, and this is the seam. The data calls the
@@ -201,6 +200,7 @@ const ACCOUNTS = [
 const TILE_TYPE = { distributor: 'distributor', reseller: 'partner', customer: 'customer' }
 
 function ConcentrationDemo() {
+  const [picked, setPicked] = useState(null)
   const [sort, setSort] = useState({ key: 'seats', direction: 'desc' })
   const rows = useMemo(() => {
     const get = { name: (a) => a.name, seats: (a) => a.seats, share: (a) => a.seats }[sort.key]
@@ -210,7 +210,6 @@ function ConcentrationDemo() {
       return sort.direction === 'asc' ? c : -c
     })
   }, [sort])
-  const top = Math.max(...rows.map((a) => a.seats))
   const total = 50190
   return (
     <div className="vds-tile-demo">
@@ -224,15 +223,13 @@ function ConcentrationDemo() {
         <span className="vds-status-lead__caption">Seats held by the 5 biggest accounts</span>
       </div>
       <Rows
-        cols="24px minmax(7rem, auto) minmax(56px, 1fr) 76px 68px"
+        cols="24px minmax(0, 1fr) 76px 68px"
         data={rows} getKey={(a) => a.name}
         sort={sort} onSort={setSort}
+        current={picked} onPick={(k) => setPicked(picked === k ? null : k)}
         columns={[
           { key: 'mark', header: '', cellClass: 'vds-rowlist__mark', render: (a) => <EntityTile type={TILE_TYPE[a.type]} glyph={GLYPHS[a.type]} size={24} /> },
           { key: 'name', header: 'Account', sortable: true, cellClass: 'vds-rowlist__name', render: (a) => a.name },
-          { key: 'meter', header: '', render: (a) => (
-            <span className="vds-rowlist__track"><span className="vds-rowlist__fill" style={{ width: `${Math.max(2, Math.round(a.seats / top * 100))}%` }} /></span>
-          ) },
           { key: 'seats', header: 'Seats', sortable: true, align: 'right', cellClass: 'vds-rowlist__val', render: (a) => a.seats.toLocaleString() },
           { key: 'share', header: 'Share', sortable: true, align: 'right', cellClass: 'vds-rowlist__sub', render: (a) => `${(a.seats / total * 100).toFixed(1)}%` },
         ]}
@@ -424,7 +421,6 @@ const TRIALED = [
 
 function TrialsDemo() {
   const tone = OPP_TONE.primary
-  const topTrial = TRIALED[0].accounts
   return (
     <div className="vds-tile-demo vds-tile-demo--wide vds-tile-demo--tall">
     <div className="vds-tile" style={{ '--opp-fg': tone.fg, '--opp-soft': tone.soft }}>
@@ -475,18 +471,17 @@ function TrialsDemo() {
         <div className="vds-sell-trial vds-sell-trial--head" aria-hidden>
           <span />
           <span className="vds-sell-trial__name">Package</span>
-          <span />
           <span className="vds-sell-trial__fig">Accounts</span>
         </div>
+        {/* Buttons, like every other row on the page — these were the last inert list,
+            and an inert row among interactive ones is the difference a reader notices
+            by pointing at it and getting nothing. */}
         {TRIALED.map((p) => (
-          <div key={p.id} className="vds-sell-trial">
+          <button type="button" key={p.id} className="vds-sell-trial vds-sell-trial--btn">
             <ProductTile glyph={p.glyph} tonal size={24} />
             <span className="vds-sell-trial__name">{p.name}</span>
-            <span className="vds-sell-trial__bar" aria-hidden>
-              <span className="vds-sell-trial__open" style={{ width: `${(p.accounts / topTrial) * 100}%` }} />
-            </span>
             <span className="vds-sell-trial__fig">{p.accounts}</span>
-          </div>
+          </button>
         ))}
       </div>
     </div>
@@ -497,9 +492,9 @@ function TrialsDemo() {
 /* ============================================================================
    THE SEGMENT TILE — a count, its share, and a bar split into named parts.
    Ported from the package panel's audience strip (KpiMeter + .vds-pkg-aud__seg).
-   The key under the bar is a list of ROWS, and it is the last list on this page
-   that was still drawn its own way — it now carries the same inset, pill,
-   hairline and hover as every other row.
+   The key under the bar LOOKS like a list of rows and is not one. It is a legend:
+   two entries naming the parts of the bar above them, read together with it. It
+   shares the head and the figures' alignment and none of the row chrome.
    ========================================================================== */
 const SEGMENTS = [
   { label: 'Paying', value: 52, pct: 90, color: 'var(--vds-primary)' },
@@ -519,11 +514,6 @@ function KpiMeter({ segments, onSegmentClick }) {
         ))}
       </div>
       <dl className="vds-kpi-meter__key">
-        <div className="vds-kpi-meter__row vds-kpi-meter__row--head" aria-hidden>
-          <dt className="vds-kpi-meter__name">Segment</dt>
-          <dd className="vds-kpi-meter__val">Accounts</dd>
-          <dd className="vds-kpi-meter__pct">Share</dd>
-        </div>
         {segments.map((p) => {
           const live = !!onSegmentClick && p.value > 0
           return (
@@ -547,10 +537,13 @@ function KpiMeter({ segments, onSegmentClick }) {
   )
 }
 
+/* NO .vds-tile WRAPPER. .vds-pkg-aud__seg is its own card in the shell — it carries
+   the padding, the border and the corner — and putting it inside one made a box in a
+   box, which I then "fixed" by stripping the seg's own chrome. The tile was the thing
+   that did not belong. */
 function SegmentTileDemo() {
   return (
     <div className="vds-tile-demo">
-    <div className="vds-tile">
       <div className="vds-pkg-aud__seg vds-pkg-aud__seg--solo">
         {/* THE FIGURE AND ITS SHARE ON ONE LINE. "58" and "18% of all accounts"
             are the same fact told twice — a count, and that count as a proportion
@@ -565,7 +558,6 @@ function SegmentTileDemo() {
         <KpiMeter segments={SEGMENTS} onSegmentClick={() => {}} />
       </div>
     </div>
-    </div>
   )
 }
 
@@ -577,7 +569,7 @@ export function TileRowsPage() {
     >
       <Section
         title="Anatomy"
-        note="A head that names the cut, six rows at most, and a remainder line that names what the six left out. Six columns here rather than five: the ranked figure, its reach, and the ratio between them — see below for why the ratio earns a column of its own. Pick a row; the current one takes the same solid fill the page filter's current row takes, because it is the same claim: this is the one you are reading."
+        note="A head that names the cut, six rows at most, and a remainder line that names what the six left out. Three figure columns: the ranked figure, its reach, and the ratio between them — see below for why the ratio earns a column of its own. Every row is interactive; the current one takes the same solid fill the page filter's current row takes, because it is the same claim: this is the one you are reading. Sort by any column."
       >
         <Preview
           canvas={<SeatsByProductDemo />}
@@ -668,7 +660,7 @@ export function TileRowsPage() {
 
       <Section
         title="The segment tile"
-        note="A count, that count as a share, and a bar split into named parts. The key under the bar is a list of rows — a mark, a name, a figure, a qualifier — and it was the last list here still drawn its own way. It now carries the same 8px inset, 6px pill, hairline and ink-mix hover as every other row, so a segment in this tile and a product in Seats by product are read the same way. Its vertical padding stays at 4: these two entries are reading the bar directly above them, and the ranked rows' 8 would push the key far enough off it to stop belonging to it."
+        note="A count, that count as a share, and a bar split into named parts. The key under the bar looks like a list of rows and is not one — it is a LEGEND: two entries naming the parts of the bar directly above them, read as a pair with it rather than scanned as a table. It takes the head and the figures' alignment from everything else here, and none of the row chrome: no inset, no pill, no hairline, no header. A legend given column headings is a table nobody asked for."
       >
         <Preview canvas={<SegmentTileDemo />} code={`<span className="vds-pkg-aud__figure">
   <span className="vds-pkg-aud__val">58</span>
@@ -687,9 +679,10 @@ export function TileRowsPage() {
             ['Mark to name', '8px', 'Tighter than the rest — a mark belongs to the name beside it. One grid cannot vary its column gap, so the name pulls the 4px back.'],
             ['Row padding', '8px, with -8px margin', 'The fill reaches the tile’s inner edge while the text still stands off it. Padding alone leaves the hover floating in a box.'],
             ['Row corner', '6px', 'The row pill — the shape the nav rows and the docs column use.'],
+            ['Interactive', 'the default', 'Nearly every row in a KPI tile goes somewhere. A list that is genuinely a readout opts out; the DS Table made the same call.'],
             ['Hover', '4% of --vds-ink', 'Translucent, never a surface step. These rows sit on a card, inside a tile, on the canvas; an absolute fill is right against one of the three.'],
             ['Current row', '--vds-primary, solid', 'Same as the page filter. One row at a time, and it has to be findable without hunting.'],
-            ['Meter', 'share of the TOP ROW', 'A share of the total flattens six rows into six identical stubs. Floored at 2% so the smallest still draws.'],
+            ['No meter', 'figures only', 'A bar per row carrying one value drew six near-identical lengths and invited a comparison the data could not support. The figures carry the magnitude exactly. The line card keeps its meter — that one is TWO lengths, bought against in-use, and says something no column repeats.'],
             ['Figures', 'tabular-nums, right, fixed track', 'A ranked list is read down the numbers. Proportional digits and an elastic column both stop it being a column.'],
             ['The ratio column', 'self-labelled', 'A sixth cell for the figure divided by its reach. It carries no header — these lists have none — so it labels itself: “106/acct”, not “106”.'],
             ['Rows', 'six at most', 'Past six the tile stops showing a shape and starts being a table in a card — at which point use Table, on a page.'],
