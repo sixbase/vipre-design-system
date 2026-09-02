@@ -32,6 +32,28 @@ const OPTIONS = [
   { key: 'safesend', name: 'SafeSend', glyph: GLYPHS.safesend, customers: 46, trials: 7 },
 ]
 
+/* The accounts behind each option. A page filter is only legible once you can see what
+   it filters: with a headline figure and a sentence the panel was 159px of card beside a
+   380px rail, and the pair read as two cards rather than as a rail and the page it drives.
+   This is the same shape the product's own Package Insights panel carries. */
+const ACCOUNTS = {
+  all: [
+    ['Hawkeye Catering Inc', 472, '98%'], ['Timberline Aerospace Ltd', 463, '103%'],
+    ['Ridgeline Agriculture Ltd', 407, '101%'], ['Riverstone Hospitality', 402, '88%'],
+    ['Lakeside Marine Ltd', 396, '81%'],
+  ],
+  'email-cloud': [
+    ['Hawkeye Catering Inc', 472, '98%'], ['Willow Financial Inc', 391, '103%'],
+    ['Atlas Financial Co', 384, '83%'], ['Falcon Academy Inc', 364, '96%'],
+  ],
+  atp: [['Summit Legal Corp', 499, '101%'], ['Zenith Aviation Partners', 476, '97%'], ['Coastal Consulting Inc', 461, '104%']],
+  'ep-email': [['Driftwood Seafood Services', 341, '92%'], ['Granite Source', 288, '74%']],
+  'total-email': [['Pinnacle Optics Inc', 268, '86%'], ['Crestview Engineering', 244, '90%']],
+  ies: [['Eastgate Financial Corp', 364, '83%'], ['Peregrine Mining Ltd', 348, '78%'], ['Jade Healthcare Corp', 329, '102%']],
+  'safesend-ai': [['Quantum Consulting Ltd', 330, '81%'], ['Ivory Resources Partners', 323, '102%']],
+  safesend: [['Lighthouse Legal Ltd', 280, '89%'], ['Sunbelt Mining Services', 373, '102%']],
+}
+
 const cell = (render) => (r) => (r.isGroup ? null : render(r))
 
 function PageFilterDemo() {
@@ -125,9 +147,19 @@ function PageFilterDemo() {
           </Inline>
           <Text variant="body" tone="muted">
             {current.isAll
-              ? 'Every bundle and package in this scope, as one book.'
-              : `Accounts holding ${current.name}, and how many are still trialling it.`}
+              ? 'Every bundle and package in this scope, as one book. Biggest accounts first.'
+              : `Accounts holding ${current.name}. Biggest first.`}
           </Text>
+          <Table
+            density="compact"
+            data={ACCOUNTS[current.key] ?? []}
+            getRowKey={(r) => r[0]}
+            columns={[
+              { key: '0', header: 'Customer', render: (r) => r[0] },
+              { key: '1', header: 'Seats', align: 'right', width: '72px', render: (r) => r[1].toLocaleString() },
+              { key: '2', header: 'Used', align: 'right', width: '64px', render: (r) => r[2] },
+            ]}
+          />
         </Stack>
       </div>
     </div>
