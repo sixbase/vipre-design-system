@@ -1272,6 +1272,17 @@ section:first-of-type > .vds-section-h {
    the width of the grid rather than sharing a row, and the line card's seven columns
    need it. */
 .vds-tile-demo--wide { max-width: none; }
+/* The audience segment draws its own padding, border and corner because in the shell
+   it sits inside a panel. Inside .vds-tile it is a box in a box: the two paddings put
+   its dividers 28px inside a border every other line reaches, and the second border
+   sits a pixel in from the first. The tile is the box. */
+.vds-tile > .vds-pkg-aud__seg {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
 /* Trials' plot is height="100%" — it takes the slack the tile's row gives it, which on
    the dashboard is a grid row and in a docs preview is nothing, so the chart resolved
    to zero. The wrapper stands in for the grid row at the height the real card has. */
@@ -1474,6 +1485,11 @@ section:first-of-type > .vds-section-h {
   align-items: baseline;
   gap: 12px;
   margin-top: auto;
+  /* The rule spans the card, like the row dividers above it — a section break that
+     stopped 20px short of the border while every line above it reached would read
+     as two different kinds of rule. The padding puts the text back where it was. */
+  margin-inline: calc(-1 * var(--vds-space-5));
+  padding-inline: var(--vds-space-5);
   padding-top: 10px;
   border-top: 1px solid var(--vds-line);
   font-size: 12px;
@@ -1483,10 +1499,9 @@ section:first-of-type > .vds-section-h {
    the highlight covers the full width of the rule it sits under rather than
    floating inside it with a gap at each end. */
 .vds-biz-foot--btn {
-  width: calc(100% + 16px);
-  margin-left: -8px;
-  margin-right: -8px;
-  padding: 10px 8px 4px;
+  width: calc(100% + 2 * var(--vds-space-5));
+  margin-inline: calc(-1 * var(--vds-space-5));
+  padding: 10px var(--vds-space-5) 4px;
   border-left: 0;
   border-right: 0;
   border-bottom: 0;
@@ -1531,6 +1546,14 @@ section:first-of-type > .vds-section-h {
   --msp-row-mark-pull: calc(var(--msp-row-mark-gap) - var(--msp-row-gap));
   /* The shell declares --nav-accent as a raw #0068cb; it is --vds-primary. */
   --nav-accent: var(--vds-primary);
+
+  /* ---- HOW FAR A DIVIDER REACHES PAST ITS ROW ---------------------------------
+     Rows bleed --vds-space-2 (8px) each side so their hover fill clears the text;
+     the card insets everything by --vds-space-5 (20px). A line that stops at the
+     row's own edge therefore stops 12px short of the card's border on both sides,
+     which reads as an accident rather than a decision — nothing else in the tile
+     sits on that edge. This is the difference, so the dividers span the card. */
+  --vds-row-divider-reach: calc(var(--vds-space-5) - var(--vds-space-2));
 }
 
 /* ---- Account status: the suspended count, in context ---------------------------
@@ -2171,17 +2194,16 @@ section:first-of-type > .vds-section-h {
   align-items: center;
   /* 12, the shared row gap — this ran at 10. */
   gap: var(--msp-row-gap);
-  /* ALIGNED to the other footer's edge. This bled the full --vds-space-5 to the
-     card's border, where .vds-biz-foot stops at the ROWS' outer edge — so one card's
-     section rule touched the card border and the other floated 12px inside it, which
-     is the kind of difference you only see with both cards on screen, which is where
-     they live. The rows set the card's internal edge; both rules now sit on it. */
-  width: calc(100% + 16px);
-  margin-inline: -8px;
+  /* Full-bleed to the card's border, and so is .vds-biz-foot now. I pulled this one
+     IN to the rows' edge to match the other footer, and then the dividers went edge
+     to edge and made that the minority position — so both footers went out to meet
+     them. Every horizontal line in the tile now starts and ends on the same x. */
+  width: calc(100% + 2 * var(--vds-space-5));
+  margin-inline: calc(-1 * var(--vds-space-5));
   margin-top: calc(-1 * var(--vds-space-2));
   /* Even top and bottom: the hover fill is a band across the row, and it was 12px deep
      above the text and flush against it below. */
-  padding: var(--vds-space-3) var(--vds-space-2);
+  padding: var(--vds-space-3) var(--vds-space-5);
   border: 0;
   /* --vds-line, like the other footer's rule. A tone-tinted hairline made the break
      belong to the tile's accent rather than to the card. */
@@ -2248,6 +2270,12 @@ section:first-of-type > .vds-section-h {
 
 .vds-sell-trial {
   display: grid;
+  /* THE SAME BLEED EVERY OTHER ROW HAS. Only the --btn variant carried it, so the
+     resting rows sat at the card's content edge and their dividers stopped 8px short
+     of the border while the four lists above reached it. A row's inset is not a
+     property of whether it happens to be clickable. */
+  margin-inline: calc(-1 * var(--vds-space-2));
+  padding-inline: var(--vds-space-2);
   /* THE BAR IS THE DATA, so it gets a share of the width rather than a fixed 64px.
      At 1fr for the name and 64px for the track, a 473px tile spent 302px on a label that
      ellipsis-truncates anyway and left the one element carrying a quantity at a seventh of
@@ -2475,7 +2503,10 @@ section:first-of-type > .vds-section-h {
 .vds-sell-trials > .vds-sell-trial + .vds-sell-trial::before {
   content: '';
   position: absolute;
-  inset: 0 0 auto 0;
+  /* EDGE TO EDGE: past the row's own bleed and out to the card's border. The hover
+     fill stays inset and keeps its 6px pill — a divider is structure and belongs to
+     the card, a fill is a target and belongs to the row. */
+  inset: 0 calc(-1 * var(--vds-row-divider-reach)) auto calc(-1 * var(--vds-row-divider-reach));
   height: 1px;
   background: var(--vds-line-subtle);
   /* Under the row's own fill, so a hovered or current row covers its line rather
@@ -2530,7 +2561,25 @@ section:first-of-type > .vds-section-h {
   margin: 0;
 }
 
-.vds-kpi-meter__row { display: contents; }
+/* ---- A SUBGRID, NOT display:contents ---------------------------------------
+   This was `display: contents`, which was the right answer before subgrid: the
+   three cells had to be direct children of .__key's grid or the name, value and
+   percentage columns would not line up between the two rows.
+
+   The cost is that the row then generates NO BOX. Everything a row needs — a
+   padding, a corner, a hover fill, a divider drawn on ::before — lands on an
+   element that does not render, and getComputedStyle reports the specified values
+   back so it reads as working. The alignment pass before this one set all four on
+   this rule and not one of them painted.
+
+   `subgrid` gives the row its own box while keeping .__key's column widths, so it
+   can be a row and stay aligned. */
+.vds-kpi-meter__row {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+  align-items: center;
+}
 
 .vds-kpi-meter__name {
   display: flex;
@@ -2941,7 +2990,7 @@ section:first-of-type > .vds-section-h {
 .vds-kpi-meter__row + .vds-kpi-meter__row::before {
   content: '';
   position: absolute;
-  inset: 0 0 auto 0;
+  inset: 0 calc(-1 * var(--vds-row-divider-reach)) auto calc(-1 * var(--vds-row-divider-reach));
   height: 1px;
   background: var(--vds-line-subtle);
 }
