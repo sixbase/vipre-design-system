@@ -109,14 +109,6 @@ function PageFilterDemo() {
        the shell's own height — the filter runs from the header to the bottom of the
        window, and neither side ever scrolls the other. */
     <div style={{ height: 560, width: '100%' }}>
-    <div className="vds-page-filter-page">
-      {/* THE PAGE TITLE SPANS BOTH COLUMNS, at the very top. The filter is part of this
-          page, not a peer of it — a title sitting only above the right-hand column would
-          say the rail belongs to something else, and the reader would be left asking what
-          the filter is for before they had been told what the page is. */}
-      <header className="vds-page-filter-page__head">
-        <Text as="h2" variant="title-sm">Package Insights</Text>
-      </header>
     <div className="vds-page-filter">
       <div className="vds-page-filter__rail">
         <Table
@@ -159,6 +151,12 @@ function PageFilterDemo() {
           does not reload, and does not move: the answer appears beside the question. */}
       <div className="vds-page-filter__panel">
         <Stack gap={4}>
+          {/* THE PAGE TITLE LIVES HERE, not above both columns. The filter runs to the
+              frame's top edge because it is chrome — it is the same list whatever the page
+              is showing — and the title belongs to the thing that changes, which is the
+              content beside it. Put it across the top and the rail loses its top edge to a
+              bar that never has anything to say about it. */}
+          <Text as="h2" variant="title-sm">Package Insights</Text>
           <Inline gap={3} align="center">
             <ProductTile glyph={current.isAll ? GLYPHS.stacks : current.glyph} tonal size={32} />
             <Text as="h3" variant="title-sm">{current.name}</Text>
@@ -190,7 +188,6 @@ function PageFilterDemo() {
           />
         </Stack>
       </div>
-    </div>
     </div>
     </div>
   )

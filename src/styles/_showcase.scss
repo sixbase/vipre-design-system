@@ -1055,32 +1055,6 @@ section:first-of-type > .vds-section-h {
   }
 }
 
-/* The page: its title at the very top, spanning the filter and the content beneath it,
-   then the two columns taking the height that is left. The frame's border lives out here
-   so the title sits inside it — a title above the frame would read as a caption for a
-   component rather than as the name of the page it belongs to. */
-.vds-page-filter-page {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-  border: 1px solid var(--vds-line);
-  border-radius: var(--vds-radius-md);
-  background: var(--vds-surface);
-  overflow: hidden;
-}
-.vds-page-filter-page__head {
-  flex: none;
-  padding: var(--vds-space-4) var(--vds-space-5);
-  border-bottom: 1px solid var(--vds-line);
-}
-.vds-page-filter-page .vds-page-filter {
-  flex: 1;
-  min-height: 0;
-  border: 0;
-  border-radius: 0;
-}
-
 /* ---- page filter -------------------------------------------------------------------
    A FULL-HEIGHT COLUMN, not a card in the content flow. It was two cards side by side
    with a gap between them, and that reads as two things placed near each other; a filter
