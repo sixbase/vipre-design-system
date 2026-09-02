@@ -1106,6 +1106,36 @@ section:first-of-type > .vds-section-h {
   box-shadow: none;
 }
 
+/* THE CURRENT ROW, at full brand strength rather than the Table's pale tint.
+   The tint is right for a table, where selection means "these are the ones I have
+   ticked" and several rows may carry it at once — it has to stay quiet because it is
+   repeated. Here exactly one row is ever current, it is the whole state of the page
+   beside it, and it has to be findable at a glance in a list long enough to scroll.
+   Scoped to the rail on purpose: this is the pattern's rule, not the Table's. */
+.vds-page-filter__rail .vds-table__row--selected {
+  background-color: var(--vds-primary);
+
+  /* Everything inside inherits the row's ink, including the cells that asked for a
+     muted or subtle tone — those tones are computed against the page ground, and on a
+     cobalt fill they land as low-contrast grey. */
+  &,
+  .vds-table__td,
+  .vds-text {
+    color: var(--vds-on-primary);
+  }
+
+  /* The tile is a light square on a light row; on this one it would be a light square
+     on cobalt, which reads as a hole. Restated as the same construction in the row's
+     own ink — and still tonal, light to dark across the glyph, not one flat colour. */
+  --vds-tile-tonal-face: #{'color-mix(in srgb, var(--vds-on-primary) 22%, transparent)'};
+  --vds-tile-glyph-from: var(--vds-on-primary);
+  --vds-tile-glyph-to: #{'color-mix(in srgb, var(--vds-on-primary) 55%, transparent)'};
+
+  /* Hover must still answer, and the Table's 4%-of-ink wash is invisible on a fill
+     this saturated. One step along the brand ramp instead. */
+  &:hover { background-color: var(--vds-primary-hover); }
+}
+
 .vds-page-filter__panel {
   flex: 1;
   min-width: 0;
