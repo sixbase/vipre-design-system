@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { ChevronRight, ArrowRight, Plus, Boxes } from 'lucide-react'
 import { DocPage } from '../DocPage.jsx'
 import { Section, Preview, RefTable, IC } from '../primitives.jsx'
-import { Button, Icon, ProductTile, Stack, Text } from '../../components/index.js'
+import { AreaTrend, Badge, Button, Icon, ProductTile, Stack, Text } from '../../components/index.js'
 import { GLYPHS } from '../templateData.js'
 
 /* ============================================================================
@@ -327,6 +327,91 @@ function SellNextDemo() {
   )
 }
 
+/* ============================================================================
+   TRIALS — a chart, a hero, a call list and a ranked sub-list, in one tile.
+   Ported from TrialsCard. The plot takes `height="100%"` so it absorbs whatever
+   slack the row has: a chart is the one element here with no natural height, so
+   it takes the surplus and the tiles beside it come out level at any width
+   without either being measured against the other.
+   ========================================================================== */
+/* Twelve months of accounts on trial. */
+const TRIAL_TREND = [
+  { label: 'Oct', value: 74 }, { label: 'Nov', value: 96 }, { label: 'Dec', value: 92 },
+  { label: 'Jan', value: 118 }, { label: 'Feb', value: 63 }, { label: 'Mar', value: 84 },
+  { label: 'Apr', value: 90 }, { label: 'May', value: 97 }, { label: 'Jun', value: 78 },
+  { label: 'Jul', value: 104 }, { label: 'Aug', value: 88 }, { label: 'Sep', value: 108 },
+]
+
+const TRIALED = [
+  { id: 'complete', name: 'Complete Defense', glyph: GLYPHS.ies, accounts: 14 },
+  { id: 'essentials', name: 'Essentials', glyph: GLYPHS.ies, accounts: 12 },
+  { id: 'vault', name: 'VaultCritical Suite', glyph: GLYPHS.edr, accounts: 10 },
+]
+
+function TrialsDemo() {
+  const tone = OPP_TONE.primary
+  const topTrial = TRIALED[0].accounts
+  return (
+    <div className="vds-tile-demo vds-tile-demo--wide vds-tile-demo--tall">
+    <div className="vds-tile" style={{ '--opp-fg': tone.fg, '--opp-soft': tone.soft }}>
+      <DashHead title="Trials" sub="20 products in trial" />
+
+      <div className="vds-sell-spark">
+        <span className="vds-sell-spark__cap">Accounts on trial, 12 months</span>
+        <AreaTrend bare data={TRIAL_TREND} colorVar="--opp-fg" height="100%" valueLabel="on trial" />
+      </div>
+
+      <div className="vds-trials-lead">
+        {/* The unit is the SENTENCE, not a label. "112 accounts" states a quantity
+            and leaves you to work out what to do with it; "112 accounts could start
+            paying" is the whole point of the tile, in the same number. */}
+        <span className="vds-sell-hero__figs">
+          <span className="vds-sell-hero__count">112</span>
+          <span className="vds-sell-hero__unit">accounts could start paying</span>
+        </span>
+        {/* Expiring is the only division of this population that still means
+            something: same work, less time. */}
+        <span className="vds-sell-hero__split">
+          <span className="vds-sell-hero__legend">
+            <span className="vds-sell-hero__leg">
+              <span className="vds-sell-hero__urgent">32 inside 7 days</span>
+            </span>
+          </span>
+        </span>
+        <span className="vds-sell-hero__detail">already in the product, not yet paying · 20 packages</span>
+      </div>
+
+      {/* The proof AND the way in — naming three of the accounts is what turns the
+          figure above from a statistic into a call list. */}
+      <button type="button" className="vds-trials-who">
+        <span className="vds-sell-hero__names">
+          Meridian Healthcare Group, Coastal Manufacturing Inc, Quantum Logistics Ltd
+          <span className="vds-sell-hero__more"> +109 more</span>
+        </span>
+        <Icon as={ArrowRight} size="sm" className="vds-sell-hero__go" aria-hidden />
+      </button>
+
+      <div className="vds-sell-trials">
+        <div className="vds-sell-group__head">
+          What they&rsquo;re trying
+          <span className="vds-sell-trials__rest">top 3 of 20</span>
+        </div>
+        {TRIALED.map((p) => (
+          <div key={p.id} className="vds-sell-trial">
+            <ProductTile glyph={p.glyph} tonal size={24} />
+            <span className="vds-sell-trial__name">{p.name}</span>
+            <span className="vds-sell-trial__bar" aria-hidden>
+              <span className="vds-sell-trial__open" style={{ width: `${(p.accounts / topTrial) * 100}%` }} />
+            </span>
+            <span className="vds-sell-trial__fig">{p.accounts}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+    </div>
+  )
+}
+
 export function TileRowsPage() {
   return (
     <DocPage
@@ -405,6 +490,22 @@ export function TileRowsPage() {
   </span>
   <span className="vds-sell-row__cta">Build call list <Icon as={ArrowRight} size="sm" /></span>
 </button>`} />
+      </Section>
+
+      <Section
+        title="A tile that is more than rows"
+        note="Trials carries a chart, a hero figure, a call list and a ranked sub-list — and the rows at its foot are still the same row. The plot takes height=100% so it absorbs the row's slack: a chart is the one element here with no natural height, so it takes the surplus and the tiles beside it come out level at any width without either being measured against the other."
+      >
+        <Preview canvas={<TrialsDemo />} code={`<div className="vds-tile" style={{ '--opp-fg': tone.fg, '--opp-soft': tone.soft }}>
+  <DashHead title="Trials" sub="20 products in trial" />
+  <div className="vds-sell-spark">
+    <span className="vds-sell-spark__cap">Accounts on trial, 12 months</span>
+    <AreaTrend bare data={trend} colorVar="--opp-fg" height="100%" valueLabel="on trial" />
+  </div>
+  <div className="vds-trials-lead">…hero, expiring flag, caption…</div>
+  <button className="vds-trials-who">…three names, +109 more…</button>
+  <div className="vds-sell-trials">…what they're trying…</div>
+</div>`} />
       </Section>
 
       <Section title="The rules">

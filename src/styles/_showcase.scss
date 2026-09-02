@@ -1272,6 +1272,10 @@ section:first-of-type > .vds-section-h {
    the width of the grid rather than sharing a row, and the line card's seven columns
    need it. */
 .vds-tile-demo--wide { max-width: none; }
+/* Trials' plot is height="100%" — it takes the slack the tile's row gives it, which on
+   the dashboard is a grid row and in a docs preview is nothing, so the chart resolved
+   to zero. The wrapper stands in for the grid row at the height the real card has. */
+.vds-tile-demo--tall > .vds-tile { min-height: 27rem; }
 
 .vds-tile {
   display: flex;
@@ -1998,4 +2002,398 @@ section:first-of-type > .vds-section-h {
   font-size: 11px;
   color: var(--vds-ink-subtle);
   line-height: 1.45;
+}
+
+
+/* ---- Trials: the hero, the spark and the trial list ----------------------
+   Same extraction as above — 47 rules straight out of shell.css. */
+/* ---- Where to sell next: hero + grouped plays -----------------------------------
+   Replaces the flat five-row list. The structure carries the argument the old list made
+   invisible: one play is promoted because the list is sorted and nothing said so, and the
+   remainder splits by sales motion because "customers who already pay you" and "accounts
+   that never bought it" are different conversations that were sitting in one column.
+
+   The card's own frame does the outer padding, so these blocks only own the gaps. */
+/* The hero panel. A soft tint PLUS an inset hairline in the same hue — the flat fill alone
+   had no edge, so at the top of a white card it read as a highlight smeared across the
+   panel rather than as a thing sitting on it. The ring costs no layout and is what gives
+   the block its object-ness. */
+.vds-sell-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2px;
+  width: calc(100% + 16px);
+  margin-inline: -8px;
+  margin-top: 2px;
+  padding: 13px 12px 14px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--opp-soft);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--opp-fg) 14%, transparent);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 130ms ease, box-shadow 130ms ease;
+}
+
+.vds-sell-hero:hover {
+  background: color-mix(in srgb, var(--opp-fg) 13%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--opp-fg) 26%, transparent);
+}
+
+.vds-sell-hero:focus-visible { outline: 2px solid var(--opp-fg); outline-offset: 2px; }
+
+.vds-sell-hero__top { display: flex; align-items: center; gap: 8px; min-width: 0; }
+
+/* 28 to match the play rows' marks below it — the leading column runs one width down the
+   whole card, so the hero reads as the first item of the list rather than as a banner
+   bolted above it. */
+.vds-sell-hero__icon {
+  width: 28px; height: 28px; flex: none;
+  display: grid; place-items: center;
+  border-radius: 8px;
+  background: var(--vds-surface-raised, var(--vds-surface));
+  color: var(--opp-fg);
+}
+
+.vds-sell-hero__label {
+  font-size: 13px; font-weight: 600; color: var(--vds-ink);
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* Says WHY this row is at the top, in two words. Without it the hero reads as "the
+   biggest" — which it isn't; it's the easiest to close, which is a different claim. */
+.vds-sell-hero__flag {
+  margin-left: auto; flex: none;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--opp-fg);
+}
+
+/* `min-width: 0` on the clause is what makes the wrap actually happen. The row already had
+   flex-wrap, but "accounts could start paying" is one flex item whose min-content width is
+   its longest word — without this it refused to shrink, so on a 271px tile it ran under the
+   card's edge and off the tile instead of moving to the next line. */
+.vds-sell-hero__figs { display: flex; align-items: baseline; gap: 7px; margin-top: 8px; flex-wrap: wrap; }
+
+.vds-sell-hero__figs > .vds-sell-hero__unit { min-width: 0; }
+
+.vds-sell-hero__count {
+  font-size: 30px; font-weight: 600; line-height: 1; letter-spacing: -0.022em;
+  color: var(--vds-ink); font-variant-numeric: tabular-nums;
+}
+
+/* Reads as the rest of a sentence the number starts ("166 accounts could start paying"),
+   so it takes body ink rather than the subtle grey a unit label would — at --ink-subtle
+   the clause looked like a caption that had drifted under the figure. */
+.vds-sell-hero__unit { font-size: 12.5px; line-height: 17px; color: var(--vds-ink-muted); }
+
+/* Pushed to the far end so the two magnitudes don't read as one number with a suffix. */
+.vds-sell-hero__seats {
+  margin-left: auto;
+  font-size: 12px; font-weight: 600; color: var(--opp-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.vds-sell-hero__detail { font-size: 11.5px; line-height: 16px; color: var(--vds-ink-muted); margin-top: 4px; }
+
+/* The proof line: names on the left, the way in on the right. A ROW rather than a block,
+   so the arrow can sit at the end of it — the panel was a tinted rectangle you could click
+   with nothing anywhere on it saying so. */
+.vds-sell-hero__who {
+  display: flex; align-items: flex-end; gap: 10px;
+  margin-top: 9px; padding-top: 9px;
+  border-top: 1px solid color-mix(in srgb, var(--opp-fg) 18%, transparent);
+}
+
+/* Two lines of names, wrapping — see the note that used to sit on .vds-opp-who: three
+   account names need ~415px against a ~286px column, so nowrap always cut the third. */
+.vds-sell-hero__names {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2;
+  overflow: hidden; min-width: 0; flex: 1;
+  font-size: 11px; line-height: 1.45; color: var(--vds-ink-muted);
+}
+
+.vds-sell-hero__more { color: var(--vds-ink-subtle); }
+
+/* Carries the play's own hue rather than grey — it's the one affordance on the panel, and
+   the hue is what ties it to the icon and the flag at the other end of the block. */
+.vds-sell-hero__go {
+  flex: none; color: var(--opp-fg);
+  /* Sits on the LAST line of names rather than centred on a block that may be one line or
+     two, so the arrow lands level with text either way. */
+  margin-bottom: 1px;
+  transition: transform 130ms ease;
+}
+
+.vds-sell-hero:hover .vds-sell-hero__go { transform: translateX(2px); }
+
+/* ---- The Trials tile's lead ------------------------------------------------------
+   No panel: no tint, no border, no radius, no icon chip. The tile's own frame is the only
+   frame, and the figure is its opening line rather than a highlighted block sitting inside
+   it. See the note in the JSX for why all of that chrome existed and why none of it
+   survives the move to a tile of its own.
+
+   The tone vars still resolve — they're set on the tile element — so the meter, the legend
+   dot and the trend all keep the play's hue without a box to carry it. */
+.vds-trials-lead { display: flex; flex-direction: column; }
+
+/* The names line: the proof, and the only pressable thing in the block. Full-bleed to the
+   tile's padding so its hover fill reads as a row rather than as a floating pill, and
+   separated by a hairline in the play's own hue — the same rule the panel used to draw
+   internally, kept because it's what marks "here is the evidence" off from the figure. */
+/* CENTRED, not bottom-aligned. `flex-end` was written when the names were one line, where
+   pinning the arrow to the bottom put it on the text's baseline. The list wraps to two
+   lines as soon as the account names are long — which is most of the time — and the arrow
+   then sat against the last line ("+109 more") with the block starting 13px above it,
+   reading as a mark attached to the overflow count rather than to the row. Centred, it
+   belongs to the whole block however many lines that block runs to. */
+.vds-trials-who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: calc(100% + 2 * var(--vds-space-5));
+  margin-inline: calc(-1 * var(--vds-space-5));
+  margin-top: calc(-1 * var(--vds-space-2));
+  /* Even top and bottom: the hover fill is a band across the row, and it was 12px deep
+     above the text and flush against it below. */
+  padding: var(--vds-space-3) var(--vds-space-5);
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--opp-fg) 18%, transparent);
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 130ms ease;
+}
+
+.vds-trials-who:hover { background: color-mix(in srgb, var(--opp-fg) 7%, transparent); }
+
+.vds-trials-who:focus-visible { outline: 2px solid var(--opp-fg); outline-offset: -2px; }
+
+@container msp-dash (max-width: 640px) {
+  .vds-trials-who {
+    width: calc(100% + 2 * var(--vds-space-4));
+    margin-inline: calc(-1 * var(--vds-space-4));
+    padding-inline: var(--vds-space-4);
+  }
+}
+
+/* ---- What follows the hero figure ------------------------------------------------
+   A meter used to live here, splitting the trial population into signed and still
+   deciding. Both the meter and the split are gone: a signed trial is an active
+   subscription now and never counts as a trial, so the population has no halves left to
+   draw (see the note in TrialsCard). What remains is the expiry chip. */
+.vds-sell-hero__split { margin-top: 10px; }
+
+/* Wraps. The two halves sit at opposite ends while there's room, and on a phone the
+   "still deciding" half — which carries the nowrap expiry chip and so can't compress —
+   drops to its own line instead of pushing out through the tile. */
+.vds-sell-hero__legend {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 2px 10px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+  font-size: 11px; line-height: 15px; color: var(--vds-ink-muted);
+}
+
+.vds-sell-hero__legend strong { font-weight: 600; color: var(--vds-ink); }
+
+.vds-sell-hero__leg { display: inline-flex; align-items: center; gap: 5px; min-width: 0; }
+
+/* The slice with a deadline — and now the only thing in this row. Warning ink and its own
+   chip, because it is the one figure on the tile that expires. */
+.vds-sell-hero__urgent {
+  margin-left: 6px; padding: 1px 6px; border-radius: 999px;
+  background: var(--vds-warning-soft); color: var(--vds-warning);
+  font-size: 10px; font-weight: 600; white-space: nowrap;
+}
+
+/* ---- Trials by product ----------------------------------------------------------
+   Tile · name · proportional track · count. The track carried two depths — the full length
+   being accounts trialling the product, a solid portion inside it being how many had
+   signed. The signed share went with the population that had one, so it is a single bar
+   scaled against the busiest product. */
+.vds-sell-trials { margin-top: 18px; }
+
+.vds-sell-trials__rest { margin-left: 8px; font-weight: 500; letter-spacing: 0; text-transform: none; }
+
+.vds-sell-trial {
+  display: grid;
+  /* THE BAR IS THE DATA, so it gets a share of the width rather than a fixed 64px.
+     At 1fr for the name and 64px for the track, a 473px tile spent 302px on a label that
+     ellipsis-truncates anyway and left the one element carrying a quantity at a seventh of
+     the row — three bars all within a few pixels of each other, which is a distribution
+     you cannot read. Both columns flex now, weighted so the longest package name still
+     fits before the track starts taking from it. */
+  /* 24px, matching the tile. Was 22, the pre-snap size — same miss as .vds-sell-row. */
+  grid-template-columns: 24px minmax(0, 1.4fr) minmax(64px, 1fr) auto;
+  align-items: center;
+  gap: var(--msp-row-gap);
+  padding: 4px 0;
+}
+
+/* Pressable when the row has a package to open. Same treatment as the ranked rows on the
+   tiles either side of it, so a product row behaves the same wherever it appears. */
+.vds-sell-trial--btn {
+  width: calc(100% + 12px);
+  margin: 0 -6px;
+  padding: 4px 6px;
+  border: 0;
+  border-radius: var(--vds-radius-sm);
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.vds-sell-trial--btn:hover { background: var(--vds-surface-hover); }
+
+.vds-sell-trial--btn:focus-visible {
+  outline: 2px solid var(--vds-focus-ring, var(--nav-accent));
+  outline-offset: -2px;
+}
+
+.vds-sell-trial__name {
+  font-size: 11.5px; color: var(--vds-ink);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.vds-sell-trial__bar {
+  position: relative; height: 5px; border-radius: 999px;
+  background: color-mix(in srgb, var(--vds-ink) 7%, transparent);
+  overflow: hidden;
+}
+
+.vds-sell-trial__open {
+  position: absolute; inset-block: 0; inset-inline-start: 0;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--opp-fg) 28%, transparent);
+}
+
+.vds-sell-trial__fig {
+  display: flex; align-items: baseline; gap: 6px;
+  font-size: 11px; color: var(--vds-ink-subtle); font-variant-numeric: tabular-nums;
+}
+
+.vds-sell-trial__fig strong { font-size: 12px; font-weight: 600; color: var(--vds-ink); }
+
+/* The twelve-month shape under the distribution. Caption above rather than an axis: the
+   series has no scale worth printing — what's being read is whether the level holds. */
+/* ---- The trend, as the tile's elastic ------------------------------------------
+   This tile's grower, and the first one on the page — the pattern the rest were built from
+   once the grid went back to filling its rows (see .vds-tile__grow). Everything else in the
+   tile has a height its content decides; a chart doesn't, so the slack goes here and two
+   tiles sharing a row finish level without either being measured against the other.
+
+   It used to need a `.vds-tile--stretch` alongside it, opting this one tile out of the
+   grid's `align-items: start`. The grid stretches every tile now, so the opt-out is gone
+   and this block is the whole mechanism.
+
+   min-height keeps it honest when the tile is ALREADY the tallest in its row and there is
+   no slack to take — the trend still has to be a chart rather than a hairline. */
+.vds-sell-spark {
+  margin-top: 10px;
+  flex: 1 1 auto;
+  min-height: 56px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The chart fills whatever the caption leaves — and never less than its own shape floor.
+   `min-height: 0` was the whole story here, which is right for taking a row-mate's slack
+   and wrong when there is no row-mate: on a full-width tile this plot has no slack to
+   absorb and collapsed to a 38px line drawn across 1043px. 27:1.
+
+   The floor is the same 6:1 rule AreaTrend applies to every fixed-height plot (see the
+   note on MAX_RATIO there), stated in CSS because this is the one plot whose height is
+   the layout's to decide rather than the component's. `cqi` is 1% of the TILE's width —
+   the tile is the query container (.vds-dash-grid > *) — and this plot is full-bleed
+   within it, so the tile's width is near enough the plot's. 16cqi ≈ width ÷ 6.
+
+   Still a FLOOR: where the row does have slack, flex takes it and the chart grows past
+   this. Bounded at 200px for the same reason AreaTrend caps there. */
+.vds-sell-spark > .vds-area {
+  flex: 1 1 auto;
+  min-height: clamp(44px, 16cqi, 200px);
+}
+
+.vds-sell-spark__cap {
+  display: block; margin-bottom: 2px;
+  font-size: 10.5px; color: var(--vds-ink-subtle);
+}
+
+/* Groups pair up once the tile is wide enough — see the note in the JSX.
+
+   1 : 2, not 1 : 1. The two groups are different SHAPES, not two of a kind: "customers you
+   already have" is a single line, and "not sold yet" is two bordered blocks that each need
+   ~340px before their figure and their button stop colliding. Split evenly, the left column
+   held one row against two stacked cards and ran ~100px short, and the cards were still too
+   narrow to sit side by side — the worst of both. At 1:2 the right column clears 800px, its
+   two blocks pair off, and the columns come out within ~50px of each other.
+
+   A container query on the TILE, so this depends on how wide the tile actually is rather
+   than on which grid cell it was given. `align-items: start` because the groups still hold
+   different amounts and the shorter one shouldn't stretch to match. */
+.vds-sell-groups {
+  display: grid;
+  /* `minmax(0, 1fr)`, and it has to be stated. A grid with no template gets ONE AUTO
+     column, and an auto track sizes to max-content — so the stacked (narrow) case sized
+     itself to the widest row inside it and pushed 43px out through the tile's edge. The
+     explicit 0 floor is what lets the column be narrower than its content. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--vds-space-5) var(--vds-space-6);
+  align-items: start;
+}
+
+@container vds-tile (min-width: 860px) {
+  .vds-sell-groups { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+}
+
+/* 18 above the heading, 6 under it — the gap that OPENS a group has to beat the gap
+   inside it, or the heading floats between two lists and attaches to the wrong one.
+   Zeroed for the FIRST group in a row: the grid's own row-gap sets that distance, and the
+   margin on top of it made the two columns start at different heights. */
+.vds-sell-group { margin-top: 18px; }
+
+.vds-sell-groups > .vds-sell-group { margin-top: 0; }
+
+.vds-sell-group__head {
+  margin-bottom: 6px;
+  font-size: 10.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--vds-ink-subtle);
+}
+
+
+/* ---- AreaTrend's own rules, missed by the first extraction ---- */
+/* The canvas host. A min-width of 0 keeps it from propping the grid open — ECharts
+   writes a pixel width onto its child, and without this a card that narrows can be
+   held at the chart's previous size. */
+/* `position: relative` + an absolutely-filled canvas host: see the note in AreaTrend.
+   The canvas is taken out of flow so it can never contribute intrinsic width — a plot that
+   is momentarily wider than its box gets cropped instead of stretching the tile around it.
+   Without this, one canvas mid-resize was enough to push a 1195px tile to 1293 and blow
+   out the grid, because every ancestor sized itself to the canvas. */
+.vds-area { width: 100%; min-width: 0; position: relative; overflow: hidden; }
+
+.vds-area__canvas { position: absolute; inset: 0; }
+
+.vds-tile-plot > .vds-area { flex: 1 1 auto; min-height: 0; }
+
+/* The chart fills whatever the caption leaves — and never less than its own shape floor.
+   `min-height: 0` was the whole story here, which is right for taking a row-mate's slack
+   and wrong when there is no row-mate: on a full-width tile this plot has no slack to
+   absorb and collapsed to a 38px line drawn across 1043px. 27:1.
+
+   The floor is the same 6:1 rule AreaTrend applies to every fixed-height plot (see the
+   note on MAX_RATIO there), stated in CSS because this is the one plot whose height is
+   the layout's to decide rather than the component's. `cqi` is 1% of the TILE's width —
+   the tile is the query container (.vds-dash-grid > *) — and this plot is full-bleed
+   within it, so the tile's width is near enough the plot's. 16cqi ≈ width ÷ 6.
+
+   Still a FLOOR: where the row does have slack, flex takes it and the chart grows past
+   this. Bounded at 200px for the same reason AreaTrend caps there. */
+.vds-sell-spark > .vds-area {
+  flex: 1 1 auto;
+  min-height: clamp(44px, 16cqi, 200px);
 }

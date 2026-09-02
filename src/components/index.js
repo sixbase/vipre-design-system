@@ -95,3 +95,4 @@ export {
   CALENDAR_TIMEFRAMES,
   resolveTimeframe,
 } from './TimeframeSelect/index.js'
+export { AreaTrend } from './AreaTrend/index.js'
