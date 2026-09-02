@@ -11,7 +11,13 @@
   --vds-radio-size: 1.125rem;
   // Selected dot diameter. Glyph geometry, NOT spacing — it must not ride the
   // --vds-space-* scale even though 0.375rem currently matches the 1-5 step.
-  --vds-radio-dot: 0.375rem;
+  // A THIRD OF THE RING, derived. It was a literal 0.375rem (6px on 18), and the
+  // compact size then set its own literal 5px — which is 35.7% of a 14px ring where
+  // 6 is 33.3% of an 18px one. The dot was growing as the ring shrank, the same
+  // defect the checkmark had. A third holds at any size; 4.67px renders cleanly on
+  // the displays this ships to, and the antialiasing argument for rounding up to 5
+  // was defending an accident after the fact.
+  --vds-radio-dot: calc(var(--vds-radio-size) / 3);
   // Same indirection as Checkbox — see the note there.
   --vds-radio-on: var(--vds-primary);
   --vds-radio-on-ink: var(--vds-on-primary);
@@ -28,10 +34,6 @@
 
   &--sm {
     --vds-radio-size: 0.875rem;      // 14px, from 18
-    // 5px, from 6. NOT the exact share (that would be 4.67): a dot this small loses
-    // more to antialiasing than the arithmetic knows about, so it is rounded UP, and
-    // 5 lands on a whole pixel where 4.67 does not.
-    --vds-radio-dot: 0.3125rem;
     gap: var(--vds-space-1-5);
     // caption (13px), NOT detail (12). The stated use for this size is a dense table
     // row, and a compact row's own cells are caption — a label one step below the

@@ -22,8 +22,10 @@
   @include type.step(body);
 
   &--sm {
-    // 28 x 16 with a 12px thumb: pad + thumb + pad still equals the track height, and
-    // the travel stays the same fraction of the track, so the throw reads the same.
+    // 28 x 16 with a 12px thumb: pad + thumb + pad still equals the track height, so
+    // the thumb sits in the track the way it does at 36 x 20. The travel is derived
+    // from these three (see the checked rule), which is what makes the throw read the
+    // same — 12px of 28 against 16 of 36, 43% and 44%.
     --vds-switch-track-w: 1.75rem;   // 28px, from 36
     --vds-switch-track-h: 1rem;      // 16px, from 20
     --vds-switch-thumb: 0.75rem;     // 12px, from 16
@@ -93,9 +95,16 @@
   }
 
   &__input:checked ~ &__track .vds-switch__thumb {
-    // Travel = track-w - 2*pad - thumb (36 - 4 - 16). Kept literal, not a calc:
-    // pad is px while the rest are rem, so a calc would drift off a 16px root.
-    transform: translateX(1rem);
+    // Travel = track-w - thumb - 2*pad. This WAS the literal 1rem, with a note
+    // arguing that mixing px pad with rem track would "drift off a 16px root" —
+    // which had it backwards. calc() resolves rem against whatever the root
+    // actually is; the LITERAL is the thing that breaks when the root is not 16.
+    // And it broke sooner than that: on the 28px compact track the correct travel
+    // is 12px, so a fixed 16 slid the thumb 4px too far and hung it 2px off the
+    // end of its own track. Derived, it is right at both sizes and at any other.
+    transform: translateX(calc(
+      var(--vds-switch-track-w) - var(--vds-switch-thumb) - 2 * var(--vds-switch-pad)
+    ));
   }
 
   // Touch: the invisible input (the real hit area) grows to the minimum tap
