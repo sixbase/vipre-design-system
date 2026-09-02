@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { ChevronRight, ArrowRight, Plus, Boxes } from 'lucide-react'
 import { DocPage } from '../DocPage.jsx'
 import { Section, Preview, RefTable, IC } from '../primitives.jsx'
-import { AreaTrend, Badge, Button, Icon, ProductTile, Stack, Text } from '../../components/index.js'
+import { AreaTrend, Badge, Button, EntityTile, Icon, ProductTile, Stack, Text } from '../../components/index.js'
 import { GLYPHS, CUSTOMER_TYPE } from '../templateData.js'
 
 /* ============================================================================
@@ -146,6 +146,13 @@ const ACCOUNTS = [
   { name: 'Quantum Consulting Ltd', seats: 297, type: 'reseller' },
 ]
 
+/* THE TWO VOCABULARIES DO NOT AGREE, and this is the seam. The data calls the
+   middle type `reseller` (so does CUSTOMER_TYPE, and so does the Customers table's
+   Tag); EntityTile's colour map calls it `partner`. Mapped here rather than
+   renamed on either side, because renaming one breaks every consumer of the other
+   — but it is a rename worth doing once somebody owns both. */
+const TILE_TYPE = { distributor: 'distributor', reseller: 'partner', customer: 'customer' }
+
 function ConcentrationDemo() {
   const top = ACCOUNTS[0].seats
   return (
@@ -167,7 +174,7 @@ function ConcentrationDemo() {
       <div className="vds-biz-rows vds-biz-rows--grow">
         {ACCOUNTS.map((a) => (
           <BizRow key={a.name}
-            mark={<ProductTile glyph={GLYPHS[a.type]} tonal size={24} />}
+            mark={<EntityTile type={TILE_TYPE[a.type]} glyph={GLYPHS[a.type]} size={24} />}
             name={a.name} share={a.seats / top} value={a.seats} sub="1%"
             title={`${a.name} — ${CUSTOMER_TYPE[a.type].label}, ${a.seats} seats`} />
         ))}
@@ -454,7 +461,7 @@ export function TileRowsPage() {
 
       <Section
         title="An account's mark"
-        note="The mark is the account's TYPE — distributor, reseller or customer. A product row's mark says which product; an account row's says what kind of account, and five resellers are a different book from five direct customers at the same seat count. Same tile and same size as the product rows, so the two lists read as one system; the glyph is the only thing that changes. --plain and --tight remain for the rows that genuinely have nothing to draw — a totals row, a remainder line."
+        note="The mark is the account's TYPE, and in this one the colour carries it: purple for a distributor, amber for a partner, teal for a customer. That is EntityTile, ported from the shell — a different tile from ProductTile on purpose, because a product's mark identifies one product out of twenty while an account's sorts a book into three kinds, and three colours do that at a glance where twenty could not. The colours stay literal: they are the tile's identity, not theme chrome, and a distributor is the same purple in every product that draws one."
       >
         <Preview
           canvas={<ConcentrationDemo />}

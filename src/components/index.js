@@ -96,3 +96,4 @@ export {
   resolveTimeframe,
 } from './TimeframeSelect/index.js'
 export { AreaTrend } from './AreaTrend/index.js'
+export { EntityTile } from './EntityTile/index.js'
