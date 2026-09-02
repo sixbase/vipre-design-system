@@ -1171,11 +1171,31 @@ section:first-of-type > .vds-section-h {
   }
 }
 
+/* ---- THE SEARCH FIELD SITS IN THE NAV'S OWN COLUMN --------------------------------
+   It carried 16px of horizontal padding of its own, on top of the sidebar's 24 — so
+   the field's box ran 40 to 184 inside a column whose every row runs 24 to 200. A box
+   inset from the list beneath it by an amount that matches nothing reads as floating,
+   and it was the only thing in the sidebar with its own left edge.
+
+   Nothing else needed the inset. The rows get their breathing room from 8px INSIDE the
+   row, which is what lets the hover fill reach the column's edges while the label still
+   stands off them — so the field gets the same 8, and the two agree by construction. */
 .vds-sidebar__search {
-  padding: 0 var(--vds-space-4) var(--vds-space-3);
+  padding: 0 0 var(--vds-space-3);
 }
+
+/* 8px, down from the --sm default of 10, so the magnifier's left edge lands on 32 —
+   the exact x where every nav label and every group caption begins. The field's box
+   now matches the rows' box and its first ink matches their first ink; at 10 the box
+   agreed and the ink missed by two, which is the more visible of the two errors. */
+.vds-sidebar__search .vds-input.vds-input--sm {
+  padding-inline: var(--vds-space-2);
+}
+
 .vds-sidebar__no-matches {
   display: block;
-  padding: var(--vds-space-2) var(--vds-space-4);
+  /* Was --vds-space-4 (16), which started this message 8px right of the search field
+     it answers and of the results it replaces. */
+  padding: var(--vds-space-2);
 }
 

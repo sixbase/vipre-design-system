@@ -52,6 +52,9 @@
 
   &__track {
     flex-shrink: 0;
+    // Dropped by the optical shift: see --vds-control-optical-shift. Centred on its
+    // box this sat a fraction high against the label's visible ink.
+    transform: translateY(var(--vds-control-optical-shift));
     width: var(--vds-switch-track-w);
     height: var(--vds-switch-track-h);
     padding: var(--vds-switch-pad);

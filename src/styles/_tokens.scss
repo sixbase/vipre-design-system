@@ -269,6 +269,18 @@ $magenta: ( // accent — hot pink (hue 348)
   //     var(--vds-control-ring-tint), transparent). Reads as "active editing surface" and
   //     pairs with the border-color change. Unifying the two is a rendering change — rejected.
   --vds-control-ring-w: 2px;            // ring thickness, both recipes
+
+  // ---- OPTICAL CENTRING, for a control set beside its own label ----------------
+  // `align-items: center` centres BOXES. A line box reserves descender space that
+  // Latin lowercase mostly doesn't use, so the ink you actually see sits BELOW the
+  // box's middle — and a checkbox, radio or switch centred on the box therefore
+  // rides high against the word next to it. Measured on Rubik at every size this
+  // ships: the gap runs 0.06–0.08em. 1/16em sits inside that at both 13px and 14px
+  // and stays right if the type scale moves, which a pixel nudge would not.
+  //
+  // In `em`, so it is read against the LABEL's size — the control's own box has no
+  // opinion about where the text's ink falls.
+  --vds-control-optical-shift: 0.0625em;
   --vds-control-ring-offset: 2px;       // outline recipe only (buttons/checks)
   // Inset variant — the ring is drawn INSIDE the box. For controls whose edge is
   // flush with a container: a row in a scroll box, an item flush with a panel

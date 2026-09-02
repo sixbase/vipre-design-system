@@ -81,6 +81,9 @@
 
   &__box {
     flex-shrink: 0;
+    // Dropped by the optical shift: see --vds-control-optical-shift. Centred on its
+    // box this sat a fraction high against the label's visible ink.
+    transform: translateY(var(--vds-control-optical-shift));
     width: var(--vds-checkbox-size);
     height: var(--vds-checkbox-size);
     display: inline-flex;
