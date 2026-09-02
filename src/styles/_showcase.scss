@@ -1056,12 +1056,19 @@ section:first-of-type > .vds-section-h {
 }
 
 /* ---- page filter -------------------------------------------------------------------
-   The rail takes what it needs and the page takes the rest. minmax(0,1fr) on the panel
-   rather than 1fr, so a long value inside it cannot push the rail wider — a filter that
-   resizes when you pick something is a filter you stop trusting. */
+   Both halves are CARDS, and what has to line up is their two top edges — the one place
+   on the page where the eye checks whether two things start together. So neither carries
+   padding above its own border, and the grid aligns to `start` rather than stretching.
+
+   27rem is measured, not chosen: it is the width that holds the longest option — "Advanced
+   Threat Protection" — beside the two figure columns without the name wrapping or the
+   table overflowing. 21rem is where it stops being worth two columns and stacks.
+
+   minmax(0, 1fr) on the panel rather than 1fr, so a long value inside it cannot push the
+   rail wider. A filter that resizes when you pick something is one you stop trusting. */
 .vds-page-filter {
   display: grid;
-  grid-template-columns: minmax(20rem, 26rem) minmax(0, 1fr);
+  grid-template-columns: minmax(21rem, 27rem) minmax(0, 1fr);
   gap: var(--vds-space-5);
   align-items: start;
   width: 100%;
@@ -1072,6 +1079,8 @@ section:first-of-type > .vds-section-h {
   border-radius: var(--vds-radius-md);
   background: var(--vds-surface);
 }
+/* Below the point where two columns still earn their keep, the rail sits above the
+   panel rather than beside it. */
 @media (max-width: 60rem) {
   .vds-page-filter { grid-template-columns: minmax(0, 1fr); }
 }
