@@ -238,7 +238,7 @@ function ConcentrationDemo() {
       <div className="vds-status-lead">
         <span className="vds-status-lead__figs">
           <span className="vds-status-lead__value">20%</span>
-          <span className="vds-status-lead__share">1.5% if the book were even</span>
+          <span className="vds-status-lead__share">an even split would be 1.5%</span>
         </span>
         <span className="vds-status-lead__caption">Seats held by the 5 biggest accounts</span>
       </div>

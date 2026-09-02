@@ -3259,3 +3259,57 @@ section:first-of-type > .vds-section-h {
 @media (prefers-reduced-motion: reduce) {
   .vds-pkg-aud__seg .vds-kpi-meter__seg { transition: none; }
 }
+
+
+/* ===========================================================================
+   THE KPI HEAD — the segment tile's, worn by the other two
+   ---------------------------------------------------------------------------
+   Restored. This block listed .vds-pkg-aud__* alongside the other two heads, and
+   the pass that re-extracted the segment tile matched on that selector and deleted
+   the whole rule — taking the other two tiles' head with it. They fell back to
+   their own ported values and drifted apart again: 28px and 30px figures against
+   the segment's 26, a 16px qualifier against its 12, and .vds-status-lead__figs
+   losing its flex so "20%" and its qualifier ran together with no gap at all.
+
+   The segment tile is the model and does NOT appear here — it wears these values
+   because they are its own, and it stays verbatim.
+   =========================================================================== */
+.vds-status-lead__value,
+.vds-sell-hero__count {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--vds-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.vds-status-lead__share,
+.vds-sell-hero__unit {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--vds-ink-subtle);
+}
+
+.vds-status-lead__caption,
+.vds-sell-hero__detail {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--vds-ink-muted);
+}
+
+/* The figure and its qualifier share a line, centred on their ink — see the
+   measurement note on .vds-pkg-aud__seg--solo for why centre and not baseline. */
+.vds-status-lead__figs,
+.vds-sell-hero__figs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--vds-space-2);
+  min-width: 0;
+}
+
+.vds-status-lead,
+.vds-trials-lead { display: flex; flex-direction: column; gap: var(--vds-space-1); }
