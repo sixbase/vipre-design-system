@@ -164,12 +164,21 @@ function ConcentrationDemo() {
           1.5% in any five, so 3% is a mild lean; across 12 accounts an even book is
           42% and the same 3% could not happen. The reader cannot do that division
           at a glance, so the card does it. */}
+      {/* THE SAME HEAD AS THE SEGMENT TILE. This ran figure-then-caption, with the
+          baseline buried mid-sentence after a middot — so the one number that makes
+          "3%" mean anything was the last thing on the line and read as an aside.
+
+          It is not an aside: 3% is alarming or trivial depending only on how many
+          accounts are in the scope. Across 324 an even book already puts 1.5% in any
+          five, so 3% is a mild lean; across 12 accounts an even book is 42% and the
+          same 3% could not happen. Beside the figure it qualifies, it is read in the
+          same pass — which is exactly the job "18% of all accounts" does next to 58. */}
       <div className="vds-status-lead">
-        <span className="vds-status-lead__value">3%</span>
-        <span className="vds-status-lead__caption">
-          of seats sit with 5 accounts
-          <span className="vds-status-lead__share"> · 1.5% if the book were even</span>
+        <span className="vds-status-lead__figs">
+          <span className="vds-status-lead__value">3%</span>
+          <span className="vds-status-lead__share">1.5% if the book were even</span>
         </span>
+        <span className="vds-status-lead__caption">Seats held by the 5 biggest accounts</span>
       </div>
       <div className="vds-biz-rows vds-biz-rows--grow">
         {ACCOUNTS.map((a) => (
@@ -380,6 +389,8 @@ function TrialsDemo() {
         {/* The unit is the SENTENCE, not a label. "112 accounts" states a quantity
             and leaves you to work out what to do with it; "112 accounts could start
             paying" is the whole point of the tile, in the same number. */}
+        {/* Already this shape — figure, the same fact in words beside it, label
+            below — but at its own sizes (30px / 12.5 / 11.5). On the shared head now. */}
         <span className="vds-sell-hero__figs">
           <span className="vds-sell-hero__count">112</span>
           <span className="vds-sell-hero__unit">accounts could start paying</span>

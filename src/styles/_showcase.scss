@@ -2861,7 +2861,13 @@ section:first-of-type > .vds-section-h {
    not mistaken for part of the figure. */
 .vds-pkg-aud__seg--solo .vds-pkg-aud__figure {
   display: flex;
-  align-items: center;
+  /* BASELINE, not centre. The note directly above this rule argues for baseline —
+     "a 26px figure and 12px text share a baseline the way a number and its unit
+     do" — and then the rule centred them, which floats the share in the middle of
+     the digits' height where nothing else sits. Measured 7px off its own baseline
+     before this; the two heads that copied the SHAPE from this tile were aligned
+     and this one was not. The comment was right. */
+  align-items: baseline;
   gap: var(--vds-space-2);
   min-width: 0;
 }
@@ -2932,3 +2938,72 @@ section:first-of-type > .vds-section-h {
 /* The figures line up with every other column of figures on the page. */
 .vds-kpi-meter__val,
 .vds-kpi-meter__pct { font-variant-numeric: tabular-nums; }
+
+
+/* ===========================================================================
+   ONE KPI HEAD, for every tile that leads with a figure
+   ---------------------------------------------------------------------------
+   Three tiles led with a big number and each one sized it differently: 26, 28
+   and 30px figures, 12 and 12.5px supporting text, and three label treatments
+   (12/500, 12/400, 11.5/400). Nothing chose those differences; they are what
+   happens when three tiles are written on three days.
+
+   THE SHAPE IS THE SEGMENT TILE'S, and it is the one worth keeping:
+
+     FIGURE, and beside it on the same baseline the SAME FACT READ ANOTHER WAY —
+     a count and its share, a share and its baseline. Beside the number it
+     qualifies, a reader takes both in one pass; a line down it becomes a second
+     caption and they have to work out which of the two it measures.
+
+     LABEL UNDERNEATH, saying what is being counted. It carries weight 500 where
+     the supporting text is 400: it is the tile's subject, and the figure above
+     it is only a quantity until the label says what of.
+
+   Baseline-aligned, never centred — a 26px figure and 12px text share a
+   baseline the way a number and its unit do. Centring floats the small text in
+   the middle of the digits' height, where nothing else sits.
+   =========================================================================== */
+.vds-pkg-aud__val,
+.vds-status-lead__value,
+.vds-sell-hero__count {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--vds-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.vds-pkg-aud__stat,
+.vds-status-lead__share,
+.vds-sell-hero__unit {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--vds-ink-subtle);
+}
+
+.vds-pkg-aud__label,
+.vds-status-lead__caption,
+.vds-sell-hero__detail {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--vds-ink-muted);
+}
+
+/* The figure and its supporting text share a line and a baseline. */
+.vds-pkg-aud__figure,
+.vds-status-lead__figs,
+.vds-sell-hero__figs {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--vds-space-2);
+  min-width: 0;
+}
+
+/* 4px between the figure line and its label — they are one block, and the tile's
+   own gap between blocks is larger. */
+.vds-status-lead,
+.vds-trials-lead { gap: var(--vds-space-1); }
