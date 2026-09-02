@@ -3156,3 +3156,175 @@ section:first-of-type > .vds-section-h {
 .vds-biz-row--head .vds-biz-row__sub,
 .vds-biz-row--head .vds-biz-row__per,
 .vds-sell-trial--head .vds-sell-trial__fig { text-align: right; font-weight: inherit; color: inherit; font-size: inherit; }
+
+
+/* ===========================================================================
+   THE ROW SYSTEM — one definition, five lists
+   ---------------------------------------------------------------------------
+   Rebuilt. Four separate bugs on this page had ONE cause: every row was its own
+   grid, so `auto` and `fr` tracks resolved against that row's own content. Rows
+   agreed with each other only because they happened to hold the same shapes, and
+   the moment one didn't — a header with an empty mark cell, a header label wider
+   than its figures — the columns came apart. Each was patched by pinning another
+   track to a fixed px.
+
+   THE LIST OWNS THE COLUMNS NOW. One grid, declared once as --cols; every row is
+   a `subgrid` spanning it. Tracks resolve for the list as a whole, so a header and
+   its rows cannot disagree, `fr` and `auto` are safe again, and the fixed-px
+   patches are gone.
+
+   The chrome — inset, hover, divider, header — is one set of rules here. A family
+   class now only says what its COLUMNS are and how its own cells look.
+   =========================================================================== */
+.vds-rowlist {
+  display: grid;
+  grid-template-columns: var(--cols);
+  column-gap: var(--vds-space-3);
+  /* Out to the card's border, so a row's fill and its dividers end where every
+     other line in the tile ends. The padding puts the text back on the card's
+     own inset, so nothing moves but the ink that is supposed to bleed. */
+  margin-inline: calc(-1 * var(--vds-space-5));
+  padding-inline: var(--vds-space-5);
+}
+
+.vds-rowlist > * {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+  align-items: center;
+  position: relative;
+  /* The fill and the lines reach the card's border; the text does not. One value
+     for both, so they cannot drift apart. */
+  margin-inline: calc(-1 * var(--vds-space-5));
+  padding: var(--vds-space-2) var(--vds-space-5);
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+/* Top line on every row, bottom line on the last: a closed block, not a stack of
+   separators. Drawn as pseudo-elements because a border on a rounded box curves at
+   its ends, and at this size that curl reads as a tab. */
+.vds-rowlist > *::before,
+.vds-rowlist > *:last-child::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--vds-line-subtle);
+  z-index: 0;
+}
+.vds-rowlist > *::before { top: 0; }
+.vds-rowlist > *:last-child::after { bottom: 0; }
+
+/* HOVER SPANS THE ROW, edge to edge, with no corner. It was an inset 6px pill
+   between two full-bleed lines, which read as a fill that had missed its own row.
+   A row bounded by lines that reach the card has one honest highlight: the band
+   between them. */
+.vds-rowlist > .is-interactive { cursor: pointer; }
+.vds-rowlist > .is-interactive:hover { background: color-mix(in srgb, var(--vds-ink) 4%, transparent); }
+.vds-rowlist > .is-interactive:focus-visible {
+  outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+  outline-offset: calc(-1 * var(--vds-control-ring-w));
+}
+
+/* The current row, at brand strength — one row is ever current and it is the whole
+   state of what the list drives. It owns both its edges so the fill reads as one
+   block. */
+.vds-rowlist > .is-current { background: var(--vds-primary); color: var(--vds-on-primary); }
+.vds-rowlist > .is-current.is-interactive:hover { background: var(--vds-primary-hover); }
+.vds-rowlist > .is-current * { color: inherit; }
+.vds-rowlist > .is-current::before,
+.vds-rowlist > .is-current::after,
+.vds-rowlist > .is-current + *::before { display: none; }
+.vds-rowlist > .is-current {
+  --vds-tile-tonal-face: #{'color-mix(in srgb, var(--vds-on-primary) 22%, transparent)'};
+  --vds-tile-glyph-from: var(--vds-on-primary);
+  --vds-tile-glyph-to: #{'color-mix(in srgb, var(--vds-on-primary) 55%, transparent)'};
+}
+
+/* ---- the header ---------------------------------------------------------
+   The DS Table's header, applied to a row: 11px at 500, sentence case, normal
+   tracking, --vds-ink-subtle. Same vertical padding as a data row — it had 9px of
+   its own against the rows' 8, which is the sort of difference that has no reason
+   and shows up as a header sitting a pixel high. */
+.vds-rowlist > .is-head {
+  font-size: 0.6875rem;
+  line-height: 0.875rem;
+  font-weight: var(--vds-weight-medium);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--vds-ink-subtle);
+  cursor: default;
+}
+.vds-rowlist > .is-head:hover { background: none; }
+.vds-rowlist > .is-head > * { white-space: nowrap; }
+
+/* A sortable heading is a button filling its cell, so the whole column head is the
+   target rather than the word. It reuses .vds-table__sort — the Table's own glyph
+   and its asc/desc/hover states — because a second sort arrow that merely agrees
+   today is the thing this page exists to complain about. */
+.vds-rowsort {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--vds-space-1-5);
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.vds-rowsort--right { justify-content: flex-end; }
+.vds-rowsort:hover { color: var(--vds-ink); }
+.vds-rowsort:hover .vds-table__sort { opacity: 0.7; }
+.vds-rowsort:focus-visible {
+  outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+
+/* ---- the cells the ranked lists use -------------------------------------- */
+.vds-rowlist__name {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vds-rowlist__track {
+  display: block;
+  height: 6px;
+  border-radius: var(--vds-radius-full);
+  background: var(--vds-line);
+  overflow: hidden;
+}
+.vds-rowlist__fill { display: block; height: 100%; border-radius: inherit; background: var(--vds-primary); }
+.vds-rowlist__val { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
+.vds-rowlist__sub { font-size: 12px; color: var(--vds-ink-subtle); font-variant-numeric: tabular-nums; text-align: right; }
+/* On the cobalt fill the meter has to survive too — --vds-line is invisible there. */
+.vds-rowlist > .is-current .vds-rowlist__track { background: #{'color-mix(in srgb, var(--vds-on-primary) 25%, transparent)'}; }
+.vds-rowlist > .is-current .vds-rowlist__fill { background: var(--vds-on-primary); }
+/* The header's own cells inherit its type; the figure columns keep their alignment. */
+.vds-rowlist > .is-head .vds-rowlist__val,
+.vds-rowlist > .is-head .vds-rowlist__sub,
+.vds-rowlist > .is-head .vds-rowlist__name { font-size: inherit; font-weight: inherit; color: inherit; }
+/* The footer sits inside the list now, so it spans the grid rather than a column. */
+.vds-rowlist > .vds-biz-foot { grid-column: 1 / -1; display: flex; }
+.vds-rowlist > .vds-biz-foot::before { display: none; }
+
+/* The mark, and the 8px that ties it to the name. The row's own rhythm is 12; a mark
+   set at the column gap reads as its own column and stops belonging to the word beside
+   it. One grid cannot vary its gap, so the NAME pulls the 4px difference back — and it
+   is the cell after the mark that pulls, so a list without a mark is unaffected. */
+.vds-rowlist__mark {
+  display: inline-flex;
+  /* Optically centred against the name's ink, not its box. */
+  font-size: 13px;
+  transform: translateY(var(--vds-control-optical-shift));
+}
+.vds-rowlist__mark + * { margin-left: -4px; }

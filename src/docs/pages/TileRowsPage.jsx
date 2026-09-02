@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ChevronRight, ArrowRight, Plus, Boxes } from 'lucide-react'
 import { DocPage } from '../DocPage.jsx'
 import { Section, Preview, RefTable, IC } from '../primitives.jsx'
@@ -38,87 +38,83 @@ function DashHead({ title, sub, action }) {
   )
 }
 
-/* One row for every ranked list on the view. `share` drives the bar and is a share
-   OF THE TOP ROW, not of the total — a share of the total flattens six rows into
-   six identical stubs. `flag` is the optional right-hand alarm cell (days to
-   renewal, invoice state) and takes the place of `sub` when present. */
-function BizRow({ mark, name, share, value, sub, per, flag, flagTone, onClick, title, current }) {
-  const cls = [
-    'vds-biz-row',
-    mark ? '' : (sub || flag ? 'vds-biz-row--plain' : 'vds-biz-row--tight'),
-    per != null ? 'vds-biz-row--wide' : '',
-    onClick ? 'vds-biz-row--btn' : '',
-    current ? 'vds-biz-row--current' : '',
-  ].filter(Boolean).join(' ')
-  const body = (
-    <>
-      {mark && <span className="vds-biz-row__tile" aria-hidden>{mark}</span>}
-      <span className="vds-biz-row__name">{name}</span>
-      <span className="vds-biz-row__track" aria-hidden>
-        {/* A floor of 2%, so the smallest row still draws a mark rather than an
-            empty track that reads as missing data. */}
-        <span className="vds-biz-row__fill" style={{ width: `${Math.max(2, Math.round(share * 100))}%` }} />
-      </span>
-      <span className="vds-biz-row__val">{value}</span>
-      {flag != null
-        ? <span className={`vds-biz-row__flag${flagTone ? ` vds-biz-row__flag--${flagTone}` : ''}`}>{flag}</span>
-        : sub != null && <span className="vds-biz-row__sub">{sub}</span>}
-      {/* THE RATIO BETWEEN THE TWO COLUMNS BESIDE IT, and the reason this row has a
-          sixth cell at all. Seats-order and accounts-order are two true rankings of
-          the same rows; a product with few accounts and many seats each is sold to
-          big customers, one with many accounts and few seats each is sold everywhere
-          in small blocks, and that difference IS this number. It was the one figure
-          the card made the reader work out in their head, six times.
-
-          Self-labelled, because these lists carry no header row and an unlabelled
-          number in a sixth column is a number nobody can read. */}
-      {per != null && <span className="vds-biz-row__per">{per}</span>}
-    </>
-  )
-  return onClick
-    ? <button type="button" className={cls} onClick={onClick} title={title}>{body}</button>
-    : <div className={cls} title={title}>{body}</div>
-}
-
+/* ============================================================================
+   Rows — the list owns the columns, a row is a subgrid of them.
+   `cols` is a grid template; `columns` describes the cells once and both the
+   header and the rows read it, so a label cannot end up over the wrong figure.
+   ========================================================================== */
 /* The remainder line. It names the population the list above it left out, and it is
    deliberately NOT restyled into a button: it keeps the hairline, the size and the
    subtle ink it had as text, because its job on the card hasn't changed. What it
    gains is a hover, a focus ring and an arrow that appears on approach — the
    smallest vocabulary that says "this goes somewhere" without turning a footnote
-   into a call to action. */
+   into a call to action. It sits INSIDE the list now, spanning the grid, so it takes
+   the list's own bleed and lines up with everything above it. */
 function FootLink({ label, value, onClick }) {
-  if (!onClick) {
-    return (
-      <div className="vds-biz-foot">
-        <span>{label}</span>
-        <span className="vds-biz-foot__val">{value}</span>
-      </div>
-    )
-  }
-  return (
-    <button type="button" className="vds-biz-foot vds-biz-foot--btn" onClick={onClick}>
+  const body = (
+    <>
       <span>{label}</span>
       <span className="vds-biz-foot__val">
         {value}
-        <Icon as={ArrowRight} size="sm" className="vds-biz-foot__go" aria-hidden />
+        {onClick && <Icon as={ArrowRight} size="sm" className="vds-biz-foot__go" aria-hidden />}
       </span>
-    </button>
+    </>
+  )
+  return onClick
+    ? <button type="button" className="vds-biz-foot vds-biz-foot--btn" onClick={onClick}>{body}</button>
+    : <div className="vds-biz-foot">{body}</div>
+}
+
+function SortArrow({ direction }) {
+  /* .vds-table__sort, so the Table's own glyph styling drives it — the colour, the
+     hidden-until-hovered opacity and the 180° flip for descending all come from
+     Table.scss. A second arrow that merely agrees today is what this page is about. */
+  return (
+    <span className={`vds-table__sort${direction ? ` vds-table__sort--${direction}` : ''}`} aria-hidden="true">
+      <svg width="9" height="8" viewBox="0 0 9 8" fill="none" stroke="currentColor"
+        strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4.5 7.25V0.75M1.5 3.75L4.5 0.75L7.5 3.75" />
+      </svg>
+    </span>
   )
 }
 
-/* The header is a ROW — same classes, same grid — so a label cannot drift off the
-   column it names. The mark and meter cells carry no heading: there is nothing to
-   call either, and neither is sortable. They are not optional though, or every
-   label lands a column to the left of its figures. */
-function BizHead({ wide, columns }) {
+function Rows({ cols, columns, data, getKey, sort, onSort, current, onPick, children }) {
   return (
-    <div className={`vds-biz-row vds-biz-row--head${wide ? ' vds-biz-row--wide' : ''}`} aria-hidden>
-      <span />
-      <span className="vds-biz-row__name">{columns.name}</span>
-      <span />
-      <span className="vds-biz-row__val">{columns.value}</span>
-      <span className="vds-biz-row__sub">{columns.sub}</span>
-      {wide && <span className="vds-biz-row__per">{columns.per}</span>}
+    <div className="vds-rowlist" style={{ '--cols': cols }}>
+      <div className="is-head" role="row">
+        {columns.map((c) => {
+          const active = sort?.key === c.key
+          const cell = c.sortable && onSort ? (
+            <button type="button"
+              className={`vds-rowsort${c.align === 'right' ? ' vds-rowsort--right' : ''}`}
+              onClick={() => onSort({ key: c.key, direction: active && sort.direction === 'desc' ? 'asc' : 'desc' })}
+              aria-label={`Sort by ${c.header}`}>
+              {c.header}
+              <SortArrow direction={active ? sort.direction : undefined} />
+            </button>
+          ) : c.header
+          return (
+            <span key={c.key} className={c.cellClass} aria-sort={c.sortable ? (active ? (sort.direction === 'asc' ? 'ascending' : 'descending') : 'none') : undefined}>
+              {cell}
+            </span>
+          )
+        })}
+      </div>
+      {data.map((row, i) => {
+        const key = getKey(row)
+        const interactive = !!onPick
+        return (
+          <div key={key} role="row"
+            className={[interactive && 'is-interactive', current === key && 'is-current'].filter(Boolean).join(' ')}
+            tabIndex={interactive ? 0 : undefined}
+            onClick={interactive ? () => onPick(key) : undefined}
+            onKeyDown={interactive ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick(key) } } : undefined}>
+            {columns.map((c) => <span key={c.key} className={c.cellClass}>{c.render(row, i)}</span>)}
+          </div>
+        )
+      })}
+      {children}
     </div>
   )
 }
@@ -135,29 +131,44 @@ const PRODUCTS = [
 
 function SeatsByProductDemo() {
   const [picked, setPicked] = useState(null)
-  const top = PRODUCTS[0].seats
+  const [sort, setSort] = useState({ key: 'seats', direction: 'desc' })
+  const rows = useMemo(() => {
+    const v = [...PRODUCTS]
+    const get = { name: (p) => p.name, seats: (p) => p.seats, accounts: (p) => p.accounts,
+                  per: (p) => p.seats / p.accounts }[sort.key]
+    v.sort((a, b) => {
+      const x = get(a), y = get(b)
+      const c = typeof x === 'number' ? x - y : String(x).localeCompare(String(y))
+      return sort.direction === 'asc' ? c : -c
+    })
+    return v
+  }, [sort])
+  /* The meter is a share OF THE TOP ROW, and the top row is whatever the sort put
+     there — so it stays the longest bar under every ordering. A share of the
+     maximum would leave a sort by name drawing bars in no order at all. */
+  const top = Math.max(...rows.map((p) => p.seats))
   return (
     <div className="vds-tile-demo">
     <div className="vds-tile">
       <DashHead title="Seats by product" sub="Under contract" action={{ label: 'Package Insights' }} />
-      <div className="vds-biz-rows vds-biz-rows--grow">
-        <BizHead wide columns={{ name: 'Product', value: 'Seats', sub: 'Accounts', per: 'Per acct' }} />
-        {PRODUCTS.map((p) => (
-          <BizRow
-            key={p.id}
-            mark={<ProductTile glyph={p.glyph} tonal size={24} />}
-            name={p.name}
-            share={p.seats / top}
-            value={p.seats.toLocaleString()}
-            sub={`${p.accounts} accts`}
-            per={`${Math.round(p.seats / p.accounts)}/acct`}
-            current={picked === p.id}
-            onClick={() => setPicked(picked === p.id ? null : p.id)}
-            title={`${p.name} — ${p.seats.toLocaleString()} seats across ${p.accounts} accounts`}
-          />
-        ))}
-      </div>
-      <FootLink label="14 other products" value="29.5K" onClick={() => {}} />
+      <Rows
+        cols="24px minmax(0, 1.8fr) minmax(36px, 0.7fr) 74px 58px 62px"
+        data={rows} getKey={(p) => p.id}
+        sort={sort} onSort={setSort}
+        current={picked} onPick={(k) => setPicked(picked === k ? null : k)}
+        columns={[
+          { key: 'mark', header: '', cellClass: 'vds-rowlist__mark', render: (p) => <ProductTile glyph={p.glyph} tonal size={24} /> },
+          { key: 'name', header: 'Product', sortable: true, cellClass: 'vds-rowlist__name', render: (p) => p.name },
+          { key: 'meter', header: '', render: (p) => (
+            <span className="vds-rowlist__track"><span className="vds-rowlist__fill" style={{ width: `${Math.max(2, Math.round(p.seats / top * 100))}%` }} /></span>
+          ) },
+          { key: 'seats', header: 'Seats', sortable: true, align: 'right', cellClass: 'vds-rowlist__val', render: (p) => p.seats.toLocaleString() },
+          { key: 'accounts', header: 'Accounts', sortable: true, align: 'right', cellClass: 'vds-rowlist__sub', render: (p) => p.accounts },
+          { key: 'per', header: 'Per acct', sortable: true, align: 'right', cellClass: 'vds-rowlist__sub', render: (p) => `${Math.round(p.seats / p.accounts)}/acct` },
+        ]}
+      >
+        <FootLink label="14 other products" value="29.5K" onClick={() => {}} />
+      </Rows>
     </div>
     </div>
   )
@@ -184,42 +195,44 @@ const ACCOUNTS = [
 const TILE_TYPE = { distributor: 'distributor', reseller: 'partner', customer: 'customer' }
 
 function ConcentrationDemo() {
-  const top = ACCOUNTS[0].seats
+  const [sort, setSort] = useState({ key: 'seats', direction: 'desc' })
+  const rows = useMemo(() => {
+    const get = { name: (a) => a.name, seats: (a) => a.seats, share: (a) => a.seats }[sort.key]
+    return [...ACCOUNTS].sort((a, b) => {
+      const x = get(a), y = get(b)
+      const c = typeof x === 'number' ? x - y : String(x).localeCompare(String(y))
+      return sort.direction === 'asc' ? c : -c
+    })
+  }, [sort])
+  const top = Math.max(...rows.map((a) => a.seats))
+  const total = 50190
   return (
     <div className="vds-tile-demo">
     <div className="vds-tile">
       <DashHead title="Your biggest accounts" sub="Top 5 of 324" />
-      {/* THE HERO, AND ITS BASELINE. "3%" is alarming or trivial depending only on
-          how many accounts are in the scope: across 324 an even book already puts
-          1.5% in any five, so 3% is a mild lean; across 12 accounts an even book is
-          42% and the same 3% could not happen. The reader cannot do that division
-          at a glance, so the card does it. */}
-      {/* THE SAME HEAD AS THE SEGMENT TILE. This ran figure-then-caption, with the
-          baseline buried mid-sentence after a middot — so the one number that makes
-          "3%" mean anything was the last thing on the line and read as an aside.
-
-          It is not an aside: 3% is alarming or trivial depending only on how many
-          accounts are in the scope. Across 324 an even book already puts 1.5% in any
-          five, so 3% is a mild lean; across 12 accounts an even book is 42% and the
-          same 3% could not happen. Beside the figure it qualifies, it is read in the
-          same pass — which is exactly the job "18% of all accounts" does next to 58. */}
       <div className="vds-status-lead">
         <span className="vds-status-lead__figs">
-          <span className="vds-status-lead__value">3%</span>
+          <span className="vds-status-lead__value">20%</span>
           <span className="vds-status-lead__share">1.5% if the book were even</span>
         </span>
         <span className="vds-status-lead__caption">Seats held by the 5 biggest accounts</span>
       </div>
-      <div className="vds-biz-rows vds-biz-rows--grow">
-        <BizHead columns={{ name: 'Account', value: 'Seats', sub: 'Share' }} />
-        {ACCOUNTS.map((a) => (
-          <BizRow key={a.name}
-            mark={<EntityTile type={TILE_TYPE[a.type]} glyph={GLYPHS[a.type]} size={24} />}
-            name={a.name} share={a.seats / top} value={a.seats} sub="1%"
-            title={`${a.name} — ${CUSTOMER_TYPE[a.type].label}, ${a.seats} seats`} />
-        ))}
-      </div>
-      <FootLink label="The other 319 accounts" value="49.4K" />
+      <Rows
+        cols="24px minmax(0, 1.8fr) minmax(44px, 1fr) 74px 58px"
+        data={rows} getKey={(a) => a.name}
+        sort={sort} onSort={setSort}
+        columns={[
+          { key: 'mark', header: '', cellClass: 'vds-rowlist__mark', render: (a) => <EntityTile type={TILE_TYPE[a.type]} glyph={GLYPHS[a.type]} size={24} /> },
+          { key: 'name', header: 'Account', sortable: true, cellClass: 'vds-rowlist__name', render: (a) => a.name },
+          { key: 'meter', header: '', render: (a) => (
+            <span className="vds-rowlist__track"><span className="vds-rowlist__fill" style={{ width: `${Math.max(2, Math.round(a.seats / top * 100))}%` }} /></span>
+          ) },
+          { key: 'seats', header: 'Seats', sortable: true, align: 'right', cellClass: 'vds-rowlist__val', render: (a) => a.seats.toLocaleString() },
+          { key: 'share', header: 'Share', sortable: true, align: 'right', cellClass: 'vds-rowlist__sub', render: (a) => `${(a.seats / total * 100).toFixed(1)}%` },
+        ]}
+      >
+        <FootLink label="The other 319 accounts" value="40.2K" />
+      </Rows>
       <span className="vds-biz-note">
         Weighted by seats. Two accounts of the same size count the same here, whatever each pays for them.
       </span>
