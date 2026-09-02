@@ -26,6 +26,28 @@
   vertical-align: middle;
   @include type.step(body);
 
+  /* ---- sm — the compact step ------------------------------------------------------
+     For a dense row or a toolbar, where the md control is the tallest thing in a 33px
+     line and starts setting the row's height instead of sitting in it.
+
+     TOKENS ONLY. Every rule below is already written against these custom properties, so
+     the whole variant is a redeclaration and nothing about the checked state, the focus
+     ring or the glyph geometry is restated — which is what stops the two sizes drifting.
+
+     The label steps down with the control. A `body` label beside a 16px box makes the
+     control look shrunken rather than compact: the pair has to move together or the
+     smaller one just looks wrong.
+
+     The tap target is NOT reduced. The coarse-pointer rule further down restores a full
+     target regardless of size — a control can be visually compact and still be a
+     finger-sized hit area, and on touch it has to be. */
+  &--sm {
+    --vds-checkbox-size: 0.875rem;   // 14px, from 18
+    --vds-checkbox-stroke: 1.5px;    // the glyph thins with the box, or it reads as a blob
+    gap: var(--vds-space-1-5);       // 6px, from 8
+    @include type.step(detail);
+  }
+
   &--disabled {
     opacity: 0.5;
     pointer-events: none;

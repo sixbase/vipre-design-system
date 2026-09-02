@@ -4,6 +4,7 @@ import { Section, Preview, Code, IC } from '../primitives.jsx'
 import { Radio } from '../../components/Radio/index.js'
 import { RadioGroup } from '../../components/RadioGroup/index.js'
 import { Text } from '../../components/Text/index.js'
+import { Stack, Inline } from '../../components/index.js'
 
 function ControlledExample() {
   const [depth, setDepth] = useState('quick')
@@ -58,6 +59,27 @@ export function RadioPage() {
         <>On touch screens, the tap area grows to <IC>--vds-tap-target</IC> — the circle stays the same size.</>,
       ]}
     >
+      <Section
+        title="Compact"
+        note={'size="sm" drops the control from 18px to 14, with the dot keeping its share of the box, and steps the label down with it. Same use as the compact checkbox: dense rows and toolbars. The tap target is unchanged on touch.'}
+      >
+        <Preview
+          canvas={
+            <Stack gap={3}>
+              <Inline gap={4} align="center">
+                <Radio size="sm" name="cmp" defaultChecked>Compact</Radio>
+                <Radio size="sm" name="cmp">Second</Radio>
+                <Radio size="sm" name="cmp" disabled>Disabled</Radio>
+              </Inline>
+              <Inline gap={4} align="center">
+                <Radio name="cmp2" defaultChecked>Default, for comparison</Radio>
+              </Inline>
+            </Stack>
+          }
+          code={'<Radio size="sm" name="density">Compact</Radio>'}
+        />
+      </Section>
+
       <Section title="Basic">
         <Preview
           canvas={
