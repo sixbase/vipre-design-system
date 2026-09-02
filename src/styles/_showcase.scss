@@ -1485,13 +1485,16 @@ section:first-of-type > .vds-section-h {
   align-items: baseline;
   gap: 12px;
   margin-top: auto;
-  /* The rule spans the card, like the row dividers above it — a section break that
-     stopped 20px short of the border while every line above it reached would read
-     as two different kinds of rule. The padding puts the text back where it was. */
+  /* NO RULE OF ITS OWN. It carried a border-top, and the list above it now closes
+     itself — which put two hairlines 16px apart with nothing between them, each
+     announcing the same break. The list's closing line hugs the last row, which is
+     where the break belongs; this just sits under it.
+
+     The horizontal margin stays, so the footer's HOVER fill still spans the card
+     like every line does. */
   margin-inline: calc(-1 * var(--vds-space-5));
   padding-inline: var(--vds-space-5);
   padding-top: 10px;
-  border-top: 1px solid var(--vds-line);
   font-size: 12px;
   color: var(--vds-ink-subtle);
 }
@@ -1502,9 +1505,7 @@ section:first-of-type > .vds-section-h {
   width: calc(100% + 2 * var(--vds-space-5));
   margin-inline: calc(-1 * var(--vds-space-5));
   padding: 10px var(--vds-space-5) 4px;
-  border-left: 0;
-  border-right: 0;
-  border-bottom: 0;
+  border: 0;
   border-radius: 0 0 var(--vds-radius-sm) var(--vds-radius-sm);
   background: transparent;
   font: inherit;
@@ -2497,10 +2498,19 @@ section:first-of-type > .vds-section-h {
 .vds-lc > .vds-lc-row,
 .vds-sell-trials > .vds-sell-trial { position: relative; }
 
-.vds-biz-rows > .vds-biz-row + .vds-biz-row::before,
-.vds-sell-list > .vds-sell-row + .vds-sell-row::before,
-.vds-lc > .vds-lc-row + .vds-lc-row::before,
-.vds-sell-trials > .vds-sell-trial + .vds-sell-trial::before {
+/* EVERY row draws its top line, not just the ones with a row above them, and the
+   last draws a bottom one — so a list is a closed block rather than a stack of
+   separators that happens to start and stop. An unclosed list has no top edge to
+   align its first row against and trails off at the bottom into whatever comes
+   next; both ends now sit on a line, which is what makes the group a group. */
+.vds-biz-rows > .vds-biz-row::before,
+.vds-sell-list > .vds-sell-row::before,
+.vds-lc > .vds-lc-row::before,
+.vds-sell-trials > .vds-sell-trial::before,
+.vds-biz-rows > .vds-biz-row:last-child::after,
+.vds-sell-list > .vds-sell-row:last-child::after,
+.vds-lc > .vds-lc-row:last-child::after,
+.vds-sell-trials > .vds-sell-trial:last-child::after {
   content: '';
   position: absolute;
   /* EDGE TO EDGE: past the row's own bleed and out to the card's border. The hover
@@ -2513,10 +2523,16 @@ section:first-of-type > .vds-section-h {
      than showing it through the tint. */
   z-index: 0;
 }
+/* The closing line sits on the bottom edge instead of the top. */
+.vds-biz-rows > .vds-biz-row:last-child::after,
+.vds-sell-list > .vds-sell-row:last-child::after,
+.vds-lc > .vds-lc-row:last-child::after,
+.vds-sell-trials > .vds-sell-trial:last-child::after { inset: auto calc(-1 * var(--vds-row-divider-reach)) 0 calc(-1 * var(--vds-row-divider-reach)); }
 
 /* A CURRENT ROW OWNS ITS EDGES. Its solid fill has to read as one block, so the
    line above it and the line belonging to the row beneath both give way. */
 .vds-biz-row--current::before,
+.vds-biz-row--current::after,
 .vds-biz-row--current + .vds-biz-row::before { display: none; }
 
 
@@ -2987,13 +3003,15 @@ section:first-of-type > .vds-section-h {
      enough off the bar to stop belonging to it. The INSET and the CORNER are
      what had to agree, because those are what the hover draws. */
 }
-.vds-kpi-meter__row + .vds-kpi-meter__row::before {
+.vds-kpi-meter__row::before,
+.vds-kpi-meter__row:last-child::after {
   content: '';
   position: absolute;
   inset: 0 calc(-1 * var(--vds-row-divider-reach)) auto calc(-1 * var(--vds-row-divider-reach));
   height: 1px;
   background: var(--vds-line-subtle);
 }
+.vds-kpi-meter__row:last-child::after { inset: auto calc(-1 * var(--vds-row-divider-reach)) 0 calc(-1 * var(--vds-row-divider-reach)); }
 /* Live rows are the interactive ones; they take the row hover, not their own. */
 .vds-kpi-meter__row--live:hover { background: color-mix(in srgb, var(--vds-ink) 4%, transparent); }
 .vds-kpi-meter__row--live:focus-visible {
