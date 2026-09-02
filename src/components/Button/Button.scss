@@ -231,25 +231,39 @@
   // --------------------------------------------------------------------------
   // VARIANTS — consume the tone vars above.
   // --------------------------------------------------------------------------
+  // ---- EACH VARIANT NAMES ITS STATE FILLS; ONE RULE BELOW APPLIES THEM --------
+  // The fills used to be written straight into each variant's own &:hover and
+  // &:active. That worked, but it left the values reachable only by reading this
+  // file — and the docs' states matrix has to render hover and active with no
+  // pointer on the element, so _showcase.scss re-declared them, by hand, with a
+  // comment asking whoever changed one to remember the other.
+  //
+  // That comment is not a mechanism, and it failed: ghost's hover moved to a tint
+  // of its own ink and the docs went on showing the old surface step. Naming the
+  // fills lets the mirror READ them instead of copying them, which is what the
+  // Input mirror has always done — and the Input mirror never went stale.
   &--solid {
+    --_btn-hover-bg: var(--_btn-fill-hover);
+    --_btn-active-bg: var(--_btn-fill-active);
     background-color: var(--_btn-fill);
     color: var(--_btn-on);
-    &:hover { background-color: var(--_btn-fill-hover); }
-    &:active { background-color: var(--_btn-fill-active); }
   }
 
+  // No --_btn-active-bg: soft has no distinct pressed fill, and the shared rule
+  // falls back to the hover, which is what a pressed soft button already showed
+  // (:hover still matches while the pointer is down).
   &--soft {
+    --_btn-hover-bg: var(--_btn-soft-hover);
     background-color: var(--_btn-soft);
     color: var(--_btn-text);
-    &:hover { background-color: var(--_btn-soft-hover); }
   }
 
   &--outline {
+    --_btn-hover-bg: var(--_btn-soft);
+    --_btn-active-bg: var(--_btn-soft-hover);
     background-color: var(--vds-surface);
     color: var(--_btn-text);
     border-color: var(--_btn-line);
-    &:hover { background-color: var(--_btn-soft); }
-    &:active { background-color: var(--_btn-soft-hover); }
   }
 
   // Quiet at rest (muted ink), reveals the tone on hover.
@@ -266,12 +280,23 @@
   // under it, so the control's hover no longer depends on what its container is doing.
   // Same reasoning as the Badge's tone-matched edge.
   &--ghost {
+    --_btn-hover-bg: #{'color-mix(in srgb, var(--_btn-text) 10%, transparent)'};
+    --_btn-active-bg: #{'color-mix(in srgb, var(--_btn-text) 18%, transparent)'};
     background-color: transparent;
     color: var(--vds-ink-muted);
-    &:hover {
-      background-color: color-mix(in srgb, var(--_btn-text) 10%, transparent);
-      color: var(--_btn-text);
-    }
-    &:active { background-color: color-mix(in srgb, var(--_btn-text) 18%, transparent); }
+    // The only variant that moves its INK on hover as well as its ground. Kept as its
+    // own rule rather than folded into the shared one: a shared `color` declaration
+    // needs a fallback for the variants that DON'T change ink, and every candidate
+    // fallback is wrong — `inherit` hands solid its parent's colour instead of
+    // --_btn-on. One extra selector is cheaper than that. It reads a variable, so it
+    // cannot go stale the way the copied values did.
+    &:hover { color: var(--_btn-text); }
   }
+
+  // ---- THE ONE PLACE STATES ARE APPLIED ---------------------------------------
+  // Every variant above sets its fills; this applies them. Anything that needs to
+  // SHOW these states without a live pointer — the docs' states matrix — sets the
+  // same custom properties instead of restating the values, so it cannot drift.
+  &:hover { background-color: var(--_btn-hover-bg); }
+  &:active { background-color: var(--_btn-active-bg, var(--_btn-hover-bg)); }
 }
