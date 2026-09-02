@@ -86,31 +86,51 @@ function SortArrow({ direction }) {
    two cards sitting side by side. Pass interactive={false} for a list that really is
    just a readout; the DS Table made the same call for the same reason. */
 function Rows({ cols, columns, data, getKey, sort, onSort, current, onPick, interactive = true, children }) {
+  /* Columns with no heading fold into the heading that follows them. */
+  const headCells = []
+  let pending = 0
+  for (const c of columns) {
+    if (!c.header) { pending += 1; continue }
+    headCells.push({ c, span: pending + 1 })
+    pending = 0
+  }
+  if (pending) headCells.push({ c: null, span: pending })
+
+  const renderHead = (c, span) => {
+    const active = sort?.key === c.key
+    const arrow = <SortArrow direction={active ? sort.direction : undefined} />
+    const cell = c.sortable && onSort ? (
+      <button type="button"
+        className={`vds-rowsort${c.align === 'right' ? ' vds-rowsort--right' : ''}`}
+        onClick={() => onSort({ key: c.key, direction: active && sort.direction === 'desc' ? 'asc' : 'desc' })}
+        aria-label={`Sort by ${c.header}`}>
+        {c.align === 'right' && arrow}
+        {c.header}
+        {c.align !== 'right' && arrow}
+      </button>
+    ) : c.header
+    return (
+      <span key={c.key} className={c.cellClass} style={span > 1 ? { gridColumn: `span ${span}` } : undefined}
+        aria-sort={c.sortable ? (active ? (sort.direction === 'asc' ? 'ascending' : 'descending') : 'none') : undefined}>
+        {cell}
+      </span>
+    )
+  }
+
   return (
     <div className="vds-rowlist" style={{ '--cols': cols }}>
       <div className="is-head" role="row">
-        {columns.map((c) => {
-          const active = sort?.key === c.key
-          const cell = c.sortable && onSort ? (
-            <button type="button"
-              className={`vds-rowsort${c.align === 'right' ? ' vds-rowsort--right' : ''}`}
-              onClick={() => onSort({ key: c.key, direction: active && sort.direction === 'desc' ? 'asc' : 'desc' })}
-              aria-label={`Sort by ${c.header}`}>
-              {/* THE ARROW LEADS ON A RIGHT-ALIGNED COLUMN, and trails on a left-aligned
-                  one — either way it sits on the INSIDE and the label keeps the column's
-                  own edge. Trailing it on the right pushed every figure heading left by
-                  the arrow's width, so "Seats" no longer sat over 4,444: the one thing a
-                  column heading has to do. */}
-              {c.align === 'right' && <SortArrow direction={active ? sort.direction : undefined} />}
-              {c.header}
-              {c.align !== 'right' && <SortArrow direction={active ? sort.direction : undefined} />}
-            </button>
-          ) : c.header
-          return (
-            <span key={c.key} className={c.cellClass} aria-sort={c.sortable ? (active ? (sort.direction === 'asc' ? 'ascending' : 'descending') : 'none') : undefined}>
-              {cell}
-            </span>
-          )
+        {/* AN UNLABELLED COLUMN MERGES INTO THE NEXT ONE'S HEADING. The mark column
+            has no heading — there is nothing to call it and nothing to sort it by —
+            but it still holds a cell, and an empty cell pushed "Account" 32px right
+            of the marks, so the header started a third of an inch inside the visual
+            left edge of every row under it. Letting the heading span both tracks puts
+            it over the block it names, which is what the Table does with its leading
+            product cell: mark and name are one cell there, and the header sits over
+            both. Same idea, expressed in a grid. */}
+        {headCells.map(({ c, span }, i) => {
+          if (!c) return <span key={`gap-${i}`} style={{ gridColumn: `span ${span}` }} />
+          return renderHead(c, span)
         })}
       </div>
       {data.map((row, i) => {
