@@ -541,36 +541,38 @@ export function TileRowsPage() {
       </Section>
 
       <Section
-        title="What the prototype does today"
-        note="Four implementations of this one row, measured off the running MSP shell. None is wrong on its own; together they are four answers to the same question, and the differences are invisible until two tiles sit side by side."
+        title="What alignment changed"
+        note="Four row families came over from the shell, and every difference between them was in the chrome — which is the set a reader notices when two tiles sit side by side. They are one row now. The columns were never the problem and none of them moved."
       >
         <RefTable
-          headers={['', 'Gap', 'Padding', 'Corner', 'Hover']}
+          headers={['', 'Was', 'Now']}
           rows={[
-            ['.msp-biz-row — the one above', '12', '8', '6', '4% of ink'],
-            ['.msp-act-row', '10', '9 0', 'none', '--vds-surface-hover'],
-            ['.msp-lc-row', '12', '7 0', 'none', '--vds-surface-sunken'],
-            ['.msp-sell-row', '12', '8', '9', '--vds-surface-sunken'],
+            ['The play list', 'A joined table body: rows edge to edge, a hairline between them, 9px corners on the outer two only', '2px gaps and a 6px pill per row — the shape the ranked lists had already moved to and never told this one about'],
+            ['Hover, four ways', '--vds-surface-hover · --vds-surface-sunken · a 7% tint of the tile’s tone · 4% of the ink', '4% of the ink, everywhere. The tone lives in the mark and the CTA, not in the hover'],
+            ['Corners', '6 · 9 · 4 · none', '6, the row pill'],
+            ['Trial rows', 'A 6px inset with a 4px corner — a third hover shape', 'The 8px inset and 6px corner every other row draws'],
+            ['Section rules', 'One footer stopped at the rows’ edge, the other bled to the card border and tinted its hairline with the tile’s accent', 'Both on the rows’ edge, both --vds-line'],
+            ['Focus rings', '2px/-2px literals against --nav-accent or --opp-fg', '--vds-control-ring-w on --vds-focus-ring'],
           ]}
         />
         <Stack gap={3} style={{ marginTop: '1.25rem' }}>
           <Text variant="body">
-            <strong>Three hover treatments across four rows</strong>, two of them absolute surface
-            steps. That is the one difference here that is a defect rather than a preference:{' '}
-            <IC>--vds-surface-hover</IC> and <IC>--vds-surface-sunken</IC> are each correct against
-            exactly one ground, and these rows sit on three.
+            <strong>Vertical padding was left alone</strong> — 7, 8, 12 and 4 across the four. A
+            play row is two lines where a trial row is one, and matching the <em>air</em> would make
+            three short rows as tall as three tall ones. What has to agree is the horizontal inset
+            and the corner, because those are what the hover draws.
           </Text>
           <Text variant="body">
-            <strong>The corners disagree three ways</strong> — 6, 9, and none. A row with no corner
-            cannot show a fill that reaches its own edge, so <IC>.msp-act-row</IC> and{' '}
-            <IC>.msp-lc-row</IC> have no hover shape at all; theirs paints a bare rectangle.{' '}
-            <IC>.msp-sell-row</IC>&rsquo;s 9 is off both radius scales.
+            <strong>An earlier version of this page had the line card wrong.</strong> It listed
+            <IC>.msp-lc-row</IC> as 7&nbsp;0 with no corner, read off the first rule block — later
+            blocks in the same stylesheet had already given it the 8px inset and the 6px pill. Worth
+            saying because it is the same failure mode the page is about: a row defined in more than
+            one place, where reading one of them tells you something untrue.
           </Text>
           <Text variant="body">
-            <strong>Only <IC>.msp-biz-row</IC> has been brought to this spec</strong> — it is the one
-            on this page. The other three are the work: same gap, same padding, the 6px pill, the
-            ink-mix hover. Their columns need nothing; every difference that a reader notices when
-            two tiles sit next to each other is in the chrome.
+            <strong>None of this is back in the shell yet.</strong> The changes live here; porting
+            them is a diff against <IC>shell.css</IC>, and the largest single piece is the play
+            list, which loses its dividers.
           </Text>
         </Stack>
       </Section>

@@ -1676,9 +1676,10 @@ section:first-of-type > .vds-section-h {
   transition: background-color 120ms ease;
 }
 
-.vds-lc-row--btn:hover { background: var(--vds-surface-sunken); }
+/* ALIGNED: was --vds-surface-sunken, an absolute step. */
+.vds-lc-row--btn:hover { background: color-mix(in srgb, var(--vds-ink) 4%, transparent); }
 
-.vds-lc-row--btn:focus-visible { outline: 2px solid var(--nav-accent); outline-offset: -2px; }
+.vds-lc-row--btn:focus-visible { outline: var(--vds-control-ring-w) solid var(--vds-focus-ring); outline-offset: var(--vds-control-ring-offset-inset); }
 
 /* The mark's cell — fixed at the tile's size so it never shrinks with the name, and
    present on the header row too as an empty span. */
@@ -1883,15 +1884,19 @@ section:first-of-type > .vds-section-h {
   margin-inline: -8px;
   padding: 8px;
   border: 0;
-  border-radius: 9px;
+  /* 6, the row pill, down from 9. Nine was the joined list's outer corner and had
+     nothing to do with the row; off the pill the shape has to be the one every other
+     row uses or two lists on one dashboard round differently. */
+  border-radius: calc(var(--vds-radius-sm) + 2px);
   background: transparent;
   font: inherit; color: inherit; text-align: left; cursor: pointer;
   transition: background 130ms ease;
 }
 
-.vds-sell-row:hover { background: var(--vds-surface-sunken, color-mix(in srgb, var(--vds-ink) 4%, transparent)); }
+/* ALIGNED: the fallback was already right; the token in front of it was not. */
+.vds-sell-row:hover { background: color-mix(in srgb, var(--vds-ink) 4%, transparent); }
 
-.vds-sell-row:focus-visible { outline: 2px solid var(--nav-accent); outline-offset: -2px; }
+.vds-sell-row:focus-visible { outline: var(--vds-control-ring-w) solid var(--vds-focus-ring); outline-offset: var(--vds-control-ring-offset-inset); }
 
 /* The product's own tile, drawn by ProductTile at 28px. Just a box to hang it in — the
    artwork carries its own square and radius. */
@@ -1957,13 +1962,15 @@ section:first-of-type > .vds-section-h {
    figures are the only bold ink on the line, which is what makes "273" findable
    without reading. Hairlines between rows, because three sentences with no fig column
    need a seam the old count column used to provide. */
-.vds-sell-list { display: flex; flex-direction: column; }
+/* ---- ALIGNED: independent pills, not a joined table body -------------------
+   This list ran its rows edge to edge with a hairline between them and 9px corners
+   on the outer two only — the table-body idiom, which is exactly what the biz rows
+   moved away from and never came back to tell this list about. Two ways of showing
+   a list of rows on one dashboard is the difference a reader sees first.
 
-.vds-sell-list .vds-sell-row + .vds-sell-row { border-top: 1px solid var(--vds-line-subtle); border-radius: 0; }
-
-.vds-sell-list .vds-sell-row:first-child { border-radius: 9px 9px 0 0; }
-
-.vds-sell-list .vds-sell-row:last-child { border-radius: 0 0 9px 9px; }
+   Now: the same 2px gaps and the same 6px pill every other row uses, so a row here
+   and a row in Seats by product are the same object at rest and under the pointer. */
+.vds-sell-list { display: flex; flex-direction: column; gap: 2px; }
 
 .vds-sell-row--play { grid-template-columns: 32px minmax(0, 1fr) auto; padding-block: 12px; }
 
@@ -2042,7 +2049,7 @@ section:first-of-type > .vds-section-h {
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--opp-fg) 26%, transparent);
 }
 
-.vds-sell-hero:focus-visible { outline: 2px solid var(--opp-fg); outline-offset: 2px; }
+.vds-sell-hero:focus-visible { outline: var(--vds-control-ring-w) solid var(--vds-focus-ring); outline-offset: var(--vds-control-ring-offset); }
 
 .vds-sell-hero__top { display: flex; align-items: center; gap: 8px; min-width: 0; }
 
@@ -2151,15 +2158,23 @@ section:first-of-type > .vds-section-h {
 .vds-trials-who {
   display: flex;
   align-items: center;
-  gap: 10px;
-  width: calc(100% + 2 * var(--vds-space-5));
-  margin-inline: calc(-1 * var(--vds-space-5));
+  /* 12, the shared row gap — this ran at 10. */
+  gap: var(--msp-row-gap);
+  /* ALIGNED to the other footer's edge. This bled the full --vds-space-5 to the
+     card's border, where .vds-biz-foot stops at the ROWS' outer edge — so one card's
+     section rule touched the card border and the other floated 12px inside it, which
+     is the kind of difference you only see with both cards on screen, which is where
+     they live. The rows set the card's internal edge; both rules now sit on it. */
+  width: calc(100% + 16px);
+  margin-inline: -8px;
   margin-top: calc(-1 * var(--vds-space-2));
   /* Even top and bottom: the hover fill is a band across the row, and it was 12px deep
      above the text and flush against it below. */
-  padding: var(--vds-space-3) var(--vds-space-5);
+  padding: var(--vds-space-3) var(--vds-space-2);
   border: 0;
-  border-top: 1px solid color-mix(in srgb, var(--opp-fg) 18%, transparent);
+  /* --vds-line, like the other footer's rule. A tone-tinted hairline made the break
+     belong to the tile's accent rather than to the card. */
+  border-top: 1px solid var(--vds-line);
   background: transparent;
   font: inherit;
   text-align: left;
@@ -2167,9 +2182,12 @@ section:first-of-type > .vds-section-h {
   transition: background-color 130ms ease;
 }
 
-.vds-trials-who:hover { background: color-mix(in srgb, var(--opp-fg) 7%, transparent); }
+/* ALIGNED: was a 7% tint of the tile's tone. Translucent, so the technique was
+   right, but a row's hover should not change colour with the tile it sits in — the
+   tone lives in the mark and the CTA. */
+.vds-trials-who:hover { background: color-mix(in srgb, var(--vds-ink) 4%, transparent); }
 
-.vds-trials-who:focus-visible { outline: 2px solid var(--opp-fg); outline-offset: -2px; }
+.vds-trials-who:focus-visible { outline: var(--vds-control-ring-w) solid var(--vds-focus-ring); outline-offset: var(--vds-control-ring-offset-inset); }
 
 @container msp-dash (max-width: 640px) {
   .vds-trials-who {
@@ -2235,11 +2253,16 @@ section:first-of-type > .vds-section-h {
 /* Pressable when the row has a package to open. Same treatment as the ranked rows on the
    tiles either side of it, so a product row behaves the same wherever it appears. */
 .vds-sell-trial--btn {
-  width: calc(100% + 12px);
-  margin: 0 -6px;
-  padding: 4px 6px;
+  /* ALIGNED: was a 6px inset with a radius-sm (4) corner — a third hover shape on a
+     dashboard that had already settled on 8 and 6. The vertical padding stays at 4:
+     these rows are one line where a play row is two, and matching the AIR would make
+     three short rows as tall as three tall ones. It is the inset and the corner that
+     have to agree, because those are what the hover draws. */
+  width: calc(100% + 16px);
+  margin: 0 -8px;
+  padding: 4px 8px;
   border: 0;
-  border-radius: var(--vds-radius-sm);
+  border-radius: calc(var(--vds-radius-sm) + 2px);
   background: transparent;
   font: inherit;
   color: inherit;
@@ -2247,11 +2270,11 @@ section:first-of-type > .vds-section-h {
   cursor: pointer;
 }
 
-.vds-sell-trial--btn:hover { background: var(--vds-surface-hover); }
+.vds-sell-trial--btn:hover { background: color-mix(in srgb, var(--vds-ink) 4%, transparent); }
 
 .vds-sell-trial--btn:focus-visible {
-  outline: 2px solid var(--vds-focus-ring, var(--nav-accent));
-  outline-offset: -2px;
+  outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+  outline-offset: var(--vds-control-ring-offset-inset);
 }
 
 .vds-sell-trial__name {
