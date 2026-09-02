@@ -3,7 +3,7 @@ import { ChevronRight, ArrowRight, Plus, Boxes } from 'lucide-react'
 import { DocPage } from '../DocPage.jsx'
 import { Section, Preview, RefTable, IC } from '../primitives.jsx'
 import { AreaTrend, Badge, Button, Icon, ProductTile, Stack, Text } from '../../components/index.js'
-import { GLYPHS } from '../templateData.js'
+import { GLYPHS, CUSTOMER_TYPE } from '../templateData.js'
 
 /* ============================================================================
    PORTED VERBATIM from the MSP shell — DashHead, BizRow and FootLink, with the
@@ -133,16 +133,21 @@ function SeatsByProductDemo() {
   )
 }
 
-/* Accounts are not products: no mark to draw, so `--plain` collapses the column
-   rather than leaving a hole where a glyph would have been. */
+/* An account's mark is its TYPE — distributor, reseller or customer — which is the
+   one thing about an account that changes what a row means. A product row's mark
+   says which product; an account row's says what kind of account, and a book of
+   five resellers is a different book from five direct customers at the same seat
+   count. The three glyphs are the same set the Customers table tags with. */
 const ACCOUNTS = [
-  ['Sunbelt Brewing Services', 299], ['Atlas Agriculture Co', 298],
-  ['Metro Environmental Group', 298], ['Sunrise Automotive LLC', 297],
-  ['Quantum Consulting Ltd', 297],
+  { name: 'Sunbelt Brewing Services', seats: 299, type: 'customer' },
+  { name: 'Atlas Agriculture Co', seats: 298, type: 'reseller' },
+  { name: 'Metro Environmental Group', seats: 298, type: 'customer' },
+  { name: 'Sunrise Automotive LLC', seats: 297, type: 'distributor' },
+  { name: 'Quantum Consulting Ltd', seats: 297, type: 'reseller' },
 ]
 
 function ConcentrationDemo() {
-  const top = ACCOUNTS[0][1]
+  const top = ACCOUNTS[0].seats
   return (
     <div className="vds-tile-demo">
     <div className="vds-tile">
@@ -160,8 +165,11 @@ function ConcentrationDemo() {
         </span>
       </div>
       <div className="vds-biz-rows vds-biz-rows--grow">
-        {ACCOUNTS.map(([name, seats]) => (
-          <BizRow key={name} name={name} share={seats / top} value={seats} sub="1%" />
+        {ACCOUNTS.map((a) => (
+          <BizRow key={a.name}
+            mark={<ProductTile glyph={GLYPHS[a.type]} tonal size={24} />}
+            name={a.name} share={a.seats / top} value={a.seats} sub="1%"
+            title={`${a.name} — ${CUSTOMER_TYPE[a.type].label}, ${a.seats} seats`} />
         ))}
       </div>
       <FootLink label="The other 319 accounts" value="49.4K" />
@@ -445,8 +453,8 @@ export function TileRowsPage() {
       </Section>
 
       <Section
-        title="Without a mark"
-        note="An account is not a product, so there is nothing to draw and --plain collapses the column rather than leaving a hole. Inventing a glyph for a row that has no product says the row is one."
+        title="An account's mark"
+        note="The mark is the account's TYPE — distributor, reseller or customer. A product row's mark says which product; an account row's says what kind of account, and five resellers are a different book from five direct customers at the same seat count. Same tile and same size as the product rows, so the two lists read as one system; the glyph is the only thing that changes. --plain and --tight remain for the rows that genuinely have nothing to draw — a totals row, a remainder line."
       >
         <Preview
           canvas={<ConcentrationDemo />}
@@ -547,9 +555,10 @@ export function TileRowsPage() {
         <RefTable
           headers={['', 'Was', 'Now']}
           rows={[
-            ['The play list', 'A joined table body: rows edge to edge, a hairline between them, 9px corners on the outer two only', '2px gaps and a 6px pill per row — the shape the ranked lists had already moved to and never told this one about'],
+            ['Separating rows', 'One list used hairlines and 9px outer corners; the other three used 2px gaps and no line at all', 'A hairline between every row, in every list — drawn as a pseudo-element, because a border on a 6px-radius row curves at both ends'],
             ['Hover, four ways', '--vds-surface-hover · --vds-surface-sunken · a 7% tint of the tile’s tone · 4% of the ink', '4% of the ink, everywhere. The tone lives in the mark and the CTA, not in the hover'],
-            ['Corners', '6 · 9 · 4 · none', '6, the row pill'],
+            ['Corners', '6 · 9 · 4 · none', '6 — now only visible under the pointer, which is the one place it has a job'],
+            ['The account rows', 'A name and figures, no mark', 'The entity glyph in the same tile at the same size — a row should not stop identifying its subject because the subject is an account rather than a product'],
             ['Trial rows', 'A 6px inset with a 4px corner — a third hover shape', 'The 8px inset and 6px corner every other row draws'],
             ['Section rules', 'One footer stopped at the rows’ edge, the other bled to the card border and tinted its hairline with the tile’s accent', 'Both on the rows’ edge, both --vds-line'],
             ['Focus rings', '2px/-2px literals against --nav-accent or --opp-fg', '--vds-control-ring-w on --vds-focus-ring'],

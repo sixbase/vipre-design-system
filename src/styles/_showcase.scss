@@ -2420,3 +2420,59 @@ section:first-of-type > .vds-section-h {
   flex: 1 1 auto;
   min-height: clamp(44px, 16cqi, 200px);
 }
+
+
+/* ===========================================================================
+   ROW DIVIDERS — a hairline between every row, in every list
+   ---------------------------------------------------------------------------
+   The rows had been sitting in 2px gaps as free-standing pills. A hairline is
+   the stronger separator and it is now the one all four lists use.
+
+   THE GAP GOES WITH IT. Space AND a rule is two separators doing one job, and
+   the line then floats in the middle of the gap rather than marking the join
+   between two rows — which reads as a hole with a scratch in it. Rows meet.
+
+   BORDER-TOP ON THE SECOND ROW ONWARD, never border-bottom on all of them: a
+   bottom border on the last row draws a line under a list that has nothing
+   after it, which is a rule the eye reads as a promise of more.
+
+   --vds-line-subtle, not --vds-line. These sit INSIDE a card that already draws
+   itself in --vds-line, and a divider at the same weight as the container's own
+   edge makes the card read as a stack of boxes rather than a card with a list
+   in it. The token's own note calls this its job: nested dividers.
+
+   The rule spans the row's full bled box, so it reaches the same left and right
+   edge as the hover fill and as both section rules. */
+.vds-biz-rows,
+.vds-sell-list,
+.vds-lc,
+.vds-sell-trials { gap: 0; }
+
+/* DRAWN AS A PSEUDO-ELEMENT, not as border-top. These rows carry a 6px radius so
+   their hover fill is a pill, and a border on a rounded box CURVES at both ends —
+   at 6px that curl is plainly visible on a 1px line, and a list of them reads as
+   a stack of tabs. An absolutely positioned line ignores the radius and stays
+   straight, while the fill it sits above keeps its corners. */
+.vds-biz-rows > .vds-biz-row,
+.vds-sell-list > .vds-sell-row,
+.vds-lc > .vds-lc-row,
+.vds-sell-trials > .vds-sell-trial { position: relative; }
+
+.vds-biz-rows > .vds-biz-row + .vds-biz-row::before,
+.vds-sell-list > .vds-sell-row + .vds-sell-row::before,
+.vds-lc > .vds-lc-row + .vds-lc-row::before,
+.vds-sell-trials > .vds-sell-trial + .vds-sell-trial::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: var(--vds-line-subtle);
+  /* Under the row's own fill, so a hovered or current row covers its line rather
+     than showing it through the tint. */
+  z-index: 0;
+}
+
+/* A CURRENT ROW OWNS ITS EDGES. Its solid fill has to read as one block, so the
+   line above it and the line belonging to the row beneath both give way. */
+.vds-biz-row--current::before,
+.vds-biz-row--current + .vds-biz-row::before { display: none; }
