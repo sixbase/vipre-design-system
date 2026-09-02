@@ -1347,7 +1347,16 @@ section:first-of-type > .vds-section-h {
    the row was the first one squeezed. */
 .vds-biz-row {
   display: grid;
-  grid-template-columns: auto minmax(0, 1.8fr) minmax(44px, 1fr) 74px 58px;
+  /* ---- THE MARK TRACK IS FIXED, NEVER `auto` -----------------------------------
+     It was `auto`, and every row here is its OWN grid — so an auto track resolves
+     against that row's own content. The data rows all hold a 24px tile and agreed
+     with each other by coincidence; the header holds an empty cell, resolved its
+     first track to 0, and shifted every label one column left of the figures it
+     names. The DS's own Product-Tile-in-tables rule already said this: fix the
+     track at the tile size, never auto and never a fraction, or a long product
+     name squeezes the mark. Set --vds-biz-mark on the list to change it. */
+  --vds-biz-mark: 24px;
+  grid-template-columns: var(--vds-biz-mark) minmax(0, 1.8fr) minmax(44px, 1fr) 74px 58px;
   align-items: center;
   gap: 12px;
   /* Padding plus a matching negative margin, so the hover fill reaches the
@@ -1377,7 +1386,7 @@ section:first-of-type > .vds-section-h {
 /* Six columns: the ranked figure, its reach, and the ratio between them. The METER
    gives up the width — it is a proportion and says the same thing narrower, whereas a
    figure column that shrinks stops being a column. */
-.vds-biz-row--wide { grid-template-columns: auto minmax(0, 1.8fr) minmax(36px, 0.7fr) 74px 58px 62px; }
+.vds-biz-row--wide { grid-template-columns: var(--vds-biz-mark) minmax(0, 1.8fr) minmax(36px, 0.7fr) 74px 58px 62px; }
 .vds-biz-row__per {
   font-size: 12px;
   color: var(--vds-ink-subtle);
@@ -1391,9 +1400,9 @@ section:first-of-type > .vds-section-h {
    whereas a name clipped to two words stops the row identifying anything. */
 @container vds-tile (max-width: 360px) {
   .vds-biz-row__track { display: none; }
-  .vds-biz-row { grid-template-columns: auto minmax(0, 1fr) 74px 58px; }
+  .vds-biz-row { grid-template-columns: var(--vds-biz-mark) minmax(0, 1fr) 74px 58px; }
   .vds-biz-row--plain { grid-template-columns: minmax(0, 1fr) 74px 58px; }
-  .vds-biz-row--wide { grid-template-columns: auto minmax(0, 1fr) 74px 58px 62px; }
+  .vds-biz-row--wide { grid-template-columns: var(--vds-biz-mark) minmax(0, 1fr) 74px 58px 62px; }
   .vds-biz-row--tight { grid-template-columns: minmax(0, 1fr) 74px; }
 }
 
@@ -1661,7 +1670,6 @@ section:first-of-type > .vds-section-h {
   color: var(--vds-ink-subtle);
   text-align: right;
   padding-bottom: 9px;
-  border-bottom: 1px solid var(--vds-line);
 }
 
 .vds-lc-row--head > span { white-space: nowrap; }
@@ -2284,7 +2292,10 @@ section:first-of-type > .vds-section-h {
      you cannot read. Both columns flex now, weighted so the longest package name still
      fits before the track starts taking from it. */
   /* 24px, matching the tile. Was 22, the pre-snap size — same miss as .vds-sell-row. */
-  grid-template-columns: 24px minmax(0, 1.4fr) minmax(64px, 1fr) auto;
+  /* The figure column is FIXED, not `auto` — same reason the mark track is. Each row
+     is its own grid, so an auto track sized itself to that row's content: "Accounts"
+     in the header, a two-digit count in the rows, and the two disagreed by 37px. */
+  grid-template-columns: 24px minmax(0, 1.4fr) minmax(64px, 1fr) 56px;
   align-items: center;
   gap: var(--msp-row-gap);
   padding: 4px 0;
@@ -3094,3 +3105,54 @@ section:first-of-type > .vds-section-h {
    own gap between blocks is larger. */
 .vds-status-lead,
 .vds-trials-lead { gap: var(--vds-space-1); }
+
+
+/* ===========================================================================
+   COLUMN HEADERS — the Table's, not a second set
+   ---------------------------------------------------------------------------
+   These lists are read down their figures, and a column of numbers with nothing
+   naming it makes the reader infer what it is from the values. The DS Table
+   already answers what a column header looks like, so this is that answer
+   applied to a row instead of a <th>: 11px at weight 500, SENTENCE case with
+   normal tracking, --vds-ink-subtle.
+
+   Not the eyebrow step it is built from. Table.scss drops the caps, the +0.04em
+   and the 600 together and explains why: the tracking exists to open up runs of
+   capitals and only loosens mixed-case words, and 600 exists to hold small caps
+   up and reads heavy once letters have ascenders and descenders. Copying the
+   look here rather than the step keeps the two headers the same object.
+
+   NO RULE OF ITS OWN. The header is the first row in the list, so the divider
+   system already draws a line under it — the line card carried a border-bottom
+   as well and had two, 1px apart at different widths.
+
+   BOTTOM-ALIGNED, so a label that wraps on a narrow card still keeps its last
+   line directly above the figures it names.
+   =========================================================================== */
+.vds-biz-row--head,
+.vds-sell-trial--head,
+.vds-kpi-meter__row--head {
+  align-items: end;
+  font-size: 0.6875rem;
+  line-height: 0.875rem;
+  font-weight: var(--vds-weight-medium);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--vds-ink-subtle);
+  padding-bottom: 9px;
+}
+.vds-biz-row--head > span,
+.vds-sell-trial--head > span,
+.vds-kpi-meter__row--head > * { white-space: nowrap; }
+
+/* A header row is not a target: no pointer, no fill, no lift. */
+.vds-biz-row--head:hover,
+.vds-sell-trial--head:hover,
+.vds-kpi-meter__row--head:hover { background: none; cursor: default; }
+
+/* The figure columns keep their alignment in the header — a right-aligned column
+   whose label sits left stops being a column at the label. */
+.vds-biz-row--head .vds-biz-row__val,
+.vds-biz-row--head .vds-biz-row__sub,
+.vds-biz-row--head .vds-biz-row__per,
+.vds-sell-trial--head .vds-sell-trial__fig { text-align: right; font-weight: inherit; color: inherit; font-size: inherit; }

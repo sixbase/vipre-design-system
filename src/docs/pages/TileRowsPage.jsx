@@ -106,6 +106,23 @@ function FootLink({ label, value, onClick }) {
   )
 }
 
+/* The header is a ROW — same classes, same grid — so a label cannot drift off the
+   column it names. The mark and meter cells carry no heading: there is nothing to
+   call either, and neither is sortable. They are not optional though, or every
+   label lands a column to the left of its figures. */
+function BizHead({ wide, columns }) {
+  return (
+    <div className={`vds-biz-row vds-biz-row--head${wide ? ' vds-biz-row--wide' : ''}`} aria-hidden>
+      <span />
+      <span className="vds-biz-row__name">{columns.name}</span>
+      <span />
+      <span className="vds-biz-row__val">{columns.value}</span>
+      <span className="vds-biz-row__sub">{columns.sub}</span>
+      {wide && <span className="vds-biz-row__per">{columns.per}</span>}
+    </div>
+  )
+}
+
 /* ---- the real rows off "Seats by product", figures included ---------------- */
 const PRODUCTS = [
   { id: 'edge-nordics', name: 'Edge Defense Nordics', glyph: GLYPHS.edr, seats: 4444, accounts: 42 },
@@ -124,6 +141,7 @@ function SeatsByProductDemo() {
     <div className="vds-tile">
       <DashHead title="Seats by product" sub="Under contract" action={{ label: 'Package Insights' }} />
       <div className="vds-biz-rows vds-biz-rows--grow">
+        <BizHead wide columns={{ name: 'Product', value: 'Seats', sub: 'Accounts', per: 'Per acct' }} />
         {PRODUCTS.map((p) => (
           <BizRow
             key={p.id}
@@ -193,6 +211,7 @@ function ConcentrationDemo() {
         <span className="vds-status-lead__caption">Seats held by the 5 biggest accounts</span>
       </div>
       <div className="vds-biz-rows vds-biz-rows--grow">
+        <BizHead columns={{ name: 'Account', value: 'Seats', sub: 'Share' }} />
         {ACCOUNTS.map((a) => (
           <BizRow key={a.name}
             mark={<EntityTile type={TILE_TYPE[a.type]} glyph={GLYPHS[a.type]} size={24} />}
@@ -434,6 +453,12 @@ function TrialsDemo() {
           What they&rsquo;re trying
           <span className="vds-sell-trials__rest">top 3 of 20</span>
         </div>
+        <div className="vds-sell-trial vds-sell-trial--head" aria-hidden>
+          <span />
+          <span className="vds-sell-trial__name">Package</span>
+          <span />
+          <span className="vds-sell-trial__fig">Accounts</span>
+        </div>
         {TRIALED.map((p) => (
           <div key={p.id} className="vds-sell-trial">
             <ProductTile glyph={p.glyph} tonal size={24} />
@@ -475,6 +500,11 @@ function KpiMeter({ segments, onSegmentClick }) {
         ))}
       </div>
       <dl className="vds-kpi-meter__key">
+        <div className="vds-kpi-meter__row vds-kpi-meter__row--head" aria-hidden>
+          <dt className="vds-kpi-meter__name">Segment</dt>
+          <dd className="vds-kpi-meter__val">Accounts</dd>
+          <dd className="vds-kpi-meter__pct">Share</dd>
+        </div>
         {segments.map((p) => {
           const live = !!onSegmentClick && p.value > 0
           return (
