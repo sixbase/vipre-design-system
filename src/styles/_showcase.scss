@@ -1253,164 +1253,246 @@ section:first-of-type > .vds-section-h {
 
 
 /* ===========================================================================
-   TILE ROWS — the dashboard's ranked-list tile
+   TILE ROWS — ported from the MSP shell, not rebuilt
    ---------------------------------------------------------------------------
-   A KPI tile whose body is a short ranked list. Documented at /patterns/tile-rows
-   because the MSP shell grew four of these independently and the differences
-   between them are all in the chrome — gap, padding, corner, hover — which is
-   exactly the set a reader notices when two tiles sit side by side.
+   .msp-tile / .msp-dash-head / .msp-biz-* copied across with the prefix swapped
+   and nothing else changed, so this page documents the component that runs
+   rather than a second one that agrees with it today. Documented because the
+   shell grew FOUR of these rows independently and every difference between them
+   is in the chrome — gap, padding, corner, hover — which is exactly the set a
+   reader notices when two tiles sit side by side.
    =========================================================================== */
-.vds-tile-rows {
+/* The tile takes its width from whatever lays it out — on the dashboard that is
+   .msp-dash-grid, and in this preview it is nothing, so a bare .vds-tile shrinks to
+   its content's minimum (42px, with every column collapsed and the container query
+   in its compact form). The demos get a wrapper that stands in for the grid cell,
+   at roughly the width the real dashboard gives these two cards. */
+.vds-tile-demo { width: 100%; max-width: 44rem; min-width: 0; }
+
+.vds-tile {
   display: flex;
   flex-direction: column;
-  background: var(--vds-surface);
+  gap: var(--vds-space-4);
+  min-width: 0;
+  padding: var(--vds-space-5);
   border: 1px solid var(--vds-line);
   border-radius: var(--vds-radius-lg);
-  padding: var(--vds-space-4) var(--vds-space-5) var(--vds-space-3);
-  min-width: 0;
+  background: var(--vds-surface);
+  box-shadow: var(--vds-shadow-xs);
+  /* The tile is the query container: everything inside reflows against the
+     TILE's width, never the viewport's, because the same tile appears at four
+     widths on one dashboard. */
+  container: vds-tile / inline-size;
 }
 
-.vds-tile-rows__head {
+/* CENTRE, not baseline. The lead keeps its own baseline row (title and sub sit on
+   one); against a 32px button, baseline alignment hangs the control off the
+   text's baseline and drops its bottom edge below the header. */
+.vds-dash-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vds-space-1) var(--vds-space-3);
+  flex-wrap: wrap;
+}
+.vds-dash-head__lead {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
-  gap: var(--vds-space-3);
-  margin-bottom: var(--vds-space-2);
+  flex-wrap: wrap;
+  gap: var(--vds-space-1) var(--vds-space-2);
+  min-width: 0;
 }
+.vds-dash-head__title { font-size: 14px; font-weight: 600; color: var(--vds-ink); }
+.vds-dash-head__sub { font-size: 12px; color: var(--vds-ink-subtle); }
 
-/* The tile's one link out. Quiet at rest — it is an exit, not the point of the
-   tile — and it takes the ghost button's hover so it behaves like every other
-   low-emphasis action in the system. */
-.vds-tile-rows__action {
-  flex: none;
-  border: 0;
-  border-radius: calc(var(--vds-radius-sm) + 2px);
-  padding: var(--vds-space-1) var(--vds-space-2);
-  margin-right: calc(var(--vds-space-2) * -1);
-  background: transparent;
-  color: var(--vds-ink-muted);
-  font: inherit;
-  font-size: var(--vds-text-detail, 0.75rem);
-  cursor: pointer;
-}
-.vds-tile-rows__action:hover {
-  background: color-mix(in srgb, var(--vds-ink) 10%, transparent);
-  color: var(--vds-ink);
-}
-.vds-tile-rows__action:focus-visible {
-  outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
-  outline-offset: var(--vds-control-ring-offset-inset);
-}
+.vds-biz-rows { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; }
 
-.vds-tile-rows__body {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
+/* ---- The list as its tile's grower ---------------------------------------
+   A ranked list is the best thing on a dashboard to hand spare height to,
+   because it is the only element whose natural size is arbitrary: five rows at
+   37px is a choice, not a measurement.
 
-/* ---- the row ------------------------------------------------------------
-   mark │ name │ meter │ value │ sub. The NAME takes the surplus at ~1.8x the
-   meter: an even split puts long account names in a 110px cell, so the column
-   that identifies the row is the first one squeezed. A meter is a proportion —
-   it says the same thing at 60px as at 140. */
-.vds-tile-row {
+   THE CAP IS THE POINT. Past about 56px a list stops reading as a list and
+   starts reading as five separate panels that happen to be stacked — the gap
+   between rows overtakes the height of the text in them, and the ranking they
+   encode goes with it. Growth stops there and the remainder goes to the
+   footer's margin-top:auto. Air under the last row is a tile that finished
+   early, which is true and reads that way; air BETWEEN the rows past the cap is
+   a tile that came apart. */
+.vds-biz-rows--grow { flex: 1 1 auto; min-height: 0; }
+.vds-biz-rows--grow > .vds-biz-row { flex: 1 1 auto; min-height: 0; max-height: 56px; }
+
+/* mark │ name │ meter │ value │ sub. The NAME gets the surplus at ~1.8x the
+   meter: even shares put account names in a 110px cell, where "Crimson Optical
+   Systems" renders as "Crimson Opti…" on every row — the column that identifies
+   the row was the first one squeezed. */
+.vds-biz-row {
   display: grid;
   grid-template-columns: auto minmax(0, 1.8fr) minmax(44px, 1fr) 74px 58px;
   align-items: center;
-  gap: var(--vds-space-3);
+  gap: 12px;
   /* Padding plus a matching negative margin, so the hover fill reaches the
-     tile's inner edge while the text still stands off it. Padding alone leaves
-     every hover floating in a box inset from the card. */
-  padding: var(--vds-space-2);
-  margin-inline: calc(var(--vds-space-2) * -1);
-  width: calc(100% + var(--vds-space-4));
+     tile's inner edge while the text still stands off it. */
+  padding: 8px;
+  margin: 0 -8px;
+  width: calc(100% + 16px);
   border: 0;
   border-radius: calc(var(--vds-radius-sm) + 2px);
   background: none;
+  text-align: left;
   font: inherit;
   color: inherit;
-  text-align: left;
 }
-
-/* No mark, no meter — the columns collapse rather than standing empty. */
-.vds-tile-row--plain { grid-template-columns: minmax(0, 1.8fr) minmax(44px, 1fr) 74px 58px; }
-
-.vds-tile-row--btn { cursor: pointer; }
-.vds-tile-row--btn:hover { background: color-mix(in srgb, var(--vds-ink) 4%, transparent); }
-.vds-tile-row--btn:focus-visible {
+.vds-biz-row--btn { cursor: pointer; }
+/* A TRANSLUCENT MIX OF THE INK, never a surface step: these rows sit on a card,
+   inside a tile, on the canvas, and an absolute fill is right against one. */
+.vds-biz-row--btn:hover { background: color-mix(in srgb, var(--vds-ink) 4%, transparent); }
+.vds-biz-row--btn:focus-visible {
   outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
   outline-offset: var(--vds-control-ring-offset-inset);
 }
 
-/* THE CURRENT ROW, at brand strength — the same treatment the page filter's
-   current row takes, and for the same reason: one row at a time, and it is the
-   whole state of whatever the tile is driving. */
-.vds-tile-row--current,
-.vds-tile-row--current.vds-tile-row--btn:hover {
-  background: var(--vds-primary);
-}
-.vds-tile-row--current,
-.vds-tile-row--current .vds-tile-row__name,
-.vds-tile-row--current .vds-tile-row__value,
-.vds-tile-row--current .vds-tile-row__sub { color: var(--vds-on-primary); }
-.vds-tile-row--current.vds-tile-row--btn:hover { background: var(--vds-primary-hover); }
-/* The tonal tile is a light square; on cobalt it reads as a hole. Restated in
-   the row's own ink, still tonal across the glyph. */
-.vds-tile-row--current {
-  --vds-tile-tonal-face: color-mix(in srgb, var(--vds-on-primary) 22%, transparent);
-  --vds-tile-glyph-from: var(--vds-on-primary);
-  --vds-tile-glyph-to: color-mix(in srgb, var(--vds-on-primary) 55%, transparent);
-}
-/* The meter has to survive the fill too — its track is --vds-line, which on
-   cobalt is nearly invisible. */
-.vds-tile-row--current .vds-progress__track { background-color: color-mix(in srgb, var(--vds-on-primary) 25%, transparent); }
-.vds-tile-row--current .vds-progress__fill { background-color: var(--vds-on-primary); }
+/* No mark and no trailing cell on the lists that don't carry them — the columns
+   collapse rather than leaving a hole where a glyph would have been. */
+.vds-biz-row--plain { grid-template-columns: minmax(0, 1.8fr) minmax(44px, 1fr) 74px 58px; }
+.vds-biz-row--tight { grid-template-columns: minmax(0, 1.8fr) minmax(44px, 1fr) 74px; }
 
-.vds-tile-row__mark {
+/* Below this the BAR goes first, not the name. A 30px track can't show a
+   proportion, and the figure beside it already carries the magnitude exactly —
+   whereas a name clipped to two words stops the row identifying anything. */
+@container vds-tile (max-width: 360px) {
+  .vds-biz-row__track { display: none; }
+  .vds-biz-row { grid-template-columns: auto minmax(0, 1fr) 74px 58px; }
+  .vds-biz-row--plain { grid-template-columns: minmax(0, 1fr) 74px 58px; }
+  .vds-biz-row--tight { grid-template-columns: minmax(0, 1fr) 74px; }
+}
+
+.vds-biz-row__tile {
   display: inline-flex;
   flex-shrink: 0;
-  /* Optically centred against the NAME's ink, not its box — see
-     --vds-control-optical-shift. Pinned to the name's size so the em resolves
-     against the text this is being centred on. */
-  font-size: 0.8125rem;
+  /* Optically centred against the NAME's ink, not its box. Pinned to the name's
+     size so the em resolves against the text it is being centred on. */
+  font-size: 13px;
   transform: translateY(var(--vds-control-optical-shift));
 }
-/* 8px from the mark to the name, against the row's 12 everywhere else. One grid
-   cannot vary its column gap, so the name pulls the difference back. */
-.vds-tile-row__mark + .vds-tile-row__name { margin-left: -4px; }
+/* 8px from the mark to the name, against the row's 12 everywhere else. */
+.vds-biz-row__tile + .vds-biz-row__name { margin-left: -4px; }
 
-.vds-tile-row__name {
-  font-size: 0.8125rem;
+.vds-biz-row__name {
+  font-size: 13px;
   color: var(--vds-ink);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.vds-tile-row__meter { min-width: 0; }
-.vds-tile-row__value {
-  font-size: 0.8125rem;
+.vds-biz-row__track {
+  height: 6px;
+  border-radius: var(--vds-radius-full);
+  background: var(--vds-line);
+  overflow: hidden;
+}
+.vds-biz-row__fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--vds-radius-full);
+  background: var(--vds-primary);
+}
+.vds-biz-row__val {
+  font-size: 13px;
   font-weight: 600;
   color: var(--vds-ink);
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
-.vds-tile-row__sub {
-  font-size: 0.75rem;
+.vds-biz-row__sub {
+  font-size: 12px;
   color: var(--vds-ink-subtle);
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
-
-/* The remainder line. A rule above it and no mark or meter of its own, so it
-   cannot be mistaken for a seventh row you could rank against the six. */
-.vds-tile-rows__foot {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--vds-space-3);
-  margin-top: var(--vds-space-3);
-  padding-top: var(--vds-space-3);
-  border-top: 1px solid var(--vds-line);
-  font-size: 0.8125rem;
+/* The row's own alarm mark — days-to-renewal, invoice state. Tone, never weight:
+   one small coloured chip per row flags, a column of bold text floods. */
+.vds-biz-row__flag {
+  font-size: 12px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
   color: var(--vds-ink-muted);
 }
+.vds-biz-row__flag--urgent { color: var(--vds-danger); }
+.vds-biz-row__flag--soon { color: var(--vds-warning); }
+
+/* THE CURRENT ROW, at brand strength — the page filter's treatment, for the same
+   reason: one row at a time, and it is the whole state of what the tile drives. */
+.vds-biz-row--current,
+.vds-biz-row--current.vds-biz-row--btn:hover { background: var(--vds-primary); }
+.vds-biz-row--current.vds-biz-row--btn:hover { background: var(--vds-primary-hover); }
+.vds-biz-row--current,
+.vds-biz-row--current .vds-biz-row__name,
+.vds-biz-row--current .vds-biz-row__val,
+.vds-biz-row--current .vds-biz-row__sub,
+.vds-biz-row--current .vds-biz-row__flag { color: var(--vds-on-primary); }
+/* The tonal tile is a light square; on cobalt it reads as a hole. Restated in the
+   row's own ink, still tonal across the glyph rather than one flat colour. */
+.vds-biz-row--current {
+  --vds-tile-tonal-face: #{'color-mix(in srgb, var(--vds-on-primary) 22%, transparent)'};
+  --vds-tile-glyph-from: var(--vds-on-primary);
+  --vds-tile-glyph-to: #{'color-mix(in srgb, var(--vds-on-primary) 55%, transparent)'};
+}
+/* The meter has to survive the fill too — --vds-line is invisible on cobalt. */
+.vds-biz-row--current .vds-biz-row__track { background: #{'color-mix(in srgb, var(--vds-on-primary) 25%, transparent)'}; }
+.vds-biz-row--current .vds-biz-row__fill { background: var(--vds-on-primary); }
+
+/* ---- the remainder line -------------------------------------------------
+   Names the population the list above it left out. Deliberately NOT restyled
+   into a button: it keeps the hairline, the size and the subtle ink it had as
+   text, because its job on the card hasn't changed. What it gains is a hover, a
+   focus ring and an arrow that appears on approach — the smallest vocabulary
+   that says "this goes somewhere" without turning a footnote into a CTA. */
+.vds-biz-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--vds-line);
+  font-size: 12px;
+  color: var(--vds-ink-subtle);
+}
+/* The negative insets let the hover fill reach past the card's own padding, so
+   the highlight covers the full width of the rule it sits under rather than
+   floating inside it with a gap at each end. */
+.vds-biz-foot--btn {
+  width: calc(100% + 16px);
+  margin-left: -8px;
+  margin-right: -8px;
+  padding: 10px 8px 4px;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  border-radius: 0 0 var(--vds-radius-sm) var(--vds-radius-sm);
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  color: var(--vds-ink-subtle);
+  text-align: left;
+  cursor: pointer;
+}
+.vds-biz-foot--btn:hover { background: #{'color-mix(in srgb, var(--vds-ink) 4%, transparent)'}; color: var(--vds-ink); }
+.vds-biz-foot--btn:focus-visible {
+  outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+  outline-offset: var(--vds-control-ring-offset-inset);
+}
+/* The arrow costs no layout when hidden — it holds its box and fades — so the
+   figure beside it doesn't shift on hover. */
+.vds-biz-foot__val {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+  color: var(--vds-ink-muted);
+}
+.vds-biz-foot__go { opacity: 0; transition: opacity 120ms ease; }
+.vds-biz-foot--btn:hover .vds-biz-foot__go,
+.vds-biz-foot--btn:focus-visible .vds-biz-foot__go { opacity: 1; }
