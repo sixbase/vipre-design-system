@@ -970,7 +970,11 @@ section:first-of-type > .vds-section-h {
 .vds-button--soft.vds-demo-state--hover { background-color: var(--_btn-soft-hover); }
 .vds-button--outline.vds-demo-state--hover { background-color: var(--_btn-soft); }
 .vds-button--ghost.vds-demo-state--hover {
-  background-color: var(--_btn-soft);
+  // STALE UNTIL NOW, and stale for exactly the reason the header warns about: ghost's
+  // hover moved to a tint of its own ink and this mirror was not moved with it, so the
+  // states matrix has been showing a hover the component stopped producing. Copied
+  // again, from Button.scss's &--ghost &:hover.
+  background-color: color-mix(in srgb, var(--_btn-text) 10%, transparent);
   color: var(--_btn-text);
 }
 
@@ -979,7 +983,7 @@ section:first-of-type > .vds-section-h {
 // pressed soft cell correctly renders at rest, matching the real component.
 .vds-button--solid.vds-demo-state--active { background-color: var(--_btn-fill-active); }
 .vds-button--outline.vds-demo-state--active { background-color: var(--_btn-soft-hover); }
-.vds-button--ghost.vds-demo-state--active { background-color: var(--_btn-soft-hover); }
+.vds-button--ghost.vds-demo-state--active { background-color: color-mix(in srgb, var(--_btn-text) 18%, transparent); }
 
 // --- focus (mirrors &:focus-visible exactly) ---
 .vds-button.vds-demo-state--focus {
