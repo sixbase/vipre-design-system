@@ -21,6 +21,16 @@
   position: relative;
   @include type.step(body);
 
+  &--sm {
+    // 28 x 16 with a 12px thumb: pad + thumb + pad still equals the track height, and
+    // the travel stays the same fraction of the track, so the throw reads the same.
+    --vds-switch-track-w: 1.75rem;   // 28px, from 36
+    --vds-switch-track-h: 1rem;      // 16px, from 20
+    --vds-switch-thumb: 0.75rem;     // 12px, from 16
+    gap: var(--vds-space-1-5);
+    @include type.step(detail);
+  }
+
   &--disabled {
     opacity: 0.5;
     pointer-events: none;

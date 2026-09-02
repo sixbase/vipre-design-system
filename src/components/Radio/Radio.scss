@@ -26,6 +26,13 @@
   vertical-align: middle;
   @include type.step(body);
 
+  &--sm {
+    --vds-radio-size: 0.875rem;      // 14px, from 18
+    --vds-radio-dot: 0.3125rem;      // 5px, from 6 — the dot keeps its share of the box
+    gap: var(--vds-space-1-5);
+    @include type.step(detail);
+  }
+
   &--disabled {
     opacity: 0.5;
     pointer-events: none;

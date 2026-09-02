@@ -29,7 +29,7 @@ import { RadioGroupContext } from '../RadioGroup/RadioGroupContext.js'
  * </RadioGroup>
  */
 export const Radio = forwardRef(function Radio(
-  { value, name, checked, onChange, tone = 'primary', disabled, className, children, ...props },
+  { value, name, checked, onChange, tone = 'primary', size = 'md', disabled, className, children, ...props },
   ref,
 ) {
   const group = useContext(RadioGroupContext)
@@ -52,6 +52,7 @@ export const Radio = forwardRef(function Radio(
       className={cx(
         'vds-radio',
         tone !== 'primary' && `vds-radio--${tone}`,
+        size === 'sm' && 'vds-radio--sm',
         isDisabled && 'vds-radio--disabled',
         className,
       )}
