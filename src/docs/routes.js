@@ -50,6 +50,7 @@ import { AccordionPage } from './pages/AccordionPage.jsx'
 import { BreadcrumbPage } from './pages/BreadcrumbPage.jsx'
 import { PaginationPage } from './pages/PaginationPage.jsx'
 import { PageFilterPage } from './pages/PageFilterPage.jsx'
+import { TileRowsPage } from './pages/TileRowsPage.jsx'
 import { StepperPage } from './pages/StepperPage.jsx'
 import { KbdPage } from './pages/KbdPage.jsx'
 import { AlertPage } from './pages/AlertPage.jsx'
@@ -187,6 +188,7 @@ export const NAV = [
       { path: '/components/stepper', name: 'Stepper', Page: StepperPage },
       { path: '/components/pagination', name: 'Pagination', Page: PaginationPage },
       { path: '/patterns/page-filter', name: 'Page filter', Page: PageFilterPage },
+      { path: '/patterns/tile-rows', name: 'Tile rows', Page: TileRowsPage },
     ],
   },
   {
