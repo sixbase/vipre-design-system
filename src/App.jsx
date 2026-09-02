@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Text } from './components/index.js'
+import { useEffect, useRef, useState } from 'react'
+import { SearchInput, Text } from './components/index.js'
 import { NAV, ROUTE_MAP } from './docs/routes.js'
 import { VipreLogo } from './docs/VipreLogo.jsx'
 
@@ -24,6 +24,47 @@ function useHashRoute() {
 export function App() {
   const [dark, setDark] = useState(false) // light is the default theme
   const [navOpen, setNavOpen] = useState(false) // mobile off-canvas sidebar
+
+  /* ---- finding a page ---------------------------------------------------------------
+     Sixty-odd entries across eight groups is more than a list you scan — you either know
+     the name and want to jump, or you half-know it and want to see what is near it.
+
+     Matches the PAGE NAME and its GROUP, so "form" surfaces everything under Forms &
+     Inputs even though no page is called that, and a group whose own name matches keeps
+     all its pages. Groups that empty are dropped rather than left as a heading with
+     nothing under them.
+
+     Not a router or a command palette: it filters the list in place, so the thing you
+     were looking at stays on screen and the answer appears beside it. */
+  const [navQuery, setNavQuery] = useState('')
+
+  /* Cmd/Ctrl-K focuses the field and selects what is in it, so a second search does not
+     need the field cleared first. Escape hands focus back rather than trapping it, and
+     the hint chip is SearchInput's own — it disappears once the field has content, which
+     is exactly when it stops being useful. */
+  const navSearchRef = useRef(null)
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        navSearchRef.current?.focus()
+        navSearchRef.current?.select()
+      }
+      if (e.key === 'Escape' && document.activeElement === navSearchRef.current) {
+        navSearchRef.current.blur()
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [])
+  const q = navQuery.trim().toLowerCase()
+  const navGroups = !q
+    ? NAV
+    : NAV
+        .map((group) => group.group.toLowerCase().includes(q)
+          ? group
+          : { ...group, items: group.items.filter((i) => i.name.toLowerCase().includes(q)) })
+        .filter((group) => group.items.length > 0)
   const path = useHashRoute()
   const route = ROUTE_MAP[path] || ROUTE_MAP['/']
   const Page = route.Page
@@ -118,8 +159,21 @@ export function App() {
           </button>
         </div>
 
+        <div className="vds-sidebar__search">
+          <SearchInput
+            ref={navSearchRef}
+            size="sm"
+            shortcutHint="⌘K"
+            value={navQuery}
+            onChange={setNavQuery}
+            onClear={() => setNavQuery('')}
+            placeholder="Find a component"
+            aria-label="Find a component"
+          />
+        </div>
+
         <nav>
-          {NAV.map((group) => (
+          {navGroups.map((group) => (
             <div key={group.group} className="vds-sidebar__section">
               <Text variant="eyebrow" tone="muted" className="vds-sidebar__label">
                 {group.group}
@@ -136,6 +190,11 @@ export function App() {
               ))}
             </div>
           ))}
+          {navGroups.length === 0 && (
+            <Text variant="detail" tone="subtle" className="vds-sidebar__no-matches" role="status">
+              Nothing matches &ldquo;{navQuery.trim()}&rdquo;
+            </Text>
+          )}
         </nav>
       </aside>
 

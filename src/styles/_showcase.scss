@@ -1054,3 +1054,12 @@ section:first-of-type > .vds-section-h {
     gap: 0.375rem;
   }
 }
+
+.vds-sidebar__search {
+  padding: 0 var(--vds-space-4) var(--vds-space-3);
+}
+.vds-sidebar__no-matches {
+  display: block;
+  padding: var(--vds-space-2) var(--vds-space-4);
+}
+
