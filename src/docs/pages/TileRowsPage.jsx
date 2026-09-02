@@ -427,6 +427,76 @@ function TrialsDemo() {
   )
 }
 
+/* ============================================================================
+   THE SEGMENT TILE — a count, its share, and a bar split into named parts.
+   Ported from the package panel's audience strip (KpiMeter + .vds-pkg-aud__seg).
+   The key under the bar is a list of ROWS, and it is the last list on this page
+   that was still drawn its own way — it now carries the same inset, pill,
+   hairline and hover as every other row.
+   ========================================================================== */
+const SEGMENTS = [
+  { label: 'Paying', value: 52, pct: 90, color: 'var(--vds-primary)' },
+  { label: 'Trying', value: 6, pct: 10, color: 'var(--vds-accent-orchid, #c9a6e0)' },
+]
+
+function KpiMeter({ segments, onSegmentClick }) {
+  return (
+    <div className="vds-kpi-meter vds-kpi-meter--plain">
+      {/* aria-hidden: the bar is a redraw of the legend beneath it, which is real
+          text in a description list. A screen reader gets the numbers, not a
+          second copy of them. */}
+      <div className="vds-kpi-meter__bar" aria-hidden>
+        {segments.map((p) => (
+          <span key={p.label} className="vds-kpi-meter__seg"
+            style={{ flexGrow: p.value, background: p.color }} />
+        ))}
+      </div>
+      <dl className="vds-kpi-meter__key">
+        {segments.map((p) => {
+          const live = !!onSegmentClick && p.value > 0
+          return (
+            <div key={p.label}
+              className={`vds-kpi-meter__row${live ? ' vds-kpi-meter__row--live' : ''}`}
+              role={live ? 'button' : undefined}
+              tabIndex={live ? 0 : undefined}
+              aria-label={live ? `View ${p.value} ${p.label.toLowerCase()} accounts` : undefined}
+              onClick={live ? () => onSegmentClick(p) : undefined}>
+              <dt className="vds-kpi-meter__name">
+                <span className="vds-kpi-meter__dot" style={{ background: p.color }} aria-hidden />
+                <span className="vds-kpi-meter__label">{p.label}</span>
+              </dt>
+              <dd className="vds-kpi-meter__val">{p.value}</dd>
+              <dd className="vds-kpi-meter__pct">{p.pct}%</dd>
+            </div>
+          )
+        })}
+      </dl>
+    </div>
+  )
+}
+
+function SegmentTileDemo() {
+  return (
+    <div className="vds-tile-demo">
+    <div className="vds-tile">
+      <div className="vds-pkg-aud__seg vds-pkg-aud__seg--solo">
+        {/* THE FIGURE AND ITS SHARE ON ONE LINE. "58" and "18% of all accounts"
+            are the same fact told twice — a count, and that count as a proportion
+            — so the share belongs to the FIGURE rather than to the label under it.
+            A line down, next to the label, it reads as a second caption and leaves
+            the reader working out which of the two it measures. */}
+        <span className="vds-pkg-aud__figure">
+          <span className="vds-pkg-aud__val">58</span>
+          <span className="vds-pkg-aud__stat">18% of all accounts</span>
+        </span>
+        <span className="vds-pkg-aud__label">Accounts with this bundle</span>
+        <KpiMeter segments={SEGMENTS} onSegmentClick={() => {}} />
+      </div>
+    </div>
+    </div>
+  )
+}
+
 export function TileRowsPage() {
   return (
     <DocPage
@@ -521,6 +591,18 @@ export function TileRowsPage() {
   <button className="vds-trials-who">…three names, +109 more…</button>
   <div className="vds-sell-trials">…what they're trying…</div>
 </div>`} />
+      </Section>
+
+      <Section
+        title="The segment tile"
+        note="A count, that count as a share, and a bar split into named parts. The key under the bar is a list of rows — a mark, a name, a figure, a qualifier — and it was the last list here still drawn its own way. It now carries the same 8px inset, 6px pill, hairline and ink-mix hover as every other row, so a segment in this tile and a product in Seats by product are read the same way. Its vertical padding stays at 4: these two entries are reading the bar directly above them, and the ranked rows' 8 would push the key far enough off it to stop belonging to it."
+      >
+        <Preview canvas={<SegmentTileDemo />} code={`<span className="vds-pkg-aud__figure">
+  <span className="vds-pkg-aud__val">58</span>
+  <span className="vds-pkg-aud__stat">18% of all accounts</span>
+</span>
+<span className="vds-pkg-aud__label">Accounts with this bundle</span>
+<KpiMeter segments={segments} onSegmentClick={…} />`} />
       </Section>
 
       <Section title="The rules">

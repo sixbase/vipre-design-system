@@ -2476,3 +2476,459 @@ section:first-of-type > .vds-section-h {
    line above it and the line belonging to the row beneath both give way. */
 .vds-biz-row--current::before,
 .vds-biz-row--current + .vds-biz-row::before { display: none; }
+
+
+/* ---- The KPI meter and its segment hero ---------------------------------
+   27 more rules out of shell.css. Aligned to the row conventions below. */
+/* ---- KPI meter: what each hero number is made of -------------------------------
+   A hairline, a proportional bar, and a two-row legend — the same block on all four
+   cards (see KpiMeter). The rule and the 20px above it reproduce the DS's own
+   Divider-plus-breakdown spacing exactly, because that's what this replaced on the
+   Accounts card and the strip shouldn't shift when the other three catch up. */
+.vds-kpi-meter {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: var(--vds-space-5);
+  border-top: 1px solid var(--vds-line);
+}
+
+/* The track is the LINE colour, not a tinted version of the accent: the segments
+   already carry the accent, and a tinted trough reads as a third, always-full
+   segment. Segments are laid out by flex-grow off the raw values, so no percentage
+   is computed for the geometry — the bar can't disagree with the legend beside it. */
+.vds-kpi-meter__bar {
+  display: flex;
+  gap: 2px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--vds-line);
+  overflow: hidden;
+}
+
+.vds-kpi-meter__seg { min-width: 2px; border-radius: 999px; }
+
+/* Three columns, so label / value / share line up down the card and — because every
+   card runs the same block — across the strip. Same construction as .vds-donut__key;
+   the sizes follow the DS breakdown rows this sits in place of. */
+.vds-kpi-meter__key {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 6px 12px;
+  margin: 0;
+}
+
+.vds-kpi-meter__row { display: contents; }
+
+.vds-kpi-meter__name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 13px;
+  color: var(--vds-ink-muted);
+}
+
+/* A rounded square, matching the bar's own end caps and the donut legend's swatch —
+   a circle would read as a status dot, which means something else on this page. */
+.vds-kpi-meter__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex: none;
+}
+
+/* Optically centred against the swatch, not box-centred: 13px text sits ~0.5px high
+   in its line box, so a box-aligned pair reads as the label floating above its dot. */
+.vds-kpi-meter__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transform: translateY(0.5px);
+}
+
+.vds-kpi-meter__val,
+.vds-kpi-meter__pct {
+  margin: 0;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.vds-kpi-meter__val { font-weight: 600; color: var(--vds-ink); }
+
+/* min-width holds the column open at "7%" so the values above and below it stay in
+   one line however the shares round. */
+.vds-kpi-meter__pct { color: var(--vds-ink-subtle); min-width: 32px; }
+
+/* Standalone: the rule and its 20px exist to separate the meter from a KPI figure
+   above it, and on a dashboard card there's no figure to separate it from — the
+   card's own head already did that job. */
+.vds-kpi-meter--plain { border-top: 0; padding-top: 0; }
+
+/* ---- The audience switcher --------------------------------------------------
+   Where "Where to sell next" landed on this page. It replaced a static uppercase
+   caption ("ACCOUNTS HOLDING THIS 58") and sits exactly where it sat: the whole
+   feature costs the page one control in that caption's place plus one sentence
+   under it. No new box, no new column, no second chart.
+
+   Underline tabs, not pills or chips. The panel above already has a filled bar and
+   the column to its left is a ranked list of filled bars; a row of tinted pills
+   under both would be the third filled thing in one view and would read as the
+   loudest, which is exactly backwards — these are a way IN to the list, not the
+   headline. A rule with one active segment is the quietest control that can still
+   hold a count. */
+/* ---- The segments are the figure row now -------------------------------------
+   They used to be 12px underline tabs under a separate row of three static KPI tiles.
+   That was two rows of numbers about one package — and the static row held figures
+   ("seats used", "typical order") that are true of the HOLDERS, printed above four
+   segments three of which aren't holders. Merging them puts every figure with the
+   audience it describes and gives the page one control instead of a caption plus a
+   control.
+
+   So these carry a figure row's weight: count at 18/600, the audience named under it,
+   its seat figure under that. The active rule still sits ON the container's hairline
+   rather than under the tile, so switching slides a mark along one line instead of
+   redrawing a box — the quiet affordance the underline tabs were chosen for, kept now
+   that the things being underlined are big enough to be the headline. */
+/* FOUR BLOCKS, not four cells of a ruled strip. The tiles carry their segment's colour
+   as a background now (see .vds-pkg-aud__seg), so the furniture that used to separate
+   them — a hairline between the base case and the plays, a rule above and below the whole
+   row — is gone. Two tinted blocks with a gap between them are already separate; adding a
+   line between them draws a seam through what reads as one object.
+
+   The gap does the dividing, and the padding keeps the blocks off the panel's edges so
+   they read as sitting ON the surface rather than as bands cut into it. */
+.vds-pkg-aud {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  /* The gap does ALL the separating now. It was space-2, because each tile drew its own
+     12px of padding and a tinted box to sit in — two tiles were 24px of padding apart
+     even at an 8px gap. With the boxes gone that padding was invisible margin: it held the
+     figures off a background nothing was drawing, and squeezed four counts and their
+     captions into two thirds of the column each. The gap is the divider a plain row wants,
+     so it takes the space the padding was spending and the content gets the rest. */
+  /* The gap plus a HAIRLINE. Gap alone was doing all the separating, and at four tiles
+     across a wide panel that left four blocks of text floating in a field with nothing
+     saying where one ends — the figures read as a paragraph of numbers rather than as
+     four columns. A rule between them costs one pixel and makes the row a table.
+
+     The rule goes on the tile (border-left on every tile but the first) rather than on
+     the container, so it can never outlive a tile that isn't rendered: segments with a
+     count of 0 are filtered out before this ever sees them. */
+  /* A REAL GAP NOW. It was 0 because the tiles were separated by a border-left on each
+     one — edge to edge, no space between. With every tile carrying its own box, two boxes
+     sharing an edge would read as one split box, so the gap comes back to hold them
+     apart. space-3 matches the panel's own vertical rhythm. */
+  gap: var(--vds-space-3);
+  padding: var(--vds-space-3) 0;
+}
+
+/* The tile's legend swatch — the thing that ties this tile to the stroke in the plot.
+   ALWAYS FILLED with the segment's hue now. It used to be hollow-until-plotted, back when
+   "plotted" was a state separate from "active" and three tiles could be plotted at once;
+   with one selection there is nothing for a hollow-vs-filled distinction to say that the
+   tile's own background doesn't already say louder.
+
+   It stays rather than being deleted because it is the only full-strength statement of
+   the hue on the tile — the background is a 16% tint, which is deliberately too weak to
+   match against a 2px line by eye. The swatch is what makes the match. */
+/* (.vds-pkg-aud__mark — the segment dot — went with the markup; the labels tell the
+   tiles apart now. See the note where it was rendered.) */
+
+/* Full strength on every tile. The 0.55 was the DIMMED state of an unselected tile; with
+   nothing selectable, four half-faded swatches would just look washed out. */
+
+/* .vds-pkg-aud__chart is gone with the twelve-month plot it framed. */
+
+/* ---- THE TILE ----------------------------------------------
+   The whole tile carries the segment's hue. Selected is that hue at full tint; the other
+   three are the SAME hue, much fainter — never white, never colourless.
+
+   ---- What this replaced, and why the underline had to go ----
+   Selection was a 2px rule under the tile, in ink. Two things were wrong with it. It was
+   the weakest mark on a strip whose tiles each carry an 18px numeral, a label, a stat and
+   a meter — four lines of content above a 2px line, so the eye finished reading the tile
+   before it ever reached the thing telling it which tile was chosen. And it was INK, the
+   one colour on this strip that says nothing: the tile's identity is its hue, and marking
+   selection in a hue-neutral colour meant the selected state and the segment's identity
+   were drawn in two unrelated languages.
+
+   Tinting the whole tile fixes both at once. The mark is now the largest element rather
+   than the smallest, and it's made of the segment's own colour, so "which is selected"
+   and "which segment is this" are one signal instead of two.
+
+   ---- Why the unselected tiles keep their colour ----
+   White-with-no-underline was the old resting state, and it made the strip look like
+   three empty boxes beside one real one. Holding the hue at a low tint says the other
+   three are still segments you can pick, and — because the tint is the same colour the
+   plot would stroke — the strip doubles as its own legend whether or not a tile is
+   selected. Fading rather than emptying is the difference between "not chosen" and
+   "not there".
+
+   ---- The two mixes ----
+   Both are percentages of --seg-hue against the SURFACE, not against transparent, so the
+   tint composites the same way over any background this strip is dropped onto. Dark mode
+   takes stronger percentages: the same 16% of a mid-tone hue that reads clearly on white
+   nearly vanishes against a dark surface, so the steps are chosen against each ground
+   rather than shared between them. */
+.vds-pkg-aud__seg {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* 6px, not 2. The three lines are a figure, its name and its qualifier — three
+     different KINDS of statement, and at 2px they set as one four-line paragraph. The
+     extra air is what lets the figure read as a headline with a caption under it. */
+  gap: var(--vds-space-1-5);
+  min-width: 0;
+  padding-inline: var(--vds-space-5);
+  /* NO INSET. The padding and the radius belonged to the selected tile's tonal box; with
+     no box, the first tile's figure now starts on the panel's own left edge and lines up
+     with the heading above it and the table below it, instead of floating 12px inside a
+     column whose edges you cannot see. */
+  /* ---- A BOX AGAIN, and this time it isn't a selection state ---------------------
+     The tiles ran borderless with a hairline between them, on the argument that a rule
+     costs one pixel and makes the row read as a table. That worked at four tiles across a
+     wide panel, where the rules were close enough together to group anything. At TWO
+     tiles the same hairline sits alone in the middle of a 450px row and reads as a fold
+     in the page rather than as an edge between two figures — so the figures went back to
+     floating, which is the problem the hairline was added to fix.
+
+     A border per tile fixes it at any count, and it is safe to reach for now in a way it
+     was not before: the box used to mean SELECTED (one tinted tile against three plain
+     ones), so drawing it on all of them would have said everything was picked. Nothing is
+     selectable here any more, so a border is just an edge.
+
+     Kept quiet — --vds-line, the same hairline weight, on the panel's own ground rather
+     than a fill. These are supporting figures for the table below, and two filled cards
+     at the top of the panel would out-weigh the thing they introduce. */
+  padding: var(--vds-space-3) var(--vds-space-4);
+  border: 1px solid var(--vds-line);
+  border-radius: var(--vds-radius-md, 8px);
+  background: transparent;
+  font: inherit;
+  text-align: left;
+}
+
+/* No cursor, no hover, no tonal selected fill. The tint said "this one is chosen" and
+   nothing is chosen any more; leaving it would have one tile looking picked at random. */
+
+/* The count. Inactive tiles drop to muted ink rather than fading whole — the seat
+   figure under each one is the reason to click it and has to stay readable in all
+   four at once. */
+.vds-pkg-aud__val {
+  /* DS GAP: no type-scale tokens. Stated in px because there is nothing to point at yet,
+     and grouped so the three move together when there is.
+
+     22/12/12, up from 18/11/11. That was the app's micro-label ramp, and it was the right
+     one while these were TABS — small controls you pick between. They are the panel's
+     headline figures now: nothing else here states a count, the plot that used to carry the
+     eye is gone, and four 18px numbers across a row this wide read as a caption to a chart
+     that is no longer there. One step up on each, so the relationship between the three
+     lines is unchanged and only the block as a whole gets louder. */
+  font-size: 26px;
+  font-weight: 600;
+  /* Tighter than the body face runs, on both axes. Large figures set at default tracking
+     look loose — the digits are already monospaced by `tabular-nums`, so the extra
+     letter-space between them has nothing to do; and 1.15 leading on a single line of
+     26px just adds space above the number that the tile reads as a top margin. */
+  /* -0.022em, the DS's display step, and not the -0.02 this rounded to by hand. At 26px
+     the difference is a third of a pixel across the whole figure — the point is that it is
+     the number the typescale uses rather than a near miss that reads as a decision. */
+  letter-spacing: -0.022em;
+  line-height: 1.05;
+  /* Full ink. It sat at muted and lifted to ink on hover or when selected — a rest state
+     that only made sense while there was a state to leave. All four counts are read
+     together now, so all four are read at the same strength. */
+  color: var(--vds-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.vds-pkg-aud__label {
+  font-size: 12px;
+  font-weight: 500;
+  /* Muted, up from subtle. It names the figure above it, which makes it the second most
+     important line on the tile — at subtle it sat at the same strength as the seat count
+     below, and the tile had no middle. */
+  color: var(--vds-ink-muted);
+  max-width: 100%;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* The seat figure. A step quieter than the label above it: it qualifies the audience
+   rather than naming it, and one of the four is an estimate. */
+.vds-pkg-aud__stat {
+  font-size: 12px;
+  color: var(--vds-ink-subtle);
+  font-variant-numeric: tabular-nums;
+  max-width: 100%;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* The dashboard card header link used to be styled from scratch right here — its own
+   padding, radius, 12px type, hover colour and focus ring. It is a DS ghost Button now
+   (see DashHead), so the only rule left is the one placing it, up beside .vds-dash-head.
+   This block also claimed the link "replaces" the card's sub caption, which stopped being
+   true when the header started showing both. */
+
+/* ---- Clickable meter legend + status lead --------------------------------------
+   Both open the accounts behind a figure. They read as plain text until hovered — a
+   permanent link treatment on every legend row would turn a quiet breakdown into a menu. */
+.vds-kpi-meter__row--live {
+  cursor: pointer;
+  border-radius: 4px;
+  padding-inline: 4px; margin-inline: -4px;
+  transition: background-color var(--vds-dur-fast, 120ms) var(--vds-ease-out, ease);
+}
+
+.vds-kpi-meter__row--live:hover { background: color-mix(in oklab, var(--vds-ink) 6%, transparent); }
+
+.vds-kpi-meter__row--live:focus-visible {
+  outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+  outline-offset: 1px;
+}
+
+/* ---- NO LOCAL STYLING FOR THE RAIL'S TABLE -------------------------------------------
+   Deliberately empty. The grouped-rows pattern is the design system's, implemented as its
+   example implements it (see railNode in MspShellV2), and it is framed the way the DS
+   frames every table — a bordered Surface with its own corner and resting shadow.
+
+   Two overrides used to live here and both are gone:
+
+     THE CARD, removed so the rail could sit bare on the page canvas. That was a page
+     decision applied to a component, and it cost the table the edge that separates it from
+     the panel beside it.
+
+     `table-layout: fixed`, which existed because the table wanted 406px inside a 380px
+     column and overflowed. That is a column too narrow for its contents, not a component
+     that lays out wrongly — so the COLUMN gives way (see .vds-pkg-page) and the table lays
+     out the way the DS lays it out.
+
+   If this file starts re-styling .vds-pkg-rank again, the question to ask first is whether
+   the surface around it is the thing that should move. *//* ---- ONE TILE, SO IT TAKES THE ROW --------------------------------------------------
+   The strip auto-flows columns for the two tiles it used to hold; with the pair
+   consolidated into a total-and-split there is one, and a 1fr column of a two-column grid
+   would leave it hugging the left half. See the note where it's rendered. */
+.vds-pkg-aud__seg--solo {
+  grid-column: 1 / -1;
+}
+
+/* ---- THE BAR TAKES THE TILE -----------------------------------------------------------
+   The tile is a flex COLUMN with `align-items: flex-start`, which is right for its three
+   lines of text — a figure, its name and its qualifier all end where their words end — and
+   wrong for the one child that is a drawing. Left to that rule the meter shrank to the
+   width of its own legend (130px in a 570px tile), so the distribution it exists to show
+   was being read off a bar an eighth of the panel wide.
+
+   `align-self: stretch` rather than `width: 100%`: same result here, but it says the thing
+   that is actually true — this child opts out of the column's alignment — and it keeps
+   working if the tile ever gains padding on that axis.
+
+   The legend stretches with it, which is the point of the meter's three-column grid: the
+   labels run down the left and the figures and shares line up on the right edge of the
+   tile, the way they do on the dashboard's cards. */
+.vds-pkg-aud__seg--solo .vds-kpi-meter {
+  align-self: stretch;
+  /* The step that separates a reading from a statement — the bar is a different KIND of
+     thing from the two lines of text over it. The DS meter's own top rule and padding come
+     off: the tile is already a bounded surface, so a hairline across it would divide one
+     tile into two. */
+  margin-top: var(--vds-space-4);
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* ---- THE FIGURE AND ITS SHARE ---------------------------------------------------------
+   One line: the count, then the same count as a proportion. See the note where they are
+   rendered for why the share belongs to the figure rather than to the label.
+
+   CENTRED ON THE FIGURE, and optically rather than by the box. Baseline was tried first —
+   the small text sitting on the digits' feet, the way a unit sits beside a number — and it
+   hangs the share off the bottom of a 27px line, which reads as a footnote to the number
+   rather than as part of it.
+
+   `align-items: center` gets most of the way and lands a shade low, because the two boxes
+   are not the same shape: the figure's line box is 27.3px holding 26px digits that have no
+   descenders, so its visible ink sits high in it, while the share's 18px box holds 12px
+   text with room under it for the 'f' in "of". Centring the BOXES therefore centres two
+   different things. 1px back up is the correction, and it is the same optical rule this
+   shell applies wherever small text sits beside a taller mark.
+
+   The gap is space-2: close enough to read as one statement, far enough that the share is
+   not mistaken for part of the figure. */
+.vds-pkg-aud__seg--solo .vds-pkg-aud__figure {
+  display: flex;
+  align-items: center;
+  gap: var(--vds-space-2);
+  min-width: 0;
+}
+
+.vds-pkg-aud__seg--solo .vds-pkg-aud__stat {
+  position: relative;
+  top: -1px;
+}
+
+/* The share never truncates — four characters, and the half of the line that answers "is
+   that a lot". The label below it can, and does. */
+.vds-pkg-aud__seg--solo .vds-pkg-aud__stat { flex-shrink: 0; }
+
+.vds-pkg-aud__seg--solo .vds-pkg-aud__label {
+  align-self: stretch;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- NO TRACK UNDER THE STACKED BAR --------------------------------------------------
+   The meter's bar carries a --vds-line ground, which earns its place on a meter that does
+   not fill: there the track is the REMAINDER, and the part not yet reached has to be
+   visible for the fill to mean anything. This bar is a stacked distribution — its parts
+   sum to the whole by construction, so there is no remainder to draw, and the only place
+   the track ever showed was the 2px gap between the two segments, as a grey sliver that
+   read as a third, tiny category. Transparent, so the gap is the card. */
+.vds-pkg-aud__seg--solo .vds-kpi-meter__bar {
+  background: transparent;
+}
+
+/* ===========================================================================
+   ALIGNING THE METER'S KEY TO THE ROWS
+   ---------------------------------------------------------------------------
+   The key under the bar is a LIST OF ROWS — a mark, a name, a figure and a
+   qualifier — which is the same object as every other row on this page, and it
+   was the last one still drawn its own way. Given the row's inset, its pill and
+   its hairline, a segment in this tile and a product in Seats by product are
+   read the same way, which is the whole point of a strip of tiles.
+   =========================================================================== */
+.vds-kpi-meter__row {
+  padding: var(--vds-space-1) var(--vds-space-2);
+  margin-inline: calc(var(--vds-space-2) * -1);
+  width: calc(100% + var(--vds-space-4));
+  border-radius: calc(var(--vds-radius-sm) + 2px);
+  position: relative;
+  /* Vertical padding is 4, not the ranked rows' 8: these are two one-line
+     entries reading a bar directly above them, and 8 would push the key far
+     enough off the bar to stop belonging to it. The INSET and the CORNER are
+     what had to agree, because those are what the hover draws. */
+}
+.vds-kpi-meter__row + .vds-kpi-meter__row::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: var(--vds-line-subtle);
+}
+/* Live rows are the interactive ones; they take the row hover, not their own. */
+.vds-kpi-meter__row--live:hover { background: color-mix(in srgb, var(--vds-ink) 4%, transparent); }
+.vds-kpi-meter__row--live:focus-visible {
+  outline: var(--vds-control-ring-w) solid var(--vds-focus-ring);
+  outline-offset: var(--vds-control-ring-offset-inset);
+}
+/* 8px from the dot to its label, the same distance a mark sits from a name. */
+.vds-kpi-meter__name { gap: var(--vds-space-2); }
+/* The figures line up with every other column of figures on the page. */
+.vds-kpi-meter__val,
+.vds-kpi-meter__pct { font-variant-numeric: tabular-nums; }
